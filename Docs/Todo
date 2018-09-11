@@ -1,0 +1,8 @@
+  - lockscreen/autolock
+  - system log
+  - split repo to SDA_OS and its hardware base
+    - specify the native API
+      - build it for Proto-Red/Cardboard
+      - build it for SDL2
+      - build it for Wonder in the future
+
