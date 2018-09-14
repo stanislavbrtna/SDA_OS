@@ -159,6 +159,32 @@ void batt_overlay_handle(uint8_t init) {
 	}
 	pscg_set_event(backlightSlider, EV_NONE, &sda_sys_con);
 
+	if (sda_wrap_get_button(BUTTON_RIGHT)) {
+	  if (svpSGlobal.lcdBacklight < 255) {
+	    svpSGlobal.lcdBacklight++;
+	    svp_set_backlight(svpSGlobal.lcdBacklight);
+	    pscg_set_value(
+				backlightSlider,
+				svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
+			  &sda_sys_con
+		  );
+	  }
+	  sda_wrap_clear_button(BUTTON_RIGHT);
+	}
+
+	if (sda_wrap_get_button(BUTTON_LEFT)) {
+	  if (svpSGlobal.lcdBacklight > MIN_BACKLIGHT_VALUE) {
+	    svpSGlobal.lcdBacklight--;
+	    svp_set_backlight(svpSGlobal.lcdBacklight);
+	    pscg_set_value(
+				backlightSlider,
+				svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
+			  &sda_sys_con
+		  );
+	  }
+	  sda_wrap_clear_button(BUTTON_LEFT);
+	}
+
 	if (pscg_get_event(backlightButton, &sda_sys_con) == EV_RELEASED) {
 		batt_overlay_flag = 0;
 		setRedrawFlag();
