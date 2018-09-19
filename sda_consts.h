@@ -28,7 +28,7 @@ File description:
 #define SDA_CONSTS_H
 
 // version number string and version number,
-#define SDA_OS_VERSION "0.7 B5"
+#define SDA_OS_VERSION "0.7"
 #define SDA_OS_VERSION_NUM 700
 
 // sda wrapper version
