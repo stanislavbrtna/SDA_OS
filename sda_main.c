@@ -544,7 +544,8 @@ uint8_t sda_main_loop() {
 			    || (svpSGlobal.touchX > overlayX2+10)
 			    || (svpSGlobal.touchY < overlayY1-10 && svpSGlobal.touchY > 32)
 			    || (svpSGlobal.touchY > overlayY2+10))
-			    && svpSGlobal.kbdVisible == 0 && kbdVisibleOld == 0) {
+			    && svpSGlobal.kbdVisible == 0 && kbdVisibleOld == 0
+			    && svpSGlobal.touchType == EV_RELEASED) {
 				destroyOverlay();
 				setRedrawFlag();
 			}
