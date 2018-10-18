@@ -12,6 +12,17 @@ Do not clone/download just this! You must have base drivers for SDA_OS to run it
 Don't forget to update the submodules after pull:
 git submodule update --init --recursive --force --remote
 
+Then add SVS platform_specific.h file to the SVS folder containing:
+
+#ifndef SVS_PLATFORM_H
+#define SVS_PLATFORM_H
+
+#if defined(STM32F405xx)
+#include "../SDA_OS.h"
+#endif
+
+#endif
+
 ## Application development for SDA
 SDA applications are written in SVS language using APIs of SDA_OS, documentation on the language can be found in its repo([SVS syntax](https://github.com/stanislavbrtna/svs-script/blob/master/SYNTAX.md)) and documentation for the SDA_OS API is here.
 

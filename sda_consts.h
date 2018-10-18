@@ -28,8 +28,8 @@ File description:
 #define SDA_CONSTS_H
 
 // version number string and version number,
-#define SDA_OS_VERSION "0.7"
-#define SDA_OS_VERSION_NUM 700
+#define SDA_OS_VERSION "0.7.0.1"
+#define SDA_OS_VERSION_NUM 701
 
 // sda wrapper version
 #define SVP_FP_MAX 10
@@ -55,7 +55,9 @@ File description:
 
 #define MAX_OF_SAVED_PROC 16
 
+#ifndef MIN_BACKLIGHT_VALUE
 #define MIN_BACKLIGHT_VALUE 70
+#endif
 
 // button number defines
 #define BUTTON_A 0
