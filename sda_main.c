@@ -159,7 +159,7 @@ void batt_overlay_handle(uint8_t init) {
 	}
 	pscg_set_event(backlightSlider, EV_NONE, &sda_sys_con);
 
-	if (sda_wrap_get_button(BUTTON_RIGHT)) {
+	if (sda_wrap_get_button(BUTTON_RIGHT) || sda_wrap_get_button(BUTTON_DOWN)) {
 	  if (svpSGlobal.lcdBacklight < 255) {
 	    svpSGlobal.lcdBacklight++;
 	    svp_set_backlight(svpSGlobal.lcdBacklight);
@@ -170,9 +170,10 @@ void batt_overlay_handle(uint8_t init) {
 		  );
 	  }
 	  sda_wrap_clear_button(BUTTON_RIGHT);
+	  sda_wrap_clear_button(BUTTON_DOWN);
 	}
 
-	if (sda_wrap_get_button(BUTTON_LEFT)) {
+	if (sda_wrap_get_button(BUTTON_LEFT) || sda_wrap_get_button(BUTTON_UP)) {
 	  if (svpSGlobal.lcdBacklight > MIN_BACKLIGHT_VALUE) {
 	    svpSGlobal.lcdBacklight--;
 	    svp_set_backlight(svpSGlobal.lcdBacklight);
@@ -183,6 +184,7 @@ void batt_overlay_handle(uint8_t init) {
 		  );
 	  }
 	  sda_wrap_clear_button(BUTTON_LEFT);
+	  sda_wrap_clear_button(BUTTON_UP);
 	}
 
 	if (pscg_get_event(backlightButton, &sda_sys_con) == EV_RELEASED) {
@@ -335,6 +337,113 @@ void sdaCheckFs() {
 	}
 }
 
+void sda_power_sleep() {
+	if (svpSGlobal.lcdState == LCD_ON) {
+		svp_set_lcd_state(LCD_OFF);
+	}
+	svpSGlobal.powerMode = SDA_PWR_MODE_SLEEP;
+	system_clock_set_low();
+	svpSGlobal.powerState = PWR_LOW;
+}
+
+void sda_power_wake(uint8_t wakeWithLcdOn) {
+
+}
+
+void sda_lcd_on_handle() {
+	system_clock_set_normal();
+	svp_set_irq_redraw();
+	svpSGlobal.powerState = PWR_MAX;
+	svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
+}
+
+void sda_lcd_off_handle() {
+	system_clock_set_low();
+	svpSGlobal.powerState = PWR_LOW;
+	svpSGlobal.powerMode = SDA_PWR_MODE_SLEEP;
+}
+
+void sda_power_main_handler() {
+	static lcdStateType lcdStateOld;
+	static uint32_t lastInputTime;
+	static uint32_t lcdOffBlinkTimer;
+	static uint32_t pwrDelay;
+
+	if (svpSGlobal.touchValid) {
+		lastInputTime = svpSGlobal.uptime;
+		svpSGlobal.powerState = PWR_MAX;
+	}
+
+	// lcd auto shut down
+	if (((svpSGlobal.lcdShutdownTime * 60) < (svpSGlobal.uptime - lastInputTime))
+				&& (sleepLock == 0) && (lcdStateOld == LCD_ON)) {
+		sda_power_sleep();
+	}
+
+	// lcd turned ON
+	if ((svpSGlobal.lcdState == LCD_ON) && (lcdStateOld == LCD_OFF)) {
+		lastInputTime = svpSGlobal.uptime;
+		sda_lcd_on_handle();
+	}
+
+	// lcd turned OFF (auto or with powerbutton)
+	if ((svpSGlobal.lcdState == LCD_OFF) && (lcdStateOld == LCD_ON)) {
+		led_set_pattern(LED_ON);
+		lcdOffBlinkTimer = svpSGlobal.uptime + 1;
+		sda_lcd_off_handle();
+	}
+
+	if ((lcdOffBlinkTimer != 0) && (lcdOffBlinkTimer < svpSGlobal.uptime)) {
+		led_set_pattern(LED_OFF);
+		lcdOffBlinkTimer = 0;
+	}
+
+	lcdStateOld = svpSGlobal.lcdState;
+
+	// mid power after 30s
+	if ((15 < (svpSGlobal.uptime - lastInputTime))
+				&& (svpSGlobal.powerState == PWR_MAX)) {
+		svpSGlobal.powerState = PWR_MID;
+	}
+
+	if (svpSGlobal.powerMode == SDA_PWR_MODE_SLEEP) {
+		return;
+	}
+
+	if (svpSGlobal.powerState == PWR_MAX) {
+		pwrDelay = 10000;
+	}
+
+	if (svpSGlobal.powerState == PWR_MID) {
+		pwrDelay = 22000;
+	}
+
+	if (svpSGlobal.powerState == PWR_LOW) {
+		if (slotValid[4]) {
+			pwrDelay = 80000;
+		} else {
+			pwrDelay = 100000; // changed from 2M to fix the led sleep notif.
+		}
+	}
+
+	for (uint32_t x = 0; x < pwrDelay; x++) { // waiting for next touch event
+	#ifdef PC
+			break;
+	#endif
+		if (svpSGlobal.touchValid == 1) {
+			lastInputTime = svpSGlobal.uptime;
+			break;
+		}
+
+		if (svpSGlobal.btnFlag == 1) {
+			svpSGlobal.btnFlag = 0;
+			lastInputTime = svpSGlobal.uptime;
+			svpSGlobal.powerState = PWR_MAX;
+			break;
+		}
+	}
+}
+
 /*****************************************************************************/
 /*                             SDA main loop                                 */
 /*****************************************************************************/
@@ -351,7 +460,7 @@ uint8_t sda_main_loop() {
 	static psvcKbdLayout kbdLayout;
 	static uint8_t kbdLayoutId;
 
-	static lcdStateType lcdStateOld;
+
 
 	if (init == 0) {
 		printf(
@@ -430,8 +539,6 @@ uint8_t sda_main_loop() {
 		slotScreenContext[4] = &sda_app_con;
 		mainScr = slotScreen[0];
 		sda_current_con = &sda_sys_con;
-
-		lcdStateOld = LCD_ON; // lcd is hopefully on
 		led_set_pattern(LED_ON); // after init, we set led to on
 
 		sdaReloadAlarms();
@@ -667,8 +774,9 @@ uint8_t sda_main_loop() {
 
 	// batt button handler
 	static uint8_t batt_prev;
-	if ((systemBattClick == 1) && (batt_prev == 0)) {
+	if ((systemBattClick == 1 || svpSGlobal.systemPwrLongPress == 1) && (batt_prev == 0)) {
 		systemBattClick = 0;
+		svpSGlobal.systemPwrLongPress = 0;
 		if (batt_overlay_flag == 0) {
 			destroyOverlay();
 			batt_overlay_handle(1);
@@ -694,15 +802,6 @@ uint8_t sda_main_loop() {
 /*****************************************************************************/
 /*                          end of main loop                                 */
 /*****************************************************************************/
-	static uint32_t lastInputTime;
-	static uint32_t lcdOffBlinkTimer;
-	static uint32_t pwrDelay;
-
-	// power management
-	if (svpSGlobal.touchValid) {
-		lastInputTime = svpSGlobal.uptime;
-		svpSGlobal.powerState = PWR_MAX;
-	}
 
 	// cleaning input flags
 	svpSGlobal.touchValid = 0; //pokud se kliklo jinam, tak taky shodíme flag
@@ -710,86 +809,18 @@ uint8_t sda_main_loop() {
 	timeUpdateFlag = 0;
 	sdaSetRedrawDetect(0);
 
-	// lcd auto shut down
-	if (((svpSGlobal.lcdShutdownTime * 60) < (svpSGlobal.uptime - lastInputTime))
-				&& (sleepLock == 0) && (lcdStateOld == LCD_ON) && (lcdStateOld == LCD_ON)) {
-		svp_set_lcd_state(LCD_OFF);
-		system_clock_set_low();
-		svpSGlobal.powerState = PWR_LOW;
-	}
-
-	// lcd turned ON
-	if ((svpSGlobal.lcdState == LCD_ON) && (lcdStateOld == LCD_OFF)) {
-		system_clock_set_normal();
-		svp_set_irq_redraw();
-		lastInputTime = svpSGlobal.uptime;
-		svpSGlobal.powerState = PWR_MAX;
-	}
-
-	// lcd turned OFF (auto or with powerbutton)
-	if ((svpSGlobal.lcdState == LCD_OFF) && (lcdStateOld == LCD_ON)) {
-		led_set_pattern(LED_ON);
-		lcdOffBlinkTimer = svpSGlobal.uptime + 1;
-		system_clock_set_low();
-		svpSGlobal.powerState = PWR_LOW;
-	}
-
-	if ((lcdOffBlinkTimer != 0) && (lcdOffBlinkTimer < svpSGlobal.uptime)) {
-		led_set_pattern(LED_OFF);
-		lcdOffBlinkTimer = 0;
-	}
-
-	lcdStateOld = svpSGlobal.lcdState;
-
-	// mid power after 30s
-	if ((15 < (svpSGlobal.uptime - lastInputTime))
-				&& (svpSGlobal.powerState == PWR_MAX)) {
-		svpSGlobal.powerState = PWR_MID;
-	}
-
 	// check for notification
 	uint8_t notifAppName[APP_NAME_LEN];
 	int32_t id;
 	int32_t param;
 	if (sdaGetCurentAlarm(&id, &param, notifAppName, sizeof(notifAppName))) {
+		svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
 		setNotificationFlag(id, param);
 		sdaSvmLaunch(notifAppName, 0);
-		svpSGlobal.powerState = PWR_MAX;
-		lastInputTime = svpSGlobal.uptime;
-
 	}
 
-	if (svpSGlobal.powerState == PWR_MAX) {
-		pwrDelay = 10000;
-	}
+	// power management
+	sda_power_main_handler();
 
-	if (svpSGlobal.powerState == PWR_MID) {
-		pwrDelay = 22000;
-	}
-
-	if (svpSGlobal.powerState == PWR_LOW) {
-		if (slotValid[4]){
-			pwrDelay = 80000;
-		} else {
-			pwrDelay = 2000000;
-		}
-	}
-
-	for (x = 0; x < pwrDelay; x++) { // waiting for next touch event
-#ifdef PC
-		break;
-#endif
-		if (svpSGlobal.touchValid == 1) {
-			lastInputTime = svpSGlobal.uptime;
-			break;
-		}
-
-		if (svpSGlobal.btnFlag == 1) {
-			svpSGlobal.btnFlag = 0;
-			lastInputTime = svpSGlobal.uptime;
-			svpSGlobal.powerState = PWR_MAX;
-			break;
-		}
-	}
 	return 0;
 }

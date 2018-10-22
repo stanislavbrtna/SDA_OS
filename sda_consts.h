@@ -28,8 +28,8 @@ File description:
 #define SDA_CONSTS_H
 
 // version number string and version number,
-#define SDA_OS_VERSION "0.7.0.1"
-#define SDA_OS_VERSION_NUM 701
+#define SDA_OS_VERSION "0.7.1.0"
+#define SDA_OS_VERSION_NUM 710
 
 // sda wrapper version
 #define SVP_FP_MAX 10

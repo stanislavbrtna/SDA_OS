@@ -35,6 +35,8 @@ typedef enum {LCD_ON, LCD_OFF} lcdStateType;
 
 typedef enum {PWR_MAX, PWR_MID, PWR_LOW} pwrStateType;
 
+typedef enum {SDA_PWR_MODE_NORMAL, SDA_PWR_MODE_SLEEP} pwrModeType;
+
 typedef enum {POWER_USB, POWER_BATT} systemPwrType;
 
 typedef struct {
@@ -92,13 +94,11 @@ typedef struct {
 	volatile uint8_t systemXBtnVisible;
 	volatile uint8_t systemXBtnClick;
 	volatile uint8_t systemOptClick;
+	volatile uint8_t systemPwrLongPress;
 
+  volatile pwrModeType  powerMode;
 	volatile pwrStateType powerState;
-	/*
-		weird bug here, this structure is somewhat too long or something
-		and things break if I add something here (mainly SVS loading breaks)
-	*/
-}svpStatusStruct;
+} svpStatusStruct;
 
 //TODO: specify what should be part of os and what should be part of touch driver
 #ifdef PC
