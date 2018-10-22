@@ -159,7 +159,7 @@ void batt_overlay_handle(uint8_t init) {
 	}
 	pscg_set_event(backlightSlider, EV_NONE, &sda_sys_con);
 
-	if (sda_wrap_get_button(BUTTON_RIGHT) || sda_wrap_get_button(BUTTON_DOWN)) {
+	if (sda_wrap_get_button(BUTTON_RIGHT) || sda_wrap_get_button(BUTTON_UP)) {
 	  if (svpSGlobal.lcdBacklight < 255) {
 	    svpSGlobal.lcdBacklight++;
 	    svp_set_backlight(svpSGlobal.lcdBacklight);
@@ -170,10 +170,10 @@ void batt_overlay_handle(uint8_t init) {
 		  );
 	  }
 	  sda_wrap_clear_button(BUTTON_RIGHT);
-	  sda_wrap_clear_button(BUTTON_DOWN);
+	  sda_wrap_clear_button(BUTTON_UP);
 	}
 
-	if (sda_wrap_get_button(BUTTON_LEFT) || sda_wrap_get_button(BUTTON_UP)) {
+	if (sda_wrap_get_button(BUTTON_LEFT) || sda_wrap_get_button(BUTTON_DOWN)) {
 	  if (svpSGlobal.lcdBacklight > MIN_BACKLIGHT_VALUE) {
 	    svpSGlobal.lcdBacklight--;
 	    svp_set_backlight(svpSGlobal.lcdBacklight);
@@ -184,10 +184,10 @@ void batt_overlay_handle(uint8_t init) {
 		  );
 	  }
 	  sda_wrap_clear_button(BUTTON_LEFT);
-	  sda_wrap_clear_button(BUTTON_UP);
+	  sda_wrap_clear_button(BUTTON_DOWN);
 	}
 
-	if (pscg_get_event(backlightButton, &sda_sys_con) == EV_RELEASED) {
+	if (pscg_get_event(backlightButton, &sda_sys_con) == EV_RELEASED || svpSGlobal.lcdState == LCD_OFF) {
 		batt_overlay_flag = 0;
 		setRedrawFlag();
 		destroyOverlay(); // destroys the overlay
@@ -346,10 +346,6 @@ void sda_power_sleep() {
 	svpSGlobal.powerState = PWR_LOW;
 }
 
-void sda_power_wake(uint8_t wakeWithLcdOn) {
-
-}
-
 void sda_lcd_on_handle() {
 	system_clock_set_normal();
 	svp_set_irq_redraw();
@@ -358,7 +354,6 @@ void sda_lcd_on_handle() {
 }
 
 void sda_lcd_off_handle() {
-	system_clock_set_low();
 	svpSGlobal.powerState = PWR_LOW;
 	svpSGlobal.powerMode = SDA_PWR_MODE_SLEEP;
 }
@@ -384,6 +379,8 @@ void sda_power_main_handler() {
 	if ((svpSGlobal.lcdState == LCD_ON) && (lcdStateOld == LCD_OFF)) {
 		lastInputTime = svpSGlobal.uptime;
 		sda_lcd_on_handle();
+		lcdOffBlinkTimer = 0;
+		led_set_pattern(LED_OFF);
 	}
 
 	// lcd turned OFF (auto or with powerbutton)
@@ -396,6 +393,9 @@ void sda_power_main_handler() {
 	if ((lcdOffBlinkTimer != 0) && (lcdOffBlinkTimer < svpSGlobal.uptime)) {
 		led_set_pattern(LED_OFF);
 		lcdOffBlinkTimer = 0;
+		// after we blink the led, system will underclock itself
+		// to gave time for apps or system to do stuff after lcd shutdown
+		system_clock_set_low();
 	}
 
 	lcdStateOld = svpSGlobal.lcdState;
@@ -419,11 +419,7 @@ void sda_power_main_handler() {
 	}
 
 	if (svpSGlobal.powerState == PWR_LOW) {
-		if (slotValid[4]) {
-			pwrDelay = 80000;
-		} else {
-			pwrDelay = 100000; // changed from 2M to fix the led sleep notif.
-		}
+		pwrDelay = 80000;
 	}
 
 	for (uint32_t x = 0; x < pwrDelay; x++) { // waiting for next touch event
