@@ -375,7 +375,7 @@ void sda_power_main_handler() {
 		sda_power_sleep();
 	}
 
-	// lcd turned ON
+	// when lcd is turned ON
 	if ((svpSGlobal.lcdState == LCD_ON) && (lcdStateOld == LCD_OFF)) {
 		lastInputTime = svpSGlobal.uptime;
 		sda_lcd_on_handle();
@@ -383,7 +383,7 @@ void sda_power_main_handler() {
 		led_set_pattern(LED_OFF);
 	}
 
-	// lcd turned OFF (auto or with powerbutton)
+	// when lcd is turned OFF
 	if ((svpSGlobal.lcdState == LCD_OFF) && (lcdStateOld == LCD_ON)) {
 		led_set_pattern(LED_ON);
 		lcdOffBlinkTimer = svpSGlobal.uptime + 1;
@@ -448,14 +448,12 @@ uint8_t sda_main_loop() {
 	static uint8_t init;
 	static uint8_t kbdVisibleOld;
 	static uint8_t oldsec;
-	uint32_t x;
 
 	uint8_t scr_touch_retval = 0;
 	static uint8_t kbdRedraw;
 
 	static psvcKbdLayout kbdLayout;
 	static uint8_t kbdLayoutId;
-
 
 
 	if (init == 0) {
@@ -643,10 +641,10 @@ uint8_t sda_main_loop() {
 				}
 			}
 
-			if (((svpSGlobal.touchX < overlayX1-10)
-			    || (svpSGlobal.touchX > overlayX2+10)
-			    || (svpSGlobal.touchY < overlayY1-10 && svpSGlobal.touchY > 32)
-			    || (svpSGlobal.touchY > overlayY2+10))
+			if (((svpSGlobal.touchX < overlayX1 - 10)
+			    || (svpSGlobal.touchX > overlayX2 + 10)
+			    || (svpSGlobal.touchY < overlayY1 - 10 && svpSGlobal.touchY > 32)
+			    || (svpSGlobal.touchY > overlayY2 + 10))
 			    && svpSGlobal.kbdVisible == 0 && kbdVisibleOld == 0
 			    && svpSGlobal.touchType == EV_RELEASED) {
 				destroyOverlay();
@@ -725,6 +723,18 @@ uint8_t sda_main_loop() {
 /*                            update of screens                              */
 /*****************************************************************************/
 
+	// System overlays are updated before screens
+	if (batt_overlay_flag == 1) {
+		batt_overlay_handle(0);
+	}
+
+	if (soft_error_flag == 1) {
+		sda_error_overlay_handle();
+	}
+
+	taskSwitcherUpdate();
+
+	// updating screens
 	if (slotValid[0]) {
 		svp_homeScreen(0, slotOnTop[0]);
 	}
@@ -742,6 +752,7 @@ uint8_t sda_main_loop() {
 	}
 
 
+	// top bar button handlers
 	// handler for that big S! button
 	if ((svpSGlobal.systemOptClick == 1)) {
 		if(prev_top_slot != 0) {
@@ -784,23 +795,12 @@ uint8_t sda_main_loop() {
 	}
 	batt_prev = systemBattClick;
 
-	// system overlay handlers
-	if (batt_overlay_flag == 1) {
-		batt_overlay_handle(0);
-	}
-
-	if (soft_error_flag == 1) {
-		sda_error_overlay_handle();
-	}
-
-	taskSwitcherUpdate();
-
 /*****************************************************************************/
 /*                          end of main loop                                 */
 /*****************************************************************************/
 
 	// cleaning input flags
-	svpSGlobal.touchValid = 0; //pokud se kliklo jinam, tak taky shodíme flag
+	svpSGlobal.touchValid = 0; //if the touch event was not handled, we discard it
 	svpSGlobal.btnFlag = 0;
 	timeUpdateFlag = 0;
 	sdaSetRedrawDetect(0);
