@@ -26,6 +26,7 @@ volatile uint8_t irq_redraw;
 volatile uint8_t irq_redraw_block;
 extern volatile uint8_t systemBattClick;
 static uint8_t alarm_string[3];
+uint16_t trayBackgroundColor;
 
 void svp_set_irq_redraw() {
 	irq_redraw = 1;
@@ -48,7 +49,7 @@ void svp_tray_time(int16_t x1, int16_t y1, uint16_t w) {
 
 		oldmin = svpSGlobal.min;
 		oldhour = svpSGlobal.hour;
-		LCD_FillRect(x1 - 1, y1, x1 + w, 31, pscg_get_background_color(&sda_sys_con));
+		LCD_FillRect(x1 - 1, y1, x1 + w, 31, trayBackgroundColor);
 		curr_font = LCD_Get_Font_Size();
 		LCD_Set_Sys_Font(18);
 		LCD_DrawText_ext(x1, y1 + 8, pscg_get_text_color(&sda_sys_con), time_string);
@@ -80,7 +81,7 @@ void svp_tray_alarm(int16_t x1, int16_t y1, int16_t w) {
 
 	if((redraw == 0) || (irq_redraw)) {
 
-	  LCD_FillRect(x1 - 1, y1, x1 + w, 31, pscg_get_background_color(&sda_sys_con));
+	  LCD_FillRect(x1 - 1, y1, x1 + w, 31, trayBackgroundColor);
 		curr_font = LCD_Get_Font_Size();
 		LCD_Set_Sys_Font(18);
 		LCD_DrawText_ext(x1, y1 + 8, pscg_get_text_color(&sda_sys_con), alarm_string);
@@ -123,7 +124,7 @@ void svp_tray_battery(int16_t x1, int16_t y1, int16_t w) {
 		  batt_string[3] = '%';
 		  batt_string[4] = 0;
 		}
-		LCD_FillRect(x1 - 1, y1, x1 + w, 31, pscg_get_background_color(&sda_sys_con));
+		LCD_FillRect(x1 - 1, y1, x1 + w, 31, trayBackgroundColor);
 		curr_font = LCD_Get_Font_Size();
 		LCD_Set_Sys_Font(18);
 		if (svpSGlobal.pwrType == POWER_USB) {
@@ -246,7 +247,11 @@ uint8_t svp_tray() {
   LCD_setDrawArea(PM_TOPBAR_X1, PM_TOPBAR_Y1, PM_TOPBAR_X2, PM_TOPBAR_Y2);
 
   if ((init == 0) || (irq_redraw)) {
-		LCD_FillRect(PM_TOPBAR_X1, PM_TOPBAR_Y1, PM_TOPBAR_X2, PM_TOPBAR_Y2, pscg_get_background_color(&sda_sys_con));
+    trayBackgroundColor = LCD_color_darken(pscg_get_background_color(&sda_sys_con), 5);
+    if (trayBackgroundColor == 0){
+      trayBackgroundColor = LCD_color_lighten(pscg_get_background_color(&sda_sys_con), 5);
+    }
+		LCD_FillRect(PM_TOPBAR_X1, PM_TOPBAR_Y1, PM_TOPBAR_X2, PM_TOPBAR_Y2, trayBackgroundColor);
 		init = 1;
 	}
 
@@ -267,7 +272,7 @@ uint8_t svp_tray() {
 	}
 
 	if((XbtnVisibleOld == 1) && (svpSGlobal.systemXBtnVisible == 0)) {
-	  LCD_FillRect(PM_TOPBAR_X2 - 32, 0, PM_TOPBAR_X2, 31, pscg_get_background_color(&sda_sys_con));
+	  LCD_FillRect(PM_TOPBAR_X2 - 32, 0, PM_TOPBAR_X2, 31, trayBackgroundColor);
 	}
 	XbtnVisibleOld = svpSGlobal.systemXBtnVisible;
 
