@@ -785,6 +785,27 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
+	//#!    pSetSpacing([num]Id, [num] left, [num] right, [num] top, [num] bottom);
+	//#!Sets element spacing atributes of given screen.
+	//#!Return: None
+	if (sysFuncMatch(argS->callId, "pSetSpacing", s)) {
+		argType[1] = 0; // id
+		argType[2] = 0; // left
+		argType[3] = 0; // right
+		argType[4] = 0; // top
+		argType[5] = 0; // bottom
+
+		if(sysExecTypeCheck(argS, argType, 5, s)) {
+		  return 0;
+		}
+		pscg_set_cell_space_left(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+	  pscg_set_cell_space_right(argS->arg[1].val_s, argS->arg[3].val_s, &sda_app_con);
+	  pscg_set_cell_space_top(argS->arg[1].val_s, argS->arg[4].val_s, &sda_app_con);
+	  pscg_set_cell_space_bottom(argS->arg[1].val_s, argS->arg[5].val_s, &sda_app_con);
+	  return 1;
+	}
+
+	//#!
 	//#!    pGetXcell([num]screenId);
 	//#!Gets screen Xcell parameter.
 	//#!Return: [num] Xcell

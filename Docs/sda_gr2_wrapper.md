@@ -161,6 +161,10 @@ Return: None
 Sets position of element inside screen.
 Return: None
 
+    pSetSpacing([num]Id, [num] left, [num] right, [num] top, [num] bottom);
+Sets element spacing atributes of given screen.
+Return: None
+
     pGetXcell([num]screenId);
 Gets screen Xcell parameter.
 Return: [num] Xcell
