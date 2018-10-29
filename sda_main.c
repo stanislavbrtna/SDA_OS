@@ -190,14 +190,13 @@ void batt_overlay_handle(uint8_t init) {
 	if (pscg_get_event(backlightButton, &sda_sys_con) == EV_RELEASED || svpSGlobal.lcdState == LCD_OFF) {
 		batt_overlay_flag = 0;
 		setRedrawFlag();
-		destroyOverlay(); // destroys the overlay
+		destroyOverlay();
 		return;
 	}
 	pscg_set_event(backlightButton, EV_NONE, &sda_sys_con);
 
 	if (pscg_get_event(soundEnable, &sda_sys_con) == EV_RELEASED) {
 		svpSGlobal.mute = pscg_get_value(soundEnable, &sda_sys_con);
-		//printf("gw: %d\n", pscg_get_value(soundEnable, &sda_sys_con));
 		sda_store_mute_config();
 	}
 	pscg_set_event(soundEnable, EV_NONE, &sda_sys_con);
@@ -225,7 +224,6 @@ void setRedrawFlag() {
 	svpSGlobal.systemRedraw = 1;
 }
 
-
 void sda_error_overlay_destructor() {
 	setRedrawFlag();
 	soft_error_flag = 0;
@@ -233,7 +231,6 @@ void sda_error_overlay_destructor() {
 }
 
 void svp_errSoftPrint(svsVM *s) {
-
 	if (errCheck(s)) {
 		sda_show_error_message((uint8_t *)s->errString);
 	}
@@ -314,6 +311,7 @@ void setInitStructDefaults() {
 	svpSGlobal.battString[5] = 0;
 	svpSGlobal.powerState = PWR_MID;
 	svpSGlobal.pwrType = POWER_BATT;
+	svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
 	svpSGlobal.lcdBacklight = 255;
 }
 
@@ -679,7 +677,7 @@ uint8_t sda_main_loop() {
 	}
 
 	if ((svpSGlobal.kbdVisible == 1) && (kbdVisibleOld == 0)) {
-		//todo: fix this
+		//
 	  init_kblayout_standard(&kbdLayout);
 	  kbdRedraw = 1;
 	}

@@ -48,6 +48,7 @@ void svp_beep_set_def();
 
 // [HW] led
 void led_set_pattern(ledPatternType pat);
+void sda_set_led(uint8_t set);
 
 // [HW] clock management
 void system_clock_set_low(void);
