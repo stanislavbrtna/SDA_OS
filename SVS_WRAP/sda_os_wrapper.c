@@ -56,6 +56,12 @@ SOFTWARE.
 //#!| BTN_DOWN | Button define |
 //#!| BTN_RIGHT | Button define |
 //#!| BTN_B | Button define |
+//#!| PIN_IN | Expansion pin setup define |
+//#!| PIN_OUT | Expansion pin setup define |
+//#!| PIN_ALT | Expansion pin setup define |
+//#!| PIN_NOPULL | Expansion pin setup define |
+//#!| PIN_PULLUP | Expansion pin setup define |
+//#!| PIN_PULLDOWN | Expansion pin setup define |
 //#!
 
 
@@ -74,6 +80,14 @@ svsConstType svsWrapConsts[] = {
   {"BTN_DOWN", BUTTON_DOWN},
   {"BTN_RIGHT", BUTTON_RIGHT},
   {"BTN_B", BUTTON_B},
+
+	{"PIN_IN", SDA_BASE_PIN_IN},
+	{"PIN_OUT", SDA_BASE_PIN_OUT},
+	{"PIN_ALT", SDA_BASE_PIN_ALT},
+
+	{"PIN_NOPULL", SDA_BASE_PIN_NOPULL},
+	{"PIN_PULLDOWN", SDA_BASE_PIN_PULLDOWN},
+	{"PIN_PULLUP", SDA_BASE_PIN_PULLUP},
 
   {"end", 0}
 };
@@ -956,6 +970,60 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 		result->value.val_u = 0;
 	  result->type = SVS_TYPE_NUM;
 	  return 1;
+	}
+
+	//#!##### Define direction of pins on the internal expansion
+	//#!    iPinDef([num]Pin, [num]type, [num]pullUp);
+	//#!Sets direction of internal expansion pins.
+	//#!Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
+	//#!Pin number is number of pin on the connector, can be read from schematics.
+	//#!Return: None
+	if (sysFuncMatch(argS->callId, "iPinDef", s)) {
+		argType[1] = SVS_TYPE_NUM;
+		argType[2] = SVS_TYPE_NUM;
+		argType[3] = SVS_TYPE_NUM;
+
+
+		if(sysExecTypeCheck(argS, argType, 3, s)) {
+			return 0;
+		}
+
+		sda_internal_pin_def((uint8_t) argS->arg[1].val_s, (uint8_t) argS->arg[2].val_s, (uint8_t) argS->arg[3].val_s);
+		return 1;
+	}
+
+	//#!##### Set state of pins on the internal expansion
+	//#!    iPinSet([num]Pin, [num]val);
+	//#!Sets state of internal expansion pin.
+	//#!Value 1 sets the pin high, value 0 sets it low.
+	//#!Pin number is number of pin on the connector, can be read from schematics.
+	//#!Return: None
+	if (sysFuncMatch(argS->callId, "iPinSet", s)) {
+		argType[1] = SVS_TYPE_NUM;
+		argType[2] = SVS_TYPE_NUM;
+
+		if(sysExecTypeCheck(argS, argType, 2, s)) {
+			return 0;
+		}
+
+		sda_internal_pin_set((uint8_t) argS->arg[1].val_s, (uint8_t) argS->arg[2].val_s);
+		return 1;
+	}
+
+	//#!##### Get state of pins on the internal expansion
+	//#!    iPinGet([num]Pin, [num]val);
+	//#!Gets state of internal expansion pin.
+	//#!Pin number is number of pin on the connector, can be read from schematics.
+	//#!Return: 1 if the pin is high, 0 if it is low.
+	if (sysFuncMatch(argS->callId, "iPinGet", s)) {
+		argType[1] = SVS_TYPE_NUM;
+
+		if(sysExecTypeCheck(argS, argType, 1, s)) {
+			return 0;
+		}
+
+		sda_internal_pin_get((uint8_t) argS->arg[1].val_s);
+		return 1;
 	}
 
 	return 0;

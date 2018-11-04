@@ -65,6 +65,9 @@ void sda_serial_transmit(uint8_t *str, uint32_t len);
 uint8_t sda_serial_is_enabled();
 void sda_serial_enable();
 void sda_serial_disable();
+void sda_internal_pin_def(uint8_t pinNum, uint8_t pinType, uint8_t pull);
+void sda_internal_pin_set(uint8_t pinNum, uint8_t val);
+uint8_t sda_internal_pin_get(uint8_t pinNum);
 
 // [HW] Debug serial port
 uint8_t sda_dbg_serial_is_enabled();

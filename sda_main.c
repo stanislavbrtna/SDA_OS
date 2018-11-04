@@ -417,7 +417,7 @@ void sda_power_main_handler() {
 	}
 
 	if (svpSGlobal.powerState == PWR_LOW) {
-		pwrDelay = 80000;
+		pwrDelay = 50000;
 	}
 
 	for (uint32_t x = 0; x < pwrDelay; x++) { // waiting for next touch event
