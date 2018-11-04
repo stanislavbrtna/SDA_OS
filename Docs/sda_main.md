@@ -30,6 +30,12 @@ Api level changes:
 | BTN_DOWN | Button define |
 | BTN_RIGHT | Button define |
 | BTN_B | Button define |
+| PIN_IN | Expansion pin setup define |
+| PIN_OUT | Expansion pin setup define |
+| PIN_ALT | Expansion pin setup define |
+| PIN_NOPULL | Expansion pin setup define |
+| PIN_PULLUP | Expansion pin setup define |
+| PIN_PULLDOWN | Expansion pin setup define |
 
 #### Gui
 ##### Set main application screen
@@ -224,3 +230,20 @@ Return: [str] data
 Sets notification led to a given pattern, uses:
 LED_ON, LED_OFF ,LED_BLINK, LED_SHORTBLINK, LED_ALARM
 Return: None
+##### Define direction of pins on the internal expansion
+    iPinDef([num]Pin, [num]type, [num]pullUp);
+Sets direction of internal expansion pins.
+Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
+Pin number is number of pin on the connector, can be read from schematics.
+Return: None
+##### Set state of pins on the internal expansion
+    iPinSet([num]Pin, [num]val);
+Sets state of internal expansion pin.
+Value 1 sets the pin high, value 0 sets it low.
+Pin number is number of pin on the connector, can be read from schematics.
+Return: None
+##### Get state of pins on the internal expansion
+    iPinGet([num]Pin, [num]val);
+Gets state of internal expansion pin.
+Pin number is number of pin on the connector, can be read from schematics.
+Return: 1 if the pin is high, 0 if it is low.
