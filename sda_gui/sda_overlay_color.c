@@ -130,6 +130,23 @@ uint16_t color_overlay_get_color(uint16_t ovId) {
   				);
 }
 
+void color_overlay_set_color(uint16_t ovId, uint16_t col) {
+  uint8_t r, g, b;
+  if (col_id != ovId) {
+    return 0;
+  }
+
+  r = (uint8_t)(((float)((col >> 11) & 0x1F) / 32) * 256);
+	g = (uint8_t)(((float)(((col & 0x07E0) >> 5) & 0x3F) / 64) * 256);
+	b = (uint8_t)(((float)(col & 0x1F) / 32) * 256);
+
+  pscg_set_value(col_show, col, sda_current_con);
+  pscg_set_value(col_rsl, r, sda_current_con);
+  pscg_set_value(col_gsl, g, sda_current_con);
+  pscg_set_value(col_bsl, b, sda_current_con);
+
+}
+
 void color_overlay_clear_ok(uint16_t ovId) {
   if (col_id != ovId) {
     return;

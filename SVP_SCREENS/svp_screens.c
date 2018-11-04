@@ -89,7 +89,7 @@ uint8_t update_uptime() {
   return 0;
 }
 
-uint8_t update_uptimeL(){
+uint8_t update_uptimeL() {
   static uint32_t  uptime_prev;
   if (svpSGlobal.lcdOnTime != uptime_prev) {
     timeToStr(uptimeL, svpSGlobal.lcdOnTime);
@@ -99,7 +99,7 @@ uint8_t update_uptimeL(){
   return 0;
 }
 
-uint8_t update_uptimePWR(){
+uint8_t update_uptimePWR() {
   static uint32_t  uptime_prev;
   if (svpSGlobal.battTime != uptime_prev) {
     timeToStr(uptimePWR, svpSGlobal.battTime);
@@ -714,6 +714,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 		// border color
 		if (pscg_get_event(b_border, &sda_sys_con)==EV_RELEASED){
 		  bcolOvrId=color_overlay_init();
+		  color_overlay_set_color(bcolOvrId, pscg_get_border_color(&sda_sys_con));
 		}
 		pscg_set_event(b_border,EV_NONE, &sda_sys_con);
 
@@ -728,6 +729,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 		//text color
 		if (pscg_get_event(b_text, &sda_sys_con)==EV_RELEASED){
 		  txcolOvrId=color_overlay_init();
+		  color_overlay_set_color(txcolOvrId, pscg_get_text_color(&sda_sys_con));
 		}
 		pscg_set_event(b_text,EV_NONE, &sda_sys_con);
 
@@ -742,6 +744,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 		//background
 		if (pscg_get_event(b_back, &sda_sys_con)==EV_RELEASED){
 		  bgcolOvrId=color_overlay_init();
+		  color_overlay_set_color(bgcolOvrId, pscg_get_background_color(&sda_sys_con));
 		}
 		pscg_set_event(b_back,EV_NONE, &sda_sys_con);
 
@@ -756,6 +759,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 		//fill
 		if (pscg_get_event(b_fill, &sda_sys_con)==EV_RELEASED){
 		  ficolOvrId=color_overlay_init();
+		  color_overlay_set_color(ficolOvrId, pscg_get_fill_color(&sda_sys_con));
 		}
 		pscg_set_event(b_fill,EV_NONE, &sda_sys_con);
 
@@ -770,6 +774,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 		//active
 		if (pscg_get_event(b_active, &sda_sys_con)==EV_RELEASED){
 		  actcolOvrId=color_overlay_init();
+		  color_overlay_set_color(actcolOvrId, pscg_get_active_color(&sda_sys_con));
 		}
 		pscg_set_event(b_active,EV_NONE, &sda_sys_con);
 

@@ -40,6 +40,7 @@ void time_overlay_destructor();
 uint16_t color_overlay_init();
 void color_overlay_update(uint16_t ovId);
 uint16_t color_overlay_get_color(uint16_t ovId);
+void color_overlay_set_color(uint16_t ovId, uint16_t col);
 uint16_t color_overlay_get_ok(uint16_t ovId);
 void color_overlay_clear_ok(uint16_t ovId);
 void color_overlay_destructor();
