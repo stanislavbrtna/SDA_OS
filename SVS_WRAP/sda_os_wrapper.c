@@ -624,6 +624,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!##### Check API level
 	//#!    checkSVSVer([num] API_Level);
 	//#!Checks for API Lvl support.
+	//#!If host level is below given API_Level, error is thrown and app is terminated.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "checkSVSVer", s)) {
 		argType[1] = SVS_TYPE_NUM;
@@ -637,6 +638,20 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 			errSoftSetParam((uint8_t *)"Got", (varType)(uint16_t)SDA_OS_VERSION_NUM, s);
 			return 1;
 		}
+	  return 1;
+	}
+
+	//#!##### Get API level
+	//#!    getSVSVer();
+	//#!Checks for API Lvl support.
+	//#!Return: None
+	if (sysFuncMatch(argS->callId, "getSVSVer", s)) {
+		if(sysExecTypeCheck(argS, argType, 0, s)) {
+		  return 0;
+		}
+
+		result->value.val_u = (uint16_t) SDA_OS_VERSION_NUM;
+	  result->type = SVS_TYPE_NUM;
 	  return 1;
 	}
 

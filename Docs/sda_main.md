@@ -149,6 +149,11 @@ Return: None
 ##### Check API level
     checkSVSVer([num] API_Level);
 Checks for API Lvl support.
+If host level is below given API_Level, error is thrown and app is terminated.
+Return: None
+##### Get API level
+    getSVSVer();
+Checks for API Lvl support.
 Return: None
 ##### Get system language
     sdaGetLang();
