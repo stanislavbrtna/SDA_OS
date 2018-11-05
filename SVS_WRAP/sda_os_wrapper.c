@@ -1037,7 +1037,76 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 			return 0;
 		}
 
-		sda_internal_pin_get((uint8_t) argS->arg[1].val_s);
+		result->value.val_u = sda_internal_pin_get((uint8_t) argS->arg[1].val_s);
+		result->type = SVS_TYPE_NUM;
+		return 1;
+	}
+
+	//#!##### Define direction of pins on the expansion
+	//#!    ePinDef([num]Pin, [num]type, [num]pullUp);
+	//#!Sets direction of external expansion pins.
+	//#!Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
+	//#!Pin number is number of pin on the connector, can be read from schematics.
+	//#!Return: None
+	if (sysFuncMatch(argS->callId, "ePinDef", s)) {
+		argType[1] = SVS_TYPE_NUM;
+		argType[2] = SVS_TYPE_NUM;
+		argType[3] = SVS_TYPE_NUM;
+
+
+		if(sysExecTypeCheck(argS, argType, 3, s)) {
+			return 0;
+		}
+
+		sda_external_pin_def((uint8_t) argS->arg[1].val_s, (uint8_t) argS->arg[2].val_s, (uint8_t) argS->arg[3].val_s);
+		return 1;
+	}
+
+	//#!##### Set state of pins on the expansion
+	//#!    ePinSet([num]Pin, [num]val);
+	//#!Sets state of external expansion pin.
+	//#!Value 1 sets the pin high, value 0 sets it low.
+	//#!Pin number is number of pin on the connector, can be read from schematics.
+	//#!Return: None
+	if (sysFuncMatch(argS->callId, "ePinSet", s)) {
+		argType[1] = SVS_TYPE_NUM;
+		argType[2] = SVS_TYPE_NUM;
+
+		if(sysExecTypeCheck(argS, argType, 2, s)) {
+			return 0;
+		}
+
+		sda_external_pin_set((uint8_t) argS->arg[1].val_s, (uint8_t) argS->arg[2].val_s);
+		return 1;
+	}
+
+	//#!##### Get state of pins on the expansion
+	//#!    ePinGet([num]Pin, [num]val);
+	//#!Gets state of external expansion pin.
+	//#!Pin number is number of pin on the connector, can be read from schematics.
+	//#!Return: 1 if the pin is high, 0 if it is low.
+	if (sysFuncMatch(argS->callId, "ePinGet", s)) {
+		argType[1] = SVS_TYPE_NUM;
+
+		if(sysExecTypeCheck(argS, argType, 1, s)) {
+			return 0;
+		}
+		result->value.val_u = sda_external_pin_get((uint8_t) argS->arg[1].val_s);
+		result->type = SVS_TYPE_NUM;
+		return 1;
+	}
+
+	//#!##### Get ADC readout
+	//#!    eADCRead();
+	//#!Gets state of external expansion pin.
+	//#!Pin number is number of pin on the connector, can be read from schematics.
+	//#!Return: [float] measured voltage in volts.
+	if (sysFuncMatch(argS->callId, "eADCRead", s)) {
+		if(sysExecTypeCheck(argS, argType, 0, s)) {
+			return 0;
+		}
+		result->value.val_f = sda_external_ADC_get();
+		result->type = SVS_TYPE_FLT;
 		return 1;
 	}
 
