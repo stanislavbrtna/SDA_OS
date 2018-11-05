@@ -363,7 +363,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 		}
 
 		if (argS->usedup == 1 && argS->argType[1] == SVS_TYPE_NUM) {
-			if (argS->arg[1].val_s = 1) {
+			if (argS->arg[1].val_s == 1) {
 				svp_switch_main_dir();
 				result->value.val_s = (int32_t)svp_chdir((uint8_t *)"APPS");
 	  		result->type = SVS_TYPE_NUM;

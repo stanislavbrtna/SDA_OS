@@ -453,7 +453,6 @@ uint8_t sda_main_loop() {
 	static psvcKbdLayout kbdLayout;
 	static uint8_t kbdLayoutId;
 
-
 	if (init == 0) {
 		printf(
 				"SDA OS Init: %d:%d:%d %d.%d. %d\n",

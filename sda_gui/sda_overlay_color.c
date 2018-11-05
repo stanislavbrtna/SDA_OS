@@ -133,7 +133,7 @@ uint16_t color_overlay_get_color(uint16_t ovId) {
 void color_overlay_set_color(uint16_t ovId, uint16_t col) {
   uint8_t r, g, b;
   if (col_id != ovId) {
-    return 0;
+    return;
   }
 
   r = (uint8_t)(((float)((col >> 11) & 0x1F) / 32) * 256);

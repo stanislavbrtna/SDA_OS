@@ -59,6 +59,8 @@ void svp_fsync(svp_file *fp);
 uint8_t svp_extFindNext(uint8_t *outStr, uint16_t len);
 uint8_t svp_extFind(uint8_t *outStr, uint16_t len, uint8_t *extension, uint8_t *directory);
 
+uint8_t svp_rename(uint8_t *source, uint8_t *dest);
+
 uint8_t svp_mount();
 void svp_umount();
 uint8_t svp_getMounted();

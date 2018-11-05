@@ -362,4 +362,5 @@ uint8_t sda_keyboard_set_layout(uint8_t layoutId, psvcKbdLayout *layout) {
 		// default
 		init_kblayout_standard(layout);
 	}
+	return 0;
 }

@@ -72,6 +72,8 @@ File description:
 //#define APP_SCREEN_DEBUG
 
 // Driver options
+#ifndef TOUCH_USE_BATTERY_MEASUREMENT
 #define TOUCH_USE_BATTERY_MEASUREMENT
+#endif
 
 #endif
