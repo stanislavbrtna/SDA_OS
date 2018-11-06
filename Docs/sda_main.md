@@ -252,3 +252,25 @@ Return: None
 Gets state of internal expansion pin.
 Pin number is number of pin on the connector, can be read from schematics.
 Return: 1 if the pin is high, 0 if it is low.
+##### Define direction of pins on the expansion
+    ePinDef([num]Pin, [num]type, [num]pullUp);
+Sets direction of external expansion pins.
+Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
+Pin number is number of pin on the connector, can be read from schematics.
+Return: None
+##### Set state of pins on the expansion
+    ePinSet([num]Pin, [num]val);
+Sets state of external expansion pin.
+Value 1 sets the pin high, value 0 sets it low.
+Pin number is number of pin on the connector, can be read from schematics.
+Return: None
+##### Get state of pins on the expansion
+    ePinGet([num]Pin, [num]val);
+Gets state of external expansion pin.
+Pin number is number of pin on the connector, can be read from schematics.
+Return: 1 if the pin is high, 0 if it is low.
+##### Get ADC readout
+    eADCRead();
+Gets state of external expansion pin.
+Pin number is number of pin on the connector, can be read from schematics.
+Return: [float] measured voltage in volts.
