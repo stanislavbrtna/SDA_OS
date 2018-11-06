@@ -451,7 +451,6 @@ uint8_t sda_main_loop() {
 	static uint8_t kbdRedraw;
 
 	static psvcKbdLayout kbdLayout;
-	static uint8_t kbdLayoutId;
 
 	if (init == 0) {
 		printf(
@@ -503,7 +502,6 @@ uint8_t sda_main_loop() {
 		kbdVisibleOld = 0;
 		kbdRedraw = 0;
 
-		kbdLayoutId = 0;
 		init_kblayout_standard(&kbdLayout);
 
 		// loading config from SD
@@ -585,7 +583,6 @@ uint8_t sda_main_loop() {
 					pscg_text_deactivate(&sda_app_con);
 					svpSGlobal.kbdKeyStr[0] = 0;
 					svpSGlobal.kbdVisible = 0;
-					kbdLayoutId = 0;
 				} else {
 					if (svpSGlobal.kbdKeyStr[0] == 1) { // special button command
 						sda_keyboard_set_layout(svpSGlobal.kbdKeyStr[1], &kbdLayout);
