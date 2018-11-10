@@ -116,6 +116,8 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
   date_day_val = dy;
 
   date_screen = pscg_add_screen(sda_current_con);
+  pscg_set_cell_space_bottom(date_screen, 4, sda_current_con);
+  pscg_set_y_cell(date_screen, 34, sda_current_con);
 
   pscg_set_x_cell(date_screen, 16, sda_current_con);
 
@@ -126,7 +128,6 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
   date_year_text = pscg_add_text(5, 1, 12, 2, date_year_name, date_screen, sda_current_con);
   date_year_prev = pscg_add_button(1, 1, 3, 2, (uint8_t *)"<", date_screen, sda_current_con);
   date_year_next = pscg_add_button(13, 1, 15, 2, (uint8_t *)">", date_screen, sda_current_con);
-
 
   date_month_text
   	= pscg_add_text(5, 2, 12, 3, (uint8_t *)date_month_names[date_month_val], date_screen, sda_current_con);
@@ -147,7 +148,7 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
 
 	setOverlayDestructor(date_overlay_destructor);
 
-  setOverlayY2(432);
+  setOverlayY2(442);
 
   return date_id;
 }
