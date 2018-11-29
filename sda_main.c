@@ -144,6 +144,7 @@ void batt_overlay_handle(uint8_t init) {
 					batt_overlay,
 					&sda_sys_con
 			);
+
 		pscg_set_value(soundEnable, svpSGlobal.mute, &sda_sys_con);
 		return;
 	}
@@ -185,6 +186,17 @@ void batt_overlay_handle(uint8_t init) {
 	  }
 	  sda_wrap_clear_button(BUTTON_LEFT);
 	  sda_wrap_clear_button(BUTTON_DOWN);
+	}
+
+	if (svpSGlobal.systemPwrLongPress == 1) {
+		svpSGlobal.systemPwrLongPress = 0;
+		svpSGlobal.lcdBacklight = 255;
+		svp_set_backlight(svpSGlobal.lcdBacklight);
+		pscg_set_value(
+			backlightSlider,
+			svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
+			&sda_sys_con
+		);
 	}
 
 	if (pscg_get_event(backlightButton, &sda_sys_con) == EV_RELEASED || svpSGlobal.lcdState == LCD_OFF) {
