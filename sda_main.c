@@ -57,6 +57,9 @@ uint8_t mainDir[258]; // name of main directory
 
 uint8_t prev_top_slot;
 
+// time of the last input
+static uint32_t lastInputTime;
+
 // error overlays
 uint16_t error_overlay_scr;
 uint16_t error_overlay_ok;
@@ -363,6 +366,17 @@ void sda_lcd_on_handle() {
 	svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
 }
 
+// wakes from sleep to low power mode with screen off,
+// goes to sleep again after lcd shutdown time
+void sda_interrupt_sleep() {
+  if (svpSGlobal.powerMode == SDA_PWR_MODE_NORMAL) {
+    return;
+  }
+  svpSGlobal.powerState = PWR_LOW;
+	svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
+	lastInputTime = svpSGlobal.uptime;
+}
+
 void sda_lcd_off_handle() {
 	svpSGlobal.powerState = PWR_LOW;
 	svpSGlobal.powerMode = SDA_PWR_MODE_SLEEP;
@@ -370,7 +384,6 @@ void sda_lcd_off_handle() {
 
 void sda_power_main_handler() {
 	static lcdStateType lcdStateOld;
-	static uint32_t lastInputTime;
 	static uint32_t lcdOffBlinkTimer;
 	static uint32_t pwrDelay;
 
@@ -381,7 +394,7 @@ void sda_power_main_handler() {
 
 	// lcd auto shut down
 	if (((svpSGlobal.lcdShutdownTime * 60) < (svpSGlobal.uptime - lastInputTime))
-				&& (sleepLock == 0) && (lcdStateOld == LCD_ON)) {
+				&& (sleepLock == 0) && (svpSGlobal.powerMode != SDA_PWR_MODE_SLEEP)) {
 		sda_power_sleep();
 	}
 

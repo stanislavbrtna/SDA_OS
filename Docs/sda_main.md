@@ -142,6 +142,11 @@ Return: None
     getLcdState();
 Gets state of lcd.
 Return: 1 if lcd is on, otherwise 0
+##### Wake the SDA from sleep
+    sdaWake();
+Wakes SDA without turning the screen on.
+SDA will wake in the low power mode and will sleep again after the lcd shutdown time.
+Return: None
 ##### Quit program
     exit();
 Stops program execution after exiting update() and exit()
