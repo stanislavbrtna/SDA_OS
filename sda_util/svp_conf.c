@@ -107,13 +107,12 @@ uint8_t svp_conf_key_exists(svp_conf *fc, uint8_t* key) {
 uint8_t svp_conf_key_read(svp_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_t len) {
 	uint8_t buffer[MAX_KEY_LEN];
 	uint16_t x;
-	uint8_t skip, pass;
+	uint8_t skip;
+	uint8_t pass = 0;
 	uint32_t keystart;
 
 	// pass zero is to scan file from current position to the end of file,
 	// pass one is from start of file to keystart
-
-	pass = 0;
 
 	keystart = svp_ftell(&(fc->fil));
 
