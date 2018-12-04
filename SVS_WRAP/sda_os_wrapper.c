@@ -609,6 +609,21 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	  return 1;
 	}
 
+
+	//#!##### Wake the SDA from sleep
+	//#!    sdaWake();
+	//#!Wakes SDA without turning the screen on.
+	//#!SDA will wake in the low power mode and will sleep again after the lcd shutdown time.
+	//#!Return: None
+	if (sysFuncMatch(argS->callId, "sdaWake", s)) {
+		if(sysExecTypeCheck(argS, argType, 0, s)) {
+		  return 0;
+		}
+		sda_interrupt_sleep();
+	  return 1;
+	}
+
+
 	//#!##### Quit program
 	//#!    exit();
 	//#!Stops program execution after exiting update() and exit()

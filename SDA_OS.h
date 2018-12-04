@@ -113,4 +113,6 @@ void svp_switch_main_dir();
 
 void sda_load_config();
 
+void sda_interrupt_sleep();
+
 #endif
