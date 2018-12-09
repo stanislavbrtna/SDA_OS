@@ -610,8 +610,9 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 		  printf("setting date locally: %u. %u. %u \n", date_overlay_get_day(dateOvrId), date_overlay_get_month(dateOvrId), date_overlay_get_year(dateOvrId));
 		  svpSGlobal.day=date_overlay_get_day(dateOvrId);
 	    svpSGlobal.month=date_overlay_get_month(dateOvrId);
-	    svpSGlobal.year=date_overlay_get_year(dateOvrId);
-
+	    if (date_overlay_get_year(dateOvrId) > 2005) {
+	      svpSGlobal.year=date_overlay_get_year(dateOvrId);
+      }
 #endif
       svpSGlobal.dateUpdated=1;
 		  date_overlay_clear_ok(dateOvrId);
