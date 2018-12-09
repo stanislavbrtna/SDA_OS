@@ -392,12 +392,6 @@ void sda_power_main_handler() {
 		svpSGlobal.powerState = PWR_MAX;
 	}
 
-	// lcd auto shut down
-	if (((svpSGlobal.lcdShutdownTime * 60) < (svpSGlobal.uptime - lastInputTime))
-				&& (sleepLock == 0) && (svpSGlobal.powerMode != SDA_PWR_MODE_SLEEP)) {
-		sda_power_sleep();
-	}
-
 	// when lcd is turned ON
 	if ((svpSGlobal.lcdState == LCD_ON) && (lcdStateOld == LCD_OFF)) {
 		lastInputTime = svpSGlobal.uptime;
@@ -419,6 +413,12 @@ void sda_power_main_handler() {
 		// after we blink the led, system will underclock itself
 		// to gave time for apps or system to do stuff after lcd shutdown
 		system_clock_set_low();
+	}
+
+	// lcd auto shut down, this must be at the bottom, so it does not turn off before the sda wakes.
+	if (((svpSGlobal.lcdShutdownTime * 60) < (svpSGlobal.uptime - lastInputTime))
+				&& (sleepLock == 0) && (svpSGlobal.powerMode != SDA_PWR_MODE_SLEEP)) {
+		sda_power_sleep();
 	}
 
 	lcdStateOld = svpSGlobal.lcdState;
