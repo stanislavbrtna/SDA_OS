@@ -3,6 +3,8 @@
 
 This repo contains most of the code that runs the SDA. More on that here [SDA project on Hack a Day](https://hackaday.io/project/35165-sda-the-best-new-pda)
 
+You can try the SDA_OS in a work-in-progress browser-based [simulator](https://miskribu.cz/SDA_SIM/SDA_OS.html).
+
 ## What is this
 This is the part of SDA_OS that is "shared" between all the platforms and devices. It contains main GUI elements and higher functions. It extends the [SVS](https://github.com/stanislavbrtna/svs-script) interpreter and uses it to run the SDA_OS applications.
 
@@ -24,10 +26,10 @@ Then add SVS platform_specific.h file to the SVS folder containing:
 #endif
 
 ## Application development for SDA
-SDA applications are written in SVS language using APIs of SDA_OS, documentation on the language can be found in its repo([SVS syntax](https://github.com/stanislavbrtna/svs-script/blob/master/SYNTAX.md)) and documentation for the SDA_OS API is here.
+SDA applications are written in SVS language using APIs of SDA_OS, documentation on the language can be found in its repo [SVS script syntax](https://github.com/stanislavbrtna/svs-script/blob/master/SYNTAX.md) and documentation for the SDA_OS API is here.
 
 ### SDA_OS SVS wrappers
-SDA_OS uses wrappers to provide its functions to applications running in the SVS environment. These functions extends the **sys** keyword and they have automatically generated documentation. This API is quite stable and its intended to have long backward compatibility.
+SDA_OS uses wrappers to provide its functions to applications running in the SVS environment. These wrappers extends the **sys** keyword and they have automatically generated documentation. This API is quite stable and its intended to have long backward compatibility.
 
 - [Main functions](Docs/sda_main.md)
 
