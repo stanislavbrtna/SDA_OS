@@ -75,7 +75,6 @@ void timeToStr(uint8_t * buff, uint32_t val) {
 	    buff[a] = buff[a + 1];
     }
   }
-
 }
 
 
@@ -160,11 +159,10 @@ uint16_t svp_opt_info(uint8_t init) {
   	return 0;
   }
 
-	if (pscg_get_event(optInfoBack, &sda_sys_con) == EV_RELEASED) {
-    mainScr=slotScreen[2];
+	if (gr2_clicked(optInfoBack, &sda_sys_con)) {
+    mainScr = slotScreen[2];
     setRedrawFlag();
   }
-  pscg_set_event(optInfoBack, EV_NONE, &sda_sys_con);
 
   if (infoBattPercentPrev != svpSGlobal.battPercentage) {
 	  pscg_set_modified(infoBattStr, &sda_sys_con);
@@ -227,27 +225,24 @@ uint16_t svp_opt_notifications(uint8_t init) {
 		}
 	}
 
-	if (pscg_get_event(optSoundLoud, &sda_sys_con) == EV_RELEASED) {
+	if (gr2_clicked(optSoundLoud, &sda_sys_con)) {
 	  svpSGlobal.mute = 0;
 		pscg_set_value(optSoundMute, 0, &sda_sys_con);
 		pscg_set_value(optSoundLoud, 1, &sda_sys_con);
 		sda_store_mute_config();
 	}
-	pscg_clear_event(optSoundLoud, &sda_sys_con);
 
-	if (pscg_get_event(optSoundMute, &sda_sys_con) == EV_RELEASED) {
+	if (gr2_clicked(optSoundMute, &sda_sys_con)) {
 	  svpSGlobal.mute = 1;
 	  pscg_set_value(optSoundMute, 1, &sda_sys_con);
 		pscg_set_value(optSoundLoud, 0, &sda_sys_con);
 		sda_store_mute_config();
 	}
-	pscg_clear_event(optSoundMute, &sda_sys_con);
 
-	if (pscg_get_event(optSoundBack, &sda_sys_con) == EV_RELEASED) {
+	if (gr2_clicked(optSoundBack, &sda_sys_con)) {
     mainScr = slotScreen[2];
     setRedrawFlag();
   }
-  pscg_clear_event(optSoundBack, &sda_sys_con);
 
   return 0;
 }
@@ -277,17 +272,15 @@ uint16_t svp_opt_debug(uint8_t init) {
 		return optDbgScr;
 	}
 
-	if (pscg_get_event(dbgUartEnable, &sda_sys_con) == EV_RELEASED) {
+	if (gr2_clicked(dbgUartEnable, &sda_sys_con)) {
 	  sda_dbg_serial_enable();
 	  init = 2;
 	}
-	pscg_clear_event(dbgUartEnable, &sda_sys_con);
 
-	if (pscg_get_event(dbgUartDisable, &sda_sys_con) == EV_RELEASED) {
+	if (gr2_clicked(dbgUartDisable, &sda_sys_con)) {
 	  sda_dbg_serial_disable();
 	  init = 2;
 	}
-	pscg_clear_event(dbgUartDisable, &sda_sys_con);
 
 	if (init == 2) {
 		if (sda_dbg_serial_is_enabled()) {
@@ -299,11 +292,10 @@ uint16_t svp_opt_debug(uint8_t init) {
 		}
 	}
 
-	if (pscg_get_event(optDbgBack, &sda_sys_con) == EV_RELEASED) {
+	if (gr2_clicked(optDbgBack, &sda_sys_con)) {
     mainScr = slotScreen[2];
     setRedrawFlag();
   }
-  pscg_clear_event(optDbgBack, &sda_sys_con);
 
   return 0;
 }
@@ -496,34 +488,30 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
     return optScreen;
   }
 
-  if(init==2){
-    //deinit funkce
+  if(init == 2) {
+    //de-init
 
   }
 
   //loop top
-  if (top==1){
-		//screen switching slotScreen[2]
+  if (top == 1) {
 
-		if (pscg_get_event(optTimSel, &sda_sys_con)==EV_RELEASED){
-		  mainScr=optTimeScr;
+		if (gr2_clicked(optTimSel, &sda_sys_con)) {
+		  mainScr = optTimeScr;
 		  setRedrawFlag();
 		}
-		pscg_set_event(optTimSel,EV_NONE, &sda_sys_con);
 
-		if (pscg_get_event(optLcdSel, &sda_sys_con) == EV_RELEASED) {
+		if (gr2_clicked(optLcdSel, &sda_sys_con)) {
 		  mainScr = optLcdScr;
 		  pscg_set_value(optLcdBacklight, svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE, &sda_sys_con);
 		  setRedrawFlag();
 		}
-		pscg_set_event(optLcdSel, EV_NONE, &sda_sys_con);
 
-		if (pscg_get_event(optInfoSel, &sda_sys_con)==EV_RELEASED){
-		  mainScr=optInfoScr;
+		if (gr2_clicked(optInfoSel, &sda_sys_con)) {
+		  mainScr = optInfoScr;
 		  svp_opt_info(2); // reset position of the internal screen
 		  setRedrawFlag();
 		}
-		pscg_set_event(optInfoSel,EV_NONE, &sda_sys_con);
 
 		if (gr2_clicked(optDbgSel, &sda_sys_con)) {
 		  mainScr = optDbgScr;
@@ -532,63 +520,62 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 		}
 		svp_opt_debug(0);
 
-		if (pscg_get_event(optSecuSel, &sda_sys_con) == EV_RELEASED) {
+		if (gr2_clicked(optSecuSel, &sda_sys_con)) {
 		  mainScr = optSecuScr;
 		  pscg_set_visible(optSecuMsg, 0, &sda_sys_con);
 		  pscg_set_visible(optSecuMsg2, 0, &sda_sys_con);
 		  setRedrawFlag();
 		}
-		pscg_set_event(optSecuSel, EV_NONE, &sda_sys_con);
 
 		/*Card unmounting and apps reloader*/
-		if (pscg_get_event(optMntSel, &sda_sys_con)==EV_RELEASED){
-		  if (sd_mounted==1){
+		if (gr2_clicked(optMntSel, &sda_sys_con)) {
+		  if (sd_mounted == 1) {
 				svmCloseAll();
 		  	sdaSlotOnTop(2);
 		    svp_umount();
-		    sd_mounted=0;
+		    sd_mounted = 0;
 		    pscg_set_str(optMntSel, SCR_SD_MOUNT, &sda_sys_con);
-		    prac_screen=slotScreen[1];
-		    slotScreen[1]=pscg_add_screen(&sda_sys_con);
+		    prac_screen = slotScreen[1];
+		    slotScreen[1] = pscg_add_screen(&sda_sys_con);
 		    pscg_add_text(1, 1, 10, 2, SCR_SD_NOT_PRESENT_WARNING, slotScreen[1], &sda_sys_con);
-
-		  }else{
-		    if(svp_mount()){
+		  } else {
+		    if(svp_mount()) {
 		      pscg_set_str(optMntSel, SCR_CARD_ERROR_REPEAT, &sda_sys_con);
-		    }else{
+		    } else {
 		      pscg_set_str(optMntSel, SD_UMOUNT, &sda_sys_con);
-		      // takovej háček na reload aplikací
+		      // little hack for reload of app screen
 		      pscg_destroy_screen( slotScreen[1], &sda_sys_con);
 		      pscg_destroy_screen( prac_screen, &sda_sys_con);
 		      slotScreen[1] = svp_appScreen(1, 0);
 		      sd_mounted = 1;
 		      sdaSlotOnTop(2);
-		      //printf("debug: %u\n", slotScreen[1]);
 		    }
-
 		  }
 		}
-		pscg_set_event(optMntSel,EV_NONE, &sda_sys_con);
 
-		/* time setup                                           */
-		if (pscg_get_event(optTimeBtn, &sda_sys_con)==EV_RELEASED){
-		  timeOvrId=time_overlay_init();
+//============================ Time setup ======================================
+		if (gr2_clicked(optTimeBtn, &sda_sys_con)) {
+		  timeOvrId = time_overlay_init();
 		  time_overlay_set_time(timeOvrId, svpSGlobal.hour, svpSGlobal.min);
 		}
-		pscg_set_event(optTimeBtn,EV_NONE, &sda_sys_con);
 
-		if (pscg_get_event(optDateBtn, &sda_sys_con)==EV_RELEASED){
-		 dateOvrId=date_overlay_init(svpSGlobal.year,svpSGlobal.month,svpSGlobal.day);
-		 printf("Old date: y:%u d:%u wkd:%u mon:%u %u:%u \n",svpSGlobal.year, svpSGlobal.day, svpSGlobal.weekday, svpSGlobal.month, svpSGlobal.hour, svpSGlobal.min);
+		if (gr2_clicked(optDateBtn, &sda_sys_con)) {
+		 dateOvrId = date_overlay_init(svpSGlobal.year, svpSGlobal.month, svpSGlobal.day);
+		 printf("Old date: y:%u d:%u wkd:%u mon:%u %u:%u \n",
+		         svpSGlobal.year,
+		         svpSGlobal.day,
+		         svpSGlobal.weekday,
+		         svpSGlobal.month,
+		         svpSGlobal.hour,
+		         svpSGlobal.min
+		       );
 		}
-		pscg_set_event(optDateBtn,EV_NONE, &sda_sys_con);
-
 
 		date_overlay_update(dateOvrId);
 
 		time_overlay_update(timeOvrId);
 
-		if(time_overlay_get_ok(timeOvrId)){
+		if(time_overlay_get_ok(timeOvrId)) {
 
 		  #ifdef PLATFORM_PC
 		  printf("setting time: %u:%u (Does not work in simulation)\n", time_overlay_get_hours(timeOvrId), time_overlay_get_minutes(timeOvrId));
@@ -599,10 +586,10 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 		  #endif
 
 		  time_overlay_clear_ok(timeOvrId);
-		  timeOvrId=0;
+		  timeOvrId = 0;
 		}
 
-		if(date_overlay_get_ok(dateOvrId)){
+		if(date_overlay_get_ok(dateOvrId)) {
 #ifndef PC
 		  rtc_set_time(date_overlay_get_year(dateOvrId), date_overlay_get_day(dateOvrId), svpSGlobal.weekday, date_overlay_get_month(dateOvrId),svpSGlobal.hour, svpSGlobal.min, svpSGlobal.sec);
 		  printf("New date: y:%u d:%u wkd:%u mon:%u %u:%u \n",svpSGlobal.year, svpSGlobal.day, svpSGlobal.weekday, svpSGlobal.month, svpSGlobal.hour, svpSGlobal.min);
@@ -614,26 +601,24 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 	      svpSGlobal.year=date_overlay_get_year(dateOvrId);
       }
 #endif
-      svpSGlobal.dateUpdated=1;
+      svpSGlobal.dateUpdated = 1;
 		  date_overlay_clear_ok(dateOvrId);
-		  dateOvrId=0;
+		  dateOvrId = 0;
 		}
 
-		if (pscg_get_event(optTimBack, &sda_sys_con) == EV_RELEASED){
-		  mainScr=slotScreen[2];
-		  setRedrawFlag();
-		}
-		pscg_set_event(optTimBack,EV_NONE, &sda_sys_con);
-
-		/* Displey setup                                         */
-
-		if (pscg_get_event(optLcdBack, &sda_sys_con) == EV_RELEASED) {
+		if (gr2_clicked(optTimBack, &sda_sys_con)) {
 		  mainScr = slotScreen[2];
 		  setRedrawFlag();
 		}
-		pscg_set_event(optLcdBack, EV_NONE, &sda_sys_con);
 
-		if (pscg_get_event(optLcdCol, &sda_sys_con) == EV_RELEASED) {
+//============================ Display setup ===================================
+
+		if (gr2_clicked(optLcdBack, &sda_sys_con)) {
+		  mainScr = slotScreen[2];
+		  setRedrawFlag();
+		}
+
+		if (gr2_clicked(optLcdCol, &sda_sys_con)) {
 		  mainScr = optColScr;
 		  graphic_is_stored = 0;
 		  // store for possible back out of settings
@@ -643,16 +628,15 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 			fill_color_bkp = pscg_get_fill_color(&sda_sys_con);
 			active_color_bkp = pscg_get_active_color(&sda_sys_con);
 			// reload the color input values
-			pscg_set_value(b_border,pscg_get_border_color(&sda_sys_con), &sda_sys_con);
-      pscg_set_value(b_text,pscg_get_text_color(&sda_sys_con), &sda_sys_con);
-      pscg_set_value(b_back,pscg_get_background_color(&sda_sys_con), &sda_sys_con);
+			pscg_set_value(b_border, pscg_get_border_color(&sda_sys_con), &sda_sys_con);
+      pscg_set_value(b_text, pscg_get_text_color(&sda_sys_con), &sda_sys_con);
+      pscg_set_value(b_back, pscg_get_background_color(&sda_sys_con), &sda_sys_con);
       pscg_set_value(b_fill, pscg_get_fill_color(&sda_sys_con), &sda_sys_con);
-      pscg_set_value(b_active,pscg_get_active_color(&sda_sys_con), &sda_sys_con);
+      pscg_set_value(b_active, pscg_get_active_color(&sda_sys_con), &sda_sys_con);
 		  setRedrawFlag();
 		}
-		pscg_set_event(optLcdCol, EV_NONE, &sda_sys_con);
 
-		if (pscg_get_event(optLcdCalib, &sda_sys_con) == EV_RELEASED) {
+		if (gr2_clicked(optLcdCalib, &sda_sys_con)) {
 			uint8_t tickLockOld;
 			uint8_t redraw_lockOld;
 			uint8_t touch_lockOld;
@@ -674,28 +658,25 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 		  sda_store_calibration();
 		  setRedrawFlag();
 		}
-		pscg_set_event(optLcdCalib, EV_NONE, &sda_sys_con);
 
-		if (pscg_get_event(optLcdDecr, &sda_sys_con) == EV_RELEASED) {
+		if (gr2_clicked(optLcdDecr, &sda_sys_con)) {
 			if (svpSGlobal.lcdShutdownTime >= 2) {
 				svpSGlobal.lcdShutdownTime--;
 				optLcdMins[0] = svpSGlobal.lcdShutdownTime + 48;
 				pscg_set_modified(optLcdNum, &sda_sys_con);
 			}
 		}
-		pscg_set_event(optLcdDecr, EV_NONE, &sda_sys_con);
 
-		if (pscg_get_event(optLcdIncr, &sda_sys_con) == EV_RELEASED) {
+		if (gr2_clicked(optLcdIncr, &sda_sys_con)) {
 			if (svpSGlobal.lcdShutdownTime < 9) {
 				svpSGlobal.lcdShutdownTime++;
 				optLcdMins[0] = svpSGlobal.lcdShutdownTime + 48;
 				pscg_set_modified(optLcdNum, &sda_sys_con);
 			}
 		}
-		pscg_set_event(optLcdIncr, EV_NONE, &sda_sys_con);
 
 		if (pscg_get_event(optLcdBacklight, &sda_sys_con)) {
-			if ((pscg_get_value(optLcdBacklight, &sda_sys_con) + MIN_BACKLIGHT_VALUE) > 255){
+			if ((pscg_get_value(optLcdBacklight, &sda_sys_con) + MIN_BACKLIGHT_VALUE) > 255) {
 				svpSGlobal.lcdBacklight = 255;
 			} else {
 				svpSGlobal.lcdBacklight = (uint8_t) (pscg_get_value(optLcdBacklight, &sda_sys_con) + MIN_BACKLIGHT_VALUE);
@@ -705,99 +686,90 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 		}
 		pscg_set_event(optLcdBacklight, EV_NONE, &sda_sys_con);
 
-		if (pscg_get_event(optLcdStore, &sda_sys_con)==EV_RELEASED){
+		if (gr2_clicked(optLcdStore, &sda_sys_con)) {
 		  sda_store_config();
 		}
-		pscg_set_event(optLcdStore,EV_NONE, &sda_sys_con);
 
-		/* color setup                                           */
+//============================ Color setup =====================================
 
 		// border color
-		if (pscg_get_event(b_border, &sda_sys_con)==EV_RELEASED){
-		  bcolOvrId=color_overlay_init();
+		if (gr2_clicked(b_border, &sda_sys_con)) {
+		  bcolOvrId = color_overlay_init();
 		  color_overlay_set_color(bcolOvrId, pscg_get_border_color(&sda_sys_con));
 		}
-		pscg_set_event(b_border,EV_NONE, &sda_sys_con);
 
 		color_overlay_update(bcolOvrId);
 
 		if (color_overlay_get_ok(bcolOvrId)){
 		   pscg_set_border_color(color_overlay_get_color(bcolOvrId), &sda_sys_con);
 		   color_overlay_clear_ok(bcolOvrId);
-		   pscg_set_value(b_border,pscg_get_border_color(&sda_sys_con), &sda_sys_con);
+		   pscg_set_value(b_border, pscg_get_border_color(&sda_sys_con), &sda_sys_con);
 		}
 
 		//text color
-		if (pscg_get_event(b_text, &sda_sys_con)==EV_RELEASED){
-		  txcolOvrId=color_overlay_init();
+		if (gr2_clicked(b_text, &sda_sys_con)) {
+		  txcolOvrId = color_overlay_init();
 		  color_overlay_set_color(txcolOvrId, pscg_get_text_color(&sda_sys_con));
 		}
-		pscg_set_event(b_text,EV_NONE, &sda_sys_con);
 
 		color_overlay_update(txcolOvrId);
 
-		if (color_overlay_get_ok(txcolOvrId)){
+		if (color_overlay_get_ok(txcolOvrId)) {
 		   pscg_set_text_color(color_overlay_get_color(txcolOvrId), &sda_sys_con);
 		   color_overlay_clear_ok(txcolOvrId);
-		   pscg_set_value(b_text,pscg_get_text_color(&sda_sys_con), &sda_sys_con);
+		   pscg_set_value(b_text, pscg_get_text_color(&sda_sys_con), &sda_sys_con);
 		}
 
 		//background
-		if (pscg_get_event(b_back, &sda_sys_con)==EV_RELEASED){
-		  bgcolOvrId=color_overlay_init();
+		if (gr2_clicked(b_back, &sda_sys_con)) {
+		  bgcolOvrId = color_overlay_init();
 		  color_overlay_set_color(bgcolOvrId, pscg_get_background_color(&sda_sys_con));
 		}
-		pscg_set_event(b_back,EV_NONE, &sda_sys_con);
 
 		color_overlay_update(bgcolOvrId);
 
-		if (color_overlay_get_ok(bgcolOvrId)){
+		if (color_overlay_get_ok(bgcolOvrId)) {
 		   pscg_set_background_color(color_overlay_get_color(bgcolOvrId), &sda_sys_con);
 		   color_overlay_clear_ok(bgcolOvrId);
-		   pscg_set_value(b_back,pscg_get_background_color(&sda_sys_con), &sda_sys_con);
+		   pscg_set_value(b_back, pscg_get_background_color(&sda_sys_con), &sda_sys_con);
 		}
 
 		//fill
-		if (pscg_get_event(b_fill, &sda_sys_con)==EV_RELEASED){
+		if (gr2_clicked(b_fill, &sda_sys_con)) {
 		  ficolOvrId=color_overlay_init();
 		  color_overlay_set_color(ficolOvrId, pscg_get_fill_color(&sda_sys_con));
 		}
-		pscg_set_event(b_fill,EV_NONE, &sda_sys_con);
 
 		color_overlay_update(ficolOvrId);
 
-		if (color_overlay_get_ok(ficolOvrId)){
+		if (color_overlay_get_ok(ficolOvrId)) {
 		   pscg_set_fill_color(color_overlay_get_color(ficolOvrId), &sda_sys_con);
 		   color_overlay_clear_ok(ficolOvrId);
-		   pscg_set_value(b_fill,pscg_get_fill_color(&sda_sys_con), &sda_sys_con);
+		   pscg_set_value(b_fill, pscg_get_fill_color(&sda_sys_con), &sda_sys_con);
 		}
 
 		//active
-		if (pscg_get_event(b_active, &sda_sys_con)==EV_RELEASED){
+		if (gr2_clicked(b_active, &sda_sys_con)) {
 		  actcolOvrId=color_overlay_init();
 		  color_overlay_set_color(actcolOvrId, pscg_get_active_color(&sda_sys_con));
 		}
-		pscg_set_event(b_active,EV_NONE, &sda_sys_con);
 
 		color_overlay_update(actcolOvrId);
 
-		if (color_overlay_get_ok(actcolOvrId)){
+		if (color_overlay_get_ok(actcolOvrId)) {
 		   pscg_set_active_color(color_overlay_get_color(actcolOvrId), &sda_sys_con);
 		   color_overlay_clear_ok(actcolOvrId);
 		   pscg_set_value(b_active,pscg_get_active_color(&sda_sys_con), &sda_sys_con);
 		}
 
-
-
 		//store button
-		if (pscg_get_event(b_store, &sda_sys_con)==EV_RELEASED){
+		if (gr2_clicked(b_store, &sda_sys_con)) {
 		  sda_store_config_gui(0);
 		  graphic_is_stored = 1;
 		}
-		pscg_set_event(b_store,EV_NONE, &sda_sys_con);
 
 		//def button
-		if (pscg_get_event(b_def, &sda_sys_con)==EV_RELEASED){
+		if (gr2_clicked(b_def, &sda_sys_con)) {
 		  sda_store_config_gui(1);
 		  sda_load_config();
 		  pscg_set_value(b_border,pscg_get_border_color(&sda_sys_con), &sda_sys_con);
@@ -807,9 +779,8 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
       pscg_set_value(b_active,pscg_get_active_color(&sda_sys_con), &sda_sys_con);
       setRedrawFlag();
 		}
-		pscg_set_event(b_def,EV_NONE, &sda_sys_con);
 
-		if (pscg_get_event(optColBack, &sda_sys_con)==EV_RELEASED){
+		if (gr2_clicked(optColBack, &sda_sys_con)) {
 	    if (!graphic_is_stored) {
 	    	pscg_set_border_color(border_color_bkp, &sda_sys_con);
 				pscg_set_text_color(text_color_bkp, &sda_sys_con);
@@ -817,35 +788,36 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 				pscg_set_fill_color(fill_color_bkp, &sda_sys_con);
 				pscg_set_active_color(active_color_bkp, &sda_sys_con);
 	    }
-	    mainScr=optLcdScr;
+	    mainScr = optLcdScr;
 	    setRedrawFlag();
 	  }
-	  pscg_set_event(optColBack,EV_NONE, &sda_sys_con);
 
+//============================ Info ============================================
 	  svp_opt_info(0);
 
-		/*sound options*/
-		svp_opt_notifications(0);
+//============================ Notifications ===================================
+	  svp_opt_notifications(0);
 
-		if (pscg_get_event(optSound, &sda_sys_con) == EV_RELEASED) {
+//============================ Sound options ===================================
+
+		if (gr2_clicked(optSound, &sda_sys_con)) {
 			svp_opt_notifications(2); // reload current settings
 			mainScr = optNotifyScr; //krapet ugly
 			setRedrawFlag();
 		}
-		pscg_clear_event(optSound, &sda_sys_con);
 
-		//secu
-		if (pscg_get_event(optSecuBack, &sda_sys_con) == EV_RELEASED) {
+//============================ Security options ================================
+
+		if (gr2_clicked(optSecuBack, &sda_sys_con)) {
 	    mainScr = slotScreen[2];
 	    setRedrawFlag();
 	  }
-	  pscg_clear_event(optSecuBack, &sda_sys_con);
 
 	  svp_input_handler(optSecuNewStr, 32, optSecuNew);
 
 	  svp_input_handler(optSecuOldStr, 32, optSecuOld);
 
-	  if (pscg_get_event(optSecuOk, &sda_sys_con) == EV_RELEASED) {
+	  if (gr2_clicked(optSecuOk, &sda_sys_con)) {
 	  	uint8_t retval;
 	  	retval = svp_crypto_unlock(optSecuOldStr);
 	  	if (retval != 0) {
@@ -870,8 +842,6 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 	    pscg_set_modified(optSecuOld, &sda_sys_con);
 	    hideKeyboard();
 	  }
-	  pscg_clear_event(optSecuOk, &sda_sys_con);
-
   }
   return 0;
 }

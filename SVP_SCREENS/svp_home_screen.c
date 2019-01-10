@@ -38,14 +38,13 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
   if (init == 1) {
     screen = pscg_add_screen(&sda_sys_con);
     text = pscg_add_text(0 , 1, 12, 3,(uint8_t *)"S!   PDA", screen, &sda_sys_con);
-
     time = pscg_add_text(3, 4, 12, 6,(uint8_t *)"??:??", screen, &sda_sys_con);
     date = pscg_add_text(3, 6, 12, 7,(uint8_t *)"?. ?. 20??", screen, &sda_sys_con);
     appsBtn = pscg_add_icon(2, 10, 5, 13,(uint8_t *)"", (uint8_t *)"apps.ppm", screen, &sda_sys_con);
     optBtn = pscg_add_icon(6, 10, 9, 13,(uint8_t *)"", (uint8_t *)"options.ppm", screen, &sda_sys_con);
     pscg_text_set_size(text, 70, &sda_sys_con);
     pscg_text_set_size(time, 70, &sda_sys_con);
-    oldmin = 66; //absurdní hodnota, aby se to napoprvé aktualizovalo
+    oldmin = 66; // absurd value, so current minute would not equal oldmin and time would update after init
     return screen;
   }
 
@@ -62,7 +61,6 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 		  time_string[4] = svpSGlobal.min % 10 + 48;
 		  time_string[5] = 0;
 		  pscg_set_str(time, time_string, &sda_sys_con);
-		  pscg_set_modified(time, &sda_sys_con); //hodnota ukazatele na čas s textem se nezměnila, je třeba nahodit modif flag
 		  oldmin = svpSGlobal.min;
     }
 
@@ -85,6 +83,6 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 		}
 		pscg_set_event(optBtn, EV_NONE, &sda_sys_con);
   }
-  //else: práce na pozadí
+  //else: work in the background, noting for now
   return 0;
 }
