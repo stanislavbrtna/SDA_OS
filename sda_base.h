@@ -37,9 +37,6 @@ uint8_t getTimeUpdateFlag();
 void setTimeUpdateFlag();
 uint16_t svp_get_uptime();
 
-// display
-void svp_set_calibration_data(touchCalibDataStruct input);
-
 // [HW] beeper
 void svp_beep();
 void svp_beep_set_t(uint16_t time);

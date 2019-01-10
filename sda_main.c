@@ -561,7 +561,7 @@ uint8_t sda_main_loop() {
 		// screen redraw for the first time
 		touch_lock = 1;
 		tickLock = 0;
-		LCD_setDrawArea(0, 0, LCD_W, LCD_H);
+		LCD_setDrawArea(0, 0, SDA_LCD_W, SDA_LCD_H);
 		pscg_draw_screen(0, 32, 319, 479, mainScr, 1, &sda_sys_con);
 		touch_lock = 0;
 		tickLock = 1;
@@ -681,7 +681,7 @@ uint8_t sda_main_loop() {
 
 	touch_lock = 1;
 	tickLock = 0;
-	LCD_setDrawArea(0, 0, LCD_W, LCD_H);
+	LCD_setDrawArea(0, 0, SDA_LCD_W, SDA_LCD_H);
 	if (svpSGlobal.systemRedraw == 1 || kbdRedraw) {
 		sdaSetRedrawDetect(1);
 	}
@@ -710,7 +710,7 @@ uint8_t sda_main_loop() {
 	kbdVisibleOld = svpSGlobal.kbdVisible;
 
 	if (overlayScr == 0) {
-		LCD_setDrawArea(0, 0, LCD_W - 1, LCD_H - 160 * svpSGlobal.kbdVisible);
+		LCD_setDrawArea(0, 0, SDA_LCD_W - 1, SDA_LCD_H - 160 * svpSGlobal.kbdVisible);
 		if (svpSGlobal.systemRedraw == 1) {
 			pscg_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 1, sda_current_con);
 			svpSGlobal.systemRedraw = 0;

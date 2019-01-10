@@ -90,7 +90,7 @@ extern gr2context * sda_current_con;
 uint8_t sda_main_loop();
 uint8_t svp_irq();
 
-//===========================misc SVP functions===============================//
+//========================== misc SVP functions ==============================//
 
 // appSlots
 void sdaSlotSetValid(uint16_t slot);
@@ -106,7 +106,6 @@ void svs_hardErrHandler();
 
 void sdaSetSleepLock(uint8_t val);
 
-//graphics
 void setRedrawFlag();
 
 void svp_switch_main_dir();

@@ -31,9 +31,6 @@ File description:
 #define SDA_OS_VERSION "0.7.1.0"
 #define SDA_OS_VERSION_NUM 710
 
-// sda wrapper version
-#define SVP_FP_MAX 10
-
 // shows where the screen is redrawn, works only in simulator, usefull for debug
 // #define SIM_SHOW_REDRAW
 
@@ -44,22 +41,36 @@ File description:
 #define SDA_APP_ELEM_MAX 250
 #define SDA_APP_SCREEN_MAX 20
 
+// LCD resolution
+#define SDA_LCD_W 320
+#define SDA_LCD_H 480
+
 // size and position of top bar
 #define PM_TOPBAR_X1 0
 #define PM_TOPBAR_Y1 0
 #define PM_TOPBAR_X2 319
 #define PM_TOPBAR_Y2 31
 
+// maximum number of system application slots
+// slot | use
+//  0   | homescreen
+//  1   | app screen (launcher)
+//  2   | options
+//  4   | currently running SVS application
 #define APP_SLOT_MAX 8
+
+// max name lenght of running SVS application
 #define APP_NAME_LEN 36
 
+// maximum chached applications
 #define MAX_OF_SAVED_PROC 16
 
+// default minimum backlight value, override this in your SDA_OS base if needed
 #ifndef MIN_BACKLIGHT_VALUE
 #define MIN_BACKLIGHT_VALUE 70
 #endif
 
-// button number defines
+// button id defines
 #define BUTTON_A 0
 #define BUTTON_LEFT 1
 #define BUTTON_UP 2
@@ -67,8 +78,7 @@ File description:
 #define BUTTON_RIGHT 4
 #define BUTTON_B 5
 
-// Global debug switches
-
+// App screen (launcher) debug switch
 //#define APP_SCREEN_DEBUG
 
 // Driver options
