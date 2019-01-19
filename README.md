@@ -1,7 +1,7 @@
 # SDA OS
 *The best (and only) OS for your SDA.*
 
-This repo contains most of the code that runs the SDA. More on that here [SDA project on Hack a Day](https://hackaday.io/project/35165-sda-the-best-new-pda)
+This repo contains most of the code that runs the SDA. More on that here [SDA project on Hack a Day](https://hackaday.io/project/35165-sda-the-best-new-pda).
 
 You can try the SDA_OS in a work-in-progress browser-based [simulator](https://miskribu.cz/SDA_SIM/SDA_OS.html).
 
@@ -14,16 +14,7 @@ Do not clone/download just this! You must have base drivers for SDA_OS to run it
 Don't forget to update the submodules after pull:
 git submodule update --init --recursive --force --remote
 
-Then add SVS platform_specific.h file to the SVS folder containing:
-
-#ifndef SVS_PLATFORM_H
-#define SVS_PLATFORM_H
-
-#if defined(STM32F405xx)
-#include "../SDA_OS.h"
-#endif
-
-#endif
+Then duplicate the platform specific header example for SDA_OS in SVS (platform_specific.h.SDA-example) and rename it to *platform_specific.h*
 
 ## Application development for SDA
 SDA applications are written in SVS language using APIs of SDA_OS, documentation on the language can be found in its repo [SVS script syntax](https://github.com/stanislavbrtna/svs-script/blob/master/SYNTAX.md) and documentation for the SDA_OS API is here.
