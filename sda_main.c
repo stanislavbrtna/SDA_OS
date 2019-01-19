@@ -802,6 +802,12 @@ uint8_t sda_main_loop() {
 	static uint8_t batt_prev;
 	if ((systemBattClick == 1 || svpSGlobal.systemPwrLongPress == 1) && (batt_prev == 0)) {
 		systemBattClick = 0;
+
+		if (svpSGlobal.systemPwrLongPress == 1) {
+			svpSGlobal.lcdBacklight = 255;
+			svp_set_backlight(svpSGlobal.lcdBacklight);
+		}
+
 		svpSGlobal.systemPwrLongPress = 0;
 		if (batt_overlay_flag == 0) {
 			destroyOverlay();

@@ -686,6 +686,10 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 		}
 		pscg_set_event(optLcdBacklight, EV_NONE, &sda_sys_con);
 
+		if (pscg_get_value(optLcdBacklight, &sda_sys_con) != svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE) {
+			pscg_set_value(optLcdBacklight, svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE, &sda_sys_con);
+		}
+
 		if (gr2_clicked(optLcdStore, &sda_sys_con)) {
 		  sda_store_config();
 		}
