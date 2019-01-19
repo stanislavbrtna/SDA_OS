@@ -1,8 +1,16 @@
   - lockscreen/autolock
   - system log
-  - split repo to SDA_OS and its hardware base
-    - specify the native API
-      - build it for Proto-Red/Cardboard
-      - build it for SDL2
-      - build it for Wonder in the future
+  - file specifying init state of internal expansion pins
 
+Docs:
+  - specify the native API
+  - specify all the used file formats:
+    - basic "ini" style file
+    - basic "csv" style file
+    - Application:
+      - list and describe used callbacks
+    - Config files:
+      - svp.cfg
+      - alarms.cfg
+      - calib.dat
+    - PPM images
