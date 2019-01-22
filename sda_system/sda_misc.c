@@ -155,6 +155,16 @@ void sda_setbuff(uint8_t * source, uint8_t * target) {
 	}
 }
 
+uint32_t sda_strlen(uint8_t * str) {
+  uint32_t len = 0;
+
+  while (str[len] != 0) {
+    len++;
+  }
+
+  return len;
+}
+
 void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
 	uint16_t a;
 	uint8_t negative = 0;

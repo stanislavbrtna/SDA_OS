@@ -49,5 +49,6 @@ uint32_t  svp_str_add(uint8_t *str, uint8_t *str2);
 void sda_setbuff(uint8_t * source, uint8_t * target);
 void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len);
 uint32_t  sda_strcp(uint8_t *in, uint8_t *out, uint32_t len);
+uint32_t sda_strlen(uint8_t * str);
 
 #endif
