@@ -291,7 +291,9 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
 			type = detect_type(selectedObject);
 			if (type == 2) {
-				sdaSvmLaunch(selectedObject, 0);
+				if(sdaSvmLaunch(selectedObject, 0) == 0) {
+				  sda_show_error_message((uint8_t *)"Error occured while launching file!");
+				}
 			}else if (type == 1) {
 				add_to_stack(selectedObject);
 				sda_setbuff(selectedObjectStr, labelbuff);
@@ -307,6 +309,8 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 				#endif
 				inScreenResizer(inScreen);
     		pscg_set_screen(inScreen, appScreen, &sda_sys_con);
+			} else {
+			  sda_show_error_message((uint8_t *)"Menu file error: Unknown file type!");
 			}
 		}
 
