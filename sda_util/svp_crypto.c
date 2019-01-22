@@ -6,7 +6,7 @@ uint8_t svp_crpyto_unlocked;
 void svp_crypto_init() {
 	uint16_t i = 0;
 	uint8_t default_key[] = "def";
-	
+
 	for(i = 0; default_key[i] != 0; i++) {
 		svp_crypto_key[i] = default_key[i];
 	}
@@ -18,11 +18,11 @@ void svp_crypto_init() {
 uint8_t svp_crypto_unlock(uint8_t * key) {
 	static uint8_t fails;
 	uint16_t i = 0;
-	
+
 	if (fails >= 5) {
 		return 3;
 	}
-	
+
 	while (svp_crypto_key[i] != 0) {
 		if ((key[i] == 0) && (svp_crypto_key[i] != 0)) {
 			svp_crpyto_unlocked = 0;
@@ -36,7 +36,7 @@ uint8_t svp_crypto_unlock(uint8_t * key) {
 		}
 		i++;
 	}
-	
+
 	if (key[i] != 0) {
 		fails++;
 		return 2;
@@ -51,7 +51,7 @@ void svp_crypto_lock() {
 }
 
 uint8_t svp_crypto_change_key(uint8_t * new_key) {
-	
+
 	if (!svp_crpyto_unlocked) {
 		return 1;
 	}
@@ -59,7 +59,7 @@ uint8_t svp_crypto_change_key(uint8_t * new_key) {
 	for(uint16_t i = 0; (new_key[i] != 0) && (i < KEY_LEN_MAX); i++) {
 		svp_crypto_key[i] = new_key[i];
 	}
-	
+
 	return 0;
 }
 
@@ -69,28 +69,28 @@ uint8_t svp_encrypt(uint8_t * fname) {
 	uint8_t prevVal;
 	uint32_t keyLen;
 	uint32_t i;
-	
+
 	if (!svp_crpyto_unlocked) {
 		return 1;
 	}
-	
+
 	if(!svp_fopen_rw(&source, fname)) {
 		return 1;
 	}
-	
+
 	i = 0;
-	keyLen = 0;
+
 	while(svp_crypto_key[i] != 0){
 		i++;
 	}
 	keyLen = i;
-	
+
 	if (svp_feof(&source)){
 		return 0;
 	}
 	//read
 	nextchar = svp_fread_u8(&source);
-	
+
 	i = 0;
 	prevVal = 0;
 	while(!svp_feof(&source)) {
@@ -102,9 +102,9 @@ uint8_t svp_encrypt(uint8_t * fname) {
 		nextchar = svp_fread_u8(&source);
 		i++;
 	}
-	
+
 	svp_fclose(&source);
-	
+
 	return 0;
 }
 
@@ -114,33 +114,33 @@ uint8_t svp_decrypt(uint8_t * fname) {
 	uint8_t prevVal;
 	uint32_t keyLen;
 	uint32_t i;
-	
+
 	if (!svp_crpyto_unlocked) {
 		return 1;
 	}
-	
+
 	if(!svp_fopen_rw(&source, fname)) {
 		return 1;
 	}
-	
+
 	i = 0;
 	keyLen = 0;
 	while(svp_crypto_key[i] != 0) {
 		i++;
 	}
 	keyLen = i;
-	
+
 	//read
 	if (svp_feof(&source)) {
 		return 0;
 	}
-	
+
 	nextchar = svp_fread_u8(&source);
-	
+
 	if (svp_feof(&source)) {
 		return 0;
 	}
-	
+
 	i = 0;
 	prevVal = 0;
 	while(!svp_feof(&source)) {
@@ -153,8 +153,8 @@ uint8_t svp_decrypt(uint8_t * fname) {
 		nextchar = svp_fread_u8(&source);
 		i++;
 	}
-	
+
 	svp_fclose(&source);
-	
+
 	return 0;
 }

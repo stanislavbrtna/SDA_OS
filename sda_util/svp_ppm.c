@@ -108,9 +108,6 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
 	fpos_line_begin = fpos;
 	laneScaleCnt = 0;
 
-	r = 0;
-	g = 0;
-	b = 0;
 	uint8_t rgtmp[3];
 
 	while (1) {
