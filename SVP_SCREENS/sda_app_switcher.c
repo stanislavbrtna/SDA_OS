@@ -35,6 +35,38 @@ static uint16_t close_all;
 static uint16_t scrollbar;
 static uint16_t numberOfApps;
 
+static uint8_t niceSuspendName[MAX_OF_SAVED_PROC][35];
+
+
+static void reloadNiceNames() {
+  uint8_t *buff;
+  uint32_t len;
+  uint16_t slash = 0;
+
+  for(uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+    buff = svmGetSuspendedName(x);
+
+    if (buff == 0) {
+      continue;
+    }
+
+    len = sda_strlen(buff);
+
+    for(uint16_t i = 0; i < len; i++) {
+      if (buff[i] == '/') {
+        slash = i;
+      }
+    }
+
+    if (slash == 0) {
+      sda_strcp(buff, niceSuspendName[x], 35);
+    } else {
+      sda_strcp(buff + slash + 1, niceSuspendName[x], 35);
+    }
+
+  }
+}
+
 void taskSwitcherDestructor() {
 	pscg_destroy(task_switcher, &sda_sys_con);
 	valid = 0;
@@ -69,14 +101,17 @@ void taskSwitcherOpen() {
 
 	for(uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
 		appId[n] = svmGetSuspendedId(x);
+
 		if(appId[n] == 0){
 			continue;
 		}
 
+    reloadNiceNames();
+
 		appButtons[n]
 			= pscg_add_button(
 												0, 1 + n, 6, 2 + n,
-												svmGetSuspendedName(x),
+												niceSuspendName[x],
 												task_switcher_inner,
 												&sda_sys_con
 				);

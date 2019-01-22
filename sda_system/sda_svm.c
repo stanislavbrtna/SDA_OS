@@ -218,13 +218,18 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
 	singularId = GetIfSingular(fname);
 	if (singularId) {
 		svmWake(singularId);
-		return 0;
+		return 1;
 	}
 
 	sda_int_to_str(numbuff, (int32_t)nextId, sizeof(numbuff));
 	sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
 	svp_str_add(cacheBuffer, numbuff);
 	svp_str_add(cacheBuffer,(uint8_t *) ".stc");
+
+	if (sda_strlen(fname) > APP_NAME_LEN) {
+	  printf("Application name %s is too long!\n", fname);
+	  return 0;
+	}
 
 	if (svmValid)	{
 		if(svmSuspend()) {
