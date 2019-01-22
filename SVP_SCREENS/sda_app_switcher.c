@@ -41,9 +41,10 @@ static uint8_t niceSuspendName[MAX_OF_SAVED_PROC][35];
 static void reloadNiceNames() {
   uint8_t *buff;
   uint32_t len;
-  uint16_t slash = 0;
+  uint16_t slash;
 
   for(uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+    slash = 0;
     buff = svmGetSuspendedName(x);
 
     if (buff == 0) {
