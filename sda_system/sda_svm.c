@@ -181,7 +181,8 @@ static uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
   newFname[0] = 0;
 
   for (uint16_t i; i < sizeof(dirbuf); i++) {
-    if (i > 4 && dirbuf[i] == 'S' && dirbuf[i-1] == 'P' && dirbuf[i-2] == 'P' && dirbuf[i-3] == 'A') {
+    if ((i < (sizeof(dirbuf) - 4)) && dirbuf[i] == 'A' && dirbuf[i+1] == 'P' && dirbuf[i+2] == 'P' && dirbuf[i+3] == 'S') {
+      i += 3;
       sda_strcp(dirbuf + i + 2, newFname, APP_NAME_LEN);
       sda_strcp("/", newFname + sda_strlen(newFname), APP_NAME_LEN);
       sda_strcp(oldFname, newFname + sda_strlen(newFname), APP_NAME_LEN);
