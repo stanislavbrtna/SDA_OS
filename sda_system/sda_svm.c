@@ -778,7 +778,12 @@ void sdaSvmSave() {
   svp_getcwd(dirbuf, 256);
   svp_switch_main_dir();
   svp_getcwd(path, 256);
-	sda_strcp(dirbuf + sda_strlen(path) + 1, svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
+  if (dirbuf[sda_strlen(path)] == '/') {
+	  sda_strcp(dirbuf + sda_strlen(path) + 1, svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
+	} else {
+	  sda_strcp(dirbuf + sda_strlen(path), svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
+	}
+	//printf("restoring workdir: %s\n", svmMeta.currentWorkDir);
 
 	svmMeta.lcdOffButtons = wrap_get_lcdOffButtons();
 
