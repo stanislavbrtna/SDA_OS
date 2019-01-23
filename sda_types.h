@@ -115,6 +115,7 @@ typedef struct {
 	uint16_t id;
 	uint16_t parentId;
 	uint8_t name[APP_NAME_LEN];
+	uint8_t currentWorkDir[APP_NAME_LEN];
 	uint16_t screen;
 	uint8_t openFileName[64];
 	uint8_t openFileUsed;

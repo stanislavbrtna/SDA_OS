@@ -129,7 +129,7 @@ uint8_t sdaGetRedrawDetect() {
 
 void sdaSvmOnTop() {
 	svp_switch_main_dir();
-	svp_chdir((uint8_t *)"DATA");
+	svp_chdir(svmMeta.currentWorkDir);
 	sdaSlotOnTop(4);
 	svpSGlobal.systemXBtnVisible = 1;
 	svpSGlobal.systemXBtnClick = 0;
@@ -174,6 +174,24 @@ void sdaSvmSetError(uint8_t * str) {
 	pscgErrorString = str;
 }
 
+static uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
+  uint8_t dirbuf[258];
+
+  svp_getcwd(dirbuf, 256);
+  newFname[0] = 0;
+
+  for (uint16_t i; i < sizeof(dirbuf); i++) {
+    if (i > 4 && dirbuf[i] == 'S' && dirbuf[i-1] == 'P' && dirbuf[i-2] == 'P' && dirbuf[i-3] == 'A') {
+      sda_strcp(dirbuf + i + 2, newFname, APP_NAME_LEN);
+      sda_strcp("/", newFname + sda_strlen(newFname), APP_NAME_LEN);
+      sda_strcp(oldFname, newFname + sda_strlen(newFname), APP_NAME_LEN);
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
 // app loading/closing
 
 uint8_t sdaSvmLoadApp(uint8_t *fname, uint8_t *name, uint8_t mode) {
@@ -213,6 +231,9 @@ uint8_t sdaSvmLoadApp(uint8_t *fname, uint8_t *name, uint8_t mode) {
 uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
 	uint8_t cacheBuffer[256];
 	uint8_t numbuff[25];
+	uint8_t dirbuf[258];
+	uint8_t fname_updated[APP_NAME_LEN];
+  svp_getcwd(dirbuf, 256);
 
 	uint16_t singularId = 0;
 	singularId = GetIfSingular(fname);
@@ -239,9 +260,20 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
 	svmValid = 0; // invalidate slot before loading
 	pscg_last_elements_count = pscg_get_element_count(&sda_app_con);
 	set_pscg_workaround_context(&sda_app_con);
-	// move to APPS directory
-	svp_switch_main_dir();
-	svp_chdir((uint8_t *)"APPS");
+  if (parentId != 0) {
+    svp_chdir(dirbuf);
+    // if we do not launch from launcher, we update the path of the executable
+    if (updatePath(fname_updated, fname)) {
+      sda_show_error_message("Executables are only allowed in APPS folder.\n");
+      return 0;
+    }
+    fname = fname_updated;
+  }
+
+  // move to APPS directory
+  svp_switch_main_dir();
+  svp_chdir((uint8_t *)"APPS");
+
 	// loads app
   if (sdaSvmLoadApp(fname, cacheBuffer, 0) != 0) {
     return 0;
@@ -258,7 +290,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
 	svmMeta.openConfUsed = 0;
 	sda_strcp((uint8_t *)"", svmMeta.openCsvName, sizeof(svmMeta.openCsvName));
 	svmMeta.openCsvUsed = 0;
-
+  sda_strcp((uint8_t *)"DATA", svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
 	svmMeta.lcdOffButtons = 0;
 	wrap_set_lcdOffButtons(0);
 
@@ -310,6 +342,7 @@ void sdaSvmCloseApp() {
 
 		storeArguments(argBuff, svmCallRetval, svmCallRetvalType, svmCallRetvalStr, &svm);
 
+    //TODO: when we try to return to an already killed app, sda shows gr2 invalid elements errors
   	if (!sdaSvmLoad(svmMeta.parentId)){
   		svmValid = 0;
   		sdaSlotSetInValid(4);
@@ -630,9 +663,10 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
 
     	storeArguments(argBuff, svmCallArg, svmCallArgType, svmCallArgStr, &svm);
 
-    	sdaSvmSave();
-    	svmValid = 0;
-    	sdaSvmLaunch(svmCallName, svmMeta.id);
+    	if(sdaSvmLaunch(svmCallName, svmMeta.id) == 0) {
+    	  flag_svmCall = 0;
+    	  return 0;
+    	}
 
     	restoreArguments(svmCallArgType, svmCallArg, svmCallArgStr, &svm);
 
@@ -737,6 +771,14 @@ void sdaSvmSave() {
 		svmMeta.openCsvUsed = 1;
 	}
 
+  // get current wd relative to main dir
+	uint8_t dirbuf[258];
+	uint8_t path[258];
+  svp_getcwd(dirbuf, 256);
+  svp_switch_main_dir();
+  svp_getcwd(path, 256);
+	sda_strcp(dirbuf + sda_strlen(path) + 1, svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
+
 	svmMeta.lcdOffButtons = wrap_get_lcdOffButtons();
 
 	sda_files_close();
@@ -750,7 +792,7 @@ void sdaSvmSave() {
 }
 
 uint8_t sdaSvmLoad(uint16_t id) {
-	//SVScloseCache(&svm);
+
 	if(!sdaSvmLoader(id, (uint8_t *) ".svm", &svm, sizeof(svm)))
 		return 0;
 
@@ -769,7 +811,7 @@ uint8_t sdaSvmLoad(uint16_t id) {
 	SVSopenCache(&svm);
 
 	svp_switch_main_dir();
-	svp_chdir((uint8_t *)"DATA");
+	svp_chdir(svmMeta.currentWorkDir);
 
 	if (svmMeta.openFileUsed) {
 		sda_fr_fname_open(svmMeta.openFileName);
@@ -789,7 +831,9 @@ uint8_t sdaSvmLoad(uint16_t id) {
 		wrap_set_lcdOffButtons(0);
 	}
 
-	slotScreen[4] = svmMeta.screen;
+  svp_chdir(svmMeta.currentWorkDir);
+
+  slotScreen[4] = svmMeta.screen;
 	mainScr = slotScreen[4];
 	return 1;
 }
