@@ -55,7 +55,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 	//#!
 
 	//#!##### Get color from RGB
-	//#!    sxMixColor([num] r, [num] g, [num] b)
+	//#!    sys sxMixColor([num] r, [num] g, [num] b)
 	//#!Mixes the right color
 	//#!Return: [num] Color
 	if (sysFuncMatch(argS->callId, "sxMixColor", s)) {
@@ -75,7 +75,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 	}
 
 	//#!##### Set draw area
-	//#!    sxSetArea([num] x1, [num] y1, [num] x2, [num] y2)
+	//#!    sys sxSetArea([num] x1, [num] y1, [num] x2, [num] y2)
 	//#!Sets the draw area
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "sxSetArea", s)) {
@@ -108,7 +108,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 	}
 
 	//#!##### Draw rectangle
-	//#!    sxDrawRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
+	//#!    sys sxDrawRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
 	//#!Draws rectangle
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "sxDrawRect", s)) {
@@ -139,7 +139,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 	}
 
 	//#!##### Draw filled rectangle
-	//#!    sxFillRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
+	//#!    sys sxFillRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
 	//#!Draws rectangle
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "sxFillRect", s)) {
@@ -170,7 +170,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 	}
 
 	//#!##### Draw circle
-	//#!    sxDrawCircle([num] x1, [num] y1, [num] radius, [num]col)
+	//#!    sys sxDrawCircle([num] x1, [num] y1, [num] radius, [num]col)
 	//#!Draws circle
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "sxDrawCircle", s)) {
@@ -199,7 +199,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 	}
 
 	//#!##### Draw filled circle
-	//#!    sxFillCircle([num] x1, [num] y1, [num] radius, [num]col)
+	//#!    sys sxFillCircle([num] x1, [num] y1, [num] radius, [num]col)
 	//#!Fills circle
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "sxFillCircle", s)) {
@@ -228,7 +228,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 	}
 
 	//#!##### Draw line
-	//#!    sxDrawLine([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
+	//#!    sys sxDrawLine([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
 	//#!Draws line
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "sxDrawLine", s)) {
@@ -259,7 +259,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 	}
 
 	//#!##### Draw text
-	//#!    sxDrawText([num] x1, [num] y1, [str] txt, [num]col)
+	//#!    sys sxDrawText([num] x1, [num] y1, [str] txt, [num]col)
 	//#!Draws text
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "sxDrawText", s)) {
@@ -288,7 +288,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 	}
 
 	//#!##### Set text to fit specified width
-	//#!    sxSetTextFit([num] enable, [num] width)
+	//#!    sys sxSetTextFit([num] enable, [num] width)
 	//#!Sets max width for next drawn text
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "sxSetTextFit", s)) {
@@ -310,7 +310,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 	}
 
 	//#!##### Fill area with color
-	//#!    sxClearArea([num]col)
+	//#!    sys sxClearArea([num]col)
 	//#!Clears draw area with goven color
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "sxClearArea", s)) {
@@ -331,7 +331,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 	}
 
 	//#!##### Draws PPM
-	//#!    pDrawPPM([num]x, [num]y, [num]scale, [str]name);
+	//#!    sys pDrawPPM([num]x, [num]y, [num]scale, [str]name);
 	//#!Draws ppm image.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pDrawPPM", s)) {

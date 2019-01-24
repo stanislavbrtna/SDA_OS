@@ -382,8 +382,6 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 		return 0;
 	}
 
-	// TODO: mkdir, rmdir, move
-
 	//#!##### File copy select source
 	//#!    sys fCopySource([str]source);
 	//#!Selects source file for copy operation.

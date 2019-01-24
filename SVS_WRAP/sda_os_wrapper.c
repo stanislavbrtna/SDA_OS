@@ -39,6 +39,8 @@ SOFTWARE.
 //#!
 //#!- API level overhaul -
 //#!660 - SDA version 0.6.6 with all its features
+//#! ...
+//#!720 - SDA version 0.7.2 with all its features
 
 //#!#### Constants
 //#!| Constant | Description |
@@ -149,7 +151,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!#### Gui
 
 	//#!##### Set main application screen
-	//#!    pSetMainScr([num]id);
+	//#!    sys pSetMainScr([num]id);
 	//#!Sets main screen to id
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetMainScr", s)) {
@@ -162,7 +164,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get main application screen
-	//#!    pGetMainScr();
+	//#!    sys pGetMainScr();
 	//#!Gets main screen id
 	//#!Return: [num]id
 	if (sysFuncMatch(argS->callId, "pGetMainScr", s)) {
@@ -175,7 +177,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get redraw flag
-	//#!    getRedraw();
+	//#!    sys getRedraw();
 	//#!Gets redraw flag.
 	//#!Return: [num] 1 if redraw flag is set, otherwise 0
 	if (sysFuncMatch(argS->callId, "getRadraw", s)
@@ -189,7 +191,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Set redraw
-	//#!    pSetRedraw();
+	//#!    sys pSetRedraw();
 	//#!Sets redraw flag
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetRedraw", s)) {
@@ -201,7 +203,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Show Error
-	//#!    error([str]errorText);
+	//#!    sys error([str]errorText);
 	//#!Throws error message
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "error", s)) {
@@ -216,7 +218,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!#### Counters
 
 	//#!##### Set counter
-	//#!    cntSet([num] ms);
+	//#!    sys cntSet([num] ms);
 	//#!Sets system timer, it counts down and stops at zero.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "cntSet", s)) {
@@ -229,7 +231,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Gets counter
-	//#!    cntGet();
+	//#!    sys cntGet();
 	//#!Gets system timer value
 	//#!Return: value of system timer
 	if (sysFuncMatch(argS->callId, "cntGet", s)) {
@@ -243,7 +245,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
 	//#!#### Buttons
 	//#!##### Get button event
-	//#!    btnGetEv([num] btn)
+	//#!    sys btnGetEv([num] btn)
 	//#!Return last button event
 	//#!Return: 0 - none, 1-pressed, 2 - hold, 3 - released
 	if (sysFuncMatch(argS->callId, "btnGetEv", s)) {
@@ -285,7 +287,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Clears button events
-	//#!    btnClrEv([num]btn)
+	//#!    sys btnClrEv([num]btn)
 	//#!Sets button event to EV_NONE
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "btnClrEv", s)) {
@@ -329,7 +331,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!#### Text field handling
 
 	//#!##### Handle text input
-	//#!    pHandleText([num]id, [str]text);
+	//#!    sys pHandleText([num]id, [str]text);
 	//#!Handles text input fields. Id is field id. Text is default text value.
 	//#!Return: [str] New modified text value
 	if (sysFuncMatch(argS->callId, "pHandleText", s)) {
@@ -436,7 +438,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!#### Keyboard
 
 	//#!##### Hide keyboard
-	//#!    keybHide();
+	//#!    sys keybHide();
 	//#!Hides system keyboard.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "keybHide", s)) {
@@ -448,7 +450,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Show keyboard
-	//#!    keybShow();
+	//#!    sys keybShow();
 	//#!Shows system keyboard
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "keybShow", s)) {
@@ -476,7 +478,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get if system sound is disabled
-	//#!    getMute();
+	//#!    sys getMute();
 	//#!Returns system mute
 	//#!Return: [num]1 if system is on mute.
 	if (sysFuncMatch(argS->callId, "getMute", s)) {
@@ -493,7 +495,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!
 
 	//#!##### Init calendar widget
-	//#!    wCalInit([num]year, [num]month, [num]day) #return: cal screen ID
+	//#!    sys wCalInit([num]year, [num]month, [num]day) #return: cal screen ID
 	//#!Creates callendar widget screen.
 	//#!With given year, month and day.
 	//#!Return: [num]Callendar widget screen id.
@@ -510,7 +512,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Select date
-	//#!    wCalSelect([num]year, [num]month, [num]day);
+	//#!    sys wCalSelect([num]year, [num]month, [num]day);
 	//#!Sets year, month and day to callendar widget.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "wCalSelect", s)) {
@@ -525,7 +527,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Update
-	//#!    wCalUpdate();
+	//#!    sys wCalUpdate();
 	//#!Updates callendar widget.
 	//#!Return: [num]1 when callendar is clicked.
 	if (sysFuncMatch(argS->callId, "wCalUpdate", s)) {
@@ -538,7 +540,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Mark day
-	//#!    wCalMark([num]day);
+	//#!    sys wCalMark([num]day);
 	//#!Marks day in callendar widget.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "wCalMark", s)) {
@@ -551,7 +553,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get selected day
-	//#!    wCalGetDay();
+	//#!    sys wCalGetDay();
 	//#!Returns selected day.
 	//#!Return: [num]day
   if (sysFuncMatch(argS->callId, "wCalGetDay", s)) {
@@ -568,7 +570,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!
 
 	//#!##### Lock LCD sleep
-	//#!    sleepLock([num]val);
+	//#!    sys sleepLock([num]val);
 	//#!Sets sleep lock value. On 1 system wont go to sleep.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "sleepLock", s)) {
@@ -581,7 +583,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Turn on the LCD
-	//#!    lcdWake();
+	//#!    sys lcdWake();
 	//#!Wakes LCD screen.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "lcdWake", s)) {
@@ -593,7 +595,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get LCD state
-	//#!    getLcdState();
+	//#!    sys getLcdState();
 	//#!Gets state of lcd.
 	//#!Return: 1 if lcd is on, otherwise 0
 	if (sysFuncMatch(argS->callId, "getLcdState", s)) {
@@ -611,7 +613,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
 
 	//#!##### Wake the SDA from sleep
-	//#!    sdaWake();
+	//#!    sys sdaWake();
 	//#!Wakes SDA without turning the screen on.
 	//#!SDA will wake in the low power mode and will sleep again after the lcd shutdown time.
 	//#!Return: None
@@ -625,8 +627,8 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
 
 	//#!##### Quit program
-	//#!    exit();
-	//#!Stops program execution after exiting update() and exit()
+	//#!    sys exit();
+	//#!Stops program execution after exiting *update* function and performing *exit* function.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "exit", s)) {
 		if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -637,7 +639,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Check API level
-	//#!    checkSVSVer([num] API_Level);
+	//#!    sys checkSVSVer([num] API_Level);
 	//#!Checks for API Lvl support.
 	//#!If host level is below given API_Level, error is thrown and app is terminated.
 	//#!Return: None
@@ -657,7 +659,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get API level
-	//#!    getSVSVer();
+	//#!    sys getSVSVer();
 	//#!Checks for API Lvl support.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "getSVSVer", s)) {
@@ -671,7 +673,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get system language
-	//#!    sdaGetLang();
+	//#!    sys sdaGetLang();
 	//#!Returns SDA_OS language.
 	//#!Return: 0 if czech, 1 if english, also defines SVP_LANG_CZ SVP_LANG_ENG
 	if (sysFuncMatch(argS->callId, "sdaGetLang", s)) {
@@ -687,7 +689,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!#### Text obfuscation
 
 	//#!##### Unlock
-	//#!    crUnLock([str]password);
+	//#!    sys crUnLock([str]password);
 	//#!Unlocks svp encryption
 	//#!Return: [num] 0 if success, 2 if error, 3 if locked
 	if (sysFuncMatch(argS->callId, "crUnLock", s)) {
@@ -701,7 +703,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Lock
-	//#!    crLock();
+	//#!    sys crLock();
 	//#!Locks svp encryption
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "crLock", s)) {
@@ -713,7 +715,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Encrypt file
-	//#!    crEncrypt([str]fname);
+	//#!    sys crEncrypt([str]fname);
 	//#!Encrypts file.
 	//#!Return: 0 if success, 1 if error
 	if (sysFuncMatch(argS->callId, "crEncrypt", s)) {
@@ -727,7 +729,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Decrypt file
-	//#!    crDecrypt([str]fname);
+	//#!    sys crDecrypt([str]fname);
 	//#!Encrypts file.
 	//#!Return: 0 if success, 1 if error
 	if (sysFuncMatch(argS->callId, "crDecrypt", s)) {
@@ -744,7 +746,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
 
 	//#!##### Set process as singular
-	//#!    setSingular();
+	//#!    sys setSingular();
 	//#!Sets current process as singular.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "setSingular", s)) {
@@ -756,7 +758,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Launch subprocess
-	//#!    subProcess([str]fileName, [str/ref] callback, [str] arg0, [str] arg1, [str] arg2);
+	//#!    sys subProcess([str]fileName, [str/ref] callback, [str] arg0, [str] arg1, [str] arg2);
 	//#!Runs child process
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "subProcess", s)) {
@@ -779,7 +781,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Return data to parent process
-	//#!    subRetval([str] arg0, [str] arg1, [str] arg2);
+	//#!    sys subRetval([str] arg0, [str] arg1, [str] arg2);
 	//#!Sets values that will be returned to parent process
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "subRetval", s)) {
@@ -800,7 +802,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!#### Sound and notification LED
 
 	//#!##### Beep the speaker
-  //#!    beep();
+  //#!    sys beep();
   //#!Initiates system beep.
   //#!Return: None
    if (sysFuncMatch(argS->callId, "beep", s)) {
@@ -813,7 +815,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Set beep param to default
-	//#!    beepDef();
+	//#!    sys beepDef();
 	//#!Sets beep to its default values.
 	//#!Return: None
   if (sysFuncMatch(argS->callId, "beepDef", s)) {
@@ -967,7 +969,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Set notification led pattern
-	//#!    sdaSetLed([num]led_type);
+	//#!    sys sdaSetLed([num]led_type);
 	//#!Sets notification led to a given pattern, uses:
 	//#!LED_ON, LED_OFF ,LED_BLINK, LED_SHORTBLINK, LED_ALARM
 	//#!Return: None
@@ -1003,7 +1005,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Define direction of pins on the internal expansion
-	//#!    iPinDef([num]Pin, [num]type, [num]pullUp);
+	//#!    sys iPinDef([num]Pin, [num]type, [num]pullUp);
 	//#!Sets direction of internal expansion pins.
 	//#!Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
 	//#!Pin number is number of pin on the connector, can be read from schematics.
@@ -1023,7 +1025,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Set state of pins on the internal expansion
-	//#!    iPinSet([num]Pin, [num]val);
+	//#!    sys iPinSet([num]Pin, [num]val);
 	//#!Sets state of internal expansion pin.
 	//#!Value 1 sets the pin high, value 0 sets it low.
 	//#!Pin number is number of pin on the connector, can be read from schematics.
@@ -1041,7 +1043,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get state of pins on the internal expansion
-	//#!    iPinGet([num]Pin, [num]val);
+	//#!    sys iPinGet([num]Pin, [num]val);
 	//#!Gets state of internal expansion pin.
 	//#!Pin number is number of pin on the connector, can be read from schematics.
 	//#!Return: 1 if the pin is high, 0 if it is low.
@@ -1058,7 +1060,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Define direction of pins on the expansion
-	//#!    ePinDef([num]Pin, [num]type, [num]pullUp);
+	//#!    sys ePinDef([num]Pin, [num]type, [num]pullUp);
 	//#!Sets direction of external expansion pins.
 	//#!Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
 	//#!Pin number is number of pin on the connector, can be read from schematics.
@@ -1078,7 +1080,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Set state of pins on the expansion
-	//#!    ePinSet([num]Pin, [num]val);
+	//#!    sys ePinSet([num]Pin, [num]val);
 	//#!Sets state of external expansion pin.
 	//#!Value 1 sets the pin high, value 0 sets it low.
 	//#!Pin number is number of pin on the connector, can be read from schematics.
@@ -1096,7 +1098,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get state of pins on the expansion
-	//#!    ePinGet([num]Pin, [num]val);
+	//#!    sys ePinGet([num]Pin, [num]val);
 	//#!Gets state of external expansion pin.
 	//#!Pin number is number of pin on the connector, can be read from schematics.
 	//#!Return: 1 if the pin is high, 0 if it is low.
@@ -1112,7 +1114,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get ADC readout
-	//#!    eADCRead();
+	//#!    sys eADCRead();
 	//#!Gets state of external expansion pin.
 	//#!Pin number is number of pin on the connector, can be read from schematics.
 	//#!Return: [float] measured voltage in volts.

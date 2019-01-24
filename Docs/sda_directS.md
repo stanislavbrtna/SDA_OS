@@ -3,47 +3,47 @@ Automatically generated documentation on wrap_directS.c
 ####	Color & Areas
 
 ##### Get color from RGB
-    sxMixColor([num] r, [num] g, [num] b)
+    sys sxMixColor([num] r, [num] g, [num] b)
 Mixes the right color
 Return: [num] Color
 ##### Set draw area
-    sxSetArea([num] x1, [num] y1, [num] x2, [num] y2)
+    sys sxSetArea([num] x1, [num] y1, [num] x2, [num] y2)
 Sets the draw area
 Return: None
 ##### Draw rectangle
-    sxDrawRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
+    sys sxDrawRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
 Draws rectangle
 Return: None
 ##### Draw filled rectangle
-    sxFillRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
+    sys sxFillRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
 Draws rectangle
 Return: None
 ##### Draw circle
-    sxDrawCircle([num] x1, [num] y1, [num] radius, [num]col)
+    sys sxDrawCircle([num] x1, [num] y1, [num] radius, [num]col)
 Draws circle
 Return: None
 ##### Draw filled circle
-    sxFillCircle([num] x1, [num] y1, [num] radius, [num]col)
+    sys sxFillCircle([num] x1, [num] y1, [num] radius, [num]col)
 Fills circle
 Return: None
 ##### Draw line
-    sxDrawLine([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
+    sys sxDrawLine([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
 Draws line
 Return: None
 ##### Draw text
-    sxDrawText([num] x1, [num] y1, [str] txt, [num]col)
+    sys sxDrawText([num] x1, [num] y1, [str] txt, [num]col)
 Draws text
 Return: None
 ##### Set text to fit specified width
-    sxSetTextFit([num] enable, [num] width)
+    sys sxSetTextFit([num] enable, [num] width)
 Sets max width for next drawn text
 Return: None
 ##### Fill area with color
-    sxClearArea([num]col)
+    sys sxClearArea([num]col)
 Clears draw area with goven color
 Return: None
 ##### Draws PPM
-    pDrawPPM([num]x, [num]y, [num]scale, [str]name);
+    sys pDrawPPM([num]x, [num]y, [num]scale, [str]name);
 Draws ppm image.
 Return: None
 #### Touch API
