@@ -137,7 +137,6 @@ void sdaReloadAlarms() {
 	uint8_t keybuff[25];
 	uint8_t numbuff[10];
 	int32_t maxId;
-	int32_t maxIdFile;
 	int32_t alarmTime = 0;
 	uint32_t alarmId = 0;
 	int32_t alarmParam = 0;
@@ -151,12 +150,6 @@ void sdaReloadAlarms() {
   }
 
   maxId = 1;
-
-  maxIdFile = svp_conf_key_read_i32(&conffile, (uint8_t *)"maxId", 0);
-
-  if (maxIdFile == 0) {
-  	maxIdFile = 1000;
-  }
 
   sda_int_to_str(numbuff, maxId, sizeof(numbuff));
 	sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));

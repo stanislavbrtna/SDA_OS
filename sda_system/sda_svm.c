@@ -180,7 +180,7 @@ static uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
   svp_getcwd(dirbuf, 256);
   newFname[0] = 0;
 
-  for (uint16_t i; i < sizeof(dirbuf); i++) {
+  for (uint16_t i = 0; i < sizeof(dirbuf); i++) {
     if ((i < (sizeof(dirbuf) - 4)) && dirbuf[i] == 'A' && dirbuf[i+1] == 'P' && dirbuf[i+2] == 'P' && dirbuf[i+3] == 'S') {
       i += 3;
       sda_strcp(dirbuf + i + 2, newFname, APP_NAME_LEN);

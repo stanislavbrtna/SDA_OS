@@ -74,16 +74,21 @@ uint8_t svp_encrypt(uint8_t * fname) {
 		return 1;
 	}
 
-	if(!svp_fopen_rw(&source, fname)) {
-		return 1;
-	}
-
 	i = 0;
 
 	while(svp_crypto_key[i] != 0){
 		i++;
 	}
 	keyLen = i;
+
+	if (keyLen == 0) {
+	  printf("crypto: Key must not be empty!\n");
+		return 1;
+	}
+
+	if(!svp_fopen_rw(&source, fname)) {
+		return 1;
+	}
 
 	if (svp_feof(&source)){
 		return 0;
@@ -119,16 +124,21 @@ uint8_t svp_decrypt(uint8_t * fname) {
 		return 1;
 	}
 
-	if(!svp_fopen_rw(&source, fname)) {
-		return 1;
-	}
-
 	i = 0;
-	keyLen = 0;
+
 	while(svp_crypto_key[i] != 0) {
 		i++;
 	}
 	keyLen = i;
+
+ 	if (keyLen == 0) {
+	  printf("crypto: Key must not be empty!\n");
+		return 1;
+	}
+
+	if(!svp_fopen_rw(&source, fname)) {
+		return 1;
+	}
 
 	//read
 	if (svp_feof(&source)) {

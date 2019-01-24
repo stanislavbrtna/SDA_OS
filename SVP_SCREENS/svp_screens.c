@@ -68,7 +68,6 @@ void timeToStr(uint8_t * buff, uint32_t val) {
     buff[1] = ((val / 3600) / 24) / 10 % 10 + 48;
     buff[0] = ((val / 3600) / 24) / 100 % 10 + 48;
   }
-  a = 0;
 
   while (buff[0] == ' ') {
     for (a = 0; a < 16; a++) {

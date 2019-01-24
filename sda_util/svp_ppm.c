@@ -96,7 +96,7 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
 	}
 
 	ch2 = 0;
-	a = 0;
+
 	while(ch2 != 10) {
 		svp_fseek(&fp, sizeof(uint8_t) * (fpos));
 		ch2 = svp_fread_u8(&fp);
@@ -175,15 +175,17 @@ uint16_t ppm_get_width(uint8_t *filename) {
 	uint16_t img_width = 0;
 	uint16_t img_height = 0;
 
+	ch[0] = 0;
+
 	if (!svp_fopen_read(&fp, filename)) {
-	  printf("draw_ppm: Error while opening file %s!\n",filename);
+	  printf("ppm_get_width: Error while opening file %s!\n",filename);
 	  return 0;
 	}
 
 	ch[0] = svp_fread_u8(&fp);
 	ch[1] = svp_fread_u8(&fp);
 	if ((ch[0] != 'P') && (ch[1] != '6')) {
-		printf("draw_ppm: Error: wrong header\n");
+		printf("ppm_get_width: Error: wrong header\n");
 		return 0;
 	}
 	fpos = 3;
@@ -206,6 +208,10 @@ uint16_t ppm_get_width(uint8_t *filename) {
 	ch[a] = 10;
 
 	a = 0;
+	if (ch[0] == 0) {
+	  printf("ppm_get_width: Error: file header corruped!\n");
+	  return 0;
+	}
 	while (ch[a] != ' ') {
 		img_width *= 10;
 		img_width += ch[a] - 48;
