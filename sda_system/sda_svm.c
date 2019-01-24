@@ -174,6 +174,10 @@ void sdaSvmSetError(uint8_t * str) {
 	pscgErrorString = str;
 }
 
+void svmSetLaunchCWDflag(uint8_t val) {
+  svmMeta.launchFromCWD = val;
+}
+
 static uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
   uint8_t dirbuf[258];
 
@@ -261,7 +265,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
 	svmValid = 0; // invalidate slot before loading
 	pscg_last_elements_count = pscg_get_element_count(&sda_app_con);
 	set_pscg_workaround_context(&sda_app_con);
-  if (parentId != 0) {
+  if (parentId != 0 && svmMeta.launchFromCWD == 1) {
     svp_chdir(dirbuf);
     // if we do not launch from launcher, we update the path of the executable
     if (updatePath(fname_updated, fname)) {
@@ -293,6 +297,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
 	svmMeta.openCsvUsed = 0;
   sda_strcp((uint8_t *)"DATA", svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
 	svmMeta.lcdOffButtons = 0;
+	svmMeta.launchFromCWD = 0;
 	wrap_set_lcdOffButtons(0);
 
 	// move to DATA

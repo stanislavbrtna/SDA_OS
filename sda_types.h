@@ -124,6 +124,7 @@ typedef struct {
 	uint8_t openCsvName[64];
 	uint8_t openCsvUsed;
 	uint8_t lcdOffButtons;
+	uint8_t launchFromCWD;
 } sdaSvmMetadata;
 
 #endif

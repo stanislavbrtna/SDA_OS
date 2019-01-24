@@ -192,6 +192,11 @@ Return: None
     sys subProcess([str]fileName, [str/ref] callback, [str] arg0, [str] arg1, [str] arg2);
 Runs child process
 Return: None
+##### Enable launching subprocess from cwd
+    sys subProcCWD([num] val);
+Sets if subprocesses are launched from cwd or from APPS folder.
+val: 0 - APPS folder,1 - cwd
+Return: None
 ##### Return data to parent process
     sys subRetval([str] arg0, [str] arg1, [str] arg2);
 Sets values that will be returned to parent process

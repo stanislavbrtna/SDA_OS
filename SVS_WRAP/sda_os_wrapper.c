@@ -780,6 +780,20 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	  return 1;
 	}
 
+	//#!##### Enable launching subprocess from cwd
+	//#!    sys subProcCWD([num] val);
+	//#!Sets if subprocesses are launched from cwd or from APPS folder.
+	//#!val: 0 - APPS folder,1 - cwd
+	//#!Return: None
+	if (sysFuncMatch(argS->callId, "subProcCWD", s)) {
+	  argType[1] = SVS_TYPE_NUM;
+		if(sysExecTypeCheck(argS, argType, 1, s)) {
+		  return 0;
+		}
+		svmSetLaunchCWDflag(argS->arg[1].val_s);
+	  return 1;
+	}
+
 	//#!##### Return data to parent process
 	//#!    sys subRetval([str] arg0, [str] arg1, [str] arg2);
 	//#!Sets values that will be returned to parent process
