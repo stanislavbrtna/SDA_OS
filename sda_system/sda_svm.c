@@ -187,8 +187,10 @@ static uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
   for (uint16_t i = 0; i < sizeof(dirbuf); i++) {
     if ((i < (sizeof(dirbuf) - 4)) && dirbuf[i] == 'A' && dirbuf[i+1] == 'P' && dirbuf[i+2] == 'P' && dirbuf[i+3] == 'S') {
       i += 3;
-      sda_strcp(dirbuf + i + 2, newFname, APP_NAME_LEN);
-      sda_strcp("/", newFname + sda_strlen(newFname), APP_NAME_LEN);
+      if (dirbuf[i+1] != 0) { // if we are in apps root folder, we don't need the slash
+        sda_strcp(dirbuf + i + 2, newFname, APP_NAME_LEN);
+        sda_strcp("/", newFname + sda_strlen(newFname), APP_NAME_LEN);
+      }
       sda_strcp(oldFname, newFname + sda_strlen(newFname), APP_NAME_LEN);
       return 0;
     }
