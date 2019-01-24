@@ -42,6 +42,16 @@ void pm_keyboard_draw_key(
 	}
 }
 
+static void draw_esc_icon(int16_t x, int16_t y) {
+  LCD_DrawLine(x + 8, y + 32 - 8 , x + 32 - 8, y + 8, sda_current_con->border_color);
+
+	LCD_DrawLine(x + 4, y + 32 - 16 , x + 4, y + 32 - 4 , sda_current_con->border_color);
+	LCD_DrawLine(x + 4, y + 32 - 4 , x + 16, y + 32 - 4, sda_current_con->border_color);
+
+	LCD_DrawLine(x + 8, y + 32 - 8 , x + 4, y + 32 - 16 , sda_current_con->border_color);
+	LCD_DrawLine(x + 8, y + 32 - 8 , x + 16, y + 32 - 4, sda_current_con->border_color);
+
+}
 
 void svp_draw_keyboard(uint16_t x, uint16_t y, psvcKbdLayout *layout) {
 	uint16_t i, line = 0;
@@ -130,10 +140,14 @@ void svp_draw_keyboard(uint16_t x, uint16_t y, psvcKbdLayout *layout) {
 	                     y + line * 32,
 	                     x + 32 * (i + 1),
 	                     y + (line + 1) * 32,
-	                     layout->keyStr[37],
+	                     (uint8_t *) "",
 	                     0,
 	                     1
 	                    );
+  draw_esc_icon(x + 32 * (i), y + line * 32);
+
+
+
 	i++;
 	pm_keyboard_draw_key(
 	                     x + 32 * i,
@@ -322,7 +336,7 @@ uint8_t svp_touch_keyboard(
 	}
 	line++;
 	i=0;
-	if(pm_keyboard_touch_key(event,&prevState[37],x+32*(i),y+line*32,x+32*(i+1),y+(line+1)*32,layout->keyStr[37],1, touch_x, touch_y)){
+	if(pm_keyboard_touch_key(event,&prevState[37],x+32*(i),y+line*32,x+32*(i+1),y+(line+1)*32,(uint8_t *)"",1, touch_x, touch_y)){
 		//retStr=layout->key[37];
 		retStrCpy(retStr, layout->key[37]); //esc
 		return 2;
