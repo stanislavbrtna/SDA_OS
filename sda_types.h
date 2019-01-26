@@ -96,8 +96,8 @@ typedef struct {
 	volatile uint8_t systemOptClick;
 	volatile uint8_t systemPwrLongPress;
 
-  volatile pwrModeType  powerMode;
-	volatile pwrStateType powerState;
+  volatile pwrModeType  powerMode; // normal or sleep
+  volatile pwrStateType powerState; // specifies for how long the sda waits for input
 } svpStatusStruct;
 
 //TODO: specify what should be part of os and what should be part of touch driver
