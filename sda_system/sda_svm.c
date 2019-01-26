@@ -445,7 +445,9 @@ uint8_t svmWake(uint16_t id) {
 
 	for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
 		if (svmSavedProcId[x] == id && svmSavedProcValid[x] == 1) {
-			sdaSvmLoad(id);
+			if (sdaSvmLoad(id) == 0) {
+			  return 1;
+			}
 			sdaSvmOnTop();
 			if(functionExists(WAKEUP_FUNCTION, &svm)) {
 				commExec(WAKEUP_FUNCTION, &svm);
@@ -620,8 +622,6 @@ void sdaSvmInit() {
 	nextId = 1;
 }
 
-// run function
-
 static uint8_t svmCheckAndExit() {
 	if((svpSGlobal.systemXBtnClick) || (errCheck(&svm) != 0)) {
     sdaSvmCloseApp();
@@ -631,7 +631,7 @@ static uint8_t svmCheckAndExit() {
 }
 
 uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
-	if (init){
+	if (init) {
 		sdaSvmInit();
 		return 0;
 	}
@@ -812,11 +812,6 @@ void sdaSvmSave() {
 }
 
 uint8_t sdaSvmLoad(uint16_t id) {
-
-  if(svmGetSuspendedId(id)) {
-    printf("sdaSvmLoad: Error: Trying to load invalid app id.");
-    return 0;
-  }
 
 	if(!sdaSvmLoader(id, (uint8_t *) ".svm", &svm, sizeof(svm)))
 		return 0;
