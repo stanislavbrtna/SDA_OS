@@ -177,11 +177,12 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get redraw flag
-	//#!    sys getRedraw();
-	//#!Gets redraw flag.
+	//#!    sys pGetRedraw();
+	//#!Gets redraw flag. *getRedraw* also works.
 	//#!Return: [num] 1 if redraw flag is set, otherwise 0
 	if (sysFuncMatch(argS->callId, "getRadraw", s)
-	     || sysFuncMatch(argS->callId, "getRedraw", s)) {
+	     || sysFuncMatch(argS->callId, "getRedraw", s)
+	     || sysFuncMatch(argS->callId, "pGetRedraw", s)) {
 		if(sysExecTypeCheck(argS, argType, 0, s)) {
 		  return 0;
 		}

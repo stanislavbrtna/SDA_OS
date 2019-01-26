@@ -49,8 +49,8 @@ Return: None
 Gets main screen id
 Return: [num]id
 ##### Get redraw flag
-    sys getRedraw();
-Gets redraw flag.
+    sys pGetRedraw();
+Gets redraw flag. *getRedraw* also works.
 Return: [num] 1 if redraw flag is set, otherwise 0
 ##### Set redraw
     sys pSetRedraw();
