@@ -569,7 +569,6 @@ static void storeArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_
 	  	svmArgs[z] = prac2;
   	}
 	}
-
 }
 
 void sdaSvmKillApp_handle() {
@@ -657,7 +656,15 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
     if (svmCheckAndExit()) {
     	return 0;
     }
-    commExec((uint8_t *)"update", &svm);
+
+    if(functionExists((uint8_t *)"update", &svm)) {
+      commExec((uint8_t *)"update", &svm);
+    } else {
+      sdaSvmCloseApp();
+      printf("No update function found.\n");
+      sda_show_error_message("No update function found.\n");
+      return 0;
+    }
     redrawDetect = 0;
 
     if (svm.handbrake == 1) {
@@ -805,6 +812,11 @@ void sdaSvmSave() {
 }
 
 uint8_t sdaSvmLoad(uint16_t id) {
+
+  if(svmGetSuspendedId(id)) {
+    printf("sdaSvmLoad: Error: Trying to load invalid app id.");
+    return 0;
+  }
 
 	if(!sdaSvmLoader(id, (uint8_t *) ".svm", &svm, sizeof(svm)))
 		return 0;
