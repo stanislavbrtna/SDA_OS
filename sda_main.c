@@ -479,8 +479,8 @@ uint8_t sda_main_loop() {
 
   // autoexec sits in the APPS directory, it's executed upon boot, if found
   if (init == 1) {
-    if (svp_fexists("autoexec.svs")) {
-      if (sdaSvmLaunch("autoexec.svs", 0) == 1) {
+    if (svp_fexists((uint8_t *)"autoexec.svs")) {
+      if (sdaSvmLaunch((uint8_t *)"autoexec.svs", 0) == 1) {
         // if it loaded ok, we run it a few times for it to execute the exit call
         sdaSvmRun(0, 1);
         sdaSvmRun(0, 1);
