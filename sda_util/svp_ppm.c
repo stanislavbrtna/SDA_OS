@@ -22,10 +22,10 @@ SOFTWARE.
 
 #include "../SDA_OS.h"
 
-uint8_t ppm_R;
-uint8_t ppm_G;
-uint8_t ppm_B;
-uint8_t ppm_use_pmc;
+static uint8_t ppm_R;
+static uint8_t ppm_G;
+static uint8_t ppm_B;
+static uint8_t ppm_use_pmc;
 
 void svp_ppm_set_pmc(uint8_t enable, uint16_t color) {
   ppm_use_pmc = enable;
@@ -52,6 +52,17 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
 	int16_t xi = 0;
 	int16_t yi = 0;
 	uint8_t n, laneScaleCnt;
+
+  uint32_t fnameLen = 0;
+
+  printf("filename: %s %u\n", filename, sda_strlen(filename));
+  fnameLen = sda_strlen(filename);
+
+  if(filename[fnameLen - 3] == 'p' && filename[fnameLen - 2] == '1' && filename[fnameLen-1] == '6') {
+    sda_draw_p16(x, y, filename);
+    return;
+  }
+
 
 	if (!svp_fopen_read(&fp,filename)) {
 	  printf("draw_ppm: Error while opening file %s!\n", filename);

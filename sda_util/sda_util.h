@@ -30,8 +30,10 @@ SOFTWARE.
 #define SVP_SEPARATOR '|'
 
 void svp_ppm_set_pmc(uint8_t enable, uint16_t color);
-void draw_ppm(uint16_t x,uint16_t y, uint8_t scale,uint8_t *filename);
+void draw_ppm(uint16_t x,uint16_t y, uint8_t scale, uint8_t *filename);
 uint16_t ppm_get_width(uint8_t *filename);
+
+uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename);
 
 void svp_calibrator();
 
