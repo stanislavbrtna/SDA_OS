@@ -2,6 +2,7 @@
 #define SDA_P16_H
 
 typedef struct {
+  uint8_t version;
   uint16_t imageWidth;
   uint16_t imageHeight;
   uint8_t  storageMode;

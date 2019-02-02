@@ -32,8 +32,21 @@ void svp_ppm_set_pmc(uint8_t enable, uint16_t color) {
   ppm_R = (uint8_t)(((float)((color>>11)&0x1F)/32)*256);
   ppm_G = (uint8_t)(((float)(((color&0x07E0)>>5)&0x3F)/64)*256);
   ppm_B = (uint8_t)(((float)(color&0x1F)/32)*256);
+
+  sda_p16_set_pmc(enable, color);
 }
 
+uint8_t get_if_p16(uint8_t * filename) {
+  uint32_t fnameLen = 0;
+
+  fnameLen = sda_strlen(filename);
+
+  if(filename[fnameLen - 3] == 'p' && filename[fnameLen - 2] == '1' && filename[fnameLen-1] == '6') {
+    return 1;
+  }
+
+  return 0;
+}
 
 void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
 	#ifdef PC
@@ -53,12 +66,8 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
 	int16_t yi = 0;
 	uint8_t n, laneScaleCnt;
 
-  uint32_t fnameLen = 0;
 
-  printf("filename: %s %u\n", filename, sda_strlen(filename));
-  fnameLen = sda_strlen(filename);
-
-  if(filename[fnameLen - 3] == 'p' && filename[fnameLen - 2] == '1' && filename[fnameLen-1] == '6') {
+  if(get_if_p16(filename)) {
     sda_draw_p16(x, y, filename);
     return;
   }
@@ -185,6 +194,10 @@ uint16_t ppm_get_width(uint8_t *filename) {
 	uint32_t fpos = 0;
 	uint16_t img_width = 0;
 	uint16_t img_height = 0;
+
+  if(get_if_p16(filename)){
+    return sda_p16_get_width(filename);
+  }
 
 	ch[0] = 0;
 

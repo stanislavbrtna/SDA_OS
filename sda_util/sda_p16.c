@@ -23,59 +23,71 @@ SOFTWARE.
 #include "../SDA_OS.h"
 #include "sda_p16.h"
 
-static uint8_t ppm_R;
-static uint8_t ppm_G;
-static uint8_t ppm_B;
-static uint8_t ppm_use_pmc;
+static uint8_t p16_R;
+static uint8_t p16_G;
+static uint8_t p16_B;
+static uint8_t p16_use_pmc;
 
 void sda_p16_set_pmc(uint8_t enable, uint16_t color) {
-  ppm_use_pmc = enable;
-  ppm_R = (uint8_t)(((float)((color>>11)&0x1F)/32)*256);
-  ppm_G = (uint8_t)(((float)(((color&0x07E0)>>5)&0x3F)/64)*256);
-  ppm_B = (uint8_t)(((float)(color&0x1F)/32)*256);
+  p16_use_pmc = enable;
+  p16_R = (uint8_t)((color>>11)&0x1F);
+  p16_G = (uint8_t)(((color&0x07E0)>>5)&0x3F);
+  p16_B = (uint8_t)(color&0x1F);
 }
-
-
 
 uint8_t p16_get_header(svp_file * fp, p16Header * header) {
   svp_fseek(fp, 0);
 
+  header->version = 0;
   header->imageWidth = 0;
   header->imageHeight = 0;
   header->storageMode = 0;
   header->dataOffset = 0;
 
+  if (svp_fread_u8(fp) != 0x1b) {
+    return 1;
+  }
 
   if (svp_fread_u8(fp) != 'P') {
     return 1;
   }
+
   if (svp_fread_u8(fp) != 'S') {
     return 1;
   }
+
   if (svp_fread_u8(fp) != 'M') {
     return 1;
   }
+
   if (svp_fread_u8(fp) != '1') {
     return 1;
   }
+
   if (svp_fread_u8(fp) != '6') {
     return 1;
   }
 
-  header->imageWidth |= svp_fread_u8(fp) << 8;
-  header->imageWidth |= svp_fread_u8(fp);
+  header->version = svp_fread_u8(fp);
 
-  header->imageHeight |= svp_fread_u8(fp) << 8;
-  header->imageHeight |= svp_fread_u8(fp);
+  if(header->version == 1) {
+    header->imageWidth |= svp_fread_u8(fp);
+    header->imageWidth |= svp_fread_u8(fp) << 8;
 
-  header->storageMode = svp_fread_u8(fp);
-  header->dataOffset = svp_fread_u8(fp);
+    header->imageHeight |= svp_fread_u8(fp);
+    header->imageHeight |= svp_fread_u8(fp) << 8;
 
-  // convinient seek to data start
-  if (header->dataOffset != 1) {
-    svp_fseek(fp, svp_ftell(fp) + header->dataOffset - 1);
+    header->storageMode = svp_fread_u8(fp);
+    header->dataOffset = svp_fread_u8(fp);
+
+    // convinient seek to data start
+    if (header->dataOffset != 1) {
+      svp_fseek(fp, svp_ftell(fp) + header->dataOffset - 1);
+    }
+  } else {
+    printf("Can parse p16 version 1 only\n");
+    return 1;
   }
-
   return 0;
 }
 
@@ -141,12 +153,48 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
 
 	imageState.init = 0;
 
+  uint16_t color;
 	for(uint32_t n = 0; n < header.imageWidth*header.imageHeight ; n++) {
-    LCD_canvas_putcol(p16_get_pixel(&fp, &header, &imageState));
+    color = p16_get_pixel(&fp, &header, &imageState);
+
+    if (p16_use_pmc) {
+      uint8_t r, g, b;
+
+      r = (uint8_t)((color>>11)&0x1F);
+      g = (uint8_t)(((color&0x07E0)>>5)&0x3F);
+      b = (uint8_t)(color&0x1F);
+
+      color = (((r+p16_R)/2) & 0x1F)<<11 | (((g+p16_G)/2)<<5  & 0x7E0 ) | (((b+p16_B)/2)&0x1F);
+
+    }
+
+    LCD_canvas_putcol(color);
 	}
 
 	svp_fclose(&fp);
 	touch_lock = 0;
 	return 0;
+}
+
+uint16_t sda_p16_get_width(uint8_t *filename) {
+	#ifdef PC
+	uint8_t touch_lock;
+	#endif
+
+	svp_file fp;
+	p16Header header;
+	p16State imageState;
+
+	if (!svp_fopen_read(&fp, filename)) {
+	  printf("sda_draw_p16: Error while opening file %s!\n", filename);
+	  return 1;
+	}
+	touch_lock = 1;
+
+  p16_get_header(&fp, &header);
+
+	svp_fclose(&fp);
+	touch_lock = 0;
+	return header.imageWidth;
 }
 
