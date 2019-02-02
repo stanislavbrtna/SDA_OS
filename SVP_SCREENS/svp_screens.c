@@ -123,7 +123,7 @@ uint16_t svp_opt_info(uint8_t init) {
   	optInfoScr = pscg_add_screen(&sda_sys_con);
   	internalScr = pscg_add_screen(&sda_sys_con);
 
-		pscg_add_image(1, 1, 8, 4, (uint8_t *)"logo.ppm", optInfoScr, &sda_sys_con);
+		pscg_add_image(1, 1, 8, 4, (uint8_t *)"logo.p16", optInfoScr, &sda_sys_con);
 		pscg_add_text(1, 4, 10, 5, SCR_OS_VERSION" "SDA_OS_VERSION, optInfoScr, &sda_sys_con);
 
     slider = pscg_add_slider_v(8, 5, 9, 11, 170, 0, optInfoScr, &sda_sys_con);

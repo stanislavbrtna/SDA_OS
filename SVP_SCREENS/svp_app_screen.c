@@ -74,7 +74,7 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
     do{
     	// load data
 		  svp_csv_get_cell(&appsCSV, 0, (uint8_t *)"", appFName[x], APP_NAME_LEN);
-		  svp_csv_get_cell(&appsCSV, 1, (uint8_t *)"none.ppm", appIcoName[x], APP_NAME_LEN);
+		  svp_csv_get_cell(&appsCSV, 1, (uint8_t *)"none.p16", appIcoName[x], APP_NAME_LEN);
 		  svp_csv_get_cell(&appsCSV, 2, ASCR_NONAME, appHumanName[x], APP_NAME_LEN);
 #ifdef APP_SCREEN_DEBUG
 		  printf("%u:app found: %s ico: %s name: %s id:", x, appFName[x], appIcoName[x], appHumanName[x]);

@@ -40,8 +40,8 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     text = pscg_add_text(0 , 1, 12, 3,(uint8_t *)"S!   PDA", screen, &sda_sys_con);
     time = pscg_add_text(3, 4, 12, 6,(uint8_t *)"??:??", screen, &sda_sys_con);
     date = pscg_add_text(3, 6, 12, 7,(uint8_t *)"?. ?. 20??", screen, &sda_sys_con);
-    appsBtn = pscg_add_icon(2, 10, 5, 13,(uint8_t *)"", (uint8_t *)"apps.ppm", screen, &sda_sys_con);
-    optBtn = pscg_add_icon(6, 10, 9, 13,(uint8_t *)"", (uint8_t *)"options.ppm", screen, &sda_sys_con);
+    appsBtn = pscg_add_icon(2, 10, 5, 13,(uint8_t *)"", (uint8_t *)"apps.p16", screen, &sda_sys_con);
+    optBtn = pscg_add_icon(6, 10, 9, 13,(uint8_t *)"", (uint8_t *)"options.p16", screen, &sda_sys_con);
     pscg_text_set_size(text, 70, &sda_sys_con);
     pscg_text_set_size(time, 70, &sda_sys_con);
     oldmin = 66; // absurd value, so current minute would not equal oldmin and time would update after init
