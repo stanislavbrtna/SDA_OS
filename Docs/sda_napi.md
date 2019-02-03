@@ -75,7 +75,7 @@ Main feature of SDA_OS is running its applications. These applications are store
 
     uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId);
 
-Launches .svs file specified in *fname* from APPS directory. Parent id is 0 for apps launched form launcher. 
+Launches .svs file specified in *fname* from APPS directory. Parent id is 0 for apps launched form launcher. When the parent id is not zero, parent application is woken upon closing its child. 
 
     void sdaSvmOnTop();
 
