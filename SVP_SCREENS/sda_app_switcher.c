@@ -160,7 +160,9 @@ void taskSwitcherUpdate() {
 
 	for(uint16_t x = 0; x < numberOfApps; x++) {
 		if (pscg_get_event(appButtons[x], &sda_sys_con) == EV_RELEASED) {
-			svmWake(appId[x]);
+			if (svmWake(appId[x])) {
+			  sda_show_error_message("Error occured while waking app.");
+			}
 			setRedrawFlag();
 			destroyOverlay();
 			return;

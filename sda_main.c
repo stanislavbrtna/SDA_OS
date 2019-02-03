@@ -291,6 +291,7 @@ void sda_error_overlay_handle() {
 void sdaSlotOnTop(uint8_t slot) {
 	uint8_t x;
 	if (!(slotValid[slot]) && (slot <= APP_SLOT_MAX)) {
+	  printf("sdaSlotOnTop: invalid slot!\n");
 		return;
 	}
 

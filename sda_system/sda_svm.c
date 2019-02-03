@@ -128,9 +128,9 @@ uint8_t sdaGetRedrawDetect() {
 }
 
 void sdaSvmOnTop() {
+	sdaSlotOnTop(4);
 	svp_switch_main_dir();
 	svp_chdir(svmMeta.currentWorkDir);
-	sdaSlotOnTop(4);
 	svpSGlobal.systemXBtnVisible = 1;
 	svpSGlobal.systemXBtnClick = 0;
 }
@@ -428,13 +428,13 @@ uint8_t svmSuspend() {
 uint8_t svmWake(uint16_t id) {
 	if(id == svmMeta.id) {
 		sdaSvmOnTop();
-		if(functionExists(WAKEUP_FUNCTION, &svm)) {
+		if(functionExists(WAKEUP_FUNCTION, &svm)) { // execute the wakeup
 		  commExec(WAKEUP_FUNCTION, &svm);
 		  if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
 		    errSoftPrint(&svm);
 		    return 1;
 		  }
-		  if (svmCheckAndExit()) {
+		  if (svmCheckAndExit()) { // handle potential exit call
 		  	return 0;
 		  }
 		}
@@ -446,8 +446,10 @@ uint8_t svmWake(uint16_t id) {
 	for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
 		if (svmSavedProcId[x] == id && svmSavedProcValid[x] == 1) {
 			if (sdaSvmLoad(id) == 0) {
+			  printf("svmWake: error while loading app (1)\n");
 			  return 1;
 			}
+			sdaSlotSetValid(4);
 			sdaSvmOnTop();
 			if(functionExists(WAKEUP_FUNCTION, &svm)) {
 				commExec(WAKEUP_FUNCTION, &svm);
@@ -462,6 +464,7 @@ uint8_t svmWake(uint16_t id) {
 			return 0;
 		}
 	}
+	printf("svmWake: error while loading app (2)\n");
 	return 1;
 }
 
