@@ -73,7 +73,6 @@ extern svpStatusStruct svpSGlobal;
 
 //irq flags
 extern volatile sdaLockState touch_lock;
-extern volatile sdaLockState redraw_lock;
 extern volatile sdaLockState irq_lock;
 extern volatile sdaLockState tick_lock;
 
