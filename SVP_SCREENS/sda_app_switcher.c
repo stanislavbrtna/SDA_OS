@@ -163,7 +163,7 @@ void taskSwitcherUpdate() {
 		  pscg_text_deactivate(&sda_app_con);
 			hideKeyboard();
 			if (svmWake(appId[x])) {
-			  sda_show_error_message("Error occured while waking app.");
+			  sda_show_error_message((uint8_t *)"Error occured while waking app.");
 			}
 			setRedrawFlag();
 			destroyOverlay();

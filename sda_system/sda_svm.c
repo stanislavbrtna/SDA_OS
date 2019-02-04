@@ -189,7 +189,7 @@ static uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
       i += 3;
       if (dirbuf[i+1] != 0) { // if we are in apps root folder, we don't need the slash
         sda_strcp(dirbuf + i + 2, newFname, APP_NAME_LEN);
-        sda_strcp("/", newFname + sda_strlen(newFname), APP_NAME_LEN);
+        sda_strcp((uint8_t *)"/", newFname + sda_strlen(newFname), APP_NAME_LEN);
       }
       sda_strcp(oldFname, newFname + sda_strlen(newFname), APP_NAME_LEN);
       return 0;
@@ -271,7 +271,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
     svp_chdir(dirbuf);
     // if we do not launch from launcher, we update the path of the executable
     if (updatePath(fname_updated, fname)) {
-      sda_show_error_message("Executables are only allowed in APPS folder.\n");
+      sda_show_error_message((uint8_t *)"Executables are only allowed in APPS folder.\n");
       return 0;
     }
     fname = fname_updated;
@@ -665,7 +665,7 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
     } else {
       sdaSvmCloseApp();
       printf("No update function found.\n");
-      sda_show_error_message("No update function found.\n");
+      sda_show_error_message((uint8_t *)"No update function found.\n");
       return 0;
     }
     redrawDetect = 0;
