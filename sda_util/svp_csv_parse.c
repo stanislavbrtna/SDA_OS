@@ -307,7 +307,7 @@ uint8_t svp_csv_next_line(svp_csvf *fc){
   if ((c == SVP_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
     pracpos = svp_ftell(&(fc->fil));
 
-    c = svp_fread_u8(&(fc->fil));
+    svp_fread_u8(&(fc->fil));
 
     if (svp_feof(&(fc->fil))){
     	return 0;
