@@ -774,6 +774,22 @@ static uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t 
 	return 1;
 }
 
+void sdaUpdateCurrentWD() { // get current wd relative to main dir
+  uint8_t dirbuf[258];
+  uint8_t path[258];
+  svp_getcwd(dirbuf, 256);
+  svp_switch_main_dir();
+  svp_getcwd(path, 256);
+
+  if (dirbuf[sda_strlen(path)] == '/') {
+    sda_strcp(dirbuf + sda_strlen(path) + 1, svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
+  } else {
+    sda_strcp(dirbuf + sda_strlen(path), svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
+  }
+
+  svp_chdir(svmMeta.currentWorkDir);
+}
+
 void sdaSvmSave() {
 	SVScloseCache(&svm);
 	if (sda_get_fr_fname() != 0)	{
@@ -789,18 +805,7 @@ void sdaSvmSave() {
 		svmMeta.openCsvUsed = 1;
 	}
 
-  // get current wd relative to main dir
-	uint8_t dirbuf[258];
-	uint8_t path[258];
-  svp_getcwd(dirbuf, 256);
-  svp_switch_main_dir();
-  svp_getcwd(path, 256);
-  if (dirbuf[sda_strlen(path)] == '/') {
-	  sda_strcp(dirbuf + sda_strlen(path) + 1, svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
-	} else {
-	  sda_strcp(dirbuf + sda_strlen(path), svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
-	}
-	//printf("restoring workdir: %s\n", svmMeta.currentWorkDir);
+	//printf("storing workdir: %s\n", svmMeta.currentWorkDir);
 
 	svmMeta.lcdOffButtons = wrap_get_lcdOffButtons();
 
@@ -835,6 +840,7 @@ uint8_t sdaSvmLoad(uint16_t id) {
 
 	svp_switch_main_dir();
 	svp_chdir(svmMeta.currentWorkDir);
+	//printf("restoring workdir: %s\n", svmMeta.currentWorkDir);
 
 	if (svmMeta.openFileUsed) {
 		sda_fr_fname_open(svmMeta.openFileName);

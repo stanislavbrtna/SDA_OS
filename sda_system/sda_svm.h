@@ -83,6 +83,7 @@ uint8_t sdaSvmGetRunning();
 uint16_t sdaSvmGetId();
 uint16_t svmGetSuspendedId(uint16_t id);
 uint8_t *svmGetSuspendedName(uint16_t id);
+void sdaUpdateCurrentWD();
 
 // notification flags
 void setNotificationFlag(int32_t id, int32_t param);
