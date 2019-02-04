@@ -43,13 +43,13 @@ void pm_keyboard_draw_key(
 }
 
 static void draw_esc_icon(int16_t x, int16_t y) {
-  LCD_DrawLine(x + 8, y + 32 - 8 , x + 32 - 8, y + 8, sda_current_con->border_color);
+  LCD_DrawLine(x + 8, y + 32 - 8 , x + 32 - 8, y + 8, sda_current_con->text_color);
 
-	LCD_DrawLine(x + 4, y + 32 - 16 , x + 4, y + 32 - 4 , sda_current_con->border_color);
-	LCD_DrawLine(x + 4, y + 32 - 4 , x + 16, y + 32 - 4, sda_current_con->border_color);
+	LCD_DrawLine(x + 4, y + 32 - 16 , x + 4, y + 32 - 4 , sda_current_con->text_color);
+	LCD_DrawLine(x + 4, y + 32 - 4 , x + 16, y + 32 - 4, sda_current_con->text_color);
 
-	LCD_DrawLine(x + 8, y + 32 - 8 , x + 4, y + 32 - 16 , sda_current_con->border_color);
-	LCD_DrawLine(x + 8, y + 32 - 8 , x + 16, y + 32 - 4, sda_current_con->border_color);
+	LCD_DrawLine(x + 8, y + 32 - 8 , x + 4, y + 32 - 16 , sda_current_con->text_color);
+	LCD_DrawLine(x + 8, y + 32 - 8 , x + 16, y + 32 - 4, sda_current_con->text_color);
 
 }
 
