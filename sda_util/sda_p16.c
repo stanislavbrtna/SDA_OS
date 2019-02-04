@@ -132,10 +132,6 @@ uint16_t p16_get_pixel(svp_file * fp, p16Header * header, p16State * state) {
 
 
 uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
-	#ifdef PC
-	uint8_t touch_lock;
-	#endif
-
 	svp_file fp;
 	p16Header header;
 	p16State imageState;
@@ -177,10 +173,6 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
 }
 
 uint16_t sda_p16_get_width(uint8_t *filename) {
-	#ifdef PC
-	uint8_t touch_lock;
-	#endif
-
 	svp_file fp;
 	p16Header header;
 	p16State imageState;
@@ -189,12 +181,9 @@ uint16_t sda_p16_get_width(uint8_t *filename) {
 	  printf("sda_draw_p16: Error while opening file %s!\n", filename);
 	  return 1;
 	}
-	touch_lock = 1;
 
   p16_get_header(&fp, &header);
-
 	svp_fclose(&fp);
-	touch_lock = 0;
 	return header.imageWidth;
 }
 

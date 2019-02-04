@@ -49,9 +49,6 @@ uint8_t get_if_p16(uint8_t * filename) {
 }
 
 void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
-	#ifdef PC
-	uint8_t touch_lock;
-	#endif
 
 	svp_file fp;
 	uint8_t ch[16];
@@ -183,10 +180,6 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
 }
 
 uint16_t ppm_get_width(uint8_t *filename) {
-  #ifdef PC
-  uint8_t touch_lock;
-  #endif
-
 	svp_file fp;
 	uint8_t ch[16];
 	uint8_t ch2 = 0;
