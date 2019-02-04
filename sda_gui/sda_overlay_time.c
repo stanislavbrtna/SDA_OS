@@ -59,6 +59,9 @@ uint16_t time_overlay_init() {
   tov_min2_str[0] = '0';
   tov_hr1_str[0] = '0';
   tov_hr2_str[0] = '0';
+
+  hideKeyboard();
+
   tov_screen = pscg_add_screen(sda_current_con);
 
   pscg_add_text(1, 0, 8, 1, OVRL_ENTER_TIME, tov_screen, sda_current_con);

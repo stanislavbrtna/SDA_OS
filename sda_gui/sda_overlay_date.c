@@ -115,6 +115,8 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
   date_month_val = mn;
   date_day_val = dy;
 
+  hideKeyboard();
+
   date_screen = pscg_add_screen(sda_current_con);
   pscg_set_cell_space_bottom(date_screen, 4, sda_current_con);
   pscg_set_y_cell(date_screen, 34, sda_current_con);

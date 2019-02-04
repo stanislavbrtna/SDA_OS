@@ -41,6 +41,8 @@ static uint16_t col_bsl;
 uint16_t color_overlay_init() {
   col_done = 0;
 
+  hideKeyboard();
+
   col_screen = pscg_add_screen(sda_current_con);
 
   pscg_add_text(1, 0, 8, 1, OVRL_SELECT_COLOR , col_screen, sda_current_con);
