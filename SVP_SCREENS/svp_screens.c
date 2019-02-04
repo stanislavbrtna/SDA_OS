@@ -22,8 +22,6 @@ SOFTWARE.
 
 #include "svp_screens.h"
 
-extern volatile uint8_t tickLock;
-
 uint8_t uptime[20];
 uint8_t uptimeL[20];
 uint8_t uptimePWR[20];
@@ -636,23 +634,24 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 		}
 
 		if (gr2_clicked(optLcdCalib, &sda_sys_con)) {
-			uint8_t tickLockOld;
-			uint8_t redraw_lockOld;
-			uint8_t touch_lockOld;
+			sdaLockState tickLockOld;
+			// tick lock should be enough, rest of the code is TBR
+			//sdaLockState redraw_lockOld;
+			//sdaLockState touch_lockOld;
 
-			tickLockOld = tickLock;
-			redraw_lockOld = redraw_lock;
-			touch_lockOld = touch_lock;
+			tickLockOld = tick_lock;
+			//redraw_lockOld = redraw_lock;
+			//touch_lockOld = touch_lock;
 
-			tickLock = 0;
-			redraw_lock = 1;
-			touch_lock = 1;
+			tick_lock = SDA_LOCK_LOCKED;
+			//redraw_lock = SDA_LOCK_LOCKED;
+			//touch_lock = SDA_LOCK_LOCKED;
 
 		  sda_calibrate();
 
-		  tickLock = tickLockOld;
-			redraw_lock = redraw_lockOld;
-			touch_lock = touch_lockOld;
+		  tick_lock = tickLockOld;
+			//redraw_lock = redraw_lockOld;
+			//touch_lock = touch_lockOld;
 
 		  sda_store_calibration();
 		  setRedrawFlag();

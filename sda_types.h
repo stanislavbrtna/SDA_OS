@@ -33,6 +33,8 @@ typedef enum {LED_ON, LED_OFF ,LED_BLINK, LED_SHORTBLINK, LED_ALARM} ledPatternT
 
 typedef enum {LCD_ON, LCD_OFF} lcdStateType;
 
+typedef enum {SDA_LOCK_LOCKED, SDA_LOCK_UNLOCKED} sdaLockState;
+
 typedef enum {PWR_MAX, PWR_MID, PWR_LOW} pwrStateType;
 
 typedef enum {SDA_PWR_MODE_NORMAL, SDA_PWR_MODE_SLEEP} pwrModeType;

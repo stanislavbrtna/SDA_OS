@@ -72,9 +72,10 @@ SOFTWARE.
 extern svpStatusStruct svpSGlobal;
 
 //irq flags
-extern volatile uint8_t touch_lock;
-extern volatile uint8_t redraw_lock;
-extern volatile uint8_t irq_lock;
+extern volatile sdaLockState touch_lock;
+extern volatile sdaLockState redraw_lock;
+extern volatile sdaLockState irq_lock;
+extern volatile sdaLockState tick_lock;
 
 //fonts
 extern uint8_t *font8x8_basic;

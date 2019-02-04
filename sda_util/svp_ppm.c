@@ -74,12 +74,12 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
 	  printf("draw_ppm: Error while opening file %s!\n", filename);
 	  return;
 	}
-	touch_lock = 1;
+	touch_lock = SDA_LOCK_LOCKED;
 	ch[0] = svp_fread_u8(&fp);
 	ch[1] = svp_fread_u8(&fp);
 	if ((ch[0] != 'P') && (ch[1] != '6')) {
 		printf("draw_ppm: Error: wrong header\n");
-		touch_lock = 0;
+		touch_lock = SDA_LOCK_UNLOCKED;
 		return;
 	}
 	fpos = 3;
@@ -175,7 +175,7 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
 		}
 	}
 	svp_fclose(&fp);
-	touch_lock = 0;
+	touch_lock = SDA_LOCK_UNLOCKED;
 	return;
 }
 

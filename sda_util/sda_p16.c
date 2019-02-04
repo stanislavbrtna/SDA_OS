@@ -140,7 +140,7 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
 	  printf("sda_draw_p16: Error while opening file %s!\n", filename);
 	  return 1;
 	}
-	touch_lock = 1;
+	touch_lock = SDA_LOCK_LOCKED;
 
   p16_get_header(&fp, &header);
 
@@ -168,14 +168,13 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
 	}
 
 	svp_fclose(&fp);
-	touch_lock = 0;
+	touch_lock = SDA_LOCK_UNLOCKED;
 	return 0;
 }
 
 uint16_t sda_p16_get_width(uint8_t *filename) {
 	svp_file fp;
 	p16Header header;
-	p16State imageState;
 
 	if (!svp_fopen_read(&fp, filename)) {
 	  printf("sda_draw_p16: Error while opening file %s!\n", filename);

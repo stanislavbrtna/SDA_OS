@@ -70,7 +70,6 @@ uint16_t batt_overlay;
 uint8_t batt_overlay_flag;
 volatile uint8_t systemBattClick;
 
-extern volatile uint8_t tickLock;
 /*****************************************************************************/
 /*                       headers of svs wrappers                             */
 /*****************************************************************************/
@@ -575,12 +574,12 @@ uint8_t sda_main_loop() {
 		sdaPrintActiveAlarm();
 
 		// screen redraw for the first time
-		touch_lock = 1;
-		tickLock = 0;
+		//touch_lock = SDA_LOCK_LOCKED;
+		tick_lock = SDA_LOCK_LOCKED;
 		LCD_setDrawArea(0, 0, SDA_LCD_W, SDA_LCD_H);
 		pscg_draw_screen(0, 32, 319, 479, mainScr, 1, &sda_sys_con);
-		touch_lock = 0;
-		tickLock = 1;
+		//touch_lock = SDA_LOCK_UNLOCKED;
+		tick_lock = SDA_LOCK_UNLOCKED;
 		init = 1;
 		led_set_pattern(LED_OFF);
 
@@ -604,7 +603,7 @@ uint8_t sda_main_loop() {
 #endif
 		if (svpSGlobal.kbdVisible == 1) { // if there is a keyboard
 			uint8_t retVal = 0;
-			touch_lock = 1;
+			touch_lock = SDA_LOCK_LOCKED;
 
 			retVal
 				= svp_touch_keyboard(
@@ -616,7 +615,7 @@ uint8_t sda_main_loop() {
 							svpSGlobal.kbdKeyStr,
 							svpSGlobal.touchType
 						);
-			touch_lock = 0;
+			touch_lock = SDA_LOCK_UNLOCKED;
 
 			if (retVal != 0) {
 				if (retVal == 2) { // esc
@@ -695,8 +694,8 @@ uint8_t sda_main_loop() {
 /*                             screen redraw                                 */
 /*****************************************************************************/
 
-	touch_lock = 1;
-	tickLock = 0;
+	//touch_lock = SDA_LOCK_LOCKED;
+	tick_lock = SDA_LOCK_LOCKED;
 	LCD_setDrawArea(0, 0, SDA_LCD_W, SDA_LCD_H);
 	if (svpSGlobal.systemRedraw == 1 || kbdRedraw) {
 		sdaSetRedrawDetect(1);
@@ -751,8 +750,8 @@ uint8_t sda_main_loop() {
 	}
 	pscg_draw_end(sda_current_con);
 
-	touch_lock = 0;
-	tickLock = 1;
+	//touch_lock = SDA_LOCK_UNLOCKED;
+	tick_lock = SDA_LOCK_UNLOCKED;
 
 /*****************************************************************************/
 /*                            update of screens                              */
