@@ -41,7 +41,22 @@ uint8_t get_if_p16(uint8_t * filename) {
 
   fnameLen = sda_strlen(filename);
 
-  if(filename[fnameLen - 3] == 'p' && filename[fnameLen - 2] == '1' && filename[fnameLen-1] == '6') {
+  if((filename[fnameLen - 3] == 'p' ||  filename[fnameLen - 3] == 'P') &&
+      filename[fnameLen - 2] == '1' &&
+      filename[fnameLen - 1] == '6') {
+    return 1;
+  }
+
+  return 0;
+}
+
+uint8_t get_if_ppm(uint8_t * filename) {
+  uint32_t fnameLen = 0;
+
+  fnameLen = sda_strlen(filename);
+  if((filename[fnameLen - 3] == 'p' || filename[fnameLen - 3] == 'P') &&
+     (filename[fnameLen - 2] == 'p' || filename[fnameLen - 3] == 'P') &&
+     (filename[fnameLen - 1] == 'm' || filename[fnameLen - 3] == 'M')) {
     return 1;
   }
 
@@ -69,24 +84,37 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
     return;
   }
 
+  if(!get_if_ppm(filename)) {
+    printf("draw_ppm: File %s is unsupported!\n", filename);
+    return;
+  }
 
 	if (!svp_fopen_read(&fp,filename)) {
 	  printf("draw_ppm: Error while opening file %s!\n", filename);
 	  return;
 	}
+
 	touch_lock = SDA_LOCK_LOCKED;
 	ch[0] = svp_fread_u8(&fp);
 	ch[1] = svp_fread_u8(&fp);
+
 	if ((ch[0] != 'P') && (ch[1] != '6')) {
 		printf("draw_ppm: Error: wrong header\n");
 		touch_lock = SDA_LOCK_UNLOCKED;
 		return;
 	}
+
 	fpos = 3;
 	while (ch2 != 10) {
 		svp_fseek(&fp, sizeof(uint8_t) * (fpos));
 		ch2 = svp_fread_u8(&fp);
 		fpos++;
+
+		if (svp_feof(&fp)){
+		  printf("draw_ppm: Error: unparsable header\n");
+		  touch_lock = SDA_LOCK_UNLOCKED;
+		  return;
+		}
 	}
 	ch2 = 0;
 	a = 0;
@@ -96,6 +124,12 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
 		ch[a] = ch2;
 		fpos++;
 		a++;
+
+		if (svp_feof(&fp)){
+		  printf("draw_ppm: Error: unparsable header\n");
+		  touch_lock = SDA_LOCK_UNLOCKED;
+		  return;
+		}
 	}
 	ch[a] = 10;
 
@@ -118,6 +152,12 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
 		svp_fseek(&fp, sizeof(uint8_t) * (fpos));
 		ch2 = svp_fread_u8(&fp);
 		fpos++;
+	}
+
+	if (img_width == 0 || img_height == 0){
+	  printf("draw_ppm: Error: image dimension is zero\n");
+	  touch_lock = SDA_LOCK_UNLOCKED;
+	  return;
 	}
 
 	LCD_setSubDrawArea(x, y, x + img_width * scale, y + img_height * scale);
