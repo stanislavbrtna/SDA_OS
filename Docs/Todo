@@ -14,3 +14,5 @@ Docs:
       - alarms.cfg
       - calib.dat
     - PPM images
+    - p16 images
+    - autoexec.svs function
