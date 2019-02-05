@@ -159,16 +159,27 @@ void svp_tray_battery(int16_t x1, int16_t y1, int16_t w) {
 		LCD_Set_Sys_Font(18);
 		if (svpSGlobal.pwrType == POWER_USB) {
 			LCD_DrawText_ext(x1, y1 + 8, pscg_get_text_color(&sda_sys_con), IRQ_BATT_CHRG);
+			if (svpSGlobal.battPercentage != 101) {
+				LCD_FillRect(x1 + 8,
+										 y1 + 31 - 6,
+										 x1 + (int16_t)(((float)w - 4)*((float)svpSGlobal.battPercentage/(float)100)),
+										 y1 + 31 - 2,
+										 pscg_get_active_color(&sda_sys_con)
+				);
+			}
 		} else if (svpSGlobal.pwrType == POWER_BATT) {
 			LCD_DrawText_ext(x1, y1 + 8, pscg_get_text_color(&sda_sys_con), batt_string);
+			if (svpSGlobal.battPercentage != 101) {
+				LCD_FillRect(x1 + 8,
+										 y1 + 31 - 6,
+										 x1 + (int16_t)(((float)w - 4)*((float)battDisplayValue/(float)100)),
+										 y1 + 31 - 2,
+										 pscg_get_active_color(&sda_sys_con)
+				);
+			}
 		}
 
-		LCD_FillRect(x1 + 8,
-                 y1 + 31 - 6,
-                 x1 + (int16_t)(((float)w - 4)*((float)svpSGlobal.battPercentage/(float)100)),
-                 y1 + 31 - 2,
-                 pscg_get_active_color(&sda_sys_con)
-    );
+
 		LCD_DrawRectangle(x1 + 8, y1 + 31 - 6, x1 + w - 4, y1 + 31 - 2, pscg_get_border_color(&sda_sys_con));
 
 		LCD_Set_Sys_Font(curr_font);

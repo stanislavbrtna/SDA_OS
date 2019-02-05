@@ -81,7 +81,7 @@
 #define SWITCH_CLOSE_ALL              (uint8_t *)"Zavřit vše"
 
 #define SCR_LED_NOTIFICATIONS         (uint8_t *)"Notifikační LED"
-#define IRQ_BATT_CHRG                 (uint8_t *)"NAB."
+#define IRQ_BATT_CHRG                 (uint8_t *)" NAB."
 
 
 #endif
