@@ -111,14 +111,13 @@ void svp_tray_battery(int16_t x1, int16_t y1, int16_t w) {
 			battDisplayValue = svpSGlobal.battPercentage - svpSGlobal.battPercentage % 5;
 		}
 	} else {
-
-	// check every 30s if measured is lower, if yes, then subtract 5% from value
-	if ((svpSGlobal.uptime > oldSysPercentageTime + 30) && (svpSGlobal.battPercentage < battDisplayValue)) {
-		if (battDisplayValue > 5) {
-			battDisplayValue -= 5;
+		// check every 30s if measured is lower, if yes, then subtract 5% from value
+		if ((svpSGlobal.uptime > oldSysPercentageTime + 30) && (svpSGlobal.battPercentage < battDisplayValue)) {
+			if (battDisplayValue > 5) {
+				battDisplayValue -= 5;
+			}
+			oldSysPercentageTime = svpSGlobal.uptime;
 		}
-		oldSysPercentageTime = svpSGlobal.uptime;
-	}
 	}
 
 
@@ -179,15 +178,17 @@ void svp_tray_battery(int16_t x1, int16_t y1, int16_t w) {
 			}
 		}
 
-
 		LCD_DrawRectangle(x1 + 8, y1 + 31 - 6, x1 + w - 4, y1 + 31 - 2, pscg_get_border_color(&sda_sys_con));
-
 		LCD_Set_Sys_Font(curr_font);
 		redraw = 1;
 	}
 
-	if ((svpSGlobal.touchX > (x1 - 1)) && (svpSGlobal.touchX < (x1 + w)) && (svpSGlobal.touchY > y1) \
-	 		&& (svpSGlobal.touchY < (y1 + 31)) && (svpSGlobal.touchValid) && (systemBattClick == 0)) { //kliknuto
+	if ((svpSGlobal.touchX > (x1 - 1)) &&
+			(svpSGlobal.touchX < (x1 + w)) &&
+			(svpSGlobal.touchY > y1) &&
+			(svpSGlobal.touchY < (y1 + 31)) &&
+			(svpSGlobal.touchValid) &&
+			(systemBattClick == 0)) { // clicked on battery
 		systemBattClick = 1;
 	}
 
