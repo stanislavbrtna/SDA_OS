@@ -74,6 +74,18 @@ void sda_tray_alarm_disable() {
 	svp_set_irq_redraw();
 }
 
+static uint8_t tray_clicked(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
+  if ((svpSGlobal.touchX > x1) &&
+       (svpSGlobal.touchX < x2) &&
+       (svpSGlobal.touchY > y1) &&
+       (svpSGlobal.touchY < y2) &&
+       (svpSGlobal.touchValid)) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 void svp_tray_alarm(int16_t x1, int16_t y1, int16_t w) {
 	static uint8_t redraw;
 
@@ -183,12 +195,7 @@ void svp_tray_battery(int16_t x1, int16_t y1, int16_t w) {
 		redraw = 1;
 	}
 
-	if ((svpSGlobal.touchX > (x1 - 1)) &&
-			(svpSGlobal.touchX < (x1 + w)) &&
-			(svpSGlobal.touchY > y1) &&
-			(svpSGlobal.touchY < (y1 + 31)) &&
-			(svpSGlobal.touchValid) &&
-			(systemBattClick == 0)) { // clicked on battery
+	if ( tray_clicked(x1 - 1, y1, x1 + w, y1 + 31)) {
 		systemBattClick = 1;
 	}
 
@@ -210,8 +217,7 @@ uint8_t svp_tray_XBtn(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t re
 		init = 1;
 	}
 
-	if (((svpSGlobal.touchX > (x1)) && (svpSGlobal.touchX < x2) && (svpSGlobal.touchY > y1) \
-	 		&& (svpSGlobal.touchY < y2)) && (svpSGlobal.touchValid)) { //kliknuto
+	if (tray_clicked(x1, y1, x2, y2)) {
 
 		if (xbtnPrev == 0) {
 			LCD_FillRect(x1, y1, x2, y2, pscg_get_active_color(&sda_sys_con));
@@ -250,8 +256,7 @@ uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
 		init = 1;
 	}
 
-	if (((svpSGlobal.touchX > x1) && (svpSGlobal.touchX < x2) && (svpSGlobal.touchY > y1) \
-			&& (svpSGlobal.touchY < y2)) && (svpSGlobal.touchValid)) { //kliknuto
+	if (tray_clicked(x1, y1, x2, y2)) { //kliknuto
 
 		if (clickOld == 0) {
 			LCD_FillRect(x1, y1, x2, y2, pscg_get_active_color(&sda_sys_con));
