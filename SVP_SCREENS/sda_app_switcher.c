@@ -37,6 +37,7 @@ static uint16_t numberOfApps;
 
 static uint8_t niceSuspendName[MAX_OF_SAVED_PROC][35];
 
+//#define APP_SWITCHER_DEBUG
 
 static void reloadNiceNames() {
   uint8_t *buff;
@@ -70,14 +71,22 @@ static void reloadNiceNames() {
 
 void taskSwitcherDestructor() {
 	pscg_destroy(task_switcher, &sda_sys_con);
+#ifdef APP_SWITCHER_DEBUG
+	printf("task switcher destructor called\n");
+#endif
 	valid = 0;
 }
 
 void taskSwitcherOpen() {
 	if (valid == 1) {
+#ifdef APP_SWITCHER_DEBUG
+	  printf("failed to open already valid\n");
+#endif
 		return;
 	}
-
+#ifdef APP_SWITCHER_DEBUG
+  printf("task switcher opened\n");
+#endif
   hideKeyboard();
 
 	uint16_t n = 0;
@@ -173,6 +182,7 @@ void taskSwitcherUpdate() {
 
 		if (pscg_get_event(appButtonsClose[x], &sda_sys_con) == EV_RELEASED) {
 			svmClose(appId[x]);
+			destroyOverlay();
 			taskSwitcherOpen();
 			return;
 		}
