@@ -587,6 +587,12 @@ void sdaSvmKillApp_handle() {
 	}
 	sdaSlotSetInValid(4);
 
+	svmInValidate(svmMeta.id);
+  sdaSetSleepLock(0);
+
+  clearNotificationFlag();
+  sda_files_close();
+
 	svp_crypto_lock();
 	pscg_cleanup(&sda_app_con); // performs cleanup of pscg elements
 	sdaSlotOnTop(1);
