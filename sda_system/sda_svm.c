@@ -158,6 +158,18 @@ uint8_t sdaSvmGetRunning() {
 	return 0;
 }
 
+uint8_t sdaSvmGetValid(uint16_t id) {
+	if (svmMeta.id == id && svmValid){
+		return 1;
+	}
+	for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+		if (svmSavedProcId[x] == id) {
+			return svmSavedProcValid[x];
+		}
+	}
+	return 0;
+}
+
 uint16_t sdaSvmGetId() {
 	if (svmValid) {
 		return svmMeta.id;
@@ -347,21 +359,30 @@ void sdaSvmCloseApp() {
 
   if (svmMeta.parentId != 0) {
   	uint8_t argBuff[2048];
-
 		storeArguments(argBuff, svmCallRetval, svmCallRetvalType, svmCallRetvalStr, &svm);
 
-    //TODO: when we try to return to an already killed app, sda shows gr2 invalid elements errors
-  	if (!sdaSvmLoad(svmMeta.parentId)){
-  		svmValid = 0;
+  	if (sdaSvmGetValid(svmMeta.parentId)) {
+  	  if (sdaSvmLoad(svmMeta.parentId) == 0) {
+  	    printf("sdaSvmCloseApp: Loading parent app failed!\n");
+    		svmValid = 0;
+    		sdaSlotSetInValid(4);
+    		sdaSlotOnTop(1);
+    		svp_switch_main_dir();
+	      svp_chdir((uint8_t *)"APPS");
+    		return;
+  		}
+  	} else {
+  	  svmValid = 0;
   		sdaSlotSetInValid(4);
   		sdaSlotOnTop(1);
+  		printf("sdaSvmCloseApp: Parent is not valid.\n");
+  		svp_switch_main_dir();
+	    svp_chdir((uint8_t *)"APPS");
   		return;
   	}
 
   	if(functionExists(svmCallback, &svm)) {
-
 			restoreArguments(svmCallRetvalType, svmCallRetval, svmCallRetvalStr, &svm);
-
   		commExec(svmCallback, &svm);
   	}
 
