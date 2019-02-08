@@ -1,6 +1,6 @@
 #include "sda_overlays_api.h"
 
-extern uint16_t overlayScr;
+extern uint16_t overlayScr; // if not zero, then overlay is valid
 extern gr2context * overlayCont;
 extern uint16_t overlayX1;
 extern uint16_t overlayX2;
@@ -20,6 +20,10 @@ void setOverlayDefault() {
 }
 
 uint16_t setOverlayScreen(uint16_t val, gr2context * c) {
+
+  if (overlayScr != 0) {
+    destroyOverlay();
+  }
   ov_id++;
   destructor_set = 0;
   overlayScr = val;
@@ -45,7 +49,7 @@ void destroyOverlay() {
   	} else if (destructor_set == 2) {
   		// destructor was called from somewhere else
   		return;
-  	}else if (destructor_set == 0) {
+  	} else if (destructor_set == 0) {
   		pscg_destroy(overlayScr, overlayCont);
   	}
   	overlayScr = 0;
