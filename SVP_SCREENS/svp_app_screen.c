@@ -296,9 +296,9 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 				}
 			}else if (type == 1) {
 				add_to_stack(selectedObject);
-				sda_setbuff(selectedObjectStr, labelbuff);
+				sda_strcp(selectedObjectStr, labelbuff, sizeof(labelbuff));
 				pscg_set_str(textLabel, labelbuff, &sda_sys_con);
-				sda_setbuff(selectedObjectStr, folderStackStr[folder_stack_max]);
+				sda_strcp(selectedObjectStr, folderStackStr[folder_stack_max], sizeof(folderStackStr));
 
 				pscg_set_visible(btnBack, 1, &sda_sys_con);
 				pscg_destroy_screen(inScreen, &sda_sys_con);
@@ -316,7 +316,9 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
 		if (pscg_get_event(btnBack, &sda_sys_con) == EV_RELEASED) {
 			get_from_stack(labelbuff); // got prev
+			#ifdef APP_SCREEN_DEBUG
 			printf("reloading: %s\n", labelbuff);
+			#endif
 			pscg_destroy_screen(inScreen, &sda_sys_con);
 #ifdef APP_SCREEN_DEBUG
 			printf("screen id %u\n", inScreen);
@@ -326,7 +328,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 			inScreenResizer(inScreen);
   		pscg_set_screen(inScreen, appScreen, &sda_sys_con);
 
-  		sda_setbuff(folderStackStr[folder_stack_max], labelbuff);
+  		sda_strcp(folderStackStr[folder_stack_max], labelbuff, sizeof(labelbuff));
 
   		pscg_set_str(textLabel, labelbuff, &sda_sys_con);
 
@@ -378,7 +380,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 		appActivePrev = appActive;
 
   }
-  //else: práce na pozadí
+  //else: background jobs
   return 0;
 }
 

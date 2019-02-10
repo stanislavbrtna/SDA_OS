@@ -140,21 +140,6 @@ uint32_t sda_strcp(uint8_t *in, uint8_t *out, uint32_t len) {
   return 0;
 }
 
-// TODO replace this with sda_strcp
-void sda_setbuff(uint8_t * source, uint8_t * target) {
-	uint16_t x;
-	x = 0;
-	while(1) {
-		if (source[x]!= 0){
-			target[x] = source [x];
-		} else {
-			target[x] = source [x];
-			return;
-		}
-		x++;
-	}
-}
-
 uint32_t sda_strlen(uint8_t * str) {
   uint32_t len = 0;
 
