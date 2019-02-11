@@ -218,10 +218,11 @@ Return: None
     sys beepF([num]period of ~20kHz pulses to one pulse);
 Sets period of ~20kHz pulses to one pulse.
 Return: None
-#### Expansion Port
+#### Expansion Ports
 ##### Serial expansion transmit
     sys serialTrs([str]data);
-Sends given string to user-port serial port.
+Sends given string to serial port on internal or external expansion connector.
+Depends on what is initialized.
 Return: None
 ##### Serial expansion transmit queue
     sys srlTrsQAdd([num]data);
@@ -234,12 +235,12 @@ Clears transmit buffer.
 Return: None
 ##### Serial expansion transmit queue
     sys srlTrsQ();
-Sends previously stored queue to the expansion serial port.
+Sends previously stored queue to the initialized serial port.
 Max 32 bytes.
 Return: None
 ##### Serial expansion recieve
     sys serialRcv([num]timeout);
-Gets string (max 512 bytes) from user-port serial port.
+Gets string (max 512 bytes) from currently initialized serial port.
 If nothing is sent during timeout (in ms), empty string is returned.
 Return: [str] data
 ##### Set notification led pattern

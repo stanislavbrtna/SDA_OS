@@ -868,12 +868,13 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#
-	//#!#### Expansion Port
+	//#!#### Expansion Ports
 	//#
 
 	//#!##### Serial expansion transmit
 	//#!    sys serialTrs([str]data);
-	//#!Sends given string to user-port serial port.
+	//#!Sends given string to serial port on internal or external expansion connector.
+	//#!Depends on what is initialized.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "serialTrs", s)) {
 		int32_t i = 0;
@@ -943,7 +944,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
 	//#!##### Serial expansion transmit queue
 	//#!    sys srlTrsQ();
-	//#!Sends previously stored queue to the expansion serial port.
+	//#!Sends previously stored queue to the initialized serial port.
 	//#!Max 32 bytes.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "srlTrsQ", s)) {
@@ -961,7 +962,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
 	//#!##### Serial expansion recieve
 	//#!    sys serialRcv([num]timeout);
-	//#!Gets string (max 512 bytes) from user-port serial port.
+	//#!Gets string (max 512 bytes) from currently initialized serial port.
 	//#!If nothing is sent during timeout (in ms), empty string is returned.
 	//#!Return: [str] data
 	if (sysFuncMatch(argS->callId, "serialRcv", s)) {
