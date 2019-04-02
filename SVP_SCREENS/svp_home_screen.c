@@ -30,7 +30,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
   static uint16_t text;
   static uint16_t time;
   static uint16_t date;
-  static uint8_t oldmin;
+  static uint16_t oldtime;
   static uint8_t olddate;
   static uint8_t time_string[6];
   static uint8_t date_string[42];
@@ -44,7 +44,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     optBtn = pscg_add_icon(6, 10, 9, 13,(uint8_t *)"", (uint8_t *)"options.p16", screen, &sda_sys_con);
     pscg_text_set_size(text, 70, &sda_sys_con);
     pscg_text_set_size(time, 70, &sda_sys_con);
-    oldmin = 66; // absurd value, so current minute would not equal oldmin and time would update after init
+    oldtime = 5566; // absurd value, so current minute would not equal oldmin and time would update after init
     return screen;
   }
 
@@ -53,7 +53,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     svpSGlobal.systemXBtnVisible = 0;
 
     //time refresh
-    if (svpSGlobal.min != oldmin) {
+    if (((uint16_t)svpSGlobal.hour * 10) + (uint16_t)svpSGlobal.min != oldtime) {
       time_string[0] = svpSGlobal.hour / 10 + 48;
 		  time_string[1] = svpSGlobal.hour % 10 + 48;
 		  time_string[2] = ':';
@@ -61,7 +61,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 		  time_string[4] = svpSGlobal.min % 10 + 48;
 		  time_string[5] = 0;
 		  pscg_set_str(time, time_string, &sda_sys_con);
-		  oldmin = svpSGlobal.min;
+		  oldtime = ((uint16_t)svpSGlobal.hour * 10) + (uint16_t)svpSGlobal.min;
     }
 
     //date refresh
