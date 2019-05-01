@@ -140,8 +140,8 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	static uint8_t readBuff[2048];
 
 	//#!##### Open file
-	//#!    sys pFrOpen([str]fname);
-	//#!    sys fOpen([str]fname);
+	//#!    sys.pFrOpen([str]fname);
+	//#!    sys.fOpen([str]fname);
 	//#!Opens text file for read or write.
 	//#!Return: 1 on success, 0 on failure
 	if (sysFuncMatch(argS->callId, "pFrOpen", s) ||
@@ -158,7 +158,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Read given number of chars
-	//#!    sys fReadChars([num] bytes);
+	//#!    sys.fReadChars([num] bytes);
 	//#!Reads given number of chars from file.
 	//#!Return: [str] result
 	if (sysFuncMatch(argS->callId, "fReadChars", s)) {
@@ -192,7 +192,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Writes given string to file
-	//#!    sys fWriteChars([str] string);
+	//#!    sys.fWriteChars([str] string);
 	//#!Writes given string to file.
 	//#!Return: 1 - ok, 0 - fail
 	if (sysFuncMatch(argS->callId, "fWriteChars", s)) {
@@ -222,7 +222,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Read byte from file
-	//#!    sys fReadByte();
+	//#!    sys.fReadByte();
 	//#!Reads byte from file.
 	//#!Return: [num] result: 0 to 255 - ok, -1 - error
 	if (sysFuncMatch(argS->callId, "fReadByte", s)) {
@@ -248,7 +248,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Write byte to file
-	//#!    sys fWriteByte([num] byte (0 - 255));
+	//#!    sys.fWriteByte([num] byte (0 - 255));
 	//#!Writes byte to file.
 	//#!Return: [num] 0 - fail, 1 - ok
 	if (sysFuncMatch(argS->callId, "fWriteByte", s)) {
@@ -271,7 +271,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Seek position in file
-	//#!    sys fSeek([num] pos_from_start);
+	//#!    sys.fSeek([num] pos_from_start);
 	//#!Writes byte to file.
 	//#!Return: [num] 0 - fail, 1 - ok
 	if (sysFuncMatch(argS->callId, "fSeek", s)) {
@@ -295,7 +295,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Truncate file
-	//#!    sys fTruncate();
+	//#!    sys.fTruncate();
 	//#!Truncate currently opened file at the position of write pointer.
 	//#!Return: [num] 0 - fail, 1 - ok
 	if (sysFuncMatch(argS->callId, "fTruncate", s)) {
@@ -317,7 +317,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get if path is dir
-	//#!    sys fIsDir([str] path);
+	//#!    sys.fIsDir([str] path);
 	//#!Gets if path is a directory or not.
 	//#!Return: [num] 0 - file, 1 - dir
 	if (sysFuncMatch(argS->callId, "fIsDir", s)) {
@@ -333,7 +333,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Create directory
-	//#!    sys fMkDir([str] name);
+	//#!    sys.fMkDir([str] name);
 	//#!Creates new directory
 	//#!Return: [num] 1 - ok, 0 - fail
 	if (sysFuncMatch(argS->callId, "fMkDir", s)) {
@@ -349,10 +349,10 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Change working directory
-	//#!    sys fChDir([str] pathInData);
+	//#!    sys.fChDir([str] pathInData);
 	//#!Changes working directory.
-	//#!call sys fChDir(); to get to the DATA directory
-	//#!call sys fChDir(1); to get to the APPS directory
+	//#!call sys.fChDir(); to get to the DATA directory
+	//#!call sys.fChDir(1); to get to the APPS directory
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "fChDir", s)) {
 
@@ -381,12 +381,12 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	  	return 1;
 		}
 
-		errSoft((uint8_t *)"sysExecTypeCheck: Wrong type or count of arguments for SYS function fChDir()!", s);
+		errSoft((uint8_t *)"sysExecTypeCheck: Wrong type or count of arguments for sys function fChDir()!", s);
 		return 0;
 	}
 
 	//#!##### File copy select source
-	//#!    sys fCopySource([str]source);
+	//#!    sys.fCopySource([str]source);
 	//#!Selects source file for copy operation.
 	//#!Return: [num] 1 - ok, 0 - failed
 	if (sysFuncMatch(argS->callId, "fCopySource", s)) {
@@ -420,7 +420,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### File copy start
-	//#!    sys fCopyStart([str]dest, [num]ChunkSize);
+	//#!    sys.fCopyStart([str]dest, [num]ChunkSize);
 	//#!Starts copy operation, chunksize of bytes will be copyed each cycle.
 	//#!Return: [num] 1 - ok, 0 - failed
 	if (sysFuncMatch(argS->callId, "fCopyStart", s)) {
@@ -458,7 +458,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### File copy status
-	//#!    sys fCopyStat([num]opt);
+	//#!    sys.fCopyStat([num]opt);
 	//#! opt: 0 - status ret: [num]0 - nothing, 1 - source selected, 2 - copy in progress
 	//#! opt: 1 - size of source [num]bytes
 	//#! opt: 2 - remaining bytes [num]bytes
@@ -487,7 +487,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Stop current copy operation
-	//#!    sys fCopyStop();
+	//#!    sys.fCopyStop();
 	//#!Stops current copy operation.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "fCopyStop", s)) {
@@ -509,7 +509,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Tels position in file
-	//#!    sys fTell();
+	//#!    sys.fTell();
 	//#!Returns current write pointer position in the file.
 	//#!Return: [num] pos
 	if (sysFuncMatch(argS->callId, "fTell", s)) {
@@ -531,7 +531,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get size of file
-	//#!    sys pFrSize();
+	//#!    sys.pFrSize();
 	//#!Returns size of openned file.
 	//#!Return: Size of openned file
 	if (sysFuncMatch(argS->callId, "pFrSize", s)) {
@@ -550,7 +550,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Check if file exist
-	//#!    sys pFrExists([str]fname);
+	//#!    sys.pFrExists([str]fname);
 	//#!Checks if file exists.
 	//#!Return: 1 if file exists, otherwise 0
 	if (sysFuncMatch(argS->callId, "pFrExists", s)) {
@@ -566,7 +566,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Seek in file and fill text field
-	//#!    sys pFrSeek([num]text_id, [num]filePos);
+	//#!    sys.pFrSeek([num]text_id, [num]filePos);
 	//#!Fills pscg element with text from filePos position.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pFrSeek", s)) {
@@ -610,8 +610,8 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Close file
-	//#!    sys pFrClose();
-	//#!    sys fClose();
+	//#!    sys.pFrClose();
+	//#!    sys.fClose();
 	//#!Closes open file.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pFrClose", s)
@@ -627,7 +627,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Remove file
-	//#!    sys fDelete([str]fname);
+	//#!    sys.fDelete([str]fname);
 	//#!Deletes file with fiven fname.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "fDelete", s)) {
@@ -640,7 +640,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Move/rename file
-	//#!    sys fRename([str]oldPath, [str]newPath);
+	//#!    sys.fRename([str]oldPath, [str]newPath);
 	//#!Moves/renames given file.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "fRename", s)) {
@@ -656,7 +656,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!#### SDA CSV files API
 
 	//#!##### Open csv file
-	//#!    sys csvOpen([str]fname);
+	//#!    sys.csvOpen([str]fname);
 	//#!Opens csv file.
 	//#!Return: [num]1 on succes.
 	if (sysFuncMatch(argS->callId, "csvOpen", s)) {
@@ -671,7 +671,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Close csv file
-	//#!    sys csvClose();
+	//#!    sys.csvClose();
 	//#!Closes csv file.
 	//#!Return: None.
 	if (sysFuncMatch(argS->callId, "csvClose", s)) {
@@ -685,7 +685,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### New csv line
-	//#!    sys csvNewLine([num]numberOfCells);
+	//#!    sys.csvNewLine([num]numberOfCells);
 	//#!Adds new line to csv with given number of cells.
 	//#!Return: None.
 	if (sysFuncMatch(argS->callId, "csvNewLine", s)) {
@@ -698,7 +698,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Get csv cell
-	//#!    sys csvGetCell([num]cellNumber, [str]default);
+	//#!    sys.csvGetCell([num]cellNumber, [str]default);
 	//#!Gets data from specified cell on current line.
 	//#!Return: [str]cellContents
 	if (sysFuncMatch(argS->callId, "csvGetCell", s)) {
@@ -716,7 +716,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Set csv cell
-	//#!    sys csvSetCell([num]cellNumber, [str]value);
+	//#!    sys.csvSetCell([num]cellNumber, [str]value);
 	//#!Sets data of specified cell on current line.
 	//#!Return: [str]cellContents
 	if (sysFuncMatch(argS->callId, "csvSetCell", s)) {
@@ -731,7 +731,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Feed line
-	//#!    sys csvLineFeed();
+	//#!    sys.csvLineFeed();
 	//#!Moves to the next lone of csv file
 	//#!Return: [num] 1 - ok, 0 - end of file
 	if (sysFuncMatch(argS->callId, "csvLineFeed", s)) {
@@ -745,7 +745,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Remove line
-	//#!    sys csvRemoveLine();
+	//#!    sys.csvRemoveLine();
 	//#!Removes current line from csv
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "csvRemoveLine", s)) {
@@ -757,7 +757,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Rewind file
-	//#!    sys csvRewind();
+	//#!    sys.csvRewind();
 	//#!Rewinds file back on the start.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "csvRewind", s)) {
@@ -771,7 +771,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!#### Config files API
 
 	//#!##### Open config file
-	//#!    sys cOpen([str]fname);
+	//#!    sys.cOpen([str]fname);
 	//#!Opens config file.
 	//#!Return: [num]1 on succes.
 	if (sysFuncMatch(argS->callId, "cOpen", s)) {
@@ -787,7 +787,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Close config file
-	//#!    sys cClose();
+	//#!    sys.cClose();
 	//#!Close conf file.
 	//#!Return: [num]1 on succes.
 	if (sysFuncMatch(argS->callId, "cClose", s)) {
@@ -802,7 +802,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Check if key exists
-	//#!    sys cKeyExists([str]key);
+	//#!    sys.cKeyExists([str]key);
 	//#!Checks if key exists in conf file
 	//#!Return: [num] 1 if key exists.
 	if (sysFuncMatch(argS->callId, "cKeyExists", s)) {
@@ -817,7 +817,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Read key
-	//#!    sys cKeyRead([str]key);
+	//#!    sys.cKeyRead([str]key);
 	//#!Reads key from config file as a string, 128 chars max.
 	//#!Return: [str]Value
 	if (sysFuncMatch(argS->callId, "cKeyRead", s)) {
@@ -835,7 +835,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Read Key as int
-	//#!    sys cKeyReadInt([str]key, [num]default);
+	//#!    sys.cKeyReadInt([str]key, [num]default);
 	//#!Reads key from config file as num (integrer). To be removed.
 	//#!Return: [num]Value
 	if (sysFuncMatch(argS->callId, "cKeyReadInt", s)) {
@@ -850,7 +850,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Write key
-	//#!    sys cKeyWrite([str]key, [str]val);
+	//#!    sys.cKeyWrite([str]key, [str]val);
 	//#!Writes value in specified key.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "cKeyWrite", s)) {
@@ -864,7 +864,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Remove key
-	//#!    sys cKeyRemove([str]key);
+	//#!    sys.cKeyRemove([str]key);
 	//#!Removes given key.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "cKeyRemove", s)) {
@@ -881,7 +881,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!
 
 	//#!##### Find begin
-	//#!    sys fFind([str]extension, [str]directory);
+	//#!    sys.fFind([str]extension, [str]directory);
 	//#!Inits file find operation, returns first result.
 	//#!Return: [str]filename or "" if none
 	if (sysFuncMatch(argS->callId, "fFind", s)) {
@@ -903,7 +903,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Find next
-	//#!    sys fFindNext();
+	//#!    sys.fFindNext();
 	//#!Next iteration of file find operation.
 	//#!Return: [str]filename or "" if none
 	if (sysFuncMatch(argS->callId, "fFindNext", s)) {
@@ -923,7 +923,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Example
-	//#!    for(findfil = sys fFind("txt", "."); findfil != ""; findfil = sys fFindNext();) {
+	//#!    for(findfil = sys.fFind("txt", "."); findfil != ""; findfil = sys.fFindNext();) {
 	//#!    	print("found: " + findfil);
 	//#!    }
 
@@ -933,7 +933,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!
 
 	//#!##### Reads file as string
-	//#!    sys fReadStr([str]fname);
+	//#!    sys.fReadStr([str]fname);
 	//#!Reads text file to svs string buffer.
 	//#!Return: [str]FileContents
 	if (sysFuncMatch(argS->callId, "fReadStr", s)) {
@@ -947,7 +947,7 @@ uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Write string as file
-	//#!    sys fWriteStr([str]str, [str]fname);
+	//#!    sys.fWriteStr([str]str, [str]fname);
 	//#!Writes svs string to file.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "fWriteStr", s)) {

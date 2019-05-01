@@ -68,7 +68,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!
 
 	//#!##### New screen
-	//#!    pAddScreen();
+	//#!    sys.pAddScreen();
 	//#!Creates new screen.
 	//#!Return: [num]scrId
 	if (sysFuncMatch(argS->callId, "pAddScreen", s)) {
@@ -81,7 +81,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### New frame
-	//#!    pAddFrame([num]x1, [num]y1, [num]x2, [num]y2, [num]value, [num]scrId);
+	//#!    sys.pAddFrame([num]x1, [num]y1, [num]x2, [num]y2, [num]value, [num]scrId);
 	//#!Creates new pscg frame. Value contains id of screen inside frame.
 	//#!Return: [num]elementId
 	if (sysFuncMatch(argS->callId,"pAddFrame",s)) {
@@ -109,7 +109,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### New text field
-	//#!    pAddText([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
+	//#!    sys.pAddText([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
 	//#!Adds a new text field.
 	//#!Return: [num]id
 	if (sysFuncMatch(argS->callId, "pAddText", s)) {
@@ -138,7 +138,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### New button
-	//#!    pAddButton([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
+	//#!    sys.pAddButton([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
 	//#!Creates new button.
 	//#!Return: [num]id
 	if (sysFuncMatch(argS->callId, "pAddButton", s)) {
@@ -167,7 +167,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### New color button
-	//#!    pAddCButton([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
+	//#!    sys.pAddCButton([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
 	//#!Adds color button, color is stored in its value.
 	//#!Return: [num]id
 	if (sysFuncMatch(argS->callId, "pAddCButton", s)) {
@@ -196,7 +196,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### New check box
-	//#!    pAddCheckBox([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
+	//#!    sys.pAddCheckBox([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
 	//#!Creates new checkbox. Checkbox state is stored in its value.
 	//#!Return: [num]id
 	if (sysFuncMatch(argS->callId, "pAddCheckBox", s)) {
@@ -225,7 +225,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### New image
-	//#!    pAddImage([num]x1, [num]y1, [num]x2, [num]y2, [str]fname, [num]scrId);
+	//#!    sys.pAddImage([num]x1, [num]y1, [num]x2, [num]y2, [str]fname, [num]scrId);
 	//#!Creates new .ppm image container. Name of image is stored in str_value
 	//#!Size attribute is stored in value, (one by default)
 	//#!Return: [num]id
@@ -255,7 +255,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### New vertical slider
-	//#!    pAddSliderV([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
+	//#!    sys.pAddSliderV([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
 	//#!Adds a new vertical slider. (pAddSlider is also accepted)
 	//#!Return: [num]id
 	if (sysFuncMatch(argS->callId, "pAddSlider", s) || sysFuncMatch(argS->callId, "pAddSliderV", s)) {
@@ -286,7 +286,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### New horizontal slider
-	//#!    pAddSliderH([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
+	//#!    sys.pAddSliderH([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
 	//#!Adds a new horizontal slider.
 	//#!Return: [num]id
 	if (sysFuncMatch(argS->callId, "pAddSliderH", s)) {
@@ -317,7 +317,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### New progress bar
-	//#!    pAddBar([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
+	//#!    sys.pAddBar([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
 	//#!Adds progress bar. Orientation depends on bar dimensions.
 	//#!Return: [num]id
 	if (sysFuncMatch(argS->callId, "pAddVBar", s) || sysFuncMatch(argS->callId, "pAddBar", s)) {
@@ -349,7 +349,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
 	//#!#### Destructors
 
-	//#!    pDestroy([num]id);
+	//#!    sys.pDestroy([num]id);
 	//#!Destroys element with given id.
 	//#!Return: none
 	if (sysFuncMatch(argS->callId, "pDestroy", s)) {
@@ -361,10 +361,10 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	  return 1;
 	}
 
-	//#!
-	//#!    pDestroyScr([num]scrId);
-	//#!Destroy screen with given id (with all its sub-screens). To be removed.
-	//#!Return: None
+	//
+	//    sys.pDestroyScr([num]scrId);
+	//Destroy screen with given id (with all its sub-screens). To be removed.
+	//Return: None
 	if (sysFuncMatch(argS->callId,"pDestroyScr",s)){
 		argType[1]=0;
 		if(sysExecTypeCheck(argS, argType, 1,s)){
@@ -378,7 +378,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	//#!#### Getters & setters
 
 	//#!##### Value
-	//#!    pGetValue([num]Id);
+	//#!    sys.pGetValue([num]Id);
 	//#!Gets value of pscg item.
 	//#!Return: [num]value
 	if (sysFuncMatch(argS->callId,"pGetValue",s)){
@@ -394,7 +394,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetValue([num]Id, [num]value);
+	//#!    sys.pSetValue([num]Id, [num]value);
 	//#!Sets value of pscg item.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetValue", s)) {
@@ -410,7 +410,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Modified flag
-	//#!    pSetModif([num]Id);
+	//#!    sys.pSetModif([num]Id);
 	//#!Sets modified flag of an element.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetModif", s)) {
@@ -425,7 +425,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Parameter
-	//#!    pGetParam([num]Id);
+	//#!    sys.pGetParam([num]Id);
 	//#!Gets elements parameter value.
 	//#!Return: [num]param
 	if (sysFuncMatch(argS->callId, "pGetParam", s)) {
@@ -439,7 +439,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetParam([num]Id, [num]value);
+	//#!    sys.pSetParam([num]Id, [num]value);
 	//#!Sets elements parameter value.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetParam", s)) {
@@ -456,7 +456,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Events
-	//#!    pGetEvent([num]Id);
+	//#!    sys.pGetEvent([num]Id);
 	//#!Gets event from an element.
 	//#!Return: [num] event value, one of EV_ defines.
 	if (sysFuncMatch(argS->callId, "pGetEvent", s)) {
@@ -481,7 +481,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pGetEventC([num]Id);
+	//#!    sys.pGetEventC([num]Id);
 	//#!Gets event from an element and clears the event.
 	//#!Return: [num] event value, one of EV_ defines.
 	if (sysFuncMatch(argS->callId, "pGetEventC", s)) {
@@ -509,7 +509,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetEvent([num]Id, [num] event);
+	//#!    sys.pSetEvent([num]Id, [num] event);
 	//#!Sets event of an element.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetEvent", s)) {
@@ -535,7 +535,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pClrScrEv([num]Id);
+	//#!    sys.pClrScrEv([num]Id);
 	//#!Clears event for whole screen and its sub-screens.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pClrScrEv", s)) {
@@ -549,7 +549,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Screen
-	//#!    pSetScreen([num]Id, [num]screenId);
+	//#!    sys.pSetScreen([num]Id, [num]screenId);
 	//#!Sets element screen parameter.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetScreen", s)) {
@@ -565,7 +565,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Grayout
-	//#!    pGetGrayout([num]Id);
+	//#!    sys.pGetGrayout([num]Id);
 	//#!Gets element grayout.
 	//#!Return: [num] grayout, 1 if element is grey, 0 if it is normal
 	if (sysFuncMatch(argS->callId, "pGetGrayout", s)) {
@@ -581,7 +581,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetGrayout([num]Id, [num]grayout);
+	//#!    sys.pSetGrayout([num]Id, [num]grayout);
 	//#!Sets element grayout.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetGrayout", s)) {
@@ -596,7 +596,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Visibility
-	//#!    pGetVisible([num]Id);
+	//#!    sys.pGetVisible([num]Id);
 	//#!Gets element visibility.
 	//#!Return: [num] visibility
 	if (sysFuncMatch(argS->callId, "pGetVisible", s)) {
@@ -612,7 +612,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetVisible([num]Id, [num]visibility);
+	//#!    sys.pSetVisible([num]Id, [num]visibility);
 	//#!Sets element visibility.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetVisible", s)) {
@@ -628,7 +628,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Ghost buttons
-	//#!    pGetGhost([num]Id);
+	//#!    sys.pGetGhost([num]Id);
 	//#!Gets element ghost parameter.
 	//#!Return: [num] isGhost
 	if (sysFuncMatch(argS->callId, "pGetGhost", s)) {
@@ -644,7 +644,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetGhost([num]Id, [num]ghost);
+	//#!    sys.pSetGhost([num]Id, [num]ghost);
 	//#!Sets element ghost parameter.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetGhost", s)) {
@@ -660,7 +660,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Selected buttons
-	//#!    pGetSelect([num]Id);
+	//#!    sys.pGetSelect([num]Id);
 	//#!Gets element selected parameter.
 	//#!Return: [num] isSelected
 	if (sysFuncMatch(argS->callId, "pGetSelect", s)) {
@@ -676,7 +676,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetSelect([num]Id, [num]select);
+	//#!    sys.pSetSelect([num]Id, [num]select);
 	//#!Sets element select parameter.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetSelect", s)) {
@@ -692,7 +692,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### String parameter
-	//#!    pGetStr([num]Id);
+	//#!    sys.pGetStr([num]Id);
 	//#!Gets element value_str parameter.
 	//#!Return: [str]str
 	if (sysFuncMatch(argS->callId, "pGetStr", s)) {
@@ -708,7 +708,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetStr([num]Id, [str]str);
+	//#!    sys.pSetStr([num]Id, [str]str);
 	//#!Sets element value_str parameter.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetStr", s)) {
@@ -725,7 +725,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetTxtSize([num]Id, [num]val);
+	//#!    sys.pSetTxtSize([num]Id, [num]val);
 	//#!Sets size of text inside buttons or text fields.
 	//#!Possible values are those used by LCD_Set_Sys_Font
 	//#!By default they are: 18, 32, 70, 87
@@ -744,7 +744,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
 	//#!##### Size and placement
 	//#!
-	//#!    pSetRelInit([num]val);
+	//#!    sys.pSetRelInit([num]val);
 	//#!Sets aplication gr2 context to relative init mode.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetRelInit", s)) {
@@ -760,7 +760,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetXYXY([num]Id, [num] x1, [num] y1, [num] x2, [num] y2);
+	//#!    sys.pSetXYXY([num]Id, [num] x1, [num] y1, [num] x2, [num] y2);
 	//#!Sets position of element inside screen.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetXYXY", s)) {
@@ -785,7 +785,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetSpacing([num]Id, [num] left, [num] right, [num] top, [num] bottom);
+	//#!    sys.pSetSpacing([num]Id, [num] left, [num] right, [num] top, [num] bottom);
 	//#!Sets element spacing atributes of given screen.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetSpacing", s)) {
@@ -806,7 +806,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pGetXcell([num]screenId);
+	//#!    sys.pGetXcell([num]screenId);
 	//#!Gets screen Xcell parameter.
 	//#!Return: [num] Xcell
 	if (sysFuncMatch(argS->callId, "pGetXcell", s)) {
@@ -822,7 +822,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetXcell([num]screenId, [num] Xcell);
+	//#!    sys.pSetXcell([num]screenId, [num] Xcell);
 	//#!Sets screen Xcell parameter. (32 by default)
 	//#!Return: None
 	if (sysFuncMatch(argS->callId,"pSetXcell",s)) {
@@ -839,7 +839,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pGetYcell([num]screenId);
+	//#!    sys.pGetYcell([num]screenId);
 	//#!Gets screen Ycell parameter.
 	//#!Return: [num] Ycell
 	if (sysFuncMatch(argS->callId, "pGetYcell", s)){
@@ -855,7 +855,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetYcell([num]screenId, [num] Ycell);
+	//#!    sys.pSetYcell([num]screenId, [num] Ycell);
 	//#!Sets screen Ycell parameter. (32 by default)
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetYcell", s)) {
@@ -871,7 +871,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pGetXscroll([num]screenId);
+	//#!    sys.pGetXscroll([num]screenId);
 	//#!Gets screen Xscroll.
 	//#!Return: [num] Xscroll
 	if (sysFuncMatch(argS->callId, "pGetXscroll", s)) {
@@ -887,7 +887,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetXscroll([num]screenId, [num]Xscroll);
+	//#!    sys.pSetXscroll([num]screenId, [num]Xscroll);
 	//#!Sets Xscroll parameter.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetXscroll", s)) {
@@ -904,7 +904,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pGetYscroll([num]screenId);
+	//#!    sys.pGetYscroll([num]screenId);
 	//#!Gets Yscroll parameter.
 	//#!Return: [num] Yscroll
 	if (sysFuncMatch(argS->callId, "pGetYscroll", s)) {
@@ -920,7 +920,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetYscroll([num]screenId, [num]Yscroll);
+	//#!    sys.pSetYscroll([num]screenId, [num]Yscroll);
 	//#!Sets Yscroll parameter.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetYscroll", s)) {
@@ -936,7 +936,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!##### Fonts & texts
-	//#!    pSetDFont([num]screenId, [num] val);
+	//#!    sys.pSetDFont([num]screenId, [num] val);
 	//#!Sets defalt screen font.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetDFont", s)) {
@@ -952,7 +952,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pGetTexAct([num]Id);
+	//#!    sys.pGetTexAct([num]Id);
 	//#!Gets if given editable text field is currently active.
 	//#!Return: [num]isActive
 	if (sysFuncMatch(argS->callId, "pGetTexAct", s)) {
@@ -969,7 +969,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetTexAct([num]Id);
+	//#!    sys.pSetTexAct([num]Id);
 	//#!Sets given editable text field as currently active.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetTexAct", s)) {
@@ -986,7 +986,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetTexFit([num]Id, [num]val);
+	//#!    sys.pSetTexFit([num]Id, [num]val);
 	//#!Sets automatic line-breaking on.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetTexFit", s)) {
@@ -1002,7 +1002,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pSetTexEd([num]Id, [num]val);
+	//#!    sys.pSetTexEd([num]Id, [num]val);
 	//#!Sets text fiels as editable.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetTexEd", s)) {
@@ -1020,7 +1020,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
 	//#!##### Colours
 	//#!
-	//#!    pSetColor([num]Col, [num]val);
+	//#!    sys.pSetColor([num]Col, [num]val);
 	//#!Sets given color to given value.
 	//#!Return: None
 	if (sysFuncMatch(argS->callId, "pSetColor", s)) {
@@ -1047,7 +1047,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 	}
 
 	//#!
-	//#!    pGetColor([num]Col);
+	//#!    sys.pGetColor([num]Col);
 	//#!Gets value of given color.
 	//#!Return: [num]val
 	if (sysFuncMatch(argS->callId, "pGetColor", s)) {
