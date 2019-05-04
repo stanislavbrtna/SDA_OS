@@ -242,27 +242,28 @@ uint8_t svp_tray_XBtn(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t re
 uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
 	static uint8_t init;
 	static uint8_t clickOld;
-	uint8_t click;
+	static uint8_t click;
 	uint8_t curr_font;
 	static uint16_t holdCounter;
 
   curr_font = LCD_Get_Font_Size();
 	LCD_Set_Sys_Font(32);
 
-	if((irq_redraw) || (init == 0) || ((svpSGlobal.systemOptClick == 0) && (clickOld == 1))) {
+	if((irq_redraw) || (init == 0) || ((svpSGlobal.systemOptClick == 0) && clickOld == 1 && click == 0)) {
 		LCD_FillRect(x1, y1, x2, y2, pscg_get_fill_color(&sda_sys_con));
 		LCD_DrawRectangle(x1, y1, x2, y2, pscg_get_border_color(&sda_sys_con));
 		LCD_DrawText_ext(x1 + 10, y1 + 2, pscg_get_text_color(&sda_sys_con), (uint8_t *)"S!");
 		init = 1;
 	}
 
-	if (tray_clicked(x1, y1, x2, y2)) { //kliknuto
+	if (tray_clicked(x1, y1, x2, y2)) {
 
 		if (clickOld == 0) {
 			LCD_FillRect(x1, y1, x2, y2, pscg_get_active_color(&sda_sys_con));
 			LCD_DrawRectangle(x1, y1, x2, y2, pscg_get_border_color(&sda_sys_con));
 			LCD_DrawText_ext(x1 + 10, y1 + 2, pscg_get_text_color(&sda_sys_con), (uint8_t *)"S!");
 		}
+
 		click = 1;
 		holdCounter++;
 	} else {
