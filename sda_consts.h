@@ -28,8 +28,8 @@ File description:
 #define SDA_CONSTS_H
 
 // version number string and version number,
-#define SDA_OS_VERSION "0.7.2.1"
-#define SDA_OS_VERSION_NUM 721
+#define SDA_OS_VERSION "0.7.2.2"
+#define SDA_OS_VERSION_NUM 722
 
 // shows where the screen is redrawn, works only in simulator, usefull for debug
 // #define SIM_SHOW_REDRAW
@@ -62,7 +62,7 @@ File description:
 // max name lenght of running SVS application, including its path
 #define APP_NAME_LEN 128
 
-// maximum chached applications
+// maximum cached applications
 #define MAX_OF_SAVED_PROC 16
 
 // default minimum backlight value, override this in your SDA_OS base if needed
