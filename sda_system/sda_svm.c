@@ -65,10 +65,12 @@ static uint16_t pscg_last_elements_count; //pro kontrolu zda po sobě aplikace u
 // Globals:
 
 // main screen
-uint16_t mainScr; //obrazovka top slotu
+uint16_t mainScr; //obrazovka top slotu / top-slot screen
+
 // svs
 uint8_t svs_wrap_setScr_flag;
 uint16_t svs_wrap_setScr_id;
+
 // pscg
 uint8_t * pscgErrorString;
 
@@ -92,21 +94,26 @@ void setNotificationFlag(int32_t id, int32_t param) {
 	notificationFlag = 1;
 }
 
+
 int32_t getNotificationId() {
 	return notificationId;
 }
+
 
 int32_t getNotificationParam() {
 	return notificationParam;
 }
 
+
 int8_t getNotificationFlag() {
 	return notificationFlag;
 }
 
+
 void clearNotificationFlag() {
 	notificationFlag = 0;
 }
+
 
 // screens and stuff
 void sdaSvmSetMainScreen(uint16_t val) {
@@ -115,17 +122,21 @@ void sdaSvmSetMainScreen(uint16_t val) {
   pscg_set_modified(val, &sda_app_con);
 }
 
+
 uint16_t sdaSvmGetMainScreen() {
 	return mainScr;
 }
+
 
 void sdaSetRedrawDetect(uint8_t val) {
 	redrawDetect = val;
 }
 
+
 uint8_t sdaGetRedrawDetect() {
 	return redrawDetect;
 }
+
 
 void sdaSvmOnTop() {
 	sdaSlotOnTop(4);
@@ -134,6 +145,7 @@ void sdaSvmOnTop() {
 	svpSGlobal.systemXBtnVisible = 1;
 	svpSGlobal.systemXBtnClick = 0;
 }
+
 
 void sdaSvmGetGR2Settings() {
 	// load colors from system to app context
@@ -158,6 +170,7 @@ uint8_t sdaSvmGetRunning() {
 	return 0;
 }
 
+
 uint8_t sdaSvmGetValid(uint16_t id) {
 	if (svmMeta.id == id && svmValid){
 		return 1;
@@ -170,6 +183,7 @@ uint8_t sdaSvmGetValid(uint16_t id) {
 	return 0;
 }
 
+
 uint16_t sdaSvmGetId() {
 	if (svmValid) {
 		return svmMeta.id;
@@ -178,17 +192,21 @@ uint16_t sdaSvmGetId() {
 	}
 }
 
+
 void sdaSvmKillApp() {
 	svm.handbrake = 1;
 }
+
 
 void sdaSvmSetError(uint8_t * str) {
 	pscgErrorString = str;
 }
 
+
 void svmSetLaunchCWDflag(uint8_t val) {
   svmMeta.launchFromCWD = val;
 }
+
 
 static uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
   uint8_t dirbuf[258];
@@ -246,6 +264,7 @@ uint8_t sdaSvmLoadApp(uint8_t *fname, uint8_t *name, uint8_t mode) {
   }
   return 0;
 }
+
 
 uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
 	uint8_t cacheBuffer[256];
@@ -331,6 +350,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
 	return 1;
 }
 
+
 void sdaSvmCloseApp() {
 	if (sdaSlotGetValid(4) == 0) {
 		return;
@@ -404,6 +424,7 @@ void sdaSvmCloseApp() {
 
 }
 
+
 void svmCloseAll() {
 	for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
 		if (svmSavedProcValid[x] == 1) {
@@ -415,6 +436,7 @@ void svmCloseAll() {
 		sda_serial_disable();
 	}
 }
+
 
 static void svmSuspendAddId(uint16_t id, uint8_t * name) {
 	uint16_t index = 0;
@@ -431,6 +453,7 @@ static void svmSuspendAddId(uint16_t id, uint8_t * name) {
 	svmSavedProcSingular[index] = 0;
 }
 
+
 uint8_t svmSuspend() {
 	if(functionExists(SUSPEND_FUNCTION, &svm)) {
     commExec(SUSPEND_FUNCTION, &svm);
@@ -445,6 +468,7 @@ uint8_t svmSuspend() {
   sdaSvmSave();
   return 0;
 }
+
 
 uint8_t svmWake(uint16_t id) {
 	if(id == svmMeta.id) {
@@ -489,6 +513,7 @@ uint8_t svmWake(uint16_t id) {
 	return 1;
 }
 
+
 static uint16_t GetIfSingular(uint8_t * name) {
 	for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
 		if (svmSavedProcValid[x] == 1) {
@@ -500,6 +525,7 @@ static uint16_t GetIfSingular(uint8_t * name) {
 	return 0;
 }
 
+
 void svmSetSingular(uint16_t id) {
 	for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
 		if (svmSavedProcValid[x] == 1 && svmSavedProcId[x] == id) {
@@ -508,12 +534,14 @@ void svmSetSingular(uint16_t id) {
 	}
 }
 
+
 uint16_t svmGetSuspendedId(uint16_t id) {
 	if (svmSavedProcValid[id] == 1) {
 		return svmSavedProcId[id];
 	}
 	return 0;
 }
+
 
 uint8_t *svmGetSuspendedName(uint16_t id) {
 	if (svmSavedProcValid[id] == 1) {
@@ -522,10 +550,12 @@ uint8_t *svmGetSuspendedName(uint16_t id) {
 	return (uint8_t *)"";
 }
 
+
 void svmClose(uint16_t id) {
 	svmWake(id);
 	sdaSvmCloseApp();
 }
+
 
 static void svmRemoveCachedFile(uint16_t id, uint8_t * tail) {
 	uint8_t cacheBuffer[256];
@@ -539,6 +569,7 @@ static void svmRemoveCachedFile(uint16_t id, uint8_t * tail) {
 	svp_unlink(cacheBuffer);
 }
 
+
 static void svmRemoveCachedProc(uint16_t id) {
 	svmRemoveCachedFile(id, (uint8_t *) ".gr0");
 	svmRemoveCachedFile(id, (uint8_t *) ".gr1");
@@ -548,6 +579,7 @@ static void svmRemoveCachedProc(uint16_t id) {
 	svmRemoveCachedFile(id, (uint8_t *) ".svm");
 }
 
+
 static void svmInValidate(uint16_t id) {
 	for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
 		if (svmSavedProcId[x] == id && svmSavedProcValid[x] == 1) {
@@ -556,6 +588,7 @@ static void svmInValidate(uint16_t id) {
 		}
 	}
 }
+
 
 static void restoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsVM *s) {
 	for(uint8_t z = 0; z < 3; z++) {
@@ -569,6 +602,7 @@ static void restoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, 
   }
 		s->commArgs.usedup = 3;
 }
+
 
 static void storeArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **svmArgs, svsVM *s) {
 	uint32_t x, n;
@@ -596,6 +630,7 @@ static void storeArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_
   	}
 	}
 }
+
 
 void sdaSvmKillApp_handle() {
 	pscg_text_deactivate(&sda_app_con);
@@ -636,6 +671,7 @@ static void svmInitRemoveCache(uint8_t *ext){
 	}
 }
 
+
 void sdaSvmInit() {
 	svp_switch_main_dir();
 	svp_chdir((uint8_t *)"APPS/cache");
@@ -652,6 +688,7 @@ void sdaSvmInit() {
 	nextId = 1;
 }
 
+
 static uint8_t svmCheckAndExit() {
 	if((svpSGlobal.systemXBtnClick) || (errCheck(&svm) != 0)) {
     sdaSvmCloseApp();
@@ -659,6 +696,7 @@ static uint8_t svmCheckAndExit() {
   }
   return 0;
 }
+
 
 uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
 	if (init) {
@@ -725,8 +763,8 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
   return 0;
 }
 
-// call and retval
 
+// call and retval
 void sdaSvmCall(
 		uint8_t *name,
 		uint8_t *callback,
@@ -746,6 +784,7 @@ void sdaSvmCall(
 	sda_strcp(name, svmCallName, APP_NAME_LEN);
 }
 
+
 void sdaSvmRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varType arg2, uint8_t type2) {
 	svmCallRetval[0] = arg0;
 	svmCallRetvalType[0] = type0;
@@ -755,6 +794,8 @@ void sdaSvmRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varT
 	svmCallRetvalType[2] = type2;
 }
 
+
+// save and load
 static void sdaSvmSaver(uint16_t id, uint8_t * tail, void *target, uint32_t size) {
 	uint8_t cacheBuffer[256];
 	uint8_t numbuff[25];
@@ -776,6 +817,7 @@ static void sdaSvmSaver(uint16_t id, uint8_t * tail, void *target, uint32_t size
 
 	svp_fclose(&svmFile);
 }
+
 
 static uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t size) {
 	uint8_t cacheBuffer[256];
@@ -801,6 +843,7 @@ static uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t 
 	return 1;
 }
 
+
 void sdaUpdateCurrentWD() { // get current wd relative to main dir
   uint8_t dirbuf[258];
   uint8_t path[258];
@@ -816,6 +859,7 @@ void sdaUpdateCurrentWD() { // get current wd relative to main dir
 
   svp_chdir(svmMeta.currentWorkDir);
 }
+
 
 void sdaSvmSave() {
 	SVScloseCache(&svm);
@@ -845,6 +889,7 @@ void sdaSvmSave() {
 	sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context));
 	sdaSvmSaver(svmMeta.id, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta));
 }
+
 
 uint8_t sdaSvmLoad(uint16_t id) {
 

@@ -12,12 +12,14 @@ extern uint16_t ov_id;
 void (*overlay_destructor) ();
 uint8_t destructor_set;
 
+
 void setOverlayDefault() {
 	overlayX1 = 32;
 	overlayY1 = 64;
 	overlayX2 = 288;
 	overlayY2 = 416;
 }
+
 
 uint16_t setOverlayScreen(uint16_t val, gr2context * c) {
 
@@ -32,6 +34,7 @@ uint16_t setOverlayScreen(uint16_t val, gr2context * c) {
   return ov_id;
 }
 
+
 void setOverlayDestructor(void (*destructor) ()) {
 	overlay_destructor = destructor;
 	destructor_set = 1;
@@ -41,6 +44,7 @@ void setOverlayDestructor(void (*destructor) ()) {
 void overlayDestructorDone() {
 	destructor_set = 2;
 }
+
 
 void destroyOverlay() {
 	if (overlayScr != 0) {
@@ -56,21 +60,26 @@ void destroyOverlay() {
   }
 }
 
+
 void setOverlayX1(uint16_t val) {
   overlayX1 = val;
 }
+
 
 void setOverlayY1(uint16_t val) {
   overlayY1 = val;
 }
 
+
 void setOverlayX2(uint16_t val) {
   overlayX2 = val;
 }
 
+
 void setOverlayY2(uint16_t val) {
   overlayY2 = val;
 }
+
 
 uint16_t getOverlayId() {
 	if (overlayScr != 0) {

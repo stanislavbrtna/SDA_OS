@@ -11,7 +11,7 @@ void setOverlayY2(uint16_t val);
 
 uint16_t getOverlayId();
 
-void destroyOverlay(); // calls the destructor, used to destroy any overlay
+void destroyOverlay(); // destroys current overlay, calls the destructor
 
 void overlayDestructorDone();
 void setOverlayDestructor(void (*destructor) ());

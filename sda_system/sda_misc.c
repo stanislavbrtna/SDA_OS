@@ -29,8 +29,6 @@ extern uint8_t sleepLock;
 
 static gr2EventType keyEvLocal[6];
 
-// here will be misc svs functions originaly in main
-
 uint8_t getKbdKey() {
 	if (svpSGlobal.kbdFlag == 1) {
 		svpSGlobal.kbdFlag = 0;
@@ -39,21 +37,26 @@ uint8_t getKbdKey() {
 	return 0;
 }
 
+
 uint16_t svp_get_uptime() {
   return svpSGlobal.uptime;
 }
+
 
 uint8_t getTimeUpdateFlag() {
   return timeUpdateFlag;
 }
 
+
 void setTimeUpdateFlag() {
   timeUpdateFlag = 1;
 }
 
+
 void showKeyboard() {
   svpSGlobal.kbdVisible = 1;
 }
+
 
 void hideKeyboard() {
   pscg_text_deactivate(&sda_sys_con);
@@ -62,17 +65,21 @@ void hideKeyboard() {
   svpSGlobal.kbdVisible = 0;
 }
 
+
 void set_svp_counter(uint16_t val) {
   svsCounter = val;
 }
+
 
 uint16_t get_svp_counter() {
   return svsCounter;
 }
 
+
 void svp_set_sleep_lock(uint8_t val) {
 	sleepLock = val;
 }
+
 
 void pscg_error_callback(uint8_t *str, gr2context * c) {
 	if (c == &sda_sys_con) {
@@ -88,6 +95,7 @@ void pscg_error_callback(uint8_t *str, gr2context * c) {
 	}
 }
 
+
 void svp_clr_button_ev() {
   svpSGlobal.keyEv[0] = EV_NONE;
   svpSGlobal.keyEv[1] = EV_NONE;
@@ -97,19 +105,23 @@ void svp_clr_button_ev() {
   svpSGlobal.keyEv[5] = EV_NONE;
 }
 
+
 gr2EventType sda_wrap_get_button(uint8_t num) {
 	return keyEvLocal[num];
 }
 
+
 void sda_wrap_clear_button(uint8_t num) {
 	keyEvLocal[num] = EV_NONE;
 }
+
 
 void sda_store_buttons() {
 	for (uint16_t i = 0; i < 6; i++) {
   	keyEvLocal[i] = svpSGlobal.keyEv[i];
   }
 }
+
 
 uint32_t svp_str_add(uint8_t *str, uint8_t *str2) {
   uint32_t i, n;
@@ -128,6 +140,7 @@ uint32_t svp_str_add(uint8_t *str, uint8_t *str2) {
   return n+1;
 }
 
+
 uint32_t sda_strcp(uint8_t *in, uint8_t *out, uint32_t len) {
   uint32_t x;
   for (x = 0; x < (len - 1); x++) {
@@ -140,6 +153,7 @@ uint32_t sda_strcp(uint8_t *in, uint8_t *out, uint32_t len) {
   return 0;
 }
 
+
 uint32_t sda_strlen(uint8_t * str) {
   uint32_t len = 0;
 
@@ -149,6 +163,7 @@ uint32_t sda_strlen(uint8_t * str) {
 
   return len;
 }
+
 
 void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
 	uint16_t a;
@@ -160,7 +175,6 @@ void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
 		return;
 	}
 
-	//printf("write-i32-DBG: val: %d\n", val);
 	for(uint16_t x = 0; x < len; x++) {
 		buff[x] = ' ';
 	}
@@ -185,7 +199,6 @@ void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
 	if (negative) {
 		buff[len - a - 1] = '-';
 	}
-	//printf("sda_int_to_str-DBG: i1: %s\n", buff);
 
 	while(buff[0] == ' ') {
 		for(uint16_t x = 0; x < len ; x++) {

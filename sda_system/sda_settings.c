@@ -53,9 +53,13 @@ void sda_load_config() {
   if ((svpSGlobal.lcdShutdownTime < 2)||(svpSGlobal.lcdShutdownTime > 10)) {
   	svpSGlobal.lcdShutdownTime = 5;
   }
-  svp_set_irq_redraw(); //po nastavení barev překreslíme panel
+  svp_set_irq_redraw(); //po nastavení barev překreslíme panel / redraw the tray after loading color settings
   svp_conf_close(&conffile);
+
+  // handle possible on-boot calibration
   if (svp_getLcdCalibrationFlag() == 0) {
+    // load calibration data
+    // TODO: perform calibration if calib.dat is missing
   	if (svp_fexists((uint8_t *)"calib.dat") == 1) {
   		svp_fopen_rw(&calib, (uint8_t *)"calib.dat");
   		svp_fread(&calib, &calibData, sizeof(calibData));
@@ -70,6 +74,7 @@ void sda_load_config() {
   svp_chdir(dirbuf);
   printf("Done.\n");
 }
+
 
 void sda_store_config_gui(uint8_t set_def) {
   svp_conf conffile;
@@ -104,6 +109,7 @@ void sda_store_config_gui(uint8_t set_def) {
 
 }
 
+
 void sda_store_config() {
   svp_conf conffile;
   uint8_t dirbuf[258];
@@ -120,6 +126,7 @@ void sda_store_config() {
   printf("Done.\n");
 }
 
+
 void sda_store_mute_config() {
   svp_conf conffile;
   uint8_t dirbuf[258];
@@ -135,6 +142,7 @@ void sda_store_mute_config() {
   svp_chdir(dirbuf);
   printf("Done.\n");
 }
+
 
 void sda_store_calibration() {
   uint8_t dirbuf[258];

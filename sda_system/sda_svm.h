@@ -41,6 +41,7 @@ uint8_t sdaSvmGetRunning();
 
 // gently closes the currently running app, performs exit() call
 void sdaSvmCloseApp();
+
 // kills app
 void sdaSvmKillApp();
 
