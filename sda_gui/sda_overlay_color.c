@@ -65,6 +65,7 @@ uint16_t color_overlay_init() {
   return col_id;
 }
 
+
 void color_overlay_destructor() {
 	col_done = 2;
   pscg_clear_screen_ev(col_screen, sda_current_con);
@@ -72,6 +73,7 @@ void color_overlay_destructor() {
 	setRedrawFlag();
 	overlayDestructorDone();
 }
+
 
 void color_overlay_update(uint16_t ovId) {
   if (col_id != ovId) {
@@ -109,6 +111,7 @@ void color_overlay_update(uint16_t ovId) {
   pscg_clear_screen_ev(col_screen, sda_current_con);
 }
 
+
 uint16_t color_overlay_get_ok(uint16_t ovId) {
   if (col_id != ovId) {
     return 0;
@@ -119,6 +122,7 @@ uint16_t color_overlay_get_ok(uint16_t ovId) {
     return 0;
   }
 }
+
 
 uint16_t color_overlay_get_color(uint16_t ovId) {
   if (col_id != ovId) {
@@ -131,6 +135,7 @@ uint16_t color_overlay_get_color(uint16_t ovId) {
   									(uint8_t)pscg_get_value(col_bsl, sda_current_con)
   				);
 }
+
 
 void color_overlay_set_color(uint16_t ovId, uint16_t col) {
   uint8_t r, g, b;
@@ -148,6 +153,7 @@ void color_overlay_set_color(uint16_t ovId, uint16_t col) {
   pscg_set_value(col_bsl, b, sda_current_con);
 
 }
+
 
 void color_overlay_clear_ok(uint16_t ovId) {
   if (col_id != ovId) {
