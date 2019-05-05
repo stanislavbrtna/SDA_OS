@@ -108,7 +108,7 @@ void svp_tray_battery(int16_t x1, int16_t y1, int16_t w) {
 	static uint8_t redraw;
 	static uint8_t batt_string[5];
 	static uint8_t oldbatt;
-	systemPwrType oldBattState;
+	static systemPwrType oldBattState;
 	
 	uint8_t curr_font;
 

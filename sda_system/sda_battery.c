@@ -27,12 +27,12 @@ SOFTWARE.
 
 
 static uint8_t get_batt_percent(float voltage) {
-	uint8_t percent;
-	percent = (uint8_t)((voltage - MIN_VOLTAGE) / ((MAX_VOLTAGE - MIN_VOLTAGE) / 100 ));
-	if (percent > 100) {
-		percent = 100;
-	}
-	return percent;
+  uint8_t percent;
+  percent = (uint8_t)((voltage - MIN_VOLTAGE) / ((MAX_VOLTAGE - MIN_VOLTAGE) / 100 ));
+  if (percent > 100) {
+    percent = 100;
+  }
+  return percent;
 }
 
 
@@ -58,65 +58,54 @@ static void reload_batt_percent(uint8_t percentage) {
 
 
 void sda_handle_battery_status() {
-  // read sda_is_battery_measured(); then sda_get_battery_voltage();
   float batteryVoltage;
-  uint32_t temp;
   static uint8_t unplugged_flag;
+  static uint8_t battUnpluggedVal;
   static uint8_t battPercentRealValue;
   static uint32_t oldSysPercentageTime;
-  systemPwrType oldBattState;
+  static systemPwrType oldBattState;
+  static unpluggedCount;
 
   if (sda_is_battery_measured()) {
+
     batteryVoltage = sda_get_battery_voltage();
+
     reload_batt_string(batteryVoltage);
-   
-		battPercentRealValue = get_batt_percent(batteryVoltage);
+
+    battPercentRealValue = get_batt_percent(batteryVoltage);
 
     if (unplugged_flag) {
-      if (svpSGlobal.uptime > oldSysPercentageTime + 30) {
+      unpluggedCount--;
 
+      if (battUnpluggedVal < battPercentRealValue) {
+        battUnpluggedVal = battPercentRealValue;
       }
 
-      unplugged_flag = 0;
+      if (unpluggedCount == 0) {
+        unplugged_flag = 0;
+        svpSGlobal.battPercentage = (battUnpluggedVal / 5) * 5;
+      }
     } else {
-      if (svpSGlobal.uptime > oldSysPercentageTime + 30) {
-        reload_batt_percent(battPercentRealValue);
+
+      if (svpSGlobal.battPercentage == 101) {
+        svpSGlobal.battPercentage = (battPercentRealValue / 5) * 5;
       }
-      oldSysPercentageTime = svpSGlobal.uptime;
+      if (svpSGlobal.pwrType == POWER_BATT) {
+        reload_batt_percent(battPercentRealValue);
+      } else {
+        svpSGlobal.battPercentage = (battPercentRealValue / 5) * 5;
+      }
+
     }
   }
 
   // reset batt state after unplugging device from charger
   if (oldBattState != svpSGlobal.pwrType && svpSGlobal.pwrType == POWER_BATT) {
-    // raise some sort of flag that will override default behaviour and measure battery few times to get accurate result
     unplugged_flag = 1;
-    oldSysPercentageTime = svpSGlobal.uptime;
+    unpluggedCount = 2;
+    battUnpluggedVal = 0;
+    svpSGlobal.battPercentage = 101;
   }
 
   oldBattState = svpSGlobal.pwrType;
-  /*
-  	// if we do not know (etc reset) set it to measured, rounded by 5
-	if (battDisplayValue == 0 || battDisplayValue == 101) {
-		if (svpSGlobal.battPercentage == 101) {
-			battDisplayValue = 101;
-		} else {
-			battDisplayValue = svpSGlobal.battPercentage - svpSGlobal.battPercentage % 5;
-		}
-	} else {
-		// check every 30s if measured is lower, if yes, then subtract 5% from value
-		if ((svpSGlobal.uptime > oldSysPercentageTime + 30) && (svpSGlobal.battPercentage < battDisplayValue)) {
-			if (battDisplayValue > 5) {
-				battDisplayValue -= 5;
-			}
-			oldSysPercentageTime = svpSGlobal.uptime;
-		}
-	}
-
-  // reset the measured value when unplugged from charger
-  if (oldBattState != svpSGlobal.pwrType && svpSGlobal.pwrType == POWER_BATT) {
-      if (svpSGlobal.battPercentage != 101) {
-          battDisplayValue = svpSGlobal.battPercentage - svpSGlobal.battPercentage % 5;
-      }
-  }
-*/
 }
