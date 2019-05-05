@@ -59,6 +59,7 @@ SOFTWARE.
 #include "sda_system/sda_alarms.h"
 #include "sda_system/sda_settings.h"
 #include "sda_system/sda_irq.h"
+#include "sda_system/sda_battery.h"
 #include "SVS_WRAP/sda_wrapper.h"
 
 #include "SVP_SCREENS/svp_screens.h"

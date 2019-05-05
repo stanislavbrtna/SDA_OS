@@ -43,6 +43,10 @@ void svp_beep_set_t(uint16_t time);
 void svp_beep_set_pf(uint16_t val);
 void svp_beep_set_def();
 
+// [HW] Battery
+uint8_t sda_is_battery_measured();
+float   sda_get_battery_voltage();
+
 // [HW] led
 void led_set_pattern(ledPatternType pat);
 void sda_set_led(uint8_t set);

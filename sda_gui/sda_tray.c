@@ -106,88 +106,58 @@ void svp_tray_alarm(int16_t x1, int16_t y1, int16_t w) {
 
 void svp_tray_battery(int16_t x1, int16_t y1, int16_t w) {
 	static uint8_t redraw;
-	static systemPwrType oldBattState;
 	static uint8_t batt_string[5];
 	static uint8_t oldbatt;
-	static uint32_t oldSysPercentageTime;
-	static uint8_t battDisplayValue;
+	systemPwrType oldBattState;
+	
 	uint8_t curr_font;
 
-	// here is an accumulation of ugly hacks to keep battery percentage from going up
-
-	// if we do not know (etc reset) set it to measured, rounded by 5
-	if (battDisplayValue == 0 || battDisplayValue == 101) {
-		if (svpSGlobal.battPercentage == 101) {
-			battDisplayValue = 101;
-		} else {
-			battDisplayValue = svpSGlobal.battPercentage - svpSGlobal.battPercentage % 5;
-		}
-	} else {
-		// check every 30s if measured is lower, if yes, then subtract 5% from value
-		if ((svpSGlobal.uptime > oldSysPercentageTime + 30) && (svpSGlobal.battPercentage < battDisplayValue)) {
-			if (battDisplayValue > 5) {
-				battDisplayValue -= 5;
-			}
-			oldSysPercentageTime = svpSGlobal.uptime;
-		}
-	}
-
-
 	if((redraw == 0) || (irq_redraw)) {
-	  if (0 != battDisplayValue / 100) {
-		  batt_string[0] = battDisplayValue / 100 + 48;
+	  // constructing battery string
+		if (0 != svpSGlobal.battPercentage / 100) {
+		  batt_string[0] = svpSGlobal.battPercentage / 100 + 48;
 		} else {
 		  batt_string[0] = ' ';
 		}
-		if (0 != battDisplayValue / 10) {
-		  batt_string[1] = (battDisplayValue / 10) % 10 + 48;
+
+		if (0 != svpSGlobal.battPercentage / 10) {
+		  batt_string[1] = (svpSGlobal.battPercentage / 10) % 10 + 48;
 		} else {
 		  batt_string[1] = ' ';
 		}
-		batt_string[2] = battDisplayValue % 10 + 48;
+		
+		batt_string[2] = svpSGlobal.battPercentage % 10 + 48;
 		batt_string[3] = '%';
 		batt_string[4] = 0;
-
-		// reset the measured value when unplugged from charger
-		if (oldBattState != svpSGlobal.pwrType && svpSGlobal.pwrType == POWER_BATT) {
-			if (svpSGlobal.battPercentage != 101) {
-				battDisplayValue = svpSGlobal.battPercentage - svpSGlobal.battPercentage % 5;
-			}
-		}
-
-		oldbatt = battDisplayValue;
+		
+		oldbatt = svpSGlobal.battPercentage;
 		oldBattState = svpSGlobal.pwrType;
 
-		if(battDisplayValue == 101) {
+		// unknown value
+		if(svpSGlobal.battPercentage == 101) {
 		  batt_string[0] = ' ';
 		  batt_string[1] = ' ';
 		  batt_string[2] = '?';
 		  batt_string[3] = '%';
 		  batt_string[4] = 0;
 		}
+
 		LCD_FillRect(x1 - 1, y1, x1 + w, 31, trayBackgroundColor);
 		curr_font = LCD_Get_Font_Size();
 		LCD_Set_Sys_Font(18);
-		if (svpSGlobal.pwrType == POWER_USB) {
+		if (svpSGlobal.pwrType == POWER_USB) { 
 			LCD_DrawText_ext(x1, y1 + 8, pscg_get_text_color(&sda_sys_con), IRQ_BATT_CHRG);
-			if (svpSGlobal.battPercentage != 101) {
-				LCD_FillRect(x1 + 8,
-										 y1 + 31 - 6,
-										 x1 + (int16_t)(((float)w - 4)*((float)svpSGlobal.battPercentage/(float)100)),
-										 y1 + 31 - 2,
-										 pscg_get_active_color(&sda_sys_con)
-				);
-			}
-		} else if (svpSGlobal.pwrType == POWER_BATT) {
+		} else {
 			LCD_DrawText_ext(x1, y1 + 8, pscg_get_text_color(&sda_sys_con), batt_string);
-			if (svpSGlobal.battPercentage != 101) {
-				LCD_FillRect(x1 + 8,
-										 y1 + 31 - 6,
-										 x1 + (int16_t)(((float)w - 4)*((float)battDisplayValue/(float)100)),
-										 y1 + 31 - 2,
-										 pscg_get_active_color(&sda_sys_con)
-				);
-			}
+		}
+
+		if (svpSGlobal.battPercentage != 101) {
+			LCD_FillRect(x1 + 8,
+									 y1 + 31 - 6,
+									 x1 + (int16_t)(((float)w - 4)*((float)svpSGlobal.battPercentage/(float)100)),
+									 y1 + 31 - 2,
+									 pscg_get_active_color(&sda_sys_con)
+			);
 		}
 
 		LCD_DrawRectangle(x1 + 8, y1 + 31 - 6, x1 + w - 4, y1 + 31 - 2, pscg_get_border_color(&sda_sys_con));
@@ -199,7 +169,7 @@ void svp_tray_battery(int16_t x1, int16_t y1, int16_t w) {
 		systemBattClick = 1;
 	}
 
-	if ((oldbatt != battDisplayValue) || (oldBattState != svpSGlobal.pwrType)) {
+	if ((oldbatt != svpSGlobal.battPercentage) || (oldBattState != svpSGlobal.pwrType)) {
 		redraw = 0;
 	}
 }

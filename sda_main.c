@@ -694,7 +694,6 @@ uint8_t sda_main_loop() {
 /*                             screen redraw                                 */
 /*****************************************************************************/
 
-	//touch_lock = SDA_LOCK_LOCKED;
 	tick_lock = SDA_LOCK_LOCKED;
 	LCD_setDrawArea(0, 0, SDA_LCD_W, SDA_LCD_H);
 	if (svpSGlobal.systemRedraw == 1 || kbdRedraw) {
@@ -857,6 +856,9 @@ uint8_t sda_main_loop() {
 
 	// power management
 	sda_power_main_handler();
+
+	// battery status handling
+	sda_handle_battery_status();
 
 	return 0;
 }
