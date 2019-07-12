@@ -39,6 +39,14 @@ void sdaPrintActiveAlarm() {
 	}
 }
 
+uint8_t sdaGetActiveAlarm() {
+	if (currentAlarmTime) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 static void sdaReloadAlarmIcon() {
 	if (currentAlarmTime != 0) {
 		if (currentAlarmTime - svpSGlobal.timestamp < 24*60*60) {

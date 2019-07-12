@@ -43,4 +43,7 @@ int32_t sdaRegisterAlarm(
 
 void sdaPrintActiveAlarm();
 
+// Returns 1 if there is an active alarm
+uint8_t sdaGetActiveAlarm();
+
 #endif

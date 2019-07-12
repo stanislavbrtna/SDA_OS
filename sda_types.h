@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 File description:
-	This file stores main custom data types used in SDA-OS.
+  This file stores main custom data types used in SDA-OS.
 
 */
 
@@ -38,6 +38,8 @@ typedef enum {SDA_LOCK_LOCKED, SDA_LOCK_UNLOCKED} sdaLockState;
 typedef enum {PWR_MAX, PWR_MID, PWR_LOW} pwrStateType;
 
 typedef enum {SDA_PWR_MODE_NORMAL, SDA_PWR_MODE_SLEEP} pwrModeType;
+
+typedef enum {SDA_PWR_MODE_SLEEP_LOW, SDA_PWR_MODE_SLEEP_NORMAL, SDA_PWR_MODE_SLEEP_DEEP} pwrSleepModeType;
 
 typedef enum {POWER_USB, POWER_BATT} systemPwrType;
 
@@ -66,67 +68,68 @@ typedef struct {
   uint32_t lcdShutdownTime;
 
   //RTC
-	volatile uint8_t sec;
-	volatile uint8_t min;
-	volatile uint8_t hour;
-	volatile uint8_t day;
-	volatile uint8_t weekday;
-	volatile uint8_t month;
-	volatile uint16_t year;
-	volatile uint8_t dateUpdated;
-	volatile int32_t timestamp;
+  volatile uint8_t sec;
+  volatile uint8_t min;
+  volatile uint8_t hour;
+  volatile uint8_t day;
+  volatile uint8_t weekday;
+  volatile uint8_t month;
+  volatile uint16_t year;
+  volatile uint8_t dateUpdated;
+  volatile int32_t timestamp;
 
-	//time
-	volatile uint32_t uptime;
-	volatile uint32_t lcdOnTime;
-	volatile uint32_t battTime;
+  //time
+  volatile uint32_t uptime;
+  volatile uint32_t lcdOnTime;
+  volatile uint32_t battTime;
 
-	//sound
-	volatile uint8_t mute;
+  //sound
+  volatile uint8_t mute;
 
-	//keyboard
-	volatile uint8_t   kbdFlag;
-	uint8_t kbdKeyStr[10];
-	volatile uint8_t   kbdVisible;
+  //keyboard
+  volatile uint8_t   kbdFlag;
+  uint8_t kbdKeyStr[10];
+  volatile uint8_t   kbdVisible;
 
-	//system
-	volatile uint8_t systemRedraw;
-	volatile uint16_t systemOverlay;
-	volatile uint16_t systemMessage;
-	volatile uint8_t systemXBtnVisible;
-	volatile uint8_t systemXBtnClick;
-	volatile uint8_t systemOptClick;
-	volatile uint8_t systemPwrLongPress;
+  //system
+  volatile uint8_t systemRedraw;
+  volatile uint16_t systemOverlay;
+  volatile uint16_t systemMessage;
+  volatile uint8_t systemXBtnVisible;
+  volatile uint8_t systemXBtnClick;
+  volatile uint8_t systemOptClick;
+  volatile uint8_t systemPwrLongPress;
 
   volatile pwrModeType  powerMode; // normal or sleep
+  volatile pwrSleepModeType powerSleepMode;
   volatile pwrStateType powerState; // specifies for how long the sda waits for input
 } svpStatusStruct;
 
 //TODO: specify what should be part of os and what should be part of touch driver
 #ifdef PC
 typedef struct {
-	float a;
-	float b;
-	float c;
-	float d;
-	float e;
+  float a;
+  float b;
+  float c;
+  float d;
+  float e;
 } touchCalibDataStruct;
 #endif
 
 typedef struct {
-	uint16_t id;
-	uint16_t parentId;
-	uint8_t name[APP_NAME_LEN];
-	uint8_t currentWorkDir[APP_NAME_LEN];
-	uint16_t screen;
-	uint8_t openFileName[64];
-	uint8_t openFileUsed;
-	uint8_t openConfName[64];
-	uint8_t openConfUsed;
-	uint8_t openCsvName[64];
-	uint8_t openCsvUsed;
-	uint8_t lcdOffButtons;
-	uint8_t launchFromCWD;
+  uint16_t id;
+  uint16_t parentId;
+  uint8_t name[APP_NAME_LEN];
+  uint8_t currentWorkDir[APP_NAME_LEN];
+  uint16_t screen;
+  uint8_t openFileName[64];
+  uint8_t openFileUsed;
+  uint8_t openConfName[64];
+  uint8_t openConfUsed;
+  uint8_t openCsvName[64];
+  uint8_t openCsvUsed;
+  uint8_t lcdOffButtons;
+  uint8_t launchFromCWD;
 } sdaSvmMetadata;
 
 #endif
