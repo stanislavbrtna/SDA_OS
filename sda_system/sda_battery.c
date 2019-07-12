@@ -64,7 +64,7 @@ void sda_handle_battery_status() {
   static uint8_t battPercentRealValue;
   static uint32_t oldSysPercentageTime;
   static systemPwrType oldBattState;
-  static unpluggedCount;
+  static uint8_t unpluggedCount;
 
   if (sda_is_battery_measured()) {
 
