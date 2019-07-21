@@ -22,10 +22,10 @@ SOFTWARE.
 
 #include "svp_screens.h"
 
-//main homescreenu, init provede inicializaci, top pokud je on top
+// homescreen handler
 uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
   static uint16_t screen;
-	static uint16_t appsBtn;
+  static uint16_t appsBtn;
   static uint16_t optBtn;
   static uint16_t text;
   static uint16_t time;
@@ -48,23 +48,23 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     return screen;
   }
 
-  //loop top
+  // loop top
   if (top == 1) {
     svpSGlobal.systemXBtnVisible = 0;
 
-    //time refresh
+    // time refresh
     if (((uint16_t)svpSGlobal.hour * 10) + (uint16_t)svpSGlobal.min != oldtime) {
       time_string[0] = svpSGlobal.hour / 10 + 48;
-		  time_string[1] = svpSGlobal.hour % 10 + 48;
-		  time_string[2] = ':';
-		  time_string[3] = svpSGlobal.min / 10 + 48;
-		  time_string[4] = svpSGlobal.min % 10 + 48;
-		  time_string[5] = 0;
-		  pscg_set_str(time, time_string, &sda_sys_con);
-		  oldtime = ((uint16_t)svpSGlobal.hour * 10) + (uint16_t)svpSGlobal.min;
+      time_string[1] = svpSGlobal.hour % 10 + 48;
+      time_string[2] = ':';
+      time_string[3] = svpSGlobal.min / 10 + 48;
+      time_string[4] = svpSGlobal.min % 10 + 48;
+      time_string[5] = 0;
+      pscg_set_str(time, time_string, &sda_sys_con);
+      oldtime = ((uint16_t)svpSGlobal.hour * 10) + (uint16_t)svpSGlobal.min;
     }
 
-    //date refresh
+    // date refresh
     if ((svpSGlobal.day != olddate) || (svpSGlobal.dateUpdated)) {
       svp_write_date_string(date_string, 0, 1);
       pscg_set_str(date, date_string, &sda_sys_con);
@@ -73,15 +73,15 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
       svpSGlobal.dateUpdated = 0;
     }
 
-		if (pscg_get_event(appsBtn, &sda_sys_con) == EV_RELEASED) {
-		  sdaSlotOnTop(1);
-		}
-		pscg_set_event(appsBtn, EV_NONE, &sda_sys_con);
+    if (pscg_get_event(appsBtn, &sda_sys_con) == EV_RELEASED) {
+      sdaSlotOnTop(1);
+    }
+    pscg_set_event(appsBtn, EV_NONE, &sda_sys_con);
 
-		if (pscg_get_event(optBtn, &sda_sys_con) == EV_RELEASED) {
-		  sdaSlotOnTop(2);
-		}
-		pscg_set_event(optBtn, EV_NONE, &sda_sys_con);
+    if (pscg_get_event(optBtn, &sda_sys_con) == EV_RELEASED) {
+      sdaSlotOnTop(2);
+    }
+    pscg_set_event(optBtn, EV_NONE, &sda_sys_con);
   }
   //else: work in the background, noting for now
   return 0;
