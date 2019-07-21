@@ -101,11 +101,11 @@ uint16_t time_overlay_init() {
 }
 
 void time_overlay_destructor() {
-	tov_done = 2; // set done to cancel
-	pscg_clear_screen_ev(tov_screen, sda_current_con);
-	pscg_destroy(tov_screen, sda_current_con);
-	setRedrawFlag();
-	overlayDestructorDone();
+  tov_done = 2; // set done to cancel
+  pscg_clear_screen_ev(tov_screen, sda_current_con);
+  pscg_destroy(tov_screen, sda_current_con);
+  setRedrawFlag();
+  overlayDestructorDone();
 }
 
 void time_overlay_update(uint16_t ovId) {
@@ -119,52 +119,52 @@ void time_overlay_update(uint16_t ovId) {
   }
 
   if (pscg_get_event(tov_ok, sda_current_con) == EV_RELEASED) {
-	  destroyOverlay();
-	  tov_done = 1;
-		return;
-	}
+    destroyOverlay();
+    tov_done = 1;
+    return;
+  }
 
-	if (pscg_get_event(tov_cancel, sda_current_con) == EV_RELEASED) {
-	  destroyOverlay();
-	  tov_done = 2;
-		return;
-	}
-	//hours
+  if (pscg_get_event(tov_cancel, sda_current_con) == EV_RELEASED) {
+    destroyOverlay();
+    tov_done = 2;
+    return;
+  }
+  //hours
 
-	if (pscg_get_event(tov_ph1, sda_current_con) == EV_RELEASED) {
-	  if ((tov_hr1_str[0] - 48 < 1)
-	  		|| ((tov_hr2_str[0] - 48 < 4) && (tov_hr1_str[0] - 48 == 1))) {
-	      tov_hr1_str[0]++;
-	      pscg_set_modified(tov_th1, sda_current_con);
-	  }
-	}
+  if (pscg_get_event(tov_ph1, sda_current_con) == EV_RELEASED) {
+    if ((tov_hr1_str[0] - 48 < 1)
+        || ((tov_hr2_str[0] - 48 < 4) && (tov_hr1_str[0] - 48 == 1))) {
+        tov_hr1_str[0]++;
+        pscg_set_modified(tov_th1, sda_current_con);
+    }
+  }
 
-	if (pscg_get_event(tov_mh1, sda_current_con) == EV_RELEASED) {
-	  if (tov_hr1_str[0] - 48 != 0){
-	    tov_hr1_str[0]--;
-	    pscg_set_modified(tov_th1, sda_current_con);
-	  }
-	}
+  if (pscg_get_event(tov_mh1, sda_current_con) == EV_RELEASED) {
+    if (tov_hr1_str[0] - 48 != 0){
+      tov_hr1_str[0]--;
+      pscg_set_modified(tov_th1, sda_current_con);
+    }
+  }
 
-	if (pscg_get_event(tov_mh2, sda_current_con) == EV_RELEASED){
-	  if (tov_hr2_str[0] - 48 != 0) {
-	    tov_hr2_str[0]--;
-	    pscg_set_modified(tov_th2, sda_current_con);
-	  } else {
-	  	if (tov_hr1_str[0] - 48 != 0) {
-	  		tov_hr1_str[0]--;
-	  		tov_hr2_str[0] = '9';
-	  	} else {
-				tov_hr1_str[0] = '2';
-				tov_hr2_str[0] = '3';
-	  	}
-	  	pscg_set_modified(tov_th1, sda_current_con);
-			pscg_set_modified(tov_th2, sda_current_con);
-	  }
-	}
+  if (pscg_get_event(tov_mh2, sda_current_con) == EV_RELEASED){
+    if (tov_hr2_str[0] - 48 != 0) {
+      tov_hr2_str[0]--;
+      pscg_set_modified(tov_th2, sda_current_con);
+    } else {
+      if (tov_hr1_str[0] - 48 != 0) {
+        tov_hr1_str[0]--;
+        tov_hr2_str[0] = '9';
+      } else {
+        tov_hr1_str[0] = '2';
+        tov_hr2_str[0] = '3';
+      }
+      pscg_set_modified(tov_th1, sda_current_con);
+      pscg_set_modified(tov_th2, sda_current_con);
+    }
+  }
 
-	if (pscg_get_event(tov_ph2, sda_current_con) == EV_RELEASED) {
-	  if (tov_hr2_str[0] - 48 < 9) {
+  if (pscg_get_event(tov_ph2, sda_current_con) == EV_RELEASED) {
+    if (tov_hr2_str[0] - 48 < 9) {
       if ((tov_hr1_str[0] - 48 < 2)) {
         tov_hr2_str[0]++;
       } else {
@@ -176,69 +176,69 @@ void time_overlay_update(uint16_t ovId) {
           pscg_set_modified(tov_th1, sda_current_con);
         }
       }
-	    pscg_set_modified(tov_th2, sda_current_con);
-	  } else {
-	    if (tov_hr1_str[0] - 48 < 2) {
-	      tov_hr1_str[0]++;
-	      pscg_set_modified(tov_th1, sda_current_con);
-	    }
-	    tov_hr2_str[0] = '0';
-	    pscg_set_modified(tov_th2, sda_current_con);
-	  }
-	}
+      pscg_set_modified(tov_th2, sda_current_con);
+    } else {
+      if (tov_hr1_str[0] - 48 < 2) {
+        tov_hr1_str[0]++;
+        pscg_set_modified(tov_th1, sda_current_con);
+      }
+      tov_hr2_str[0] = '0';
+      pscg_set_modified(tov_th2, sda_current_con);
+    }
+  }
 
-	//minutes
-	if (pscg_get_event(tov_pm1, sda_current_con) == EV_RELEASED) {
-	  if (tov_min1_str[0] - 48 < 5) {
-	    tov_min1_str[0]++;
-	    pscg_set_modified(tov_tm1, sda_current_con);
-	  }
-	}
+  //minutes
+  if (pscg_get_event(tov_pm1, sda_current_con) == EV_RELEASED) {
+    if (tov_min1_str[0] - 48 < 5) {
+      tov_min1_str[0]++;
+      pscg_set_modified(tov_tm1, sda_current_con);
+    }
+  }
 
-	if (pscg_get_event(tov_mm1, sda_current_con) == EV_RELEASED) {
-	  if (tov_min1_str[0]-48 != 0) {
-	    tov_min1_str[0]--;
-	    pscg_set_modified(tov_tm1, sda_current_con);
-	  }
-	}
+  if (pscg_get_event(tov_mm1, sda_current_con) == EV_RELEASED) {
+    if (tov_min1_str[0]-48 != 0) {
+      tov_min1_str[0]--;
+      pscg_set_modified(tov_tm1, sda_current_con);
+    }
+  }
 
-	if (pscg_get_event(tov_mm2, sda_current_con) == EV_RELEASED) {
-	  if (tov_min2_str[0] - 48 != 0) {
-	    tov_min2_str[0]--;
-	    pscg_set_modified(tov_tm2, sda_current_con);
-	  } else {
-	  	if (tov_min1_str[0] - 48 != 0) {
-	  		tov_min2_str[0]='9';
-	  		tov_min1_str[0]--;
-	  	} else {
-	  		tov_min1_str[0] = '5';
-	  		tov_min2_str[0] = '9';
-	  	}
-	  	pscg_set_modified(tov_tm2, sda_current_con);
-	     pscg_set_modified(tov_tm1, sda_current_con);
-	  }
-	}
+  if (pscg_get_event(tov_mm2, sda_current_con) == EV_RELEASED) {
+    if (tov_min2_str[0] - 48 != 0) {
+      tov_min2_str[0]--;
+      pscg_set_modified(tov_tm2, sda_current_con);
+    } else {
+      if (tov_min1_str[0] - 48 != 0) {
+        tov_min2_str[0]='9';
+        tov_min1_str[0]--;
+      } else {
+        tov_min1_str[0] = '5';
+        tov_min2_str[0] = '9';
+      }
+      pscg_set_modified(tov_tm2, sda_current_con);
+       pscg_set_modified(tov_tm1, sda_current_con);
+    }
+  }
 
-	if (pscg_get_event(tov_pm2, sda_current_con) == EV_RELEASED) {
-	  if (tov_min2_str[0] - 48 < 9) {
+  if (pscg_get_event(tov_pm2, sda_current_con) == EV_RELEASED) {
+    if (tov_min2_str[0] - 48 < 9) {
       tov_min2_str[0]++;
-	    pscg_set_modified(tov_tm2, sda_current_con);
-	  } else {
-	    if (tov_min1_str[0] - 48 < 5) {
-	      tov_min1_str[0]++;
-	      tov_min2_str[0] = '0';
-	      pscg_set_modified(tov_tm2, sda_current_con);
-	      pscg_set_modified(tov_tm1, sda_current_con);
-	    } else {
-	      tov_min2_str[0] = '0';
-	      tov_min1_str[0] = '0';
-	      pscg_set_modified(tov_tm1, sda_current_con);
-	      pscg_set_modified(tov_tm2, sda_current_con);
-	    }
-	  }
-	}
+      pscg_set_modified(tov_tm2, sda_current_con);
+    } else {
+      if (tov_min1_str[0] - 48 < 5) {
+        tov_min1_str[0]++;
+        tov_min2_str[0] = '0';
+        pscg_set_modified(tov_tm2, sda_current_con);
+        pscg_set_modified(tov_tm1, sda_current_con);
+      } else {
+        tov_min2_str[0] = '0';
+        tov_min1_str[0] = '0';
+        pscg_set_modified(tov_tm1, sda_current_con);
+        pscg_set_modified(tov_tm2, sda_current_con);
+      }
+    }
+  }
 
-	pscg_clear_screen_ev(tov_screen, sda_current_con);
+  pscg_clear_screen_ev(tov_screen, sda_current_con);
 }
 
 void time_overlay_set_time(uint16_t ovId, uint16_t hour, uint16_t min){

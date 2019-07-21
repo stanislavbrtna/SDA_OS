@@ -22,8 +22,6 @@ SOFTWARE.
 
 #include "sda_system_overlays.h"
 
-// get color overlay
-
 static uint16_t col_screen;
 static uint16_t col_id = 0xFFFF;
 
@@ -59,19 +57,18 @@ uint16_t color_overlay_init() {
   col_cancel = pscg_add_button(1, 9, 3, 10, OVRL_CANCEL, col_screen, sda_current_con);
 
   col_id = setOverlayScreen(col_screen, sda_current_con);
-	setOverlayDestructor(color_overlay_destructor);
-  //setOverlayY2(288);
+  setOverlayDestructor(color_overlay_destructor);
 
   return col_id;
 }
 
 
 void color_overlay_destructor() {
-	col_done = 2;
+  col_done = 2;
   pscg_clear_screen_ev(col_screen, sda_current_con);
-	pscg_destroy_screen(col_screen, sda_current_con);
-	setRedrawFlag();
-	overlayDestructorDone();
+  pscg_destroy_screen(col_screen, sda_current_con);
+  setRedrawFlag();
+  overlayDestructorDone();
 }
 
 
@@ -85,28 +82,30 @@ void color_overlay_update(uint16_t ovId) {
   }
 
   if (pscg_get_event(col_ok, sda_current_con) == EV_RELEASED) {
-	  destroyOverlay();
-	  col_done = 1;
-		return;
-	}
+    destroyOverlay();
+    col_done = 1;
+    return;
+  }
 
-	if (pscg_get_event(col_cancel, sda_current_con) == EV_RELEASED) {
-	  destroyOverlay();
-	  col_done = 2;
-		return;
-	}
+  if (pscg_get_event(col_cancel, sda_current_con) == EV_RELEASED) {
+    destroyOverlay();
+    col_done = 2;
+    return;
+  }
 
-	if ((pscg_get_event(col_rsl, sda_current_con))||(pscg_get_event(col_gsl, sda_current_con))||(pscg_get_event(col_bsl, sda_current_con))){
-	  pscg_set_value(
-	  							col_show,
-	  							LCD_MixColor(
-	  													(uint8_t)pscg_get_value(col_rsl, sda_current_con),
-	  													(uint8_t)pscg_get_value(col_gsl, sda_current_con),
-	  													(uint8_t)pscg_get_value(col_bsl, sda_current_con)
-	  							)
-								, sda_current_con
-	  );
-	}
+  if ((pscg_get_event(col_rsl, sda_current_con))
+       || (pscg_get_event(col_gsl, sda_current_con))
+       || (pscg_get_event(col_bsl, sda_current_con))) {
+    pscg_set_value(
+      col_show,
+      LCD_MixColor(
+        (uint8_t)pscg_get_value(col_rsl, sda_current_con),
+        (uint8_t)pscg_get_value(col_gsl, sda_current_con),
+        (uint8_t)pscg_get_value(col_bsl, sda_current_con)
+      ),
+      sda_current_con
+    );
+  }
 
   pscg_clear_screen_ev(col_screen, sda_current_con);
 }
@@ -129,11 +128,12 @@ uint16_t color_overlay_get_color(uint16_t ovId) {
     return 0;
   }
 
-  return LCD_MixColor(
-  									(uint8_t)pscg_get_value(col_rsl, sda_current_con),
-  									(uint8_t)pscg_get_value(col_gsl, sda_current_con),
-  									(uint8_t)pscg_get_value(col_bsl, sda_current_con)
-  				);
+  return (LCD_MixColor(
+      (uint8_t)pscg_get_value(col_rsl, sda_current_con),
+      (uint8_t)pscg_get_value(col_gsl, sda_current_con),
+      (uint8_t)pscg_get_value(col_bsl, sda_current_con)
+    )
+  );
 }
 
 
@@ -144,8 +144,8 @@ void color_overlay_set_color(uint16_t ovId, uint16_t col) {
   }
 
   r = (uint8_t)(((float)((col >> 11) & 0x1F) / 32) * 256);
-	g = (uint8_t)(((float)(((col & 0x07E0) >> 5) & 0x3F) / 64) * 256);
-	b = (uint8_t)(((float)(col & 0x1F) / 32) * 256);
+  g = (uint8_t)(((float)(((col & 0x07E0) >> 5) & 0x3F) / 64) * 256);
+  b = (uint8_t)(((float)(col & 0x1F) / 32) * 256);
 
   pscg_set_value(col_show, col, sda_current_con);
   pscg_set_value(col_rsl, r, sda_current_con);

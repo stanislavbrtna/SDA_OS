@@ -59,9 +59,9 @@ void set_year_string(uint8_t * str, uint16_t year) {
 
   if (year < 9999) {
     while (0 != year) {
-	    str[4 - a] = (year % 10 + 48);
-	    year = year / 10;
-	    a++;
+      str[4 - a] = (year % 10 + 48);
+      year = year / 10;
+      a++;
     }
 
     str[5] = 0;
@@ -83,10 +83,11 @@ void set_year_string(uint8_t * str, uint16_t year) {
 
 }
 
+
 void svp_write_date_string(
-                         uint8_t *str,
-                         uint8_t month_as_num,
-                         uint8_t write_year) {
+    uint8_t *str,
+    uint8_t month_as_num,
+    uint8_t write_year) {
   uint8_t year_str[6];
 
   str[0] = 0;
@@ -108,6 +109,7 @@ void svp_write_date_string(
     svp_str_add(str, year_str);
   }
 }
+
 
 uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
   date_done = 0;
@@ -132,12 +134,12 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
   date_year_next = pscg_add_button(13, 1, 15, 2, (uint8_t *)">", date_screen, sda_current_con);
 
   date_month_text
-  	= pscg_add_text(5, 2, 12, 3, (uint8_t *)date_month_names[date_month_val], date_screen, sda_current_con);
+    = pscg_add_text(5, 2, 12, 3, (uint8_t *)date_month_names[date_month_val], date_screen, sda_current_con);
   date_month_prev = pscg_add_button(1, 2, 3, 3, (uint8_t *)"<", date_screen, sda_current_con);
   date_month_next = pscg_add_button(13, 2, 15, 3, (uint8_t *)">", date_screen, sda_current_con);
 
   date_selector_screen
-  	= date_select_widget_init(&date_widget, date_year_val, date_month_val, date_day_val);
+    = date_select_widget_init(&date_widget, date_year_val, date_month_val, date_day_val);
 
   pscg_set_x1y1x2y2(date_selector_screen, 1, 3, 15, 10, sda_current_con);
 
@@ -148,20 +150,22 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
 
   date_id = setOverlayScreen(date_screen, sda_current_con);
 
-	setOverlayDestructor(date_overlay_destructor);
+  setOverlayDestructor(date_overlay_destructor);
 
   setOverlayY2(442);
 
   return date_id;
 }
 
+
 void date_overlay_destructor() {
-	date_done = 2;
-	pscg_clear_screen_ev(date_screen, sda_current_con);
-	pscg_destroy_screen(date_screen, sda_current_con);
-	setRedrawFlag();
-	overlayDestructorDone();
+  date_done = 2;
+  pscg_clear_screen_ev(date_screen, sda_current_con);
+  pscg_destroy_screen(date_screen, sda_current_con);
+  setRedrawFlag();
+  overlayDestructorDone();
 }
+
 
 void date_overlay_update(uint16_t ovId) {
 
@@ -176,18 +180,18 @@ void date_overlay_update(uint16_t ovId) {
   date_select_widget_update(&date_widget);
 
   if (pscg_get_event(date_ok, sda_current_con) == EV_RELEASED) {
-	  destroyOverlay();
-	  date_done = 1;
-		return;
-	}
-	pscg_set_event(date_ok, EV_NONE, sda_current_con);
+    destroyOverlay();
+    date_done = 1;
+    return;
+  }
+  pscg_set_event(date_ok, EV_NONE, sda_current_con);
 
-	if (pscg_get_event(date_cancel, sda_current_con) == EV_RELEASED) {
-	  destroyOverlay();
-	  date_done = 2;
-		return;
-	}
-	pscg_set_event(date_cancel, EV_NONE, sda_current_con);
+  if (pscg_get_event(date_cancel, sda_current_con) == EV_RELEASED) {
+    destroyOverlay();
+    date_done = 2;
+    return;
+  }
+  pscg_set_event(date_cancel, EV_NONE, sda_current_con);
 
   if (pscg_get_event(date_year_prev, sda_current_con) == EV_RELEASED) {
     if (date_year_val > 1904) {
@@ -195,10 +199,10 @@ void date_overlay_update(uint16_t ovId) {
       set_year_string(date_year_name, date_year_val);
       pscg_set_modified(date_year_text, sda_current_con);
       date_select_widget_set_date(
-      													&date_widget,
-      													date_year_val,
-      													date_month_val,
-      													date_select_widget_get_day(&date_widget)
+        &date_widget,
+        date_year_val,
+        date_month_val,
+        date_select_widget_get_day(&date_widget)
       );
     }
   }
@@ -210,25 +214,24 @@ void date_overlay_update(uint16_t ovId) {
       set_year_string(date_year_name, date_year_val);
       pscg_set_modified(date_year_text, sda_current_con);
       date_select_widget_set_date(
-      													&date_widget,
-      													date_year_val,
-      													date_month_val,
-      													date_select_widget_get_day(&date_widget)
+        &date_widget,
+        date_year_val,
+        date_month_val,
+        date_select_widget_get_day(&date_widget)
       );
     }
   }
   pscg_set_event(date_year_next, EV_NONE, sda_current_con);
-
 
   if (pscg_get_event(date_month_prev, sda_current_con) == EV_RELEASED) {
     if (date_month_val > 1) {
       date_month_val--;
       pscg_set_str(date_month_text, (uint8_t *)date_month_names[date_month_val], sda_current_con);
       date_select_widget_set_date(
-      													&date_widget,
-      													date_year_val,
-      													date_month_val,
-      													date_select_widget_get_day(&date_widget)
+        &date_widget,
+        date_year_val,
+        date_month_val,
+        date_select_widget_get_day(&date_widget)
       );
 
     } else {
@@ -239,10 +242,10 @@ void date_overlay_update(uint16_t ovId) {
         set_year_string(date_year_name, date_year_val);
         pscg_set_modified(date_year_text, sda_current_con);
         date_select_widget_set_date(
-        													&date_widget,
-        													date_year_val,
-        													date_month_val,
-        													date_select_widget_get_day(&date_widget)
+          &date_widget,
+          date_year_val,
+          date_month_val,
+          date_select_widget_get_day(&date_widget)
         );
       }
     }
@@ -254,10 +257,10 @@ void date_overlay_update(uint16_t ovId) {
       date_month_val++;
       pscg_set_str(date_month_text, (uint8_t *)date_month_names[date_month_val], sda_current_con);
       date_select_widget_set_date(
-      													&date_widget,
-      													date_year_val,
-      													date_month_val,
-      													date_select_widget_get_day(&date_widget)
+        &date_widget,
+        date_year_val,
+        date_month_val,
+        date_select_widget_get_day(&date_widget)
       );
     } else {
       if (date_year_val < 2500) {
@@ -267,10 +270,10 @@ void date_overlay_update(uint16_t ovId) {
         set_year_string(date_year_name, date_year_val);
         pscg_set_modified(date_year_text, sda_current_con);
         date_select_widget_set_date(
-        													&date_widget,
-        													date_year_val,
-        													date_month_val,
-        													date_select_widget_get_day(&date_widget)
+          &date_widget,
+          date_year_val,
+          date_month_val,
+          date_select_widget_get_day(&date_widget)
         );
       }
     }
@@ -290,6 +293,7 @@ uint16_t date_overlay_get_ok(uint16_t ovId) {
   }
 }
 
+
 uint16_t date_overlay_get_year(uint16_t ovId) {
   if (date_id != ovId) {
     return 0;
@@ -297,6 +301,7 @@ uint16_t date_overlay_get_year(uint16_t ovId) {
 
   return date_year_val;
 }
+
 
 uint8_t date_overlay_get_month(uint16_t ovId) {
   if (date_id != ovId) {
@@ -306,6 +311,7 @@ uint8_t date_overlay_get_month(uint16_t ovId) {
   return date_month_val;
 }
 
+
 uint8_t date_overlay_get_day(uint16_t ovId) {
   if (date_id != ovId) {
     return 0;
@@ -313,6 +319,7 @@ uint8_t date_overlay_get_day(uint16_t ovId) {
 
   return date_select_widget_get_day(&date_widget);
 }
+
 
 void date_overlay_clear_ok(uint16_t ovId) {
   if (date_id != ovId) {

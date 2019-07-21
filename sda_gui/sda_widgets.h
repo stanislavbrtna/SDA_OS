@@ -36,13 +36,13 @@ extern const uint8_t *date_month_names[];
 extern const uint8_t date_month_lenghts[];
 extern const uint8_t * date_days_strs[];
 
-//return: pscg screen kde date widget sedí
+//return: pscg screen id of the new widget
 uint16_t date_select_widget_init(dateSelectorWidgetType *d, uint16_t year, uint8_t month, uint8_t day);
 
 // nastavuje datum widgetu
 void date_select_widget_set_date(dateSelectorWidgetType *d, uint16_t year, uint8_t month, uint8_t day);
 
-//return: 1 pokud bylo kliknuto, jinak 0
+//return: 1 if user clicked in the widget, otherwise 0
 uint16_t date_select_widget_update(dateSelectorWidgetType *d);
 
 // higliths day

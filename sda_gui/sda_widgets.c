@@ -24,76 +24,74 @@ SOFTWARE.
 
 // date select widget
 //aby to šlo 1 až 12
-const uint8_t *date_month_names[]
-	= {
-			(uint8_t *)"",
-			OVRL_MON1,
-			OVRL_MON2,
-			OVRL_MON3,
-			OVRL_MON4,
-			OVRL_MON5,
-			OVRL_MON6,
-			OVRL_MON7,
-			OVRL_MON8,
-			OVRL_MON9,
-			OVRL_MON10,
-			OVRL_MON11,
-			OVRL_MON12
-	};
+const uint8_t *date_month_names[] = {
+  (uint8_t *)"",
+  OVRL_MON1,
+  OVRL_MON2,
+  OVRL_MON3,
+  OVRL_MON4,
+  OVRL_MON5,
+  OVRL_MON6,
+  OVRL_MON7,
+  OVRL_MON8,
+  OVRL_MON9,
+  OVRL_MON10,
+  OVRL_MON11,
+  OVRL_MON12
+};
 
 //únor 28 nebo 29, třeba vyrobit funkci s detekcí přechodného roku, 28 je magic pro únor
-const uint8_t date_month_lenghts[]
-	= {
-			0,
-			31,
-			28,
-			31,
-			30,
-			31,
-			30,
-			31,
-			31,
-			30,
-			31,
-			30,
-			31
-	};
+const uint8_t date_month_lenghts[] = {
+  0,
+  31,
+  28,
+  31,
+  30,
+  31,
+  30,
+  31,
+  31,
+  30,
+  31,
+  30,
+  31
+};
 
-const uint8_t * date_days_strs[]
-	= {
-			(uint8_t *)"0",
-			(uint8_t *)"1",
-			(uint8_t *)"2",
-			(uint8_t *)"3",
-			(uint8_t *)"4",
-			(uint8_t *)"5",
-			(uint8_t *)"6",
-			(uint8_t *)"7",
-			(uint8_t *)"8",
-			(uint8_t *)"9",
-			(uint8_t *)"10",
-			(uint8_t *)"11",
-			(uint8_t *)"12",
-			(uint8_t *)"13",
-			(uint8_t *)"14",
-			(uint8_t *)"15",
-			(uint8_t *)"16",
-			(uint8_t *)"17",
-			(uint8_t *)"18",
-			(uint8_t *)"19",
-			(uint8_t *)"20",
-			(uint8_t *)"21",
-			(uint8_t *)"22",
-			(uint8_t *)"23",
-			(uint8_t *)"24",
-			(uint8_t *)"25",
-			(uint8_t *)"26",
-			(uint8_t *)"27",
-			(uint8_t *)"28",
-			(uint8_t *)"29",
-			(uint8_t *)"30",
-			(uint8_t *)"31"
-	};
+const uint8_t * date_days_strs[] = {
+  (uint8_t *)"0",
+  (uint8_t *)"1",
+  (uint8_t *)"2",
+  (uint8_t *)"3",
+  (uint8_t *)"4",
+  (uint8_t *)"5",
+  (uint8_t *)"6",
+  (uint8_t *)"7",
+  (uint8_t *)"8",
+  (uint8_t *)"9",
+  (uint8_t *)"10",
+  (uint8_t *)"11",
+  (uint8_t *)"12",
+  (uint8_t *)"13",
+  (uint8_t *)"14",
+  (uint8_t *)"15",
+  (uint8_t *)"16",
+  (uint8_t *)"17",
+  (uint8_t *)"18",
+  (uint8_t *)"19",
+  (uint8_t *)"20",
+  (uint8_t *)"21",
+  (uint8_t *)"22",
+  (uint8_t *)"23",
+  (uint8_t *)"24",
+  (uint8_t *)"25",
+  (uint8_t *)"26",
+  (uint8_t *)"27",
+  (uint8_t *)"28",
+  (uint8_t *)"29",
+  (uint8_t *)"30",
+  (uint8_t *)"31"
+};
+
 
 // works only for years from 1904 to 25xx
 uint8_t date_get_leap(uint16_t yr) {
@@ -103,6 +101,7 @@ uint8_t date_get_leap(uint16_t yr) {
     return 0;
   }
 }
+
 
 uint8_t date_get_starting_day(uint16_t year, uint8_t month) {
   //1.1.1904 = pátek/friday
@@ -143,11 +142,12 @@ uint8_t date_get_starting_day(uint16_t year, uint8_t month) {
 
 }
 
+
 void date_select_widget_load_days(
-                                dateSelectorWidgetType *d,
-                                uint16_t year,
-                                uint8_t month,
-                                uint8_t day) {
+    dateSelectorWidgetType *d,
+    uint16_t year,
+    uint8_t month,
+    uint8_t day) {
   uint16_t x, y;
 
   if (month != 2) {
@@ -169,42 +169,39 @@ void date_select_widget_load_days(
   y = 1;
   for(x = d->startDay - 1; x < (d->dayCount + d->startDay - 1); x++) {
       if (y == day) {
-        d->buttons[y]
-        	= pscg_add_cbutton(
-        										0 + x % 7,
-        										1 + x / 7,
-        										1 + x % 7,
-        										2 + x / 7,
-														(uint8_t *)date_days_strs[y],
-        										d->dateSelectorId,
-												sda_current_con
-        								);
+        d->buttons[y] = pscg_add_cbutton(
+          0 + x % 7,
+          1 + x / 7,
+          1 + x % 7,
+          2 + x / 7,
+          (uint8_t *)date_days_strs[y],
+          d->dateSelectorId,
+          sda_current_con
+        );
         pscg_set_value(d->buttons[y], pscg_get_text_color(sda_current_con), sda_current_con);
       } else {
-        d->buttons[y]
-        	= pscg_add_button(
-        										0 + x % 7,
-        										1 + x / 7,
-        										1 + x % 7,
-        										2 + x / 7,
-														(uint8_t *)date_days_strs[y],
-        										d->dateSelectorId,
-												sda_current_con
-        								);
+        d->buttons[y] = pscg_add_button(
+          0 + x % 7,
+          1 + x / 7,
+          1 + x % 7,
+          2 + x / 7,
+          (uint8_t *)date_days_strs[y],
+          d->dateSelectorId,
+          sda_current_con
+        );
       }
-      y++; //značí korektní den v měsíci
+      y++; // counts day in month
   }
-
   d->selectedDay = day;
-
 }
 
 
 uint16_t date_select_widget_init(
-                               dateSelectorWidgetType *d,
-                               uint16_t year,
-                               uint8_t month,
-                               uint8_t day) {
+    dateSelectorWidgetType *d,
+    uint16_t year,
+    uint8_t month,
+    uint8_t day) {
+
   uint16_t scr;
 
   scr = pscg_add_screen(sda_current_con);
@@ -223,10 +220,11 @@ uint16_t date_select_widget_init(
 }
 
 void date_select_widget_set_date(
-                               dateSelectorWidgetType *d,
-                               uint16_t year,
-                               uint8_t month,
-                               uint8_t day) {
+    dateSelectorWidgetType *d,
+    uint16_t year,
+    uint8_t month,
+    uint8_t day) {
+
   uint16_t y;
   //remove days
   for (y = 1; y <= d->dayCount; y++) {
@@ -247,14 +245,14 @@ uint16_t date_select_widget_update(dateSelectorWidgetType *d) {
       if (y != d->selectedDay) {
         //replace selected with normal button
         prac = pscg_add_button(
-        									pscg_get_x1(d->buttons[d->selectedDay], sda_current_con),
-        									pscg_get_y1(d->buttons[d->selectedDay], sda_current_con),
-        									pscg_get_x2(d->buttons[d->selectedDay], sda_current_con),
-        									pscg_get_y2(d->buttons[d->selectedDay], sda_current_con),
-        									(uint8_t *)date_days_strs[d->selectedDay],
-        									d->dateSelectorId,
-											sda_current_con
-        		);
+          pscg_get_x1(d->buttons[d->selectedDay], sda_current_con),
+          pscg_get_y1(d->buttons[d->selectedDay], sda_current_con),
+          pscg_get_x2(d->buttons[d->selectedDay], sda_current_con),
+          pscg_get_y2(d->buttons[d->selectedDay], sda_current_con),
+          (uint8_t *)date_days_strs[d->selectedDay],
+          d->dateSelectorId,
+          sda_current_con
+        );
         //destroy old one
         pscg_destroy(d->buttons[d->selectedDay], sda_current_con);
         //place prac in his place
@@ -262,14 +260,14 @@ uint16_t date_select_widget_update(dateSelectorWidgetType *d) {
 
         //place new cbutton on selected place
         prac = pscg_add_cbutton(
-        									pscg_get_x1(d->buttons[y], sda_current_con),
-        									pscg_get_y1(d->buttons[y], sda_current_con),
-        									pscg_get_x2(d->buttons[y], sda_current_con),
-        									pscg_get_y2(d->buttons[y], sda_current_con),
-        									(uint8_t *)date_days_strs[y],
-        									d->dateSelectorId,
-											sda_current_con
-        		);
+          pscg_get_x1(d->buttons[y], sda_current_con),
+          pscg_get_y1(d->buttons[y], sda_current_con),
+          pscg_get_x2(d->buttons[y], sda_current_con),
+          pscg_get_y2(d->buttons[y], sda_current_con),
+          (uint8_t *)date_days_strs[y],
+          d->dateSelectorId,
+          sda_current_con
+        );
         pscg_set_value(prac, pscg_get_text_color(sda_current_con), sda_current_con);
         //same routine
         pscg_destroy(d->buttons[y], sda_current_con);
@@ -293,19 +291,19 @@ uint16_t date_select_highlight(dateSelectorWidgetType *d, uint8_t day) {
 
   // input validation
   if ((day == 0) || (day > 31)) {
-  	return 0;
+    return 0;
   }
 
   // replace old button with new
   prac = pscg_add_cbutton(
-  											pscg_get_x1(d->buttons[day], sda_current_con),
-  											pscg_get_y1(d->buttons[day], sda_current_con),
-  											pscg_get_x2(d->buttons[day], sda_current_con),
-  											pscg_get_y2(d->buttons[day], sda_current_con),
-  											(uint8_t *)date_days_strs[day],
-  											d->dateSelectorId,
-											sda_current_con
-			);
+    pscg_get_x1(d->buttons[day], sda_current_con),
+    pscg_get_y1(d->buttons[day], sda_current_con),
+    pscg_get_x2(d->buttons[day], sda_current_con),
+    pscg_get_y2(d->buttons[day], sda_current_con),
+    (uint8_t *)date_days_strs[day],
+    d->dateSelectorId,
+    sda_current_con
+  );
   pscg_set_value(prac, pscg_get_border_color(sda_current_con), sda_current_con);
   // same routine
   pscg_destroy(d->buttons[day], sda_current_con);
@@ -313,6 +311,7 @@ uint16_t date_select_highlight(dateSelectorWidgetType *d, uint8_t day) {
 
   return 0;
 }
+
 
 uint8_t date_select_widget_get_day(dateSelectorWidgetType *d) {
   return d->selectedDay;
