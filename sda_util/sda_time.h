@@ -31,7 +31,14 @@ uint8_t sdaTimeGetWeekDay(int32_t sdaTime);
 uint8_t sdaTimeGetDays(int32_t sdaTime);
 uint8_t sdaTimeGetMonths(int32_t sdaTime);
 uint16_t sdaTimeGetYears(int32_t sdaTime);
-int32_t sdaTimeGetTimestamp(uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t min, uint8_t sec);
+int32_t sdaTimeGetTimestamp(
+  uint16_t year,
+  uint8_t month,
+  uint8_t day,
+  uint8_t hour,
+  uint8_t min,
+  uint8_t sec
+);
 uint16_t sdaTimeGetMonthDayYear(int32_t sdaTime, uint8_t select);
 void sdaTimePrint(int32_t sdaTime);
 

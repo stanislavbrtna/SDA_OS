@@ -28,12 +28,14 @@ static uint8_t p16_G;
 static uint8_t p16_B;
 static uint8_t p16_use_pmc;
 
+
 void sda_p16_set_pmc(uint8_t enable, uint16_t color) {
   p16_use_pmc = enable;
   p16_R = (uint8_t)((color>>11)&0x1F);
   p16_G = (uint8_t)(((color&0x07E0)>>5)&0x3F);
   p16_B = (uint8_t)(color&0x1F);
 }
+
 
 uint8_t p16_get_header(svp_file * fp, p16Header * header) {
   svp_fseek(fp, 0);
@@ -91,6 +93,7 @@ uint8_t p16_get_header(svp_file * fp, p16Header * header) {
   return 0;
 }
 
+
 uint16_t p16_get_pixel(svp_file * fp, p16Header * header, p16State * state) {
   uint16_t color;
 
@@ -132,25 +135,25 @@ uint16_t p16_get_pixel(svp_file * fp, p16Header * header, p16State * state) {
 
 
 uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
-	svp_file fp;
-	p16Header header;
-	p16State imageState;
+  svp_file fp;
+  p16Header header;
+  p16State imageState;
 
-	if (!svp_fopen_read(&fp, filename)) {
-	  printf("sda_draw_p16: Error while opening file %s!\n", filename);
-	  return 1;
-	}
-	touch_lock = SDA_LOCK_LOCKED;
+  if (!svp_fopen_read(&fp, filename)) {
+    printf("sda_draw_p16: Error while opening file %s!\n", filename);
+    return 1;
+  }
+  touch_lock = SDA_LOCK_LOCKED;
 
   p16_get_header(&fp, &header);
 
-	LCD_setSubDrawArea(x, y, x + header.imageWidth, y + header.imageHeight);
-	LCD_canvas_set(x, y, x + header.imageWidth - 1, y + header.imageHeight - 1);
+  LCD_setSubDrawArea(x, y, x + header.imageWidth, y + header.imageHeight);
+  LCD_canvas_set(x, y, x + header.imageWidth - 1, y + header.imageHeight - 1);
 
-	imageState.init = 0;
+  imageState.init = 0;
 
   uint16_t color;
-	for(uint32_t n = 0; n < header.imageWidth*header.imageHeight ; n++) {
+  for(uint32_t n = 0; n < header.imageWidth*header.imageHeight ; n++) {
     color = p16_get_pixel(&fp, &header, &imageState);
 
     if (p16_use_pmc) {
@@ -165,24 +168,25 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
     }
 
     LCD_canvas_putcol(color);
-	}
+  }
 
-	svp_fclose(&fp);
-	touch_lock = SDA_LOCK_UNLOCKED;
-	return 0;
+  svp_fclose(&fp);
+  touch_lock = SDA_LOCK_UNLOCKED;
+  return 0;
 }
 
-uint16_t sda_p16_get_width(uint8_t *filename) {
-	svp_file fp;
-	p16Header header;
 
-	if (!svp_fopen_read(&fp, filename)) {
-	  printf("sda_draw_p16: Error while opening file %s!\n", filename);
-	  return 1;
-	}
+uint16_t sda_p16_get_width(uint8_t *filename) {
+  svp_file fp;
+  p16Header header;
+
+  if (!svp_fopen_read(&fp, filename)) {
+    printf("sda_draw_p16: Error while opening file %s!\n", filename);
+    return 1;
+  }
 
   p16_get_header(&fp, &header);
-	svp_fclose(&fp);
-	return header.imageWidth;
+  svp_fclose(&fp);
+  return header.imageWidth;
 }
 

@@ -23,135 +23,132 @@ SOFTWARE.
 #include "../SDA_OS.h"
 
 uint16_t svp_str_insert(uint8_t *index1, uint8_t *index2, uint8_t *buff, uint16_t pos, uint16_t len) {
-	uint16_t x = 0;
-	uint16_t y = 0;
-	uint16_t cont;
+  uint16_t x = 0;
+  uint16_t y = 0;
+  uint16_t cont;
 
+  // source
+  while((index1[x] != 0) && (x != pos)) {
+    if (x > len) {
+      return 1;
+    }
+    buff[y] = index1[x];
 
-	//zdroj
-	while((index1[x] != 0) && (x != pos)) {
-		if (x > len) {
-			return 1;
-		}
-		buff[y] = index1[x];
+    y++;
+    x++;
+  }
 
-		y++;
-		x++;
-	}
+  cont = x;
+  x = 0;
 
-	cont = x;
+  // insert string no. 2
+  while(index2[x] != 0) {
+    buff[y] = index2[x];
+    x++;
+    y++;
+  }
 
-	x = 0;
+  // finish string no. 1
+  x = cont;
 
-	//vložíme string 2
-	while(index2[x] != 0) {
-		buff[y] = index2[x];
-		x++;
-		y++;
-	}
+  while(index1[x] != 0) {
 
-	//dokončíme string 1
-	x = cont;
+    buff[y] = index1[x];
+    x++;
+    y++;
+  }
 
-	while(index1[x] != 0) {
+  buff[y] = 0;
 
-		buff[y] = index1[x];
-		x++;
-		y++;
-	}
+  x = 0;
+  while(buff[x] != 0){
+    index1[x] = buff[x];
+    x++;
+  }
 
-	buff[y] = 0;
-
-	x = 0;
-	while(buff[x] != 0){
-		index1[x] = buff[x];
-		x++;
-	}
-
-	index1[x] = buff[x];
-
-	return 1;
+  index1[x] = buff[x];
+  return 1;
 }
 
-//max 255 chars limit
+// max 255 chars limit
 uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
-	uint16_t x = 0;
-	uint8_t buff[256];
+  uint16_t x = 0;
+  uint8_t buff[256];
 
-	//délka řetězce
-	while(str[x] != 0) {
-		x++;
-		if (x == len) {
-			return 0;
-		}
-	}
+  // string lenght
+  while(str[x] != 0) {
+    x++;
+    if (x == len) {
+      return 0;
+    }
+  }
 
-	if (pscg_get_value(input_id, &sda_sys_con)) {
-		//nastavování kurzoru
-		if ((pscg_get_event(input_id, &sda_sys_con) == EV_PRESSED)
-				|| (pscg_get_event(input_id, &sda_sys_con) == EV_HOLD)) {
-			uint16_t temp;
-			temp = LCD_Text_Get_Cursor_Pos(str, pscg_get_tmx(&sda_sys_con), pscg_get_tmy(&sda_sys_con));
-			if (temp == 0) {
-				pscg_set_param(input_id, 0, &sda_sys_con);
-			} else {
-				pscg_set_param(input_id, temp, &sda_sys_con);
-			}
-		}
-		pscg_set_event(input_id, EV_NONE, &sda_sys_con);
+  if (pscg_get_value(input_id, &sda_sys_con)) {
+    // set the cursor position
+    if ((pscg_get_event(input_id, &sda_sys_con) == EV_PRESSED)
+        || (pscg_get_event(input_id, &sda_sys_con) == EV_HOLD)) {
+      uint16_t temp;
+      temp = LCD_Text_Get_Cursor_Pos(str, pscg_get_tmx(&sda_sys_con), pscg_get_tmy(&sda_sys_con));
+      if (temp == 0) {
+        pscg_set_param(input_id, 0, &sda_sys_con);
+      } else {
+        pscg_set_param(input_id, temp, &sda_sys_con);
+      }
+    }
+    pscg_set_event(input_id, EV_NONE, &sda_sys_con);
 
-		if (getKbdKey()) {
-		    if (*((uint8_t *)svpSGlobal.kbdKeyStr) != 2) {
-		      //tohle chce modifuckovat
-		      svp_str_insert(str, svpSGlobal.kbdKeyStr, buff,  pscg_get_param(input_id, &sda_sys_con), len);
+    if (getKbdKey()) {
+        if (*((uint8_t *)svpSGlobal.kbdKeyStr) != 2) {
+          // TODO: Fix this
+          svp_str_insert(str, svpSGlobal.kbdKeyStr, buff,  pscg_get_param(input_id, &sda_sys_con), len);
 
-	        if (*((uint8_t *)svpSGlobal.kbdKeyStr + 1) != 0) {
-	          pscg_set_param(input_id, pscg_get_param(input_id, &sda_sys_con) + 2, &sda_sys_con); //posunem kurzor
-	        } else {
-	          pscg_set_param(input_id, pscg_get_param(input_id, &sda_sys_con) + 1, &sda_sys_con);
-	        }
-	        return 1;
-		    } else {
-		      uint16_t len = 0;
+          if (*((uint8_t *)svpSGlobal.kbdKeyStr + 1) != 0) {
+            pscg_set_param(input_id, pscg_get_param(input_id, &sda_sys_con) + 2, &sda_sys_con); // move cursor
+          } else {
+            pscg_set_param(input_id, pscg_get_param(input_id, &sda_sys_con) + 1, &sda_sys_con);
+          }
+          return 1;
+        } else {
+          uint16_t len = 0;
 
-		      while(str[len] != 0) {
-		        len++;
-		      }
+          while(str[len] != 0) {
+            len++;
+          }
 
-		      if (len > 0) {
-		        uint16_t prac;
-						uint8_t czFlag = 0;
+          if (len > 0) {
+            uint16_t prac;
+            uint8_t czFlag = 0;
 
-		        if (len >= 2
-		            && (str[pscg_get_param(input_id, &sda_sys_con) - 2] >= 0xC3)
-		            && (str[pscg_get_param(input_id, &sda_sys_con) - 2] <= 0xC5)
-		            ) {
-		          pscg_set_param(input_id, pscg_get_param(input_id, &sda_sys_con) - 2, &sda_sys_con);
-		          czFlag = 1;
-		        } else {
-		          pscg_set_param(input_id, pscg_get_param(input_id, &sda_sys_con) - 1, &sda_sys_con);
-		          czFlag = 0;
-		        }
-		        prac = pscg_get_param(input_id, &sda_sys_con);
+            if (len >= 2
+                && (str[pscg_get_param(input_id, &sda_sys_con) - 2] >= 0xC3)
+                && (str[pscg_get_param(input_id, &sda_sys_con) - 2] <= 0xC5)
+                ) {
+              pscg_set_param(input_id, pscg_get_param(input_id, &sda_sys_con) - 2, &sda_sys_con);
+              czFlag = 1;
+            } else {
+              pscg_set_param(input_id, pscg_get_param(input_id, &sda_sys_con) - 1, &sda_sys_con);
+              czFlag = 0;
+            }
+            prac = pscg_get_param(input_id, &sda_sys_con);
 
-		        x = 0;
+            x = 0;
 
-		        while(str[x] != 0) {
-		          str[prac + x] = str[prac + x + 1 + czFlag];
-		          x++;
-		        }
+            while(str[x] != 0) {
+              str[prac + x] = str[prac + x + 1 + czFlag];
+              x++;
+            }
 
-		        str[x] = 0; //zkrátíme pro jistotu
-		        pscg_set_str(input_id, str, &sda_sys_con); //nastavíme text/updatujeme
-	          return 1;
-		      }
+            str[x] = 0; // add null terminator, just to be sure
+            pscg_set_str(input_id, str, &sda_sys_con); // set/update
+            return 1;
+          }
 
-		    }
+        }
 
-		  }
-	  }
-	  if (pscg_get_str(input_id, &sda_sys_con) != str) {
-	  	pscg_set_str(input_id, str, &sda_sys_con); //stejnak nastavíme
-	  }
-	  return 0;
+      }
+    }
+    if (pscg_get_str(input_id, &sda_sys_con) != str) {
+      pscg_set_str(input_id, str, &sda_sys_con); // still set/update
+    }
+    return 0;
 }

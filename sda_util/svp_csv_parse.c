@@ -2,7 +2,7 @@
 
 uint8_t svp_csv_open(svp_csvf *fc, uint8_t * fname) {
   if (svp_fopen_rw(&(fc->fil),fname) == 0){
-  	// error
+    // error
     return 0;
   }
   return 1;
@@ -267,32 +267,32 @@ void svp_csv_remove_line(svp_csvf *fc) {
 #endif
 
   while(!svp_feof(&(fc->fil))) {
-		if (svp_fread_u8(&(fc->fil)) == SVP_ENDLINE) {
-			break;
-		} else {
-			key_len++;
-		}
-	}
+    if (svp_fread_u8(&(fc->fil)) == SVP_ENDLINE) {
+      break;
+    } else {
+      key_len++;
+    }
+  }
 
-	//printf("keylen: %s %u\n", key, keylen);
+  //printf("keylen: %s %u\n", key, keylen);
 
-	svp_fseek(&(fc->fil), line_start);
+  svp_fseek(&(fc->fil), line_start);
 
-	fsize = svp_get_size(&(fc->fil));
+  fsize = svp_get_size(&(fc->fil));
 
-	for (x = line_start + key_len; x < fsize; x++) {
-		svp_fseek(&(fc->fil), x);
-		cbuff = svp_fread_u8(&(fc->fil));
-		svp_fseek(&(fc->fil), x - key_len);
-		svp_fwrite_u8(&(fc->fil), cbuff);
-	}
+  for (x = line_start + key_len; x < fsize; x++) {
+    svp_fseek(&(fc->fil), x);
+    cbuff = svp_fread_u8(&(fc->fil));
+    svp_fseek(&(fc->fil), x - key_len);
+    svp_fwrite_u8(&(fc->fil), cbuff);
+  }
 
-	if (fsize > key_len) {
-		svp_fseek(&(fc->fil), fsize - key_len);
-	} else {
-		svp_fseek(&(fc->fil), 0);
-	}
-	svp_truncate(&(fc->fil));
+  if (fsize > key_len) {
+    svp_fseek(&(fc->fil), fsize - key_len);
+  } else {
+    svp_fseek(&(fc->fil), 0);
+  }
+  svp_truncate(&(fc->fil));
 
 }
 
@@ -310,10 +310,10 @@ uint8_t svp_csv_next_line(svp_csvf *fc){
     svp_fread_u8(&(fc->fil));
 
     if (svp_feof(&(fc->fil))){
-    	return 0;
+      return 0;
     } else {
-    	svp_fseek(&(fc->fil),pracpos);
-    	return 1;
+      svp_fseek(&(fc->fil),pracpos);
+      return 1;
     }
   } else {
     return 0;

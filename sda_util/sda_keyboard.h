@@ -35,14 +35,14 @@ uint8_t sda_keyboard_set_layout(uint8_t layoutId, psvcKbdLayout *layout);
 
 void svp_draw_keyboard(uint16_t x, uint16_t y, psvcKbdLayout *layout);
 uint8_t svp_touch_keyboard(
-                           uint16_t x,
-                           uint16_t y,
-                           psvcKbdLayout *layout,
-                           uint16_t touch_x,
-                           uint16_t touch_y,
-                           uint8_t *retStr,
-                           gr2EventType event
-                           );
+  uint16_t x,
+  uint16_t y,
+  psvcKbdLayout *layout,
+  uint16_t touch_x,
+  uint16_t touch_y,
+  uint8_t *retStr,
+  gr2EventType event
+);
 
 // keyboard input handler for C
 uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id);
