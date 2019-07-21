@@ -393,7 +393,7 @@ void sda_lcd_off_handler() {
 
 void sda_power_main_handler() {
   static lcdStateType lcdStateOld;
-  static uint32_t lcdOffBlinkTimer;
+  static volatile uint32_t lcdOffBlinkTimer;
   static uint32_t pwrDelay;
 
   if (svpSGlobal.touchValid) {
@@ -411,16 +411,19 @@ void sda_power_main_handler() {
 
   // when lcd is turned OFF
   if ((svpSGlobal.lcdState == LCD_OFF) && (lcdStateOld == LCD_ON)) {
-    sda_lcd_off_handler();
-    if (svpSGlobal.powerSleepMode == SDA_PWR_MODE_SLEEP_DEEP) {
-      led_set_pattern(LED_ON);
+
+    if ((wrap_get_lcdOffButtons() == 1) && slotValid[4] && slotOnTop[4]) {
+      lcdOffBlinkTimer = svpSGlobal.uptimeMs + 100;
+    } else if (sdaGetActiveAlarm()){
+      lcdOffBlinkTimer = svpSGlobal.uptimeMs + 500;
     } else {
-      led_set_pattern(LED_SHORTBLINK);
+      lcdOffBlinkTimer = svpSGlobal.uptimeMs + 1000;
     }
-    lcdOffBlinkTimer = svpSGlobal.uptime + 1;
+    led_set_pattern(LED_ON);
+    sda_lcd_off_handler();
   }
 
-  if ((lcdOffBlinkTimer != 0) && (lcdOffBlinkTimer < svpSGlobal.uptime)) {
+  if ((lcdOffBlinkTimer != 0) && (lcdOffBlinkTimer < svpSGlobal.uptimeMs)) {
     led_set_pattern(LED_OFF);
     lcdOffBlinkTimer = 0;
     // after we blink the led, system will underclock itself

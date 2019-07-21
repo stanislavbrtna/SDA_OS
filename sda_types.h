@@ -82,6 +82,7 @@ typedef struct {
   volatile uint32_t uptime;
   volatile uint32_t lcdOnTime;
   volatile uint32_t battTime;
+  volatile uint32_t uptimeMs;
 
   //sound
   volatile uint8_t mute;
