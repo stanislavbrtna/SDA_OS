@@ -51,7 +51,7 @@ void sda_load_config() {
   svpSGlobal.mute = svp_conf_key_read_i32(&conffile, (uint8_t *)"mute", 0);
 
   if ((svpSGlobal.lcdShutdownTime < 2)||(svpSGlobal.lcdShutdownTime > 10)) {
-  	svpSGlobal.lcdShutdownTime = 5;
+    svpSGlobal.lcdShutdownTime = 5;
   }
   svp_set_irq_redraw(); //po nastavení barev překreslíme panel / redraw the tray after loading color settings
   svp_conf_close(&conffile);
@@ -60,16 +60,16 @@ void sda_load_config() {
   if (svp_getLcdCalibrationFlag() == 0) {
     // load calibration data
     // TODO: perform calibration if calib.dat is missing
-  	if (svp_fexists((uint8_t *)"calib.dat") == 1) {
-  		svp_fopen_rw(&calib, (uint8_t *)"calib.dat");
-  		svp_fread(&calib, &calibData, sizeof(calibData));
-  		svp_set_calibration_data(calibData);
-  		svp_fclose(&calib);
-  	} else {
-  		printf("Warning: calib.dat missing, using default calibration data.\n");
-  	}
+    if (svp_fexists((uint8_t *)"calib.dat") == 1) {
+      svp_fopen_rw(&calib, (uint8_t *)"calib.dat");
+      svp_fread(&calib, &calibData, sizeof(calibData));
+      svp_set_calibration_data(calibData);
+      svp_fclose(&calib);
+    } else {
+      printf("Warning: calib.dat missing, using default calibration data.\n");
+    }
   } else {
-  	sda_store_calibration();
+    sda_store_calibration();
   }
   svp_chdir(dirbuf);
   printf("Done.\n");
@@ -151,8 +151,8 @@ void sda_store_calibration() {
   svp_file calib;
 
   if(svp_fopen_rw(&calib, (uint8_t *)"calib.dat")){
-		svp_fwrite(&calib, &touchCalibData, sizeof(touchCalibData));
-		svp_fclose(&calib);
+    svp_fwrite(&calib, &touchCalibData, sizeof(touchCalibData));
+    svp_fclose(&calib);
   }
 
   svp_chdir(dirbuf);

@@ -62,17 +62,17 @@ void svmSetLaunchCWDflag(uint8_t val);
 void sdaSvmSave();
 uint8_t sdaSvmLoad(uint16_t id);
 void sdaSvmCall(
-		uint8_t *name,
-		uint8_t *callback,
-		varType arg0, uint8_t type0,
-		varType arg1, uint8_t type1,
-		varType arg2, uint8_t type2
-	);
+  uint8_t *name,
+  uint8_t *callback,
+  varType arg0, uint8_t type0,
+  varType arg1, uint8_t type1,
+  varType arg2, uint8_t type2
+);
 void sdaSvmRetval(
-		varType arg0, uint8_t type0,
-		varType arg1, uint8_t type1,
-		varType arg2, uint8_t type2
-	);
+  varType arg0, uint8_t type0,
+  varType arg1, uint8_t type1,
+  varType arg2, uint8_t type2
+);
 
 // wake-suspend
 uint8_t svmSuspend();

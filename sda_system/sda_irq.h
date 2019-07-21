@@ -25,6 +25,14 @@ SOFTWARE.
 #include "../SDA_OS.h"
 
 // irq&config stuff
-void sda_irq_update_timestruct(uint16_t year, uint8_t mon, uint8_t day, uint8_t weekday, uint8_t hour, uint8_t min, uint8_t sec);
+void sda_irq_update_timestruct(
+  uint16_t year,
+  uint8_t mon,
+  uint8_t day,
+  uint8_t weekday,
+  uint8_t hour,
+  uint8_t min,
+  uint8_t sec
+);
 
 #endif

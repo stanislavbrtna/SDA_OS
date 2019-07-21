@@ -32,14 +32,15 @@ void sdaResolveAlarm();
 void sdaReloadAlarms();
 
 int32_t sdaRegisterAlarm(
-                            uint8_t * appname,
-                            int32_t timestamp,
-                            uint8_t hour,
-                            uint8_t min,
-                            uint8_t wkday,
-                            uint8_t day,
-                            uint8_t month,
-                            int32_t param);
+    uint8_t * appname,
+    int32_t timestamp,
+    uint8_t hour,
+    uint8_t min,
+    uint8_t wkday,
+    uint8_t day,
+    uint8_t month,
+    int32_t param
+);
 
 void sdaPrintActiveAlarm();
 

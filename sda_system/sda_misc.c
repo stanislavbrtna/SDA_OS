@@ -30,11 +30,11 @@ extern uint8_t sleepLock;
 static gr2EventType keyEvLocal[6];
 
 uint8_t getKbdKey() {
-	if (svpSGlobal.kbdFlag == 1) {
-		svpSGlobal.kbdFlag = 0;
-		return 1;
-	}
-	return 0;
+  if (svpSGlobal.kbdFlag == 1) {
+    svpSGlobal.kbdFlag = 0;
+    return 1;
+  }
+  return 0;
 }
 
 
@@ -77,22 +77,22 @@ uint16_t get_svp_counter() {
 
 
 void svp_set_sleep_lock(uint8_t val) {
-	sleepLock = val;
+  sleepLock = val;
 }
 
 
 void pscg_error_callback(uint8_t *str, gr2context * c) {
-	if (c == &sda_sys_con) {
-		// error occured in system gui, perform reset
-		printf("PSCG Error (system): %s\n", str);
-		svs_hardErrHandler();
-	} else {
-		// error occured inside application
-		// kill app, show error
-		printf("PSCG Error (app): %s\n", str);
-		sdaSvmSetError(str);
-		sdaSvmKillApp();
-	}
+  if (c == &sda_sys_con) {
+    // error occured in system gui, perform reset
+    printf("PSCG Error (system): %s\n", str);
+    svs_hardErrHandler();
+  } else {
+    // error occured inside application
+    // kill app, show error
+    printf("PSCG Error (app): %s\n", str);
+    sdaSvmSetError(str);
+    sdaSvmKillApp();
+  }
 }
 
 
@@ -107,18 +107,18 @@ void svp_clr_button_ev() {
 
 
 gr2EventType sda_wrap_get_button(uint8_t num) {
-	return keyEvLocal[num];
+  return keyEvLocal[num];
 }
 
 
 void sda_wrap_clear_button(uint8_t num) {
-	keyEvLocal[num] = EV_NONE;
+  keyEvLocal[num] = EV_NONE;
 }
 
 
 void sda_store_buttons() {
-	for (uint16_t i = 0; i < 6; i++) {
-  	keyEvLocal[i] = svpSGlobal.keyEv[i];
+  for (uint16_t i = 0; i < 6; i++) {
+    keyEvLocal[i] = svpSGlobal.keyEv[i];
   }
 }
 
@@ -166,43 +166,43 @@ uint32_t sda_strlen(uint8_t * str) {
 
 
 void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
-	uint16_t a;
-	uint8_t negative = 0;
+  uint16_t a;
+  uint8_t negative = 0;
 
-	if (val == 0) {
-		buff[0] = '0';
-		buff[1] = 0;
-		return;
-	}
+  if (val == 0) {
+    buff[0] = '0';
+    buff[1] = 0;
+    return;
+  }
 
-	for(uint16_t x = 0; x < len; x++) {
-		buff[x] = ' ';
-	}
-	buff[len - 1] = 0;
+  for(uint16_t x = 0; x < len; x++) {
+    buff[x] = ' ';
+  }
+  buff[len - 1] = 0;
 
-	if (val < 0) {
-		val *= -1;
-		negative = 1;
-	}
+  if (val < 0) {
+    val *= -1;
+    negative = 1;
+  }
 
-	a = 1;
-	while (0 != val) {
-		buff[len - a - 1] = (val % 10 + 48);
-		val = val / 10;
-		a++;
-		if ((uint32_t)a == len){
-			buff[0] = 0;
-			return;
-		}
-	}
+  a = 1;
+  while (0 != val) {
+    buff[len - a - 1] = (val % 10 + 48);
+    val = val / 10;
+    a++;
+    if ((uint32_t)a == len){
+      buff[0] = 0;
+      return;
+    }
+  }
 
-	if (negative) {
-		buff[len - a - 1] = '-';
-	}
+  if (negative) {
+    buff[len - a - 1] = '-';
+  }
 
-	while(buff[0] == ' ') {
-		for(uint16_t x = 0; x < len ; x++) {
-			buff[x] = buff[x + 1];
-		}
-	}
+  while(buff[0] == ' ') {
+    for(uint16_t x = 0; x < len ; x++) {
+      buff[x] = buff[x + 1];
+    }
+  }
 }
