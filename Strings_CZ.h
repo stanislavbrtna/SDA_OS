@@ -1,12 +1,12 @@
 #ifndef STRINGS_CZ_H
 #define STRINGS_CZ_H
 
-#define SCR_SETTINGS 				          (uint8_t *)"Nastavení:"
-#define SCR_SET_DATE_TIME 	          (uint8_t *)"Nastavení data a času"
-#define SCR_SET_DISPLAY 		          (uint8_t *)"Nastavení displeje"
-#define SCR_SETTINGS_SND 		          (uint8_t *)"Nastavení notifikací"
-#define SCR_SET_SECU 				          (uint8_t *)"Nastavení zabezpečení"
-#define SD_UMOUNT 					          (uint8_t *)"Odpojit SD kartu"
+#define SCR_SETTINGS                  (uint8_t *)"Nastavení:"
+#define SCR_SET_DATE_TIME             (uint8_t *)"Nastavení data a času"
+#define SCR_SET_DISPLAY               (uint8_t *)"Nastavení displeje"
+#define SCR_SETTINGS_SND              (uint8_t *)"Nastavení notifikací"
+#define SCR_SET_SECU                  (uint8_t *)"Nastavení zabezpečení"
+#define SD_UMOUNT                     (uint8_t *)"Odpojit SD kartu"
 #define SCR_ABOUT_SYSTEM              (uint8_t *)"O Systému"
 #define SCR_SET_TIME_SCR              (uint8_t *)"Nastavení data a času:"
 #define SCR_SET_TIME                  (uint8_t *)"Nastavit čas"

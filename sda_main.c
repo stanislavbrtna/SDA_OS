@@ -486,21 +486,6 @@ uint8_t sda_main_loop() {
 
   static psvcKbdLayout kbdLayout;
 
-  // autoexec sits in the APPS directory, it's executed upon boot, if found
-  if (init == 1) {
-    if (svp_fexists((uint8_t *)"autoexec.svs")) {
-      if (sdaSvmLaunch((uint8_t *)"autoexec.svs", 0) == 1) {
-        // if it loaded ok, we run it a few times for it to execute the exit call
-        sdaSvmRun(0, 1);
-        sdaSvmRun(0, 1);
-        sdaSvmRun(0, 1);
-        sdaSvmRun(0, 1);
-      }
-    }
-    sdaSlotOnTop(0);
-    init = 2;
-  }
-
   if (init == 0) {
     printf(
         "SDA OS Init: %d:%d:%d %d.%d. %d\n",
@@ -593,6 +578,19 @@ uint8_t sda_main_loop() {
     led_set_pattern(LED_OFF);
 
     testCode();
+  } else if (init == 1) {
+    // autoexec sits in the APPS directory, it's executed upon boot, if found
+    if (svp_fexists((uint8_t *)"autoexec.svs")) {
+      if (sdaSvmLaunch((uint8_t *)"autoexec.svs", 0) == 1) {
+        // if it loaded ok, we run it a few times for it to execute the exit call
+        sdaSvmRun(0, 1);
+        sdaSvmRun(0, 1);
+        sdaSvmRun(0, 1);
+        sdaSvmRun(0, 1);
+      }
+    }
+    sdaSlotOnTop(0);
+    init = 2;
   }
 
   if (svpSGlobal.sec != oldsec) {
@@ -709,7 +707,7 @@ uint8_t sda_main_loop() {
     sdaSetRedrawDetect(1);
   }
 
-  if ( (svpSGlobal.kbdVisible == 1 && kbdVisibleOld == 0)
+  if ((svpSGlobal.kbdVisible == 1 && kbdVisibleOld == 0)
         || (svpSGlobal.systemRedraw && svpSGlobal.kbdVisible == 1)
         || kbdRedraw
         ) {
@@ -721,7 +719,7 @@ uint8_t sda_main_loop() {
   }
 
   if ((svpSGlobal.kbdVisible == 1) && (kbdVisibleOld == 0)) {
-    //
+    // switch to standard layout when keyboard is openned
     init_kblayout_standard(&kbdLayout);
     kbdRedraw = 1;
   }
@@ -758,7 +756,6 @@ uint8_t sda_main_loop() {
   }
   pscg_draw_end(sda_current_con);
 
-  //touch_lock = SDA_LOCK_UNLOCKED;
   tick_lock = SDA_LOCK_UNLOCKED;
 
 /*****************************************************************************/
@@ -816,6 +813,7 @@ uint8_t sda_main_loop() {
     svpSGlobal.systemOptClick = 0;
   }
 
+  // long press of the S! button
   if ((svpSGlobal.systemOptClick == 2)) {
     taskSwitcherOpen();
     svpSGlobal.systemOptClick = 0;

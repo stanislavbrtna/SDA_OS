@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 File description:
-	This file stores main constants and constraints for SDA-OS.
+  This file stores main constants and constraints for SDA-OS.
 
 */
 
