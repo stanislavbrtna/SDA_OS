@@ -412,7 +412,7 @@ void sda_power_main_handler() {
   // when lcd is turned OFF
   if ((svpSGlobal.lcdState == LCD_OFF) && (lcdStateOld == LCD_ON)) {
     sda_lcd_off_handler();
-    if (svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_DEEP) {
+    if (svpSGlobal.powerSleepMode == SDA_PWR_MODE_SLEEP_DEEP) {
       led_set_pattern(LED_ON);
     } else {
       led_set_pattern(LED_SHORTBLINK);
