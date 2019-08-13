@@ -575,11 +575,9 @@ uint8_t sda_main_loop() {
     sdaPrintActiveAlarm();
 
     // screen redraw for the first time
-    //touch_lock = SDA_LOCK_LOCKED;
     tick_lock = SDA_LOCK_LOCKED;
     LCD_setDrawArea(0, 0, SDA_LCD_W, SDA_LCD_H);
     pscg_draw_screen(0, 32, 319, 479, mainScr, 1, &sda_sys_con);
-    //touch_lock = SDA_LOCK_UNLOCKED;
     tick_lock = SDA_LOCK_UNLOCKED;
     init = 1;
     led_set_pattern(LED_OFF);
@@ -652,18 +650,17 @@ uint8_t sda_main_loop() {
     if (overlayScr == 0) { // if there is no overlay
       // touch is in main screen
       if ((svpSGlobal.touchType != EV_NONE)) {
-        scr_touch_retval
-          = pscg_touch_input(
-                0,
-                32,
-                319,
-                479 - 160 * svpSGlobal.kbdVisible,
-                svpSGlobal.touchX,
-                svpSGlobal.touchY,
-                svpSGlobal.touchType,
-                mainScr,
-                sda_current_con
-              );
+        scr_touch_retval = pscg_touch_input(
+          0,
+          32,
+          319,
+          479 - 160 * svpSGlobal.kbdVisible,
+          svpSGlobal.touchX,
+          svpSGlobal.touchY,
+          svpSGlobal.touchType,
+          mainScr,
+          sda_current_con
+        );
 
         if (scr_touch_retval == 2) { // retval 2 means open the keyboard
           showKeyboard();
@@ -715,9 +712,9 @@ uint8_t sda_main_loop() {
   }
 
   if ((svpSGlobal.kbdVisible == 1 && kbdVisibleOld == 0)
-        || (svpSGlobal.systemRedraw && svpSGlobal.kbdVisible == 1)
-        || kbdRedraw
-        ) {
+      || (svpSGlobal.systemRedraw && svpSGlobal.kbdVisible == 1)
+      || kbdRedraw
+    ) {
     svp_draw_keyboard(0, 319, &kbdLayout);
     kbdRedraw = 0;
     if (kbdRedraw == 0) {
