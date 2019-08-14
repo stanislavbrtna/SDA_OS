@@ -678,7 +678,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get API level
   //#!    sys.getSVSVer();
   //#!Checks for API Lvl support.
-  //#!Return: None
+  //#!Return: [num] SDA_OS version number
   if (sysFuncMatch(argS->callId, "getSVSVer", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -887,6 +887,82 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!#### Expansion Ports
   //#
 
+  static uint8_t serialQueue[32];
+  static uint8_t serialLen;
+
+  //#!##### USB serial expansion transmit
+  //#!    sys.usbTrs([str]data);
+  //#!Sends given string to usb serial port.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "usbTrs", s)) {
+    int32_t i = 0;
+    uint8_t * c;
+
+    c = s->stringField + argS->arg[1].val_str;
+
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    while(c[i] != 0) {
+      i++;
+    }
+
+    if (i > 0) {
+      sda_usb_serial_transmit(c, i);
+      result->value.val_s = 1;
+    } else {
+      result->value.val_s = 0;
+    }
+
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Usb serial expansion transmit queue
+  //#!    sys.usbTrsQ();
+  //#!Sends previously stored queue to the initialized serial port.
+  //#!Queue can be filled with sys.srlTrsQAdd and cleared with sys.srlTrsQClr.
+  //#!Max 32 bytes.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "usbTrsQ", s)) {
+
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    if (serialLen != 0) {
+      sda_usb_serial_transmit(serialQueue, serialLen);
+    }
+    serialLen = 0;
+    return 1;
+  }
+
+  //#!##### USB serial expansion receive
+  //#!    sys.usbRcv([num]timeout);
+  //#!Gets string (max 512 bytes) from USB serial port.
+  //#!If nothing is sent during timeout (in ms), empty string is returned.
+  //#!Return: [str] data
+  if (sysFuncMatch(argS->callId, "usbRcv", s)) {
+    uint8_t c[512];
+
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (sda_usb_serial_recieve(c, sizeof(c), argS->arg[1].val_s)){
+      c[511] = 0;
+      result->value.val_u = strNew(c, s);
+    } else {
+      result->value.val_u = strNew((uint8_t *)"", s);
+    }
+
+    result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
   //#!##### Serial expansion transmit
   //#!    sys.serialTrs([str]data);
   //#!Sends given string to serial port on internal or external expansion connector.
@@ -917,9 +993,6 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
     result->type = SVS_TYPE_NUM;
     return 1;
   }
-
-  static uint8_t serialQueue[32];
-  static uint8_t serialLen;
 
   //#!##### Serial expansion transmit queue
   //#!    sys.srlTrsQAdd([num]data);

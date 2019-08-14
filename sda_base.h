@@ -79,6 +79,13 @@ uint8_t sda_dbg_serial_is_enabled();
 void sda_dbg_serial_disable();
 void sda_dbg_serial_enable();
 
+// [HW] USB serial port
+uint8_t sda_usb_serial_is_enabled();
+void sda_usb_serial_disable();
+void sda_usb_serial_enable();
+uint8_t sda_usb_serial_recieve(uint8_t *str, uint32_t len, uint32_t timeout);
+void sda_usb_serial_transmit(uint8_t *str, uint32_t len);
+
 // [HW] System
 void svp_set_calibration_data(touchCalibDataStruct input);
 uint8_t svp_getLcdCalibrationFlag();
