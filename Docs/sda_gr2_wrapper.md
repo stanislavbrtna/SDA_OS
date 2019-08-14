@@ -1,4 +1,4 @@
-	Automatically generated documentation for GR2 SVS wrapper, follows markdown syntax.
+  Automatically generated documentation for GR2 SVS wrapper, follows markdown syntax.
 
 #### Constants
 | Constant | Value | Meaning |

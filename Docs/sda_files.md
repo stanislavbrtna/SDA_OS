@@ -163,7 +163,7 @@ Next iteration of file find operation.
 Return: [str]filename or "" if none
 ##### Example
     for(findfil = sys.fFind("txt", "."); findfil != ""; findfil = sys.fFindNext();) {
-    	print("found: " + findfil);
+      print("found: " + findfil);
     }
 
 #### Files as strings

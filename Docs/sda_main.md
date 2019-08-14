@@ -1,4 +1,4 @@
-	Automatically generated documentation on wrap_umc_svp.c
+  Automatically generated documentation on wrap_umc_svp.c
 #### SVP API Level history
 
 Api level changes:
@@ -144,6 +144,10 @@ Return: None
     sys.getLcdState();
 Gets state of lcd.
 Return: 1 if lcd is on, otherwise 0
+##### Get Usb State
+    sys.getUsbState();
+Gets state of usb port. Useful for determining if the SDA is connected to PC.
+Return: 1 when powered from usb, otherwise 0
 ##### Wake the SDA from sleep
     sys.sdaWake();
 Wakes SDA without turning the screen on.

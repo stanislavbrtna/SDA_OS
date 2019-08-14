@@ -612,6 +612,22 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get Usb State
+  //#!    sys.getUsbState();
+  //#!Gets state of usb port. Useful for determining if the SDA is connected to PC.
+  //#!Return: 1 when powered from usb, otherwise 0
+  if (sysFuncMatch(argS->callId, "getLcdState", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    if (svpSGlobal.pwrType == POWER_USB) {
+      result->value.val_u = 1;
+    } else {
+      result->value.val_u = 0;
+    }
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
 
   //#!##### Wake the SDA from sleep
   //#!    sys.sdaWake();

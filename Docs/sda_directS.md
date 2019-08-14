@@ -1,6 +1,6 @@
 Automatically generated documentation on wrap_directS.c
 
-####	Color & Areas
+####  Color & Areas
 
 ##### Get color from RGB
     sys.sxMixColor([num] r, [num] g, [num] b)
