@@ -165,7 +165,7 @@ Return: None
 ##### Get API level
     sys.getSVSVer();
 Checks for API Lvl support.
-Return: None
+Return: [num] SDA_OS version number
 ##### Get system language
     sys.sdaGetLang();
 Returns SDA_OS language.
@@ -223,6 +223,21 @@ Return: None
 Sets period of ~20kHz pulses to one pulse.
 Return: None
 #### Expansion Ports
+##### USB serial expansion transmit
+    sys.usbTrs([str]data);
+Sends given string to usb serial port.
+Return: None
+##### Usb serial expansion transmit queue
+    sys.usbTrsQ();
+Sends previously stored queue to the initialized serial port.
+Queue can be filled with sys.srlTrsQAdd and cleared with sys.srlTrsQClr.
+Max 32 bytes.
+Return: None
+##### USB serial expansion receive
+    sys.usbRcv([num]timeout);
+Gets string (max 512 bytes) from USB serial port.
+If nothing is sent during timeout (in ms), empty string is returned.
+Return: [str] data
 ##### Serial expansion transmit
     sys.serialTrs([str]data);
 Sends given string to serial port on internal or external expansion connector.
