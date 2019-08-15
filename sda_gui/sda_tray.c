@@ -213,6 +213,8 @@ uint8_t svp_tray_XBtn(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t re
   return 0;
 }
 
+#define OPT_HOLD_CNT_MAX 15
+#define OPT_HOLD_CNT_BEGIN 2
 
 uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
   static uint8_t init;
@@ -224,7 +226,7 @@ uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
   curr_font = LCD_Get_Font_Size();
   LCD_Set_Sys_Font(32);
 
-  if((irq_redraw) || (init == 0) || ((svpSGlobal.systemOptClick == 0) && clickOld == 1 && click == 0)) {
+  if((irq_redraw) || (init == 0) || ((svpSGlobal.systemOptClick == CLICKED_NONE) && clickOld == 1 && click == 0)) {
     LCD_FillRect(x1, y1, x2, y2, pscg_get_fill_color(&sda_sys_con));
     LCD_DrawRectangle(x1, y1, x2, y2, pscg_get_border_color(&sda_sys_con));
     LCD_DrawText_ext(x1 + 10, y1 + 2, pscg_get_text_color(&sda_sys_con), (uint8_t *)"S!");
@@ -232,10 +234,27 @@ uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
   }
 
   if (tray_clicked(x1, y1, x2, y2)) {
-
     if (clickOld == 0) {
       LCD_FillRect(x1, y1, x2, y2, pscg_get_active_color(&sda_sys_con));
       LCD_DrawRectangle(x1, y1, x2, y2, pscg_get_border_color(&sda_sys_con));
+      LCD_DrawText_ext(x1 + 10, y1 + 2, pscg_get_text_color(&sda_sys_con), (uint8_t *)"S!");
+    }
+
+    if (holdCounter > OPT_HOLD_CNT_BEGIN && holdCounter <= OPT_HOLD_CNT_MAX) {
+      LCD_FillRect(
+        x1 + 1,
+        y1 + 1,
+        x1 - 1 + ((x2 - x1) / (OPT_HOLD_CNT_MAX - OPT_HOLD_CNT_BEGIN)) * (holdCounter - OPT_HOLD_CNT_BEGIN),
+        y2 - 1,
+        pscg_get_active_color(&sda_sys_con)
+      );
+      LCD_FillRect(
+        x1 + 1 + ((x2 - x1) / (OPT_HOLD_CNT_MAX - OPT_HOLD_CNT_BEGIN)) * (holdCounter - OPT_HOLD_CNT_BEGIN),
+        y1 + 1,
+        x2 - 1,
+        y2 - 1,
+        pscg_get_fill_color(&sda_sys_con)
+      );
       LCD_DrawText_ext(x1 + 10, y1 + 2, pscg_get_text_color(&sda_sys_con), (uint8_t *)"S!");
     }
 
@@ -246,14 +265,14 @@ uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
   }
   LCD_Set_Sys_Font(curr_font);
 
-  if (holdCounter < 15 && click == 0 && clickOld == 1 && svpSGlobal.systemOptClick == 0) {
-    svpSGlobal.systemOptClick = 1;
+  if (holdCounter < OPT_HOLD_CNT_MAX && click == 0 && clickOld == 1 && svpSGlobal.systemOptClick == CLICKED_NONE) {
+    svpSGlobal.systemOptClick = CLICKED_SHORT;
     init = 0;
     holdCounter = 0;
   }
 
-  if (holdCounter > 15 && svpSGlobal.systemOptClick == 0 && click == 1) {
-    svpSGlobal.systemOptClick = 2;
+  if (holdCounter > OPT_HOLD_CNT_MAX && svpSGlobal.systemOptClick == CLICKED_NONE && click == 1) {
+    svpSGlobal.systemOptClick = CLICKED_LONG;
     init = 0;
   }
 

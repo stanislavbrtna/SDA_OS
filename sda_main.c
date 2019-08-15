@@ -797,7 +797,7 @@ uint8_t sda_main_loop() {
 
   // top bar button handlers
   // handler for that big S! button
-  if ((svpSGlobal.systemOptClick == 1)) {
+  if ((svpSGlobal.systemOptClick == CLICKED_SHORT)) {
     if(prev_top_slot != 0) {
 
       svpSGlobal.systemXBtnClick = 0;
@@ -814,13 +814,13 @@ uint8_t sda_main_loop() {
       svp_chdir((uint8_t *)"APPS");
       sleepLock = 0;
     }
-    svpSGlobal.systemOptClick = 0;
+    svpSGlobal.systemOptClick = CLICKED_NONE;
   }
 
   // long press of the S! button
-  if ((svpSGlobal.systemOptClick == 2)) {
+  if ((svpSGlobal.systemOptClick == CLICKED_LONG)) {
     taskSwitcherOpen();
-    svpSGlobal.systemOptClick = 0;
+    svpSGlobal.systemOptClick = CLICKED_NONE;
   }
 
   // batt button handler
