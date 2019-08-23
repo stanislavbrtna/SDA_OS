@@ -213,8 +213,8 @@ uint8_t svp_tray_XBtn(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t re
   return 0;
 }
 
-#define OPT_HOLD_CNT_MAX 15
-#define OPT_HOLD_CNT_BEGIN 2
+#define OPT_HOLD_CNT_MAX 17
+#define OPT_HOLD_CNT_BEGIN 5
 
 uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
   static uint8_t init;
@@ -255,7 +255,14 @@ uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
         y2 - 1,
         pscg_get_fill_color(&sda_sys_con)
       );
+
+      if (holdCounter == OPT_HOLD_CNT_MAX) {
+        LCD_FillRect(x1, y1, x2, y2, pscg_get_active_color(&sda_sys_con));
+      }
+
       LCD_DrawText_ext(x1 + 10, y1 + 2, pscg_get_text_color(&sda_sys_con), (uint8_t *)"S!");
+
+
     }
 
     click = 1;
@@ -273,7 +280,6 @@ uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
 
   if (holdCounter > OPT_HOLD_CNT_MAX && svpSGlobal.systemOptClick == CLICKED_NONE && click == 1) {
     svpSGlobal.systemOptClick = CLICKED_LONG;
-    init = 0;
   }
 
   if (click == 0){
