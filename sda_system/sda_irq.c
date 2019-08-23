@@ -9,6 +9,7 @@ void sda_irq_update_timestruct(
   uint8_t min,
   uint8_t sec
 ) {
+  static uint32_t oldtime;
   static uint8_t oldsec;
   svpSGlobal.sec = sec;
   svpSGlobal.min = min;
@@ -26,17 +27,24 @@ void sda_irq_update_timestruct(
     sec
   );
 
-  if(svpSGlobal.sec != oldsec) {
+  // uptime coul be modified when wake from sleep occurs
+  if (svpSGlobal.sec != oldsec) {
     svpSGlobal.uptime++;
+    oldsec = sec;
+  }
+
+  // and because of that, we must be carefull, more seconds than one might pass
+  if (svpSGlobal.uptime != oldtime) {
+
     if (svpSGlobal.lcdState == LCD_ON) {
-      svpSGlobal.lcdOnTime++;
+      svpSGlobal.lcdOnTime += svpSGlobal.uptime - oldtime;
     }
 
     if (svpSGlobal.pwrType == POWER_BATT) {
-      svpSGlobal.battTime++;
+      svpSGlobal.battTime += svpSGlobal.uptime - oldtime;
     } else {
       svpSGlobal.battTime = 0;
     }
   }
-  oldsec = sec;
+  oldtime = svpSGlobal.uptime;
 }
