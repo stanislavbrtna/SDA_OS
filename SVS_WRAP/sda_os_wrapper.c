@@ -98,7 +98,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s);
 
 void svsSVPWrapInit(){
   addSysConsts(svsWrapConsts);
-  addSysWrapper(svsSVPWrap);
+  addSysWrapper(svsSVPWrap, "os");
 }
 
 static uint8_t wrap_lcdOffButtons;
