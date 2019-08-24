@@ -124,15 +124,8 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
   static dateSelectorWidgetType date;
 
   result->value.val_u = 0;
-   result->type = SVS_TYPE_NUM;
+  result->type = SVS_TYPE_NUM;
 
-  // call the sda sub-wrappers
-  subWrapperRetVal = sda_files_sub_wrapper(result, argS, s);
-  if ((subWrapperRetVal == 1)) {
-    return 1;
-  } else if (errCheck(s)) {
-    return 0;
-  }
 
   subWrapperRetVal = sda_time_sub_wrapper(result, argS, s);
   if ((subWrapperRetVal == 1)) {

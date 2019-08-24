@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "sda_wrapper.h"
+#include "sda_files.h"
 
 //file
 svp_file readFil;
@@ -131,9 +131,15 @@ uint8_t sda_files_csv_open(uint8_t * fname) {
   return csv_open;
 }
 
+uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+
+void sda_files_wrapper_init() {
+  addSysWrapper(sda_files_wrapper, "fs");
+}
+
 //#!### SDA Files
 
-uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   uint8_t argType[11];
 

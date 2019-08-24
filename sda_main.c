@@ -75,8 +75,6 @@ volatile uint8_t systemBattClick;
 /*****************************************************************************/
 void pcBasicWrapInit();
 void svsGr2WrapInit();
-void svsSVPWrapInit();
-void svsDirectSWrapInit();
 
 /*****************************************************************************/
 /*                            misc SDA functions                             */
@@ -513,6 +511,7 @@ uint8_t sda_main_loop() {
     svsDirectSWrapInit();
     pcBasicWrapInit();
     svsGr2WrapInit();
+    sda_files_wrapper_init();
     svsSVPWrapInit();
 
     gr2_InitContext(
