@@ -56,48 +56,48 @@ sys.pGetColor - sys.gui.setColor
 fs:
 sys.pFrOpen - sys.fs.open
 sys.fOpen - sys.fs.open
-sys.fReadChars
-sys.fWriteChars
-sys.fReadByte
-sys.fWriteByte
-sys.fSeek
-sys.fTruncate
-sys.fIsDir
-sys.fMkDir
-sys.fChDir
-sys.fCopySource
-sys.fCopyStart
-sys.fCopyStat
-sys.fCopyStop
-sys.fTell
+sys.fReadChars - sys.fs.readChars
+sys.fWriteChars - sys.fs.writeChars
+sys.fReadByte - sys.fs.readByte
+sys.fWriteByte - sys.fs.writeByte
+sys.fSeek - sys.fs.seek
+sys.fTruncate - sys.fs.truncate
+sys.fIsDir - sys.fs.isDir
+sys.fMkDir - sys.fs.mkDir
+sys.fChDir - sys.fs.chDir
+sys.fCopySource - sys.fs.copySource
+sys.fCopyStart - sys.fs.copyStart
+sys.fCopyStat - sys.fs.copyStat
+sys.fCopyStop - sys.fs.copyStop
+sys.fTell - sys.fs.tell
 sys.pFrSize - sys.fs.size
-sys.pFrExists
+sys.pFrExists - sys.fs.exists
 sys.pFrSeek - sys.fs.seekFill
 sys.pFrClose - sys.fs.close
 sys.fClose - sys.fs.close
-sys.fDelete
-sys.fRename
-sys.fFind
-sys.fFindNext
-sys.fReadStr
-sys.fWriteStr
+sys.fDelete - sys.fs.delete
+sys.fRename - sys.fs.rename
+sys.fFind - sys.fs.find
+sys.fFindNext - sys.fs.FindNext
+sys.fReadStr - sys.fs.readStr
+sys.fWriteStr - sys.fs.writeStr
 
 fs.csv:
-sys.csvOpen
-sys.csvClose
-sys.csvNewLine
-sys.csvGetCell
-sys.csvSetCell
-sys.csvLineFeed
-sys.csvRemoveLine
-sys.csvRewind
+sys.csvOpen - sys.fs.csv.open
+sys.csvClose - sys.fs.csv.close
+sys.csvNewLine - sys.fs.csv.newLine
+sys.csvGetCell - sys.fs.csv.getCell
+sys.csvSetCell - sys.fs.csv.setCell
+sys.csvLineFeed - sys.fs.csv.lineFeed
+sys.csvRemoveLine - sys.fs.csv.removeLine
+sys.csvRewind - sys.fs.csv.rewind
 
-fs.conf
-sys.cOpen
-sys.cClose
-sys.cKeyExists
-sys.cKeyRead
-sys.cKeyReadInt
-sys.cKeyWrite
-sys.cKeyRemove
+fs.conf:
+sys.cOpen - sys.fs.conf.open
+sys.cClose - sys.fs.conf.close
+sys.cKeyExists - sys.fs.conf.exists
+sys.cKeyRead - sys.fs.conf.read
+sys.cKeyReadInt - sys.fs.conf.readInt
+sys.cKeyWrite - sys.fs.conf.write
+sys.cKeyRemove - sys.fs.conf.remove
 
