@@ -132,9 +132,13 @@ uint8_t sda_files_csv_open(uint8_t * fname) {
 }
 
 uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 
 void sda_files_wrapper_init() {
   addSysWrapper(sda_files_wrapper, "fs");
+  addSysWrapper(sda_fs_csv_wrapper, "fs.csv");
+  addSysWrapper(sda_fs_conf_wrapper, "fs.conf");
 }
 
 //#!### SDA Files
@@ -146,12 +150,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   static uint8_t readBuff[2048];
 
   //#!##### Open file
-  //#!    sys.pFrOpen([str]fname);
-  //#!    sys.fOpen([str]fname);
+  //#!    sys.fs.open([str]fname);
   //#!Opens text file for read or write.
   //#!Return: 1 on success, 0 on failure
-  if (sysFuncMatch(argS->callId, "pFrOpen", s) ||
-      sysFuncMatch(argS->callId, "fOpen", s)) {
+  if (sysFuncMatch(argS->callId, "open", s)) {
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -164,10 +166,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Read given number of chars
-  //#!    sys.fReadChars([num] bytes);
+  //#!    sys.fs.readChars([num] bytes);
   //#!Reads given number of chars from file.
   //#!Return: [str] result
-  if (sysFuncMatch(argS->callId, "fReadChars", s)) {
+  if (sysFuncMatch(argS->callId, "readChars", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -198,10 +200,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Writes given string to file
-  //#!    sys.fWriteChars([str] string);
+  //#!    sys.fs.writeChars([str] string);
   //#!Writes given string to file.
   //#!Return: 1 - ok, 0 - fail
-  if (sysFuncMatch(argS->callId, "fWriteChars", s)) {
+  if (sysFuncMatch(argS->callId, "writeChars", s)) {
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -228,10 +230,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Read byte from file
-  //#!    sys.fReadByte();
+  //#!    sys.fs.readByte();
   //#!Reads byte from file.
   //#!Return: [num] result: 0 to 255 - ok, -1 - error
-  if (sysFuncMatch(argS->callId, "fReadByte", s)) {
+  if (sysFuncMatch(argS->callId, "readByte", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -254,10 +256,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Write byte to file
-  //#!    sys.fWriteByte([num] byte (0 - 255));
+  //#!    sys.fs.writeByte([num] byte (0 - 255));
   //#!Writes byte to file.
   //#!Return: [num] 0 - fail, 1 - ok
-  if (sysFuncMatch(argS->callId, "fWriteByte", s)) {
+  if (sysFuncMatch(argS->callId, "writeByte", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -277,10 +279,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Seek position in file
-  //#!    sys.fSeek([num] pos_from_start);
+  //#!    sys.fs.seek([num] pos_from_start);
   //#!Writes byte to file.
   //#!Return: [num] 0 - fail, 1 - ok
-  if (sysFuncMatch(argS->callId, "fSeek", s)) {
+  if (sysFuncMatch(argS->callId, "seek", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -301,10 +303,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Truncate file
-  //#!    sys.fTruncate();
+  //#!    sys.fs.truncate();
   //#!Truncate currently opened file at the position of write pointer.
   //#!Return: [num] 0 - fail, 1 - ok
-  if (sysFuncMatch(argS->callId, "fTruncate", s)) {
+  if (sysFuncMatch(argS->callId, "truncate", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -323,10 +325,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get if path is dir
-  //#!    sys.fIsDir([str] path);
+  //#!    sys.fs.isDir([str] path);
   //#!Gets if path is a directory or not.
   //#!Return: [num] 0 - file, 1 - dir
-  if (sysFuncMatch(argS->callId, "fIsDir", s)) {
+  if (sysFuncMatch(argS->callId, "isDir", s)) {
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -339,10 +341,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Create directory
-  //#!    sys.fMkDir([str] name);
+  //#!    sys.fs.mkDir([str] name);
   //#!Creates new directory
   //#!Return: [num] 1 - ok, 0 - fail
-  if (sysFuncMatch(argS->callId, "fMkDir", s)) {
+  if (sysFuncMatch(argS->callId, "mkDir", s)) {
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -355,12 +357,12 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Change working directory
-  //#!    sys.fChDir([str] pathInData);
+  //#!    sys.fs.chDir([str] pathInData);
   //#!Changes working directory.
   //#!call sys.fChDir(); to get to the DATA directory
   //#!call sys.fChDir(1); to get to the APPS directory
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "fChDir", s)) {
+  if (sysFuncMatch(argS->callId, "chDir", s)) {
 
     if (argS->usedup == 1 && argS->argType[1] == SVS_TYPE_STR) {
       result->value.val_s = (int32_t)svp_chdir(s->stringField + argS->arg[1].val_str);
@@ -392,10 +394,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### File copy select source
-  //#!    sys.fCopySource([str]source);
+  //#!    sys.fs.copySource([str]source);
   //#!Selects source file for copy operation.
   //#!Return: [num] 1 - ok, 0 - failed
-  if (sysFuncMatch(argS->callId, "fCopySource", s)) {
+  if (sysFuncMatch(argS->callId, "copySource", s)) {
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -426,10 +428,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### File copy start
-  //#!    sys.fCopyStart([str]dest, [num]ChunkSize);
+  //#!    sys.fs.copyStart([str]dest, [num]ChunkSize);
   //#!Starts copy operation, chunksize of bytes will be copyed each cycle.
   //#!Return: [num] 1 - ok, 0 - failed
-  if (sysFuncMatch(argS->callId, "fCopyStart", s)) {
+  if (sysFuncMatch(argS->callId, "copyStart", s)) {
     argType[1] = SVS_TYPE_STR;
     argType[2] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 2, s)) {
@@ -464,11 +466,11 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### File copy status
-  //#!    sys.fCopyStat([num]opt);
+  //#!    sys.fs.copyStat([num]opt);
   //#! opt: 0 - status ret: [num]0 - nothing, 1 - source selected, 2 - copy in progress
   //#! opt: 1 - size of source [num]bytes
   //#! opt: 2 - remaining bytes [num]bytes
-  if (sysFuncMatch(argS->callId, "fCopyStat", s)) {
+  if (sysFuncMatch(argS->callId, "copyStat", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -493,10 +495,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Stop current copy operation
-  //#!    sys.fCopyStop();
+  //#!    sys.fs.copyStop();
   //#!Stops current copy operation.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "fCopyStop", s)) {
+  if (sysFuncMatch(argS->callId, "copyStop", s)) {
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -515,10 +517,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Tels position in file
-  //#!    sys.fTell();
+  //#!    sys.fs.tell();
   //#!Returns current write pointer position in the file.
   //#!Return: [num] pos
-  if (sysFuncMatch(argS->callId, "fTell", s)) {
+  if (sysFuncMatch(argS->callId, "tell", s)) {
 
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -537,10 +539,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get size of file
-  //#!    sys.pFrSize();
+  //#!    sys.fs.size();
   //#!Returns size of openned file.
   //#!Return: Size of openned file
-  if (sysFuncMatch(argS->callId, "pFrSize", s)) {
+  if (sysFuncMatch(argS->callId, "size", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -556,10 +558,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Check if file exist
-  //#!    sys.pFrExists([str]fname);
+  //#!    sys.fs.exists([str]fname);
   //#!Checks if file exists.
   //#!Return: 1 if file exists, otherwise 0
-  if (sysFuncMatch(argS->callId, "pFrExists", s)) {
+  if (sysFuncMatch(argS->callId, "exists", s)) {
     argType[1] = 1;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -572,10 +574,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Seek in file and fill text field
-  //#!    sys.pFrSeek([num]text_id, [num]filePos);
+  //#!    sys.fs.seekFill([num]text_id, [num]filePos);
   //#!Fills pscg element with text from filePos position.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "pFrSeek", s)) {
+  if (sysFuncMatch(argS->callId, "seekFill", s)) {
     uint8_t c;
     uint32_t i = 0;
     argType[1] = SVS_TYPE_NUM;
@@ -616,12 +618,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Close file
-  //#!    sys.pFrClose();
-  //#!    sys.fClose();
+  //#!    sys.fs.close();
   //#!Closes open file.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "pFrClose", s)
-      || sysFuncMatch(argS->callId, "fClose", s)) {
+  if (sysFuncMatch(argS->callId, "close", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -633,10 +633,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Remove file
-  //#!    sys.fDelete([str]fname);
+  //#!    sys.fs.delete([str]fname);
   //#!Deletes file with fiven fname.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "fDelete", s)) {
+  if (sysFuncMatch(argS->callId, "delete", s)) {
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -646,10 +646,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Move/rename file
-  //#!    sys.fRename([str]oldPath, [str]newPath);
+  //#!    sys.fs.rename([str]oldPath, [str]newPath);
   //#!Moves/renames given file.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "fRename", s)) {
+  if (sysFuncMatch(argS->callId, "rename", s)) {
     argType[1] = SVS_TYPE_STR;
     argType[2] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 2, s)) {
@@ -659,238 +659,15 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!#### SDA CSV files API
-
-  //#!##### Open csv file
-  //#!    sys.csvOpen([str]fname);
-  //#!Opens csv file.
-  //#!Return: [num]1 on succes.
-  if (sysFuncMatch(argS->callId, "csvOpen", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    csv_open = 1;
-    result->value.val_s = sda_files_csv_open(s->stringField + argS->arg[1].val_str);
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Close csv file
-  //#!    sys.csvClose();
-  //#!Closes csv file.
-  //#!Return: None.
-  if (sysFuncMatch(argS->callId, "csvClose", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    csv_open = 0;
-    result->value.val_s = svp_csv_close(&csvFile);
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### New csv line
-  //#!    sys.csvNewLine([num]numberOfCells);
-  //#!Adds new line to csv with given number of cells.
-  //#!Return: None.
-  if (sysFuncMatch(argS->callId, "csvNewLine", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    svp_csv_new(&csvFile, argS->arg[1].val_s);
-    return 1;
-  }
-
-  //#!##### Get csv cell
-  //#!    sys.csvGetCell([num]cellNumber, [str]default);
-  //#!Gets data from specified cell on current line.
-  //#!Return: [str]cellContents
-  if (sysFuncMatch(argS->callId, "csvGetCell", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    argType[2] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 2, s)) {
-      return 0;
-    }
-    uint8_t buff[512];
-
-    svp_csv_get_cell(&csvFile, argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, buff, sizeof(buff));
-    result->value.val_u = strNew(buff, s);
-    result->type = SVS_TYPE_STR;
-    return 1;
-  }
-
-  //#!##### Set csv cell
-  //#!    sys.csvSetCell([num]cellNumber, [str]value);
-  //#!Sets data of specified cell on current line.
-  //#!Return: [str]cellContents
-  if (sysFuncMatch(argS->callId, "csvSetCell", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    argType[2] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 2, s)) {
-      return 0;
-    }
-
-    svp_csv_set_cell(&csvFile, argS->arg[1].val_s, s->stringField + argS->arg[2].val_str);
-    return 1;
-  }
-
-  //#!##### Feed line
-  //#!    sys.csvLineFeed();
-  //#!Moves to the next lone of csv file
-  //#!Return: [num] 1 - ok, 0 - end of file
-  if (sysFuncMatch(argS->callId, "csvLineFeed", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-
-    result->value.val_s = svp_csv_next_line(&csvFile);
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Remove line
-  //#!    sys.csvRemoveLine();
-  //#!Removes current line from csv
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "csvRemoveLine", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    svp_csv_remove_line(&csvFile);
-    return 1;
-  }
-
-  //#!##### Rewind file
-  //#!    sys.csvRewind();
-  //#!Rewinds file back on the start.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "csvRewind", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    svp_csv_rewind(&csvFile);
-    return 1;
-  }
-
-  //#!#### Config files API
-
-  //#!##### Open config file
-  //#!    sys.cOpen([str]fname);
-  //#!Opens config file.
-  //#!Return: [num]1 on succes.
-  if (sysFuncMatch(argS->callId, "cOpen", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    conf_open = 1;
-    sda_strcp(s->stringField + argS->arg[1].val_str, conf_filename, sizeof(conf_filename));
-    result->value.val_s = svp_conf_open(&conFile, s->stringField + argS->arg[1].val_str);
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Close config file
-  //#!    sys.cClose();
-  //#!Close conf file.
-  //#!Return: [num]1 on succes.
-  if (sysFuncMatch(argS->callId, "cClose", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    conf_open = 0;
-    result->value.val_s = svp_conf_close(&conFile);
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Check if key exists
-  //#!    sys.cKeyExists([str]key);
-  //#!Checks if key exists in conf file
-  //#!Return: [num] 1 if key exists.
-  if (sysFuncMatch(argS->callId, "cKeyExists", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-
-    result->value.val_s = svp_conf_key_exists(&conFile, s->stringField+argS->arg[1].val_str);
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Read key
-  //#!    sys.cKeyRead([str]key);
-  //#!Reads key from config file as a string, 128 chars max.
-  //#!Return: [str]Value
-  if (sysFuncMatch(argS->callId, "cKeyRead", s)) {
-    uint8_t buff[512];
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)){
-      return 0;
-    }
-    // TODO: Make loading in stream mode, with checking free string mem
-    svp_conf_key_read(&conFile, s->stringField+argS->arg[1].val_str, buff, 512);
-    buff[511] = 0;
-    result->value.val_u = strNew(buff, s);
-    result->type = SVS_TYPE_STR;
-    return 1;
-  }
-
-  //#!##### Read Key as int
-  //#!    sys.cKeyReadInt([str]key, [num]default);
-  //#!Reads key from config file as num (integrer). To be removed.
-  //#!Return: [num]Value
-  if (sysFuncMatch(argS->callId, "cKeyReadInt", s)) {
-    argType[1] = SVS_TYPE_STR;
-    argType[2] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 2, s)) {
-      return 0;
-    }
-    result->value.val_s = svp_conf_key_read_i32(&conFile, s->stringField + argS->arg[1].val_str,argS->arg[2].val_s);
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Write key
-  //#!    sys.cKeyWrite([str]key, [str]val);
-  //#!Writes value in specified key.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "cKeyWrite", s)) {
-    argType[1] = SVS_TYPE_STR;
-    argType[2] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 2, s)) {
-      return 0;
-    }
-    svp_conf_key_write(&conFile, s->stringField + argS->arg[1].val_str, s->stringField + argS->arg[2].val_str);
-    return 1;
-  }
-
-  //#!##### Remove key
-  //#!    sys.cKeyRemove([str]key);
-  //#!Removes given key.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "cKeyRemove", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    svp_conf_key_remove(&conFile, s->stringField + argS->arg[1].val_str);
-    return 1;
-  }
-
   //#!
   //#!#### Find files
   //#!
 
   //#!##### Find begin
-  //#!    sys.fFind([str]extension, [str]directory);
+  //#!    sys.fs.find([str]extension, [str]directory);
   //#!Inits file find operation, returns first result.
   //#!Return: [str]filename or "" if none
-  if (sysFuncMatch(argS->callId, "fFind", s)) {
+  if (sysFuncMatch(argS->callId, "find", s)) {
     uint8_t buff[129];
     argType[1] = SVS_TYPE_STR;
     argType[2] = SVS_TYPE_STR;
@@ -909,10 +686,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Find next
-  //#!    sys.fFindNext();
+  //#!    sys.fs.findNext();
   //#!Next iteration of file find operation.
   //#!Return: [str]filename or "" if none
-  if (sysFuncMatch(argS->callId, "fFindNext", s)) {
+  if (sysFuncMatch(argS->callId, "findNext", s)) {
     uint8_t buff[129];
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -929,7 +706,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Example
-  //#!    for(findfil = sys.fFind("txt", "."); findfil != ""; findfil = sys.fFindNext();) {
+  //#!    for(findfil = sys.fs.find("txt", "."); findfil != ""; findfil = sys.fs.findNext();) {
   //#!      print("found: " + findfil);
   //#!    }
 
@@ -939,10 +716,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!
 
   //#!##### Reads file as string
-  //#!    sys.fReadStr([str]fname);
+  //#!    sys.fs.readStr([str]fname);
   //#!Reads text file to svs string buffer.
   //#!Return: [str]FileContents
-  if (sysFuncMatch(argS->callId, "fReadStr", s)) {
+  if (sysFuncMatch(argS->callId, "readStr", s)) {
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -953,16 +730,255 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Write string as file
-  //#!    sys.fWriteStr([str]str, [str]fname);
+  //#!    sys.fs.writeStr([str]str, [str]fname);
   //#!Writes svs string to file.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "fWriteStr", s)) {
+  if (sysFuncMatch(argS->callId, "writeStr", s)) {
     argType[1] = SVS_TYPE_STR;
     argType[2] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 2, s)) {
       return 0;
     }
     svp_store_svs_to_file(s->stringField + argS->arg[2].val_str, s->stringField + argS->arg[1].val_str, s);
+    return 1;
+  }
+
+  return 0;
+}
+
+
+uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+
+  uint8_t argType[11];
+
+  //#!#### SDA CSV files API
+
+  //#!##### Open csv file
+  //#!    sys.fs.csv.open([str]fname);
+  //#!Opens csv file.
+  //#!Return: [num]1 on succes.
+  if (sysFuncMatch(argS->callId, "open", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    csv_open = 1;
+    result->value.val_s = sda_files_csv_open(s->stringField + argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Close csv file
+  //#!    sys.fs.csv.close();
+  //#!Closes csv file.
+  //#!Return: None.
+  if (sysFuncMatch(argS->callId, "close", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    csv_open = 0;
+    result->value.val_s = svp_csv_close(&csvFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### New csv line
+  //#!    sys.fs.csv.newLine([num]numberOfCells);
+  //#!Adds new line to csv with given number of cells.
+  //#!Return: None.
+  if (sysFuncMatch(argS->callId, "newLine", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    svp_csv_new(&csvFile, argS->arg[1].val_s);
+    return 1;
+  }
+
+  //#!##### Get csv cell
+  //#!    sys.fs.csv.getCell([num]cellNumber, [str]default);
+  //#!Gets data from specified cell on current line.
+  //#!Return: [str]cellContents
+  if (sysFuncMatch(argS->callId, "getCell", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+    uint8_t buff[512];
+
+    svp_csv_get_cell(&csvFile, argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, buff, sizeof(buff));
+    result->value.val_u = strNew(buff, s);
+    result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
+  //#!##### Set csv cell
+  //#!    sys.fs.csv.setCell([num]cellNumber, [str]value);
+  //#!Sets data of specified cell on current line.
+  //#!Return: [str]cellContents
+  if (sysFuncMatch(argS->callId, "setCell", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    svp_csv_set_cell(&csvFile, argS->arg[1].val_s, s->stringField + argS->arg[2].val_str);
+    return 1;
+  }
+
+  //#!##### Feed line
+  //#!    sys.fs.csv.lineFeed();
+  //#!Moves to the next lone of csv file
+  //#!Return: [num] 1 - ok, 0 - end of file
+  if (sysFuncMatch(argS->callId, "lineFeed", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    result->value.val_s = svp_csv_next_line(&csvFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Remove line
+  //#!    sys.fs.csv.removeLine();
+  //#!Removes current line from csv
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "removeLine", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    svp_csv_remove_line(&csvFile);
+    return 1;
+  }
+
+  //#!##### Rewind file
+  //#!    sys.fs.csv.rewind();
+  //#!Rewinds file back on the start.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "rewind", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    svp_csv_rewind(&csvFile);
+    return 1;
+  }
+
+  return 0;
+}
+
+
+uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+
+  uint8_t argType[11];
+
+  //#!#### Config files API
+
+  //#!##### Open config file
+  //#!    sys.fs.conf.open([str]fname);
+  //#!Opens config file.
+  //#!Return: [num]1 on succes.
+  if (sysFuncMatch(argS->callId, "open", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    conf_open = 1;
+    sda_strcp(s->stringField + argS->arg[1].val_str, conf_filename, sizeof(conf_filename));
+    result->value.val_s = svp_conf_open(&conFile, s->stringField + argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Close config file
+  //#!    sys.fs.conf.close();
+  //#!Close conf file.
+  //#!Return: [num]1 on succes.
+  if (sysFuncMatch(argS->callId, "close", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    conf_open = 0;
+    result->value.val_s = svp_conf_close(&conFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Check if key exists
+  //#!    sys.fs.conf.keyExists([str]key);
+  //#!Checks if key exists in conf file
+  //#!Return: [num] 1 if key exists.
+  if (sysFuncMatch(argS->callId, "keyExists", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = svp_conf_key_exists(&conFile, s->stringField+argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Read key
+  //#!    sys.fs.conf.keyRead([str]key);
+  //#!Reads key from config file as a string, 128 chars max.
+  //#!Return: [str]Value
+  if (sysFuncMatch(argS->callId, "keyRead", s)) {
+    uint8_t buff[512];
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+    // TODO: Make loading in stream mode, with checking free string mem
+    svp_conf_key_read(&conFile, s->stringField+argS->arg[1].val_str, buff, 512);
+    buff[511] = 0;
+    result->value.val_u = strNew(buff, s);
+    result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
+  //#!##### Read Key as int
+  //#!    sys.fs.conf.keyReadInt([str]key, [num]default);
+  //#!Reads key from config file as num (integrer). To be removed.
+  //#!Return: [num]Value
+  if (sysFuncMatch(argS->callId, "keyReadInt", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+    result->value.val_s = svp_conf_key_read_i32(&conFile, s->stringField + argS->arg[1].val_str,argS->arg[2].val_s);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Write key
+  //#!    sys.fs.conf.keyWrite([str]key, [str]val);
+  //#!Writes value in specified key.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "keyWrite", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+    svp_conf_key_write(&conFile, s->stringField + argS->arg[1].val_str, s->stringField + argS->arg[2].val_str);
+    return 1;
+  }
+
+  //#!##### Remove key
+  //#!    sys.fs.conf.keyRemove([str]key);
+  //#!Removes given key.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "keyRemove", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    svp_conf_key_remove(&conFile, s->stringField + argS->arg[1].val_str);
     return 1;
   }
 
