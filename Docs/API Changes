@@ -101,3 +101,47 @@ sys.cKeyReadInt - sys.fs.conf.readInt
 sys.cKeyWrite - sys.fs.conf.write
 sys.cKeyRemove - sys.fs.conf.remove
 
+snd:
+sys.beep - sys.snd.beep
+sys.beepDef - sys.snd.beepDef
+sys.beepT - sys.snd.beepTime
+sys.beepF - sys.snd.beepFreq
+sys.getMute - sys.snd.getMute
+
+os.gui:
+sys.pSetMainScr - sys.os.gui.setMainScr
+sys.pGetMainScr - sys.os.gui.setMainScr
+sys.pHandleText - sys.os.gui.handleText
+
+cr:
+sys.crUnLock - sys.cr.unLock
+sys.crLock - sys.cr.lock
+sys.crEncrypt - sys.cr.encrypt
+sys.crDecrypt - sys.cr.decrypt
+
+cnt:
+sys.cntSet - sys.cnt.set
+sys.cntGet - sys.cnt.get
+
+os:
+sys.pGetRedraw - sys.os.getRedraw
+sys.getRedraw - sys.os.getRedraw
+sys.getRadraw - sys.os.getRedraw
+sys.pSetRedraw - sys.os.setRedraw
+sys.error - sys.os.error
+sys.keybHide - sys.os.hideKbd
+sys.keybShow - sys.os.showKbd
+sys.rnd - sys.os.rnd
+sys.exit - sys.os.exit
+sys.checkSVSVer - sys.os.checkVer
+sys.getSVSVer - sys.os.getVer
+sys.sdaGetLang - sys.os.getLang
+sys.setSingular - sys.os.setSingular
+sys.subProcess - sys.os.subProcess
+sys.subProcCWD - sys.os.subProcCWD
+sys.subRetval - sys.os.subRetval
+
+hw:
+sys.sleepLock - sys.hw.lockSleep
+sys.lcdWake - sys.hw.wakeLcd
+sys.getLcdState - sys.hw.getLcdState

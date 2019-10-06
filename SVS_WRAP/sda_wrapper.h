@@ -32,4 +32,9 @@ void sx_set_touch_ev(gr2EventType ev, uint16_t x, uint16_t y);
 void svsSVPWrapInit();
 void svsDirectSWrapInit();
 
+uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+
 #endif

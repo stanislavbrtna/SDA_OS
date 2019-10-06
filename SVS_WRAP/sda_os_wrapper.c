@@ -96,58 +96,102 @@ svsConstType svsWrapConsts[] = {
 
 uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s);
 
-void svsSVPWrapInit(){
+void svsSVPWrapInit() {
   addSysConsts(svsWrapConsts);
   addSysWrapper(svsSVPWrap, "os");
-}
-
-static uint8_t wrap_lcdOffButtons;
-
-void wrap_set_lcdOffButtons(uint8_t val) {
-  wrap_lcdOffButtons = val;
-}
-
-uint8_t wrap_get_lcdOffButtons() {
-  return wrap_lcdOffButtons;
+  addSysWrapper(sda_os_sound_wrapper, "snd");
+  addSysWrapper(sda_os_crypto_wrapper, "cr");
+  addSysWrapper(sda_os_hw_wrapper, "os.hw");
+  addSysWrapper(sda_counter_wrapper, "cnt");
 }
 
 uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 
-uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
-  uint16_t x;
+
+uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   uint8_t argType[11];
 
-  uint8_t subWrapperRetVal = 0;
+  //#!##### Beep the speaker
+  //#!    sys.snd.beep();
+  //#!Initiates system beep.
+  //#!Return: None
+   if (sysFuncMatch(argS->callId, "beep", s)) {
 
-  static dateSelectorWidgetType date;
-
-  result->value.val_u = 0;
-  result->type = SVS_TYPE_NUM;
-
-
-  subWrapperRetVal = sda_time_sub_wrapper(result, argS, s);
-  if ((subWrapperRetVal == 1)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    svp_beep();
     return 1;
-  } else if (errCheck(s)) {
-    return 0;
   }
 
-  subWrapperRetVal = sda_overlay_sub_wrapper(result, argS, s);
-  if ((subWrapperRetVal == 1)) {
+  //#!##### Set beep param to default
+  //#!    sys.snd.beepDef();
+  //#!Sets beep to its default values.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "beepDef", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    svp_beep_set_def();
     return 1;
-  } else if (errCheck(s)) {
-    return 0;
   }
+
+  //#!##### Set time of beep
+  //#!    sys.snd.beepTime([num]time (~ms));
+  //#!Sets lenght of beep.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "beepTime", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    svp_beep_set_t(argS->arg[1].val_u);
+    return 1;
+  }
+
+  //#!##### Set period of beep
+  //#!    sys.snd.beepFreq([num]period of ~20kHz pulses to one pulse);
+  //#!Sets period of ~20kHz pulses to one pulse.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "beepFreq", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    svp_beep_set_pf(argS->arg[1].val_u);
+    return 1;
+  }
+
+  //#!##### Get if system sound is disabled
+  //#!    sys.snd.getMute();
+  //#!Returns system mute
+  //#!Return: [num]1 if system is on mute.
+  if (sysFuncMatch(argS->callId, "getMute", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_u = svpSGlobal.mute;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  return 0;
+}
+
+
+uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+  uint16_t x;
+  uint8_t argType[11];
 
   //#!#### Gui
 
   //#!##### Set main application screen
-  //#!    sys.pSetMainScr([num]id);
+  //#!    sys.os.gui.setMainScr([num]id);
   //#!Sets main screen to id
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "pSetMainScr", s)) {
+  if (sysFuncMatch(argS->callId, "setMainScr", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)){
       return 0;
@@ -157,10 +201,10 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get main application screen
-  //#!    sys.pGetMainScr();
+  //#!    sys.os.gui.getMainScr();
   //#!Gets main screen id
   //#!Return: [num]id
-  if (sysFuncMatch(argS->callId, "pGetMainScr", s)) {
+  if (sysFuncMatch(argS->callId, "getMainScr", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)){
       return 0;
     }
@@ -169,166 +213,13 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Get redraw flag
-  //#!    sys.pGetRedraw();
-  //#!Gets redraw flag. *getRedraw* also works.
-  //#!Return: [num] 1 if redraw flag is set, otherwise 0
-  if (sysFuncMatch(argS->callId, "getRadraw", s)
-       || sysFuncMatch(argS->callId, "getRedraw", s)
-       || sysFuncMatch(argS->callId, "pGetRedraw", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    result->value.val_u = sdaGetRedrawDetect();
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Set redraw
-  //#!    sys.pSetRedraw();
-  //#!Sets redraw flag
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "pSetRedraw", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    setRedrawFlag();
-    return 1;
-  }
-
-  //#!##### Show Error
-  //#!    sys.error([str]errorText);
-  //#!Throws error message
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "error", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    sda_show_error_message(s->stringField + argS->arg[1].val_str);
-    return 1;
-  }
-
-  //#!#### Counters
-
-  //#!##### Set counter
-  //#!    sys.cntSet([num] ms);
-  //#!Sets system timer, it counts down and stops at zero.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "cntSet", s)) {
-    argType[1] = SVS_TYPE_NUM; //ms
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    set_svp_counter(argS->arg[1].val_s);
-    return 1;
-  }
-
-  //#!##### Gets counter
-  //#!    sys.cntGet();
-  //#!Gets system timer value
-  //#!Return: value of system timer
-  if (sysFuncMatch(argS->callId, "cntGet", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    result->value.val_s = get_svp_counter();
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!#### Buttons
-  //#!##### Get button event
-  //#!    sys.btnGetEv([num] btn)
-  //#!Return last button event
-  //#!Return: 0 - none, 1-pressed, 2 - hold, 3 - released
-  if (sysFuncMatch(argS->callId, "btnGetEv", s)) {
-    gr2EventType ev;
-    argType[1] = SVS_TYPE_NUM;
-
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-
-    if (argS->arg[1].val_u < 6) {
-      ev = sda_wrap_get_button(argS->arg[1].val_u);
-    } else {
-      ev = EV_NONE;
-    }
-
-    if (svpSGlobal.lcdState == LCD_ON || wrap_lcdOffButtons) {
-      if (ev == EV_NONE) {
-        result->value.val_s = 0;
-      }
-
-      if (ev == EV_PRESSED) {
-        result->value.val_s = 1;
-      }
-
-      if (ev == EV_HOLD) {
-        result->value.val_s = 2;
-      }
-
-      if (ev == EV_RELEASED) {
-        result->value.val_s = 3;
-      }
-    } else {
-      result->value.val_s = 0;
-    }
-
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Clears button events
-  //#!    sys.btnClrEv([num]btn)
-  //#!Sets button event to EV_NONE
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "btnClrEv", s)) {
-    argType[1] = SVS_TYPE_NUM;
-
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-
-    if (argS->arg[1].val_u < 6) {
-      sda_wrap_clear_button(argS->arg[1].val_u);
-    }
-
-    result->value.val_s = 0;
-
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Enable button events with LCD off
-  //#!    sys.btnStdbyEn([num]val)
-  //#!Enables button readout with LCD off
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "btnStdbyEn", s)) {
-    argType[1] = SVS_TYPE_NUM;
-
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-
-    if (argS->arg[1].val_u < 6) {
-      wrap_lcdOffButtons = argS->arg[1].val_u;
-    }
-
-    result->value.val_s = 0;
-
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
   //#!#### Text field handling
 
   //#!##### Handle text input
-  //#!    sys.pHandleText([num]id, [str]text);
+  //#!    sys.os.gui.handleText([num]id, [str]text);
   //#!Handles text input fields. Id is field id. Text is default text value.
   //#!Return: [str] New modified text value
-  if (sysFuncMatch(argS->callId, "pHandleText", s)) {
+  if (sysFuncMatch(argS->callId, "handleText", s)) {
     argType[1] = SVS_TYPE_NUM; //id
     argType[2] = SVS_TYPE_STR; //textval
 
@@ -429,60 +320,75 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!#### Keyboard
+  return 0;
+}
 
-  //#!##### Hide keyboard
-  //#!    sys.keybHide();
-  //#!Hides system keyboard.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "keybHide", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
+
+uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+  uint8_t argType[11];
+
+  //#!#### Text obfuscation
+
+  //#!##### Unlock
+  //#!    sys.cr.unLock([str]password);
+  //#!Unlocks svp encryption
+  //#!Return: [num] 0 if success, 2 if error, 3 if locked
+  if (sysFuncMatch(argS->callId, "unLock", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    hideKeyboard();
-    return 1;
-  }
-
-  //#!##### Show keyboard
-  //#!    sys.keybShow();
-  //#!Shows system keyboard
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "keybShow", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    showKeyboard();
-    return 1;
-  }
-
-  //#!#### Misc
-
-  //#!##### Get random number
-  //#!    rnd();
-  //#!Returns random number
-  //#!Return: [num]RandomValue
-  if (sysFuncMatch(argS->callId, "rnd", s)) {
-
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    result->value.val_s = svp_random();
+    result->value.val_u = svp_crypto_unlock(s->stringField + argS->arg[1].val_str);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
 
-  //#!##### Get if system sound is disabled
-  //#!    sys.getMute();
-  //#!Returns system mute
-  //#!Return: [num]1 if system is on mute.
-  if (sysFuncMatch(argS->callId, "getMute", s)) {
+  //#!##### Lock
+  //#!    sys.cr.lock();
+  //#!Locks svp encryption
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "lock", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_u = svpSGlobal.mute;
+    svp_crypto_lock();
+    return 1;
+  }
+
+  //#!##### Encrypt file
+  //#!    sys.cr.encrypt([str]fname);
+  //#!Encrypts file.
+  //#!Return: 0 if success, 1 if error
+  if (sysFuncMatch(argS->callId, "encrypt", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    result->value.val_u = svp_encrypt(s->stringField + argS->arg[1].val_str);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
+
+  //#!##### Decrypt file
+  //#!    sys.cr.decrypt([str]fname);
+  //#!Encrypts file.
+  //#!Return: 0 if success, 1 if error
+  if (sysFuncMatch(argS->callId, "decrypt", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    result->value.val_u = svp_decrypt(s->stringField + argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  return 0;
+}
+
+uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+  uint8_t argType[11];
+  static dateSelectorWidgetType date;
 
   //#!
   //#!#### Date selector widget
@@ -559,85 +465,152 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  return 0;
+}
+
+uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+  uint16_t x;
+  uint8_t argType[11];
+
+  //#!#### Counters
+
+  //#!##### Set counter
+  //#!    sys.cnt.set([num] ms);
+  //#!Sets system timer, it counts down and stops at zero.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "cnt.set", s)) {
+    argType[1] = SVS_TYPE_NUM; //ms
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    set_svp_counter(argS->arg[1].val_s);
+    return 1;
+  }
+
+  //#!##### Gets counter
+  //#!    sys.cnt.get();
+  //#!Gets system timer value
+  //#!Return: value of system timer
+  if (sysFuncMatch(argS->callId, "cnt.get", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_s = get_svp_counter();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  return 0;
+}
+
+uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
+  uint16_t x;
+  uint8_t argType[11];
+
+  uint8_t subWrapperRetVal = 0;
+
+  result->value.val_u = 0;
+  result->type = SVS_TYPE_NUM;
+
+
+  subWrapperRetVal = sda_time_sub_wrapper(result, argS, s);
+  if ((subWrapperRetVal == 1)) {
+    return 1;
+  } else if (errCheck(s)) {
+    return 0;
+  }
+
+  subWrapperRetVal = sda_overlay_sub_wrapper(result, argS, s);
+  if ((subWrapperRetVal == 1)) {
+    return 1;
+  } else if (errCheck(s)) {
+    return 0;
+  }
+
+  //#!##### Get redraw flag
+  //#!    sys.os.getRedraw();
+  //#!Gets redraw flag. *getRedraw* also works.
+  //#!Return: [num] 1 if redraw flag is set, otherwise 0
+  if (sysFuncMatch(argS->callId, "getRedraw", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_u = sdaGetRedrawDetect();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Set redraw
+  //#!    sys.os.setRedraw();
+  //#!Sets redraw flag
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setRedraw", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    setRedrawFlag();
+    return 1;
+  }
+
+  //#!##### Show Error
+  //#!    sys.os.error([str]errorText);
+  //#!Throws error message
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "error", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    sda_show_error_message(s->stringField + argS->arg[1].val_str);
+    return 1;
+  }
+
+  //#!#### Keyboard
+
+  //#!##### Hide keyboard
+  //#!    sys.os.hideKbd();
+  //#!Hides system keyboard.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "hideKbd", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    hideKeyboard();
+    return 1;
+  }
+
+  //#!##### Show keyboard
+  //#!    sys.os.showKbd();
+  //#!Shows system keyboard
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "showKbd", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    showKeyboard();
+    return 1;
+  }
+
   //#!
   //#!#### Misc
   //#!
 
-  //#!##### Lock LCD sleep
-  //#!    sys.sleepLock([num]val);
-  //#!Sets sleep lock value. On 1 system wont go to sleep.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "sleepLock", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    svp_set_sleep_lock(argS->arg[1].val_s);
-    return 1;
-  }
+  //#!##### Get random number
+  //#!    sys.os.rnd();
+  //#!Returns random number
+  //#!Return: [num]RandomValue
+  if (sysFuncMatch(argS->callId, "rnd", s)) {
 
-  //#!##### Turn on the LCD
-  //#!    sys.lcdWake();
-  //#!Wakes LCD screen.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "lcdWake", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    svp_set_lcd_state(LCD_ON);
-    return 1;
-  }
-
-  //#!##### Get LCD state
-  //#!    sys.getLcdState();
-  //#!Gets state of lcd.
-  //#!Return: 1 if lcd is on, otherwise 0
-  if (sysFuncMatch(argS->callId, "getLcdState", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    if (svpSGlobal.lcdState == LCD_OFF) {
-      result->value.val_u = 0;
-    } else {
-      result->value.val_u = 1;
-    }
+    result->value.val_s = svp_random();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
-
-  //#!##### Get Usb State
-  //#!    sys.getUsbState();
-  //#!Gets state of usb port. Useful for determining if the SDA is connected to PC.
-  //#!Return: 1 when powered from usb, otherwise 0
-  if (sysFuncMatch(argS->callId, "getLcdState", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    if (svpSGlobal.pwrType == POWER_USB) {
-      result->value.val_u = 1;
-    } else {
-      result->value.val_u = 0;
-    }
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Wake the SDA from sleep
-  //#!    sys.sdaWake();
-  //#!Wakes SDA without turning the screen on.
-  //#!SDA will wake in the low power mode and will sleep again after the lcd shutdown time.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "sdaWake", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    sda_interrupt_sleep();
-    return 1;
-  }
-
 
   //#!##### Quit program
-  //#!    sys.exit();
+  //#!    sys.os.exit();
   //#!Stops program execution after exiting *update* function and performing *exit* function.
   //#!Return: None
   if (sysFuncMatch(argS->callId, "exit", s)) {
@@ -649,11 +622,11 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Check API level
-  //#!    sys.checkSVSVer([num] API_Level);
+  //#!    sys.os.checkVer([num] API_Level);
   //#!Checks for API Lvl support.
   //#!If host level is below given API_Level, error is thrown and app is terminated.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "checkSVSVer", s)) {
+  if (sysFuncMatch(argS->callId, "checkVer", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -669,10 +642,10 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get API level
-  //#!    sys.getSVSVer();
+  //#!    sys.os.getVer();
   //#!Checks for API Lvl support.
   //#!Return: [num] SDA_OS version number
-  if (sysFuncMatch(argS->callId, "getSVSVer", s)) {
+  if (sysFuncMatch(argS->callId, "getVer", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -683,10 +656,10 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get system language
-  //#!    sys.sdaGetLang();
+  //#!    sys.os.getLang();
   //#!Returns SDA_OS language.
   //#!Return: 0 if czech, 1 if english, also defines SVP_LANG_CZ SVP_LANG_ENG
-  if (sysFuncMatch(argS->callId, "sdaGetLang", s)) {
+  if (sysFuncMatch(argS->callId, "getLang", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -696,67 +669,10 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!#### Text obfuscation
-
-  //#!##### Unlock
-  //#!    sys.crUnLock([str]password);
-  //#!Unlocks svp encryption
-  //#!Return: [num] 0 if success, 2 if error, 3 if locked
-  if (sysFuncMatch(argS->callId, "crUnLock", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    result->value.val_u = svp_crypto_unlock(s->stringField + argS->arg[1].val_str);
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Lock
-  //#!    sys.crLock();
-  //#!Locks svp encryption
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "crLock", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    svp_crypto_lock();
-    return 1;
-  }
-
-  //#!##### Encrypt file
-  //#!    sys.crEncrypt([str]fname);
-  //#!Encrypts file.
-  //#!Return: 0 if success, 1 if error
-  if (sysFuncMatch(argS->callId, "crEncrypt", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    result->value.val_u = svp_encrypt(s->stringField + argS->arg[1].val_str);
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Decrypt file
-  //#!    sys.crDecrypt([str]fname);
-  //#!Encrypts file.
-  //#!Return: 0 if success, 1 if error
-  if (sysFuncMatch(argS->callId, "crDecrypt", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    result->value.val_u = svp_decrypt(s->stringField + argS->arg[1].val_str);
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
   //#!#### Subprocess
 
-
   //#!##### Set process as singular
-  //#!    sys.setSingular();
+  //#!    sys.os.setSingular();
   //#!Sets current process as singular.
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setSingular", s)) {
@@ -768,7 +684,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Launch subprocess
-  //#!    sys.subProcess([str]fileName, [str/ref] callback, [str] arg0, [str] arg1, [str] arg2);
+  //#!    sys.os.subProcess([str]fileName, [str/ref] callback, [str] arg0, [str] arg1, [str] arg2);
   //#!Runs child process
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subProcess", s)) {
@@ -791,7 +707,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Enable launching subprocess from cwd
-  //#!    sys.subProcCWD([num] val);
+  //#!    sys.os.subProcCWD([num] val);
   //#!Sets if subprocesses are launched from cwd or from APPS folder.
   //#!val: 0 - APPS folder,1 - cwd
   //#!Return: None
@@ -805,7 +721,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Return data to parent process
-  //#!    sys.subRetval([str] arg0, [str] arg1, [str] arg2);
+  //#!    sys.os.subRetval([str] arg0, [str] arg1, [str] arg2);
   //#!Sets values that will be returned to parent process
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subRetval", s)) {
@@ -820,408 +736,6 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
         argS->arg[2], argS->argType[2],
         argS->arg[3], argS->argType[3]
     );
-    return 1;
-  }
-
-  //#!#### Sound and notification LED
-
-  //#!##### Beep the speaker
-  //#!    sys.beep();
-  //#!Initiates system beep.
-  //#!Return: None
-   if (sysFuncMatch(argS->callId, "beep", s)) {
-
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    svp_beep();
-    return 1;
-  }
-
-  //#!##### Set beep param to default
-  //#!    sys.beepDef();
-  //#!Sets beep to its default values.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "beepDef", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    svp_beep_set_def();
-    return 1;
-  }
-
-  //#!##### Set time of beep
-  //#!    sys.beepT([num]time (~ms));
-  //#!Sets lenght of beep.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "beepT", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    svp_beep_set_t(argS->arg[1].val_u);
-    return 1;
-  }
-
-  //#!##### Set period of beep
-  //#!    sys.beepF([num]period of ~20kHz pulses to one pulse);
-  //#!Sets period of ~20kHz pulses to one pulse.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "beepF", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    svp_beep_set_pf(argS->arg[1].val_u);
-    return 1;
-  }
-
-  //#
-  //#!#### Expansion Ports
-  //#
-
-  static uint8_t serialQueue[32];
-  static uint8_t serialLen;
-
-  //#!##### USB serial expansion transmit
-  //#!    sys.usbTrs([str]data);
-  //#!Sends given string to usb serial port.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "usbTrs", s)) {
-    int32_t i = 0;
-    uint8_t * c;
-
-    c = s->stringField + argS->arg[1].val_str;
-
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-
-    while(c[i] != 0) {
-      i++;
-    }
-
-    if (i > 0) {
-      sda_usb_serial_transmit(c, i);
-      result->value.val_s = 1;
-    } else {
-      result->value.val_s = 0;
-    }
-
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Usb serial expansion transmit queue
-  //#!    sys.usbTrsQ();
-  //#!Sends previously stored queue to the initialized serial port.
-  //#!Queue can be filled with sys.srlTrsQAdd and cleared with sys.srlTrsQClr.
-  //#!Max 32 bytes.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "usbTrsQ", s)) {
-
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-
-    if (serialLen != 0) {
-      sda_usb_serial_transmit(serialQueue, serialLen);
-    }
-    serialLen = 0;
-    return 1;
-  }
-
-  //#!##### USB serial expansion receive
-  //#!    sys.usbRcv([num]timeout);
-  //#!Gets string (max 512 bytes) from USB serial port.
-  //#!If nothing is sent during timeout (in ms), empty string is returned.
-  //#!Return: [str] data
-  if (sysFuncMatch(argS->callId, "usbRcv", s)) {
-    uint8_t c[512];
-
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-
-    if (sda_usb_serial_recieve(c, sizeof(c), argS->arg[1].val_s)){
-      c[511] = 0;
-      result->value.val_u = strNew(c, s);
-    } else {
-      result->value.val_u = strNew((uint8_t *)"", s);
-    }
-
-    result->type = SVS_TYPE_STR;
-    return 1;
-  }
-
-  //#!##### Serial expansion transmit
-  //#!    sys.serialTrs([str]data);
-  //#!Sends given string to serial port on internal or external expansion connector.
-  //#!Depends on what is initialized.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "serialTrs", s)) {
-    int32_t i = 0;
-    uint8_t * c;
-
-    c = s->stringField + argS->arg[1].val_str;
-
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-
-    while(c[i] != 0) {
-      i++;
-    }
-
-    if (i > 0) {
-      sda_serial_transmit(c, i);
-      result->value.val_s = 1;
-    } else {
-      result->value.val_s = 0;
-    }
-
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Serial expansion transmit queue
-  //#!    sys.srlTrsQAdd([num]data);
-  //#!Queues given hex value to transmit buffer.
-  //#!Max 32 bytes.
-  //#!Return: [num] 1-ok, 0-error
-  if (sysFuncMatch(argS->callId, "srlTrsQAdd", s)) {
-
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-
-    if (serialLen < 32) {
-      serialQueue[serialLen] = (uint8_t) argS->arg[1].val_s;
-      serialLen++;
-      result->value.val_s = 1;
-    } else {
-      result->value.val_s = 0;
-    }
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Serial expansion transmit queue clear
-  //#!    sys.srlTrsQClr();
-  //#!Clears transmit buffer.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "srlTrsQClr", s)) {
-
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    serialLen = 0;
-    return 1;
-  }
-
-  //#!##### Serial expansion transmit queue
-  //#!    sys.srlTrsQ();
-  //#!Sends previously stored queue to the initialized serial port.
-  //#!Max 32 bytes.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "srlTrsQ", s)) {
-
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-
-    if (serialLen != 0) {
-      sda_serial_transmit(serialQueue, serialLen);
-    }
-    serialLen = 0;
-    return 1;
-  }
-
-  //#!##### Serial expansion recieve
-  //#!    sys.serialRcv([num]timeout);
-  //#!Gets string (max 512 bytes) from currently initialized serial port.
-  //#!If nothing is sent during timeout (in ms), empty string is returned.
-  //#!Return: [str] data
-  if (sysFuncMatch(argS->callId, "serialRcv", s)) {
-    uint8_t c[512];
-
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-
-    if (sda_serial_recieve(c, sizeof(c), argS->arg[1].val_s)){
-      c[511] = 0;
-      result->value.val_u = strNew(c, s);
-    } else {
-      result->value.val_u = strNew((uint8_t *)"", s);
-    }
-
-    result->type = SVS_TYPE_STR;
-    return 1;
-  }
-
-  //#!##### Set notification led pattern
-  //#!    sys.sdaSetLed([num]led_type);
-  //#!Sets notification led to a given pattern, uses:
-  //#!LED_ON, LED_OFF ,LED_BLINK, LED_SHORTBLINK, LED_ALARM
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "sdaSetLed", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-
-    if (argS->arg[1].val_s == 0) {
-      led_set_pattern(LED_OFF);
-    }
-
-    if (argS->arg[1].val_s == 1) {
-      led_set_pattern(LED_ON);
-    }
-
-    if (argS->arg[1].val_s == 2) {
-      led_set_pattern(LED_BLINK);
-    }
-
-    if (argS->arg[1].val_s == 3) {
-      led_set_pattern(LED_SHORTBLINK);
-    }
-
-    if (argS->arg[1].val_s == 4) {
-      led_set_pattern(LED_ALARM);
-    }
-
-    result->value.val_u = 0;
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Define direction of pins on the internal expansion
-  //#!    sys.iPinDef([num]Pin, [num]type, [num]pullUp);
-  //#!Sets direction of internal expansion pins.
-  //#!Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
-  //#!Pin number is number of pin on the connector, can be read from schematics.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "iPinDef", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    argType[2] = SVS_TYPE_NUM;
-    argType[3] = SVS_TYPE_NUM;
-
-
-    if(sysExecTypeCheck(argS, argType, 3, s)) {
-      return 0;
-    }
-
-    sda_internal_pin_def((uint8_t) argS->arg[1].val_s, (uint8_t) argS->arg[2].val_s, (uint8_t) argS->arg[3].val_s);
-    return 1;
-  }
-
-  //#!##### Set state of pins on the internal expansion
-  //#!    sys.iPinSet([num]Pin, [num]val);
-  //#!Sets state of internal expansion pin.
-  //#!Value 1 sets the pin high, value 0 sets it low.
-  //#!Pin number is number of pin on the connector, can be read from schematics.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "iPinSet", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    argType[2] = SVS_TYPE_NUM;
-
-    if(sysExecTypeCheck(argS, argType, 2, s)) {
-      return 0;
-    }
-
-    sda_internal_pin_set((uint8_t) argS->arg[1].val_s, (uint8_t) argS->arg[2].val_s);
-    return 1;
-  }
-
-  //#!##### Get state of pins on the internal expansion
-  //#!    sys.iPinGet([num]Pin, [num]val);
-  //#!Gets state of internal expansion pin.
-  //#!Pin number is number of pin on the connector, can be read from schematics.
-  //#!Return: 1 if the pin is high, 0 if it is low.
-  if (sysFuncMatch(argS->callId, "iPinGet", s)) {
-    argType[1] = SVS_TYPE_NUM;
-
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-
-    result->value.val_u = sda_internal_pin_get((uint8_t) argS->arg[1].val_s);
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Define direction of pins on the expansion
-  //#!    sys.ePinDef([num]Pin, [num]type, [num]pullUp);
-  //#!Sets direction of external expansion pins.
-  //#!Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
-  //#!Pin number is number of pin on the connector, can be read from schematics.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "ePinDef", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    argType[2] = SVS_TYPE_NUM;
-    argType[3] = SVS_TYPE_NUM;
-
-
-    if(sysExecTypeCheck(argS, argType, 3, s)) {
-      return 0;
-    }
-
-    sda_external_pin_def((uint8_t) argS->arg[1].val_s, (uint8_t) argS->arg[2].val_s, (uint8_t) argS->arg[3].val_s);
-    return 1;
-  }
-
-  //#!##### Set state of pins on the expansion
-  //#!    sys.ePinSet([num]Pin, [num]val);
-  //#!Sets state of external expansion pin.
-  //#!Value 1 sets the pin high, value 0 sets it low.
-  //#!Pin number is number of pin on the connector, can be read from schematics.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "ePinSet", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    argType[2] = SVS_TYPE_NUM;
-
-    if(sysExecTypeCheck(argS, argType, 2, s)) {
-      return 0;
-    }
-
-    sda_external_pin_set((uint8_t) argS->arg[1].val_s, (uint8_t) argS->arg[2].val_s);
-    return 1;
-  }
-
-  //#!##### Get state of pins on the expansion
-  //#!    sys.ePinGet([num]Pin, [num]val);
-  //#!Gets state of external expansion pin.
-  //#!Pin number is number of pin on the connector, can be read from schematics.
-  //#!Return: 1 if the pin is high, 0 if it is low.
-  if (sysFuncMatch(argS->callId, "ePinGet", s)) {
-    argType[1] = SVS_TYPE_NUM;
-
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    result->value.val_u = sda_external_pin_get((uint8_t) argS->arg[1].val_s);
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Get ADC readout
-  //#!    sys.eADCRead();
-  //#!Gets state of external expansion pin.
-  //#!Pin number is number of pin on the connector, can be read from schematics.
-  //#!Return: [float] measured voltage in volts.
-  if (sysFuncMatch(argS->callId, "eADCRead", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    result->value.val_f = sda_external_ADC_get();
-    result->type = SVS_TYPE_FLT;
     return 1;
   }
 
