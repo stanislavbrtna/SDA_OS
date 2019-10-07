@@ -36,5 +36,8 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 
 #endif

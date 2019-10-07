@@ -30,11 +30,11 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!
 
   //#!##### Get time
-  //#!    sys.getTime();
+  //#!    sys.time.get();
   //#!Returns system time in the timestamp form.
   //#!Count of seconds from 0:0 1.1. 2007
   //#!Return: [num]Timestamp
-  if (sysFuncMatch(argS->callId, "getTime", s)) {
+  if (sysFuncMatch(argS->callId, "get", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -51,10 +51,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get time update flag
-  //#!    sys.getTimeUpd()
+  //#!    sys.time.getUpd()
   //#!Returns 1 when time update flag occurs.
   //#!Return: 1 on time update (roughly 1s)
-  if (sysFuncMatch(argS->callId, "getTimeUpd", s)) {
+  if (sysFuncMatch(argS->callId, "getUpd", s)) {
 
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -65,10 +65,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get seconds
-  //#!    sys.getTimeSec();
+  //#!    sys.time.getSec();
   //#!Returns system time.
   //#!Return: [num]Seconds
-  if (sysFuncMatch(argS->callId, "getTimeSec", s)) {
+  if (sysFuncMatch(argS->callId, "getSec", s)) {
 
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -79,10 +79,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get minutes
-  //#!    sys.getTimeMin();
+  //#!    sys.time.getMin();
   //#!Returns system time.
   //#!Return: [num]Minutes
-  if (sysFuncMatch(argS->callId, "getTimeMin", s)) {
+  if (sysFuncMatch(argS->callId, "getMin", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -92,10 +92,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get hours
-  //#!    sys.getTimeHr();
+  //#!    sys.time.getHr();
   //#!Returns system time
   //#!Return: [num]Hours
-  if (sysFuncMatch(argS->callId, "getTimeHr", s)) {
+  if (sysFuncMatch(argS->callId, "getHr", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -105,10 +105,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get day
-  //#!    sys.getTimeDay();
+  //#!    sys.time.getDay();
   //#!Returns system time.
   //#!Return: [num]Day
-  if (sysFuncMatch(argS->callId, "getTimeDay", s)) {
+  if (sysFuncMatch(argS->callId, "getDay", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -118,10 +118,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get month
-  //#!    sys.getTimeMonth();
+  //#!    sys.time.getMonth();
   //#!Returns system time.
   //#!Return: [num]Month
-  if (sysFuncMatch(argS->callId, "getTimeMonth", s)) {
+  if (sysFuncMatch(argS->callId, "getMonth", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -131,10 +131,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get year
-  //#!    sys.getTimeYear();
+  //#!    sys.time.getYear();
   //#!Returns system time.
   //#!Return: [num]Year
-  if (sysFuncMatch(argS->callId, "getTimeYear", s)) {
+  if (sysFuncMatch(argS->callId, "getYear", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -144,7 +144,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get uptime
-  //#!    sys.getUptime();
+  //#!    sys.time.getUptime();
   //#!Returns system uptime.
   //#!Return: [num]Uptime(secs)
   if (sysFuncMatch(argS->callId, "getUptime", s)) {
@@ -157,7 +157,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get new timestamp
-  //#!    sys.setTs([num]Year, [num]Month, [num]Day, [num]Hour, [num]Min, [num]Sec);
+  //#!    sys.time.setTs([num]Year, [num]Month, [num]Day, [num]Hour, [num]Min, [num]Sec);
   //#!Returns timestamp of given time, works only for years 2007 and above.
   //#!Return: [num]Timestamp
   if (sysFuncMatch(argS->callId, "setTs", s)) {
@@ -184,7 +184,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get seconds from timestamp
-  //#!    sys.getTsSec([num]timestamp);
+  //#!    sys.time.getTsSec([num]timestamp);
   //#!Returns seconds from given timestamp.
   //#!Return: [num]Seconds
   if (sysFuncMatch(argS->callId, "getTsSec", s)) {
@@ -198,7 +198,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get minutes from timestamp
-  //#!    sys.getTsMin([num]timestamp);
+  //#!    sys.time.getTsMin([num]timestamp);
   //#!Returns seconds from given timestamp.
   //#!Return: [num]Minutes
   if (sysFuncMatch(argS->callId, "getTsMin", s)) {
@@ -212,7 +212,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get hours from timestamp
-  //#!    sys.getTsHr([num]timestamp);
+  //#!    sys.time.getTsHr([num]timestamp);
   //#!Returns seconds from given timestamp.
   //#!Return: [num]Seconds
   if (sysFuncMatch(argS->callId, "getTsHr", s)) {
@@ -226,7 +226,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get days from timestamp
-  //#!    sys.getTsDay([num]timestamp);
+  //#!    sys.time.getTsDay([num]timestamp);
   //#!Returns seconds from given timestamp.
   //#!Return: [num]Days
   if (sysFuncMatch(argS->callId, "getTsDay", s)) {
@@ -240,7 +240,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get weekday from timestamp
-  //#!    sys.getTsWkDay([num]timestamp);
+  //#!    sys.time.getTsWkDay([num]timestamp);
   //#!Returns weekday from given timestamp.
   //#!Return: [num]Weekday (starting with monday)
   if (sysFuncMatch(argS->callId, "getTsWkDay", s)) {
@@ -254,7 +254,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get month from timestamp
-  //#!    sys.getTsMonth([num]timestamp);
+  //#!    sys.time.getTsMonth([num]timestamp);
   //#!Returns seconds from given timestamp.
   //#!Return: [num]Months
   if (sysFuncMatch(argS->callId, "getTsMonth", s)) {
@@ -268,7 +268,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get year from timestamp
-  //#!    sys.getTsYear([num]timestamp);
+  //#!    sys.time.getTsYear([num]timestamp);
   //#!Returns seconds from given timestamp.
   //#!Return: [num]Years
   if (sysFuncMatch(argS->callId, "getTsYear", s)) {
@@ -281,12 +281,18 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  return 0;
+}
+
+
+uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+  uint8_t argType[11];
 
   //#!##### Register alarm
-  //#!    sys.alarmSetFixed([num]timestamp, [num]param);
+  //#!    sys.alarm.setFixed([num]timestamp, [num]param);
   //#!Returns id of the new alarm.
   //#!Return: [num]id
-  if (sysFuncMatch(argS->callId, "alarmSetFixed", s)) {
+  if (sysFuncMatch(argS->callId, "setFixed", s)) {
     argType[1] = 0;
     argType[2] = 0;
     if(sysExecTypeCheck(argS, argType, 2, s)) {
@@ -308,10 +314,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Register repeating alarm
-  //#!    sys.alarmSetRep([num]hour, [num]min, [num]wkday, [num]day, [num]month,[num]param);
+  //#!    sys.alarm.setRep([num]hour, [num]min, [num]wkday, [num]day, [num]month,[num]param);
   //#!Returns id of the new alarm.
   //#!Return: [num]id
-  if (sysFuncMatch(argS->callId, "alarmSetRep", s)) {
+  if (sysFuncMatch(argS->callId, "setRep", s)) {
     argType[1] = 0;
     argType[2] = 0;
     argType[3] = 0;
@@ -337,10 +343,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Remove alarm
-  //#!    sys.alarmDestroy([num]id);
+  //#!    sys.alarm.destroy([num]id);
   //#!Returns if alarm was deleted.
   //#!Return: [num] 0 - Ok, 1 - Fail
-  if (sysFuncMatch(argS->callId, "alarmDestroy", s)) {
+  if (sysFuncMatch(argS->callId, "destroy", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -352,10 +358,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get alarm flag
-  //#!    sys.alarmGetFlag();
+  //#!    sys.alarm.getFlag();
   //#!Returns id of the new alarm.
   //#!Return: [num]flag
-  if (sysFuncMatch(argS->callId, "alarmGetFlag", s)) {
+  if (sysFuncMatch(argS->callId, "getFlag", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -366,10 +372,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Clear alarm flag
-  //#!    sys.alarmClrFlag();
+  //#!    sys.alarm.clrFlag();
   //#!Clears alarm flag.
   //#!Return: none
-  if (sysFuncMatch(argS->callId, "alarmClrFlag", s)) {
+  if (sysFuncMatch(argS->callId, "clrFlag", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -380,10 +386,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get alarm id
-  //#!    sys.alarmGetId();
+  //#!    sys.alarm.getId();
   //#!Returns id of the curent alarm.
   //#!Return: [num]id
-  if (sysFuncMatch(argS->callId, "alarmGetId", s)) {
+  if (sysFuncMatch(argS->callId, "getId", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -394,10 +400,10 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get alarm parameter
-  //#!    sys.alarmGetPar();
+  //#!    sys.alarm.getPar();
   //#!Returns parameter of the current alarm.
   //#!Return: [num]param
-  if (sysFuncMatch(argS->callId, "alarmGetPar", s)) {
+  if (sysFuncMatch(argS->callId, "getPar", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }

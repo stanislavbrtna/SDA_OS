@@ -145,3 +145,32 @@ hw:
 sys.sleepLock - sys.hw.lockSleep
 sys.lcdWake - sys.hw.wakeLcd
 sys.getLcdState - sys.hw.getLcdState
+
+time:
+sys.getTime - sys.time.get
+sys.getTimeUpd - sys.time.getUpd
+sys.getTimeSec - sys.time.getSec
+sys.getTimeMin - sys.time.getMin
+sys.getTimeHr - sys.time.getHr
+sys.getTimeDay - sys.time.getDay
+sys.getTimeMonth - sys.time.getMonth
+sys.getTimeYear - sys.time.getYear
+sys.getUptime - sys.time.getUptime
+sys.setTs - sys.time.setTs
+sys.getTsSec - sys.time.getTsSec
+sys.getTsMin -
+sys.getTsHr -
+sys.getTsDay -
+sys.getTsWkDay - sys.time.getTsWkDay
+sys.getTsMonth -
+sys.getTsYear -
+
+alarm:
+sys.alarmSetFixed - sys.alarm.setFixed
+sys.alarmSetRep - sys.alarm.setRep
+sys.alarmDestroy - sys.alarm.destroy
+sys.alarmGetFlag - sys.alarm.getFlag
+sys.alarmClrFlag - sys.alarm.clrFlag
+sys.alarmGetId - sys.alarm.getId
+sys.alarmGetPar - sys.alarm.getPar
+

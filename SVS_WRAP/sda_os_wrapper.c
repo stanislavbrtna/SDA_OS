@@ -103,6 +103,9 @@ void svsSVPWrapInit() {
   addSysWrapper(sda_os_crypto_wrapper, "cr");
   addSysWrapper(sda_os_hw_wrapper, "os.hw");
   addSysWrapper(sda_counter_wrapper, "cnt");
+  addSysWrapper(sda_time_sub_wrapper, "time");
+  addSysWrapper(sda_overlay_sub_wrapper, "ov");
+  addSysWrapper(sda_time_alarm_wrapper, "alarm");
 }
 
 uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
@@ -511,21 +514,6 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
   result->value.val_u = 0;
   result->type = SVS_TYPE_NUM;
-
-
-  subWrapperRetVal = sda_time_sub_wrapper(result, argS, s);
-  if ((subWrapperRetVal == 1)) {
-    return 1;
-  } else if (errCheck(s)) {
-    return 0;
-  }
-
-  subWrapperRetVal = sda_overlay_sub_wrapper(result, argS, s);
-  if ((subWrapperRetVal == 1)) {
-    return 1;
-  } else if (errCheck(s)) {
-    return 0;
-  }
 
   //#!##### Get redraw flag
   //#!    sys.os.getRedraw();
