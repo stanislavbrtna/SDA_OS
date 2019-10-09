@@ -908,10 +908,10 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Check if key exists
-  //#!    sys.fs.conf.keyExists([str]key);
+  //#!    sys.fs.conf.exists([str]key);
   //#!Checks if key exists in conf file
   //#!Return: [num] 1 if key exists.
-  if (sysFuncMatch(argS->callId, "keyExists", s)) {
+  if (sysFuncMatch(argS->callId, "exists", s)) {
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -923,10 +923,10 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Read key
-  //#!    sys.fs.conf.keyRead([str]key);
+  //#!    sys.fs.conf.read([str]key);
   //#!Reads key from config file as a string, 128 chars max.
   //#!Return: [str]Value
-  if (sysFuncMatch(argS->callId, "keyRead", s)) {
+  if (sysFuncMatch(argS->callId, "read", s)) {
     uint8_t buff[512];
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 1, s)){
@@ -941,10 +941,10 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Read Key as int
-  //#!    sys.fs.conf.keyReadInt([str]key, [num]default);
+  //#!    sys.fs.conf.readInt([str]key, [num]default);
   //#!Reads key from config file as num (integrer). To be removed.
   //#!Return: [num]Value
-  if (sysFuncMatch(argS->callId, "keyReadInt", s)) {
+  if (sysFuncMatch(argS->callId, "readInt", s)) {
     argType[1] = SVS_TYPE_STR;
     argType[2] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 2, s)) {
@@ -956,10 +956,10 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Write key
-  //#!    sys.fs.conf.keyWrite([str]key, [str]val);
+  //#!    sys.fs.conf.write([str]key, [str]val);
   //#!Writes value in specified key.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "keyWrite", s)) {
+  if (sysFuncMatch(argS->callId, "write", s)) {
     argType[1] = SVS_TYPE_STR;
     argType[2] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 2, s)) {
@@ -970,10 +970,10 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Remove key
-  //#!    sys.fs.conf.keyRemove([str]key);
+  //#!    sys.fs.conf.remove([str]key);
   //#!Removes given key.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "keyRemove", s)) {
+  if (sysFuncMatch(argS->callId, "remove", s)) {
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
