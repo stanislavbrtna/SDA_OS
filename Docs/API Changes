@@ -110,7 +110,7 @@ sys.getMute - sys.snd.getMute
 
 os.gui:
 sys.pSetMainScr - sys.os.gui.setMainScr
-sys.pGetMainScr - sys.os.gui.setMainScr
+sys.pGetMainScr - sys.os.gui.getMainScr
 sys.pHandleText - sys.os.gui.handleText
 
 cr:
@@ -158,12 +158,12 @@ sys.getTimeYear - sys.time.getYear
 sys.getUptime - sys.time.getUptime
 sys.setTs - sys.time.setTs
 sys.getTsSec - sys.time.getTsSec
-sys.getTsMin -
-sys.getTsHr -
-sys.getTsDay -
+sys.getTsMin - sys.time.getTsMin
+sys.getTsHr - sys.time.getTsHr
+sys.getTsDay - sys.time.getTsDay
 sys.getTsWkDay - sys.time.getTsWkDay
-sys.getTsMonth -
-sys.getTsYear -
+sys.getTsMonth - sys.time.getTsMonth
+sys.getTsYear - sys.time.getTsYear
 
 alarm:
 sys.alarmSetFixed - sys.alarm.setFixed
@@ -173,4 +173,36 @@ sys.alarmGetFlag - sys.alarm.getFlag
 sys.alarmClrFlag - sys.alarm.clrFlag
 sys.alarmGetId - sys.alarm.getId
 sys.alarmGetPar - sys.alarm.getPar
+
+o:
+sys.pSetOvrScr - sys.o.setScr
+sys.pGetOvrId - sys.o.getId
+sys.pOvrDestroy - sys.o.destroy
+sys.pOvrSetXYXY - sys.o.setXYXY
+sys.pSetOvrY - sys.o.setY
+
+o.date:
+sys.oDateAdd - sys.o.date.add
+sys.oDateUpd - sys.o.date.update
+sys.oDateGetOk - sys.o.date.getOk
+sys.oDateClrOk - sys.o.date.clrOk
+sys.oDateGetYr - sys.o.date.getYr
+sys.oDateGetDay - sys.o.date.getDay
+sys.oDateGetMon - sys.o.date.getMon
+
+o.time:
+sys.oTimAdd - sys.o.time.add
+sys.oTimSet - sys.o.time.set
+sys.oTimUpd - sys.o.time.update
+sys.oTimGetOk - sys.o.time.getOk
+sys.oTimGetMin - sys.o.time.getMin
+sys.oTimGetHr - sys.o.time.getHr
+sys.oTimClrOk - sys.o.time.clrOk
+
+w.cal:
+sys.wCalInit - sys.w.cal.init
+sys.wCalSelect - sys.w.cal.select
+sys.wCalUpdate - sys.w.cal.update
+sys.wCalMark - sys.w.cal.mark
+sys.wCalGetDay - sys.w.cal.getDay
 

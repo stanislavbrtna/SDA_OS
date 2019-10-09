@@ -28,10 +28,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!#### Overlay API
 
   //#!##### Set overlay screen
-  //#!    sys.pSetOvrScr([num]screen_id);
+  //#!    sys.o.setScr([num]screen_id);
   //#!Sets overlay screen, returns overlay id.
   //#!Return: [num] Overlay id
-  if (sysFuncMatch(argS->callId, "pSetOvrScr", s)) {
+  if (sysFuncMatch(argS->callId, "setScr", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -42,10 +42,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get overlay id
-  //#!    sys.pGetOvrId();
+  //#!    sys.o.getId();
   //#!Gets id of current overlay.
   //#!Return: [num] OverlayId
-  if (sysFuncMatch(argS->callId, "pGetOvrId", s)) {
+  if (sysFuncMatch(argS->callId, "getId", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -55,10 +55,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Destroy overlay
-  //#!    sys.pOvrDestroy();
+  //#!    sys.o.destroy();
   //#!Destroys current overlay, also destroys its screen.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "pOvrDestroy", s)) {
+  if (sysFuncMatch(argS->callId, "destroy", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -69,10 +69,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Set position and size of overlay
-  //#!    sys.pOvrSetXYXY([num]x1, [num]y1, [num]x2, [num]y2);
+  //#!    sys.o.setXYXY([num]x1, [num]y1, [num]x2, [num]y2);
   //#!Sets position and size of current overlay.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "pOvrSetXYXY", s)) {
+  if (sysFuncMatch(argS->callId, "setXYXY", s)) {
     argType[1] = 0;
     argType[2] = 0;
     argType[3] = 0;
@@ -90,10 +90,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
 
   //#!##### Set overlay height
-  //#!    sys.pSetOvrY( val); set Overlay Y2
+  //#!    sys.o.setY( val); set Overlay Y2
   //#!Sets lower coordinates of current overlay.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "pSetOvrY", s)) {
+  if (sysFuncMatch(argS->callId, "setY", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -103,15 +103,22 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  return 0;
+}
+
+
+uint8_t sda_overlay_date_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+  uint8_t argType[11];
+
   //#!
   //#!#### Date overlay
   //#!
 
   //#!##### Create date overlay
-  //#!    sys.oDateAdd([num]year, [num]month, [num]day); #return overlay id
+  //#!    sys.o.date.add([num]year, [num]month, [num]day); #return overlay id
   //#!Creates date overlay id, returns id
   //#!Return: [num]Date overlay id
-  if (sysFuncMatch(argS->callId, "oDateAdd", s)) {
+  if (sysFuncMatch(argS->callId, "add", s)) {
     argType[1] = 0;
     argType[2] = 0;
     argType[3] = 0;
@@ -130,10 +137,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Update date overlay
-  //#!    sys.oDateUpd([num]id);
+  //#!    sys.o.date.update([num]id);
   //#!Updates date overlay
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "oDateUpd", s)) {
+  if (sysFuncMatch(argS->callId, "update", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -144,24 +151,24 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get ok from overlay
-  //#!    sys.oDateGetOk([num]id); #return if ok
+  //#!    sys.o.date.getOk([num]id); #return if ok
   //#!Gets if overlay ok button was pressed.
   //#!Return: 1 if overlay ok button was pressed
-  if (sysFuncMatch(argS->callId, "oDateGetOk", s)) {
+  if (sysFuncMatch(argS->callId, "getOk", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = date_overlay_get_ok((uint16_t) argS->arg[1].val_s);
-    result->type=0;
+    result->type = 0;
     return 1;
   }
 
   //#!##### Clear ok from overlay
-  //#!    sys.oDateClrOk([num]id);
+  //#!    sys.o.date.clrOk([num]id);
   //#!Clears ok flag from overlay
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "oDateClrOk", s)) {
+  if (sysFuncMatch(argS->callId, "clrOk", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -172,10 +179,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get year form overlay
-  //#!    sys.oDateGetYr([num]id); #return year
+  //#!    sys.o.date.getYr([num]id); #return year
   //#!Gets year from overlay with given id.
   //#!Return: [num]Year
-  if (sysFuncMatch(argS->callId, "oDateGetYr", s)) {
+  if (sysFuncMatch(argS->callId, "getYr", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -186,10 +193,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get day from overlay
-  //#!    sys.oDateGetDay([num]id);
+  //#!    sys.o.date.getDay([num]id);
   //#!Gets day from overlay with given id.
   //#!Return: [num]Day
-  if (sysFuncMatch(argS->callId, "oDateGetDay", s)) {
+  if (sysFuncMatch(argS->callId, "getDay", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -200,10 +207,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get month from overlay
-  //#!    sys.oDateGetMon([num]id);
+  //#!    sys.o.date.getMon([num]id);
   //#!Gets month from overlay with given id.
   //#!Return: [num]Month
-  if (sysFuncMatch(argS->callId, "oDateGetMon", s)) {
+  if (sysFuncMatch(argS->callId, "getMon", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -213,15 +220,21 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  return 0;
+}
+
+uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+  uint8_t argType[11];
+
   //#!
   //#!#### Time overlay
   //#!
 
   //#!##### Create time overlay
-  //#!    sys.oTimAdd();
+  //#!    sys.o.time.add();
   //#!Adds a time overlay, returns it's id
   //#!Return: [num]overlay id
-  if (sysFuncMatch(argS->callId, "oTimAdd", s)) {
+  if (sysFuncMatch(argS->callId, "add", s)) {
 
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -233,10 +246,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Set time overlay time
-  //#!    sys.oTimSet([num]overlay_id, [num]hr, [num]min);
+  //#!    sys.o.time.set([num]overlay_id, [num]hr, [num]min);
   //#!Sets time in overlay with given id.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "oTimSet", s)) {
+  if (sysFuncMatch(argS->callId, "set", s)) {
     argType[1] = 0;
     argType[2] = 0;
     argType[3] = 0;
@@ -252,10 +265,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Update time overlay
-  //#!    sys.oTimUpd([num]overlay_id);
+  //#!    sys.o.time.update([num]overlay_id);
   //#!Updates time overlay.
   //#!Return: None
-  if (sysFuncMatch(argS->callId,"oTimUpd",s)){
+  if (sysFuncMatch(argS->callId,"update",s)){
     argType[1]=0;
     if(sysExecTypeCheck(argS, argType, 1,s)){
       return 0;
@@ -266,10 +279,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get time overlay ok
-  //#!    sys.oTimGetOk([num]overlay_id);
+  //#!    sys.o.time.getOk([num]overlay_id);
   //#!Gets ok from time overlay.
   //#!Return: 1 if ok was pressed
-  if (sysFuncMatch(argS->callId, "oTimGetOk", s)) {
+  if (sysFuncMatch(argS->callId, "getOk", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -281,10 +294,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get time overlay minutes
-  //#!    sys.oTimGetMin([num]overlay_id);
+  //#!    sys.o.time.getMin([num]overlay_id);
   //#!Returns minutes from overlay.
   //#!Return: [num]Minutes
-  if (sysFuncMatch(argS->callId, "oTimGetMin", s)) {
+  if (sysFuncMatch(argS->callId, "getMin", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -295,10 +308,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get time overlay hours
-  //#!    sys.oTimGetHr([num]overlay_id);
+  //#!    sys.o.time.getHr([num]overlay_id);
   //#!Returns hours from overlay.
   //#!Return: [num]Hours
-  if (sysFuncMatch(argS->callId, "oTimGetHr", s)) {
+  if (sysFuncMatch(argS->callId, "getHr", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -313,7 +326,7 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.oTimClrOk([num]overlay_id);
   //#!Clears ok from time overlay
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "oTimClrOk", s)) {
+  if (sysFuncMatch(argS->callId, "clrOk", s)) {
     argType[1] = 0;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;

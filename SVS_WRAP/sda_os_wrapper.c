@@ -104,8 +104,12 @@ void svsSVPWrapInit() {
   addSysWrapper(sda_os_hw_wrapper, "os.hw");
   addSysWrapper(sda_counter_wrapper, "cnt");
   addSysWrapper(sda_time_sub_wrapper, "time");
-  addSysWrapper(sda_overlay_sub_wrapper, "ov");
+  addSysWrapper(sda_overlay_sub_wrapper, "o");
+  addSysWrapper(sda_overlay_time_wrapper, "o.time");
+  addSysWrapper(sda_overlay_date_wrapper, "o.date");
   addSysWrapper(sda_time_alarm_wrapper, "alarm");
+  addSysWrapper(sda_os_gui_wrapper, "os.gui");
+  addSysWrapper(sda_os_cal_widget_wrapper, "w.cal");
 }
 
 uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
@@ -398,11 +402,11 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   //#!
 
   //#!##### Init calendar widget
-  //#!    sys.wCalInit([num]year, [num]month, [num]day) #return: cal screen ID
+  //#!    sys.w.cal.init([num]year, [num]month, [num]day) #return: cal screen ID
   //#!Creates callendar widget screen.
   //#!With given year, month and day.
   //#!Return: [num]Callendar widget screen id.
-  if (sysFuncMatch(argS->callId, "wCalInit", s)) {
+  if (sysFuncMatch(argS->callId, "init", s)) {
     argType[1] = SVS_TYPE_NUM;
     argType[2] = SVS_TYPE_NUM;
     argType[3] = SVS_TYPE_NUM;
@@ -415,10 +419,10 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   }
 
   //#!##### Select date
-  //#!    sys.wCalSelect([num]year, [num]month, [num]day);
+  //#!    sys.w.cal.select([num]year, [num]month, [num]day);
   //#!Sets year, month and day to callendar widget.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "wCalSelect", s)) {
+  if (sysFuncMatch(argS->callId, "select", s)) {
     argType[1] = SVS_TYPE_NUM;
     argType[2] = SVS_TYPE_NUM;
     argType[3] = SVS_TYPE_NUM;
@@ -430,10 +434,10 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   }
 
   //#!##### Update
-  //#!    sys.wCalUpdate();
+  //#!    sys.w.cal.update();
   //#!Updates callendar widget.
   //#!Return: [num]1 when callendar is clicked.
-  if (sysFuncMatch(argS->callId, "wCalUpdate", s)) {
+  if (sysFuncMatch(argS->callId, "update", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -443,10 +447,10 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   }
 
   //#!##### Mark day
-  //#!    sys.wCalMark([num]day);
+  //#!    sys.w.cal.mark([num]day);
   //#!Marks day in callendar widget.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "wCalMark", s)) {
+  if (sysFuncMatch(argS->callId, "mark", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -456,10 +460,10 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   }
 
   //#!##### Get selected day
-  //#!    sys.wCalGetDay();
+  //#!    sys.w.cal.getDay();
   //#!Returns selected day.
   //#!Return: [num]day
-  if (sysFuncMatch(argS->callId, "wCalGetDay", s)) {
+  if (sysFuncMatch(argS->callId, "getDay", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
