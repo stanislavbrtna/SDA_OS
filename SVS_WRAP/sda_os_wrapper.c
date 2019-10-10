@@ -492,7 +492,7 @@ uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.cnt.set([num] ms);
   //#!Sets system timer, it counts down and stops at zero.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "cnt.set", s)) {
+  if (sysFuncMatch(argS->callId, "set", s)) {
     argType[1] = SVS_TYPE_NUM; //ms
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
@@ -505,7 +505,7 @@ uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.cnt.get();
   //#!Gets system timer value
   //#!Return: value of system timer
-  if (sysFuncMatch(argS->callId, "cnt.get", s)) {
+  if (sysFuncMatch(argS->callId, "get", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }

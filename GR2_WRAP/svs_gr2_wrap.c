@@ -524,7 +524,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.gui.clrScrEv([num]Id);
   //#!Clears event for whole screen and its sub-screens.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "pClrScrEv", s)) {
+  if (sysFuncMatch(argS->callId, "clrScrEv", s)) {
     argType[1] = 0; //id
 
     if(sysExecTypeCheck(argS, argType, 1, s)) {
