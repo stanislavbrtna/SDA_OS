@@ -250,7 +250,6 @@ uint8_t sdaSvmLoadApp(uint8_t *fname, uint8_t *name, uint8_t mode) {
 
     if (loadApp(fname, name, &svm, mode) != 0) {
       if(errCheck(&svm) != 0) {
-        errSoftPrint(&svm);
         svp_errSoftPrint(&svm);
       }
       return 1;
@@ -366,7 +365,7 @@ void sdaSvmCloseApp() {
     if(functionExists((uint8_t *)"exit", &svm)) {
       commExec((uint8_t *)"exit", &svm);
       if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-        errSoftPrint(&svm);
+        svp_errSoftPrint(&svm);
       }
     }
   }
@@ -458,7 +457,7 @@ uint8_t svmSuspend() {
   if(functionExists(SUSPEND_FUNCTION, &svm)) {
     commExec(SUSPEND_FUNCTION, &svm);
     if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-      errSoftPrint(&svm);
+      svp_errSoftPrint(&svm);
       return 1;
     }
     if (svmCheckAndExit()) {
@@ -476,7 +475,7 @@ uint8_t svmWake(uint16_t id) {
     if(functionExists(WAKEUP_FUNCTION, &svm)) { // execute the wakeup
       commExec(WAKEUP_FUNCTION, &svm);
       if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-        errSoftPrint(&svm);
+        svp_errSoftPrint(&svm);
         return 1;
       }
       if (svmCheckAndExit()) { // handle potential exit call
@@ -499,7 +498,7 @@ uint8_t svmWake(uint16_t id) {
       if(functionExists(WAKEUP_FUNCTION, &svm)) {
         commExec(WAKEUP_FUNCTION, &svm);
         if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-          errSoftPrint(&svm);
+          svp_errSoftPrint(&svm);
           return 1;
         }
         if (svmCheckAndExit()) {
