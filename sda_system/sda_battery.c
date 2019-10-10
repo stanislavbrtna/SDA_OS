@@ -62,7 +62,6 @@ void sda_handle_battery_status() {
   static uint8_t unplugged_flag;
   static uint8_t battUnpluggedVal;
   static uint8_t battPercentRealValue;
-  static uint32_t oldSysPercentageTime;
   static systemPwrType oldBattState;
   static uint8_t unpluggedCount;
 

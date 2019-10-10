@@ -213,7 +213,7 @@ uint8_t svp_tray_XBtn(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t re
   return 0;
 }
 
-#define OPT_HOLD_CNT_MAX 17
+#define OPT_HOLD_CNT_MAX 12
 #define OPT_HOLD_CNT_BEGIN 5
 
 uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
@@ -281,6 +281,11 @@ uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
   if (holdCounter > OPT_HOLD_CNT_MAX && svpSGlobal.systemOptClick == CLICKED_NONE && click == 1) {
     svpSGlobal.systemOptClick = CLICKED_LONG;
   }
+
+  if (holdCounter > OPT_HOLD_CNT_MAX && click == 0 && clickOld == 1 ) {
+    init = 0;
+  }
+
 
   if (click == 0){
     holdCounter = 0;

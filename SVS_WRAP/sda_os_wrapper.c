@@ -22,6 +22,18 @@ SOFTWARE.
 
 #include "sda_wrapper.h"
 
+uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_overlay_date_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+
 //#!  Automatically generated documentation on wrap_umc_svp.c
 
 //#!#### SVP API Level history
@@ -98,23 +110,19 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s);
 
 void svsSVPWrapInit() {
   addSysConsts(svsWrapConsts);
-  addSysWrapper(svsSVPWrap, "os");
-  addSysWrapper(sda_os_sound_wrapper, "snd");
-  addSysWrapper(sda_os_crypto_wrapper, "cr");
-  addSysWrapper(sda_os_hw_wrapper, "hw");
-  addSysWrapper(sda_counter_wrapper, "cnt");
-  addSysWrapper(sda_time_sub_wrapper, "time");
-  addSysWrapper(sda_overlay_sub_wrapper, "o");
-  addSysWrapper(sda_overlay_time_wrapper, "o.time");
-  addSysWrapper(sda_overlay_date_wrapper, "o.date");
-  addSysWrapper(sda_time_alarm_wrapper, "alarm");
-  addSysWrapper(sda_os_gui_wrapper, "os.gui");
-  addSysWrapper(sda_os_cal_widget_wrapper, "w.cal");
+  addSysWrapper(svsSVPWrap, (uint8_t *)"os");
+  addSysWrapper(sda_os_sound_wrapper, (uint8_t *)"snd");
+  addSysWrapper(sda_os_crypto_wrapper, (uint8_t *)"cr");
+  addSysWrapper(sda_os_hw_wrapper, (uint8_t *)"hw");
+  addSysWrapper(sda_counter_wrapper, (uint8_t *)"cnt");
+  addSysWrapper(sda_time_sub_wrapper, (uint8_t *)"time");
+  addSysWrapper(sda_overlay_sub_wrapper, (uint8_t *)"o");
+  addSysWrapper(sda_overlay_time_wrapper, (uint8_t *)"o.time");
+  addSysWrapper(sda_overlay_date_wrapper, (uint8_t *)"o.date");
+  addSysWrapper(sda_time_alarm_wrapper, (uint8_t *)"alarm");
+  addSysWrapper(sda_os_gui_wrapper, (uint8_t *)"os.gui");
+  addSysWrapper(sda_os_cal_widget_wrapper, (uint8_t *)"w.cal");
 }
-
-uint8_t sda_files_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 
 
 uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
@@ -476,7 +484,6 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
 }
 
 uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
-  uint16_t x;
   uint8_t argType[11];
 
   //#!#### Counters
@@ -511,11 +518,7 @@ uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 }
 
 uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
-  uint16_t x;
   uint8_t argType[11];
-
-  uint8_t subWrapperRetVal = 0;
-
   result->value.val_u = 0;
   result->type = SVS_TYPE_NUM;
 

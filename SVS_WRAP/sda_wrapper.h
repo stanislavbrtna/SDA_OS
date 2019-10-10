@@ -32,16 +32,4 @@ void sx_set_touch_ev(gr2EventType ev, uint16_t x, uint16_t y);
 void svsSVPWrapInit();
 void svsDirectSWrapInit();
 
-uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-uint8_t sda_overlay_date_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-
 #endif

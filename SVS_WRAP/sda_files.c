@@ -136,9 +136,9 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 
 void sda_files_wrapper_init() {
-  addSysWrapper(sda_files_wrapper, "fs");
-  addSysWrapper(sda_fs_csv_wrapper, "fs.csv");
-  addSysWrapper(sda_fs_conf_wrapper, "fs.conf");
+  addSysWrapper(sda_files_wrapper, (uint8_t *)"fs");
+  addSysWrapper(sda_fs_csv_wrapper, (uint8_t *)"fs.csv");
+  addSysWrapper(sda_fs_conf_wrapper, (uint8_t *)"fs.conf");
 }
 
 //#!### SDA Files
