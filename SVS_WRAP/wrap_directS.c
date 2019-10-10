@@ -55,10 +55,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!
 
   //#!##### Get color from RGB
-  //#!    sys.sxMixColor([num] r, [num] g, [num] b)
+  //#!    sys.ds.mixColor([num] r, [num] g, [num] b)
   //#!Mixes the right color
   //#!Return: [num] Color
-  if (sysFuncMatch(argS->callId, "sxMixColor", s)) {
+  if (sysFuncMatch(argS->callId, "mixColor", s)) {
     argType[1] = 0;
     argType[2] = 0;
     argType[3] = 0;
@@ -75,10 +75,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Set draw area
-  //#!    sys.sxSetArea([num] x1, [num] y1, [num] x2, [num] y2)
+  //#!    sys.ds.setArea([num] x1, [num] y1, [num] x2, [num] y2)
   //#!Sets the draw area
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "sxSetArea", s)) {
+  if (sysFuncMatch(argS->callId, "setArea", s)) {
     argType[1] = 0;
     argType[2] = 0;
     argType[3] = 0;
@@ -108,10 +108,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draw rectangle
-  //#!    sys.sxDrawRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
+  //#!    sys.ds.drawRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
   //#!Draws rectangle
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "sxDrawRect", s)) {
+  if (sysFuncMatch(argS->callId, "drawRect", s)) {
     argType[1] = 0;
     argType[2] = 0;
     argType[3] = 0;
@@ -139,10 +139,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draw filled rectangle
-  //#!    sys.sxFillRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
+  //#!    sys.ds.fillRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
   //#!Draws rectangle
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "sxFillRect", s)) {
+  if (sysFuncMatch(argS->callId, "fillRect", s)) {
     argType[1] = 0;
     argType[2] = 0;
     argType[3] = 0;
@@ -170,10 +170,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draw circle
-  //#!    sys.sxDrawCircle([num] x1, [num] y1, [num] radius, [num]col)
+  //#!    sys.ds.drawCircle([num] x1, [num] y1, [num] radius, [num]col)
   //#!Draws circle
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "sxDrawCircle", s)) {
+  if (sysFuncMatch(argS->callId, "drawCircle", s)) {
     argType[1] = 0;
     argType[2] = 0;
     argType[3] = 0;
@@ -199,10 +199,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draw filled circle
-  //#!    sys.sxFillCircle([num] x1, [num] y1, [num] radius, [num]col)
+  //#!    sys.ds.fillCircle([num] x1, [num] y1, [num] radius, [num]col)
   //#!Fills circle
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "sxFillCircle", s)) {
+  if (sysFuncMatch(argS->callId, "fillCircle", s)) {
     argType[1] = 0;
     argType[2] = 0;
     argType[3] = 0;
@@ -228,10 +228,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draw line
-  //#!    sys.sxDrawLine([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
+  //#!    sys.ds.drawLine([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
   //#!Draws line
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "sxDrawLine", s)) {
+  if (sysFuncMatch(argS->callId, "drawLine", s)) {
     argType[1] = 0;
     argType[2] = 0;
     argType[3] = 0;
@@ -259,10 +259,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draw text
-  //#!    sys.sxDrawText([num] x1, [num] y1, [str] txt, [num]col)
+  //#!    sys.ds.drawText([num] x1, [num] y1, [str] txt, [num]col)
   //#!Draws text
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "sxDrawText", s)) {
+  if (sysFuncMatch(argS->callId, "drawText", s)) {
     argType[1] = 0;
     argType[2] = 0;
     argType[3] = 1;
@@ -288,10 +288,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Set text to fit specified width
-  //#!    sys.sxSetTextFit([num] enable, [num] width)
+  //#!    sys.ds.setTextFit([num] enable, [num] width)
   //#!Sets max width for next drawn text
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "sxSetTextFit", s)) {
+  if (sysFuncMatch(argS->callId, "setTextFit", s)) {
     argType[1] = 0;
     argType[2] = 0;
 
@@ -310,10 +310,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Fill area with color
-  //#!    sys.sxClearArea([num]col)
+  //#!    sys.ds.clearArea([num]col)
   //#!Clears draw area with goven color
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "sxClearArea", s)) {
+  if (sysFuncMatch(argS->callId, "clearArea", s)) {
     argType[1] = 0;
 
     if(sysExecTypeCheck(argS, argType, 1, s)) {
@@ -331,10 +331,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draws PPM
-  //#!    sys.pDrawPPM([num]x, [num]y, [num]scale, [str]name);
+  //#!    sys.ds.drawPPM([num]x, [num]y, [num]scale, [str]name);
   //#!Draws ppm image.
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "pDrawPPM", s)) {
+  if (sysFuncMatch(argS->callId, "drawPPM", s)) {
     argType[1] = 0; //x
     argType[2] = 0; //y
     argType[3] = 0; //scale
@@ -357,10 +357,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 
   //#!#### Touch API
   //#!##### Get if screen is touched
-  //#!    sys.sxTouchEv();
+  //#!    sys.ds.touchEv();
   //#!Gets if screen is touched, returns last touch event
   //#!Return: [num] Touch event (from event defines)
-  if (sysFuncMatch(argS->callId, "sxTouchEv", s)) {
+  if (sysFuncMatch(argS->callId, "touchEv", s)) {
 
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -381,10 +381,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Clears touch event
-  //#!    sys.sxTouchClr();
+  //#!    sys.ds.touchClr();
   //#!Clears touch event
   //#!Return: none
-  if (sysFuncMatch(argS->callId, "sxTouchClr", s)) {
+  if (sysFuncMatch(argS->callId, "touchClr", s)) {
 
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -396,10 +396,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Get touch y
-  //#!    sys.sxTouchY();
+  //#!    sys.ds.touchY();
   //#!Gives y coordinate of touch event
   //#!Return: [num] Touch y coordinate
-  if (sysFuncMatch(argS->callId, "sxTouchY", s)) {
+  if (sysFuncMatch(argS->callId, "touchY", s)) {
 
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -412,10 +412,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Get touch x
-  //#!    sys.sxTouchX();
+  //#!    sys.ds.touchX();
   //#!Gives x coordinate of touch event
   //#!Return: [num] Touch y coordinate
-  if (sysFuncMatch(argS->callId, "sxTouchX", s)) {
+  if (sysFuncMatch(argS->callId, "touchX", s)) {
 
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;

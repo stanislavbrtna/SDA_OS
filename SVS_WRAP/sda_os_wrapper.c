@@ -101,7 +101,7 @@ void svsSVPWrapInit() {
   addSysWrapper(svsSVPWrap, "os");
   addSysWrapper(sda_os_sound_wrapper, "snd");
   addSysWrapper(sda_os_crypto_wrapper, "cr");
-  addSysWrapper(sda_os_hw_wrapper, "os.hw");
+  addSysWrapper(sda_os_hw_wrapper, "hw");
   addSysWrapper(sda_counter_wrapper, "cnt");
   addSysWrapper(sda_time_sub_wrapper, "time");
   addSysWrapper(sda_overlay_sub_wrapper, "o");

@@ -11,8 +11,8 @@ sys.pAddSliderV - sys.gui.addSliderV
 sys.pAddSliderH - sys.gui.addSliderH
 sys.pAddBar - sys.gui.addBar
 sys.pAddVBar - sys.gui.addBar
-sys.pDestroy - sys.gui.destroy
 sys.pDestroyScr - sys.gui.destroy
+sys.pDestroy - sys.gui.destroy
 sys.pGetValue - sys.gui.getValue
 sys.pSetValue - sys.gui.setValue
 sys.pSetModif - sys.gui.setModif
@@ -206,3 +206,19 @@ sys.wCalUpdate - sys.w.cal.update
 sys.wCalMark - sys.w.cal.mark
 sys.wCalGetDay - sys.w.cal.getDay
 
+ds:
+sys.sxMixColor - sys.ds.mixColor
+sys.sxSetArea - sys.ds.setArea
+sys.sxDrawRect - sys.ds.drawRect
+sys.sxFillRect - sys.ds.fillRect
+sys.sxDrawCircle - sys.ds.drawCircle
+sys.sxFillCircle - sys.ds.fillCircle
+sys.sxDrawLine - sys.ds.drawLine
+sys.sxDrawText - sys.ds.drawText
+sys.sxSetTextFit - sys.ds.setTextFit
+sys.sxClearArea - sys.ds.clearArea
+sys.pDrawPPM - sys.ds.drawPPM
+sys.sxTouchEv - sys.ds.touchEv
+sys.sxTouchClr - sys.ds.touchClr
+sys.sxTouchY - sys.ds.touchY
+sys.sxTouchX - sys.ds.touchX
