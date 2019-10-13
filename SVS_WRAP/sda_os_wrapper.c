@@ -125,8 +125,233 @@ void svsSVPWrapInit() {
 }
 
 
+uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
+  uint8_t argType[11];
+  result->value.val_u = 0;
+  result->type = SVS_TYPE_NUM;
+
+  //#!#### Main OS functions
+
+  //#!##### Get redraw flag
+  //#!    sys.os.getRedraw();
+  //#!Gets redraw flag. *getRedraw* also works.
+  //#!Return: [num] 1 if redraw flag is set, otherwise 0
+  if (sysFuncMatch(argS->callId, "getRedraw", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_u = sdaGetRedrawDetect();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Set redraw
+  //#!    sys.os.setRedraw();
+  //#!Sets redraw flag
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setRedraw", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    setRedrawFlag();
+    return 1;
+  }
+
+  //#!##### Show Error
+  //#!    sys.os.error([str]errorText);
+  //#!Throws error message
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "error", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    sda_show_error_message(s->stringField + argS->arg[1].val_str);
+    return 1;
+  }
+
+  //#!#### Keyboard
+
+  //#!##### Hide keyboard
+  //#!    sys.os.hideKbd();
+  //#!Hides system keyboard.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "hideKbd", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    hideKeyboard();
+    return 1;
+  }
+
+  //#!##### Show keyboard
+  //#!    sys.os.showKbd();
+  //#!Shows system keyboard
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "showKbd", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    showKeyboard();
+    return 1;
+  }
+
+  //#!
+  //#!#### Misc
+  //#!
+
+  //#!##### Get random number
+  //#!    sys.os.rnd();
+  //#!Returns random number
+  //#!Return: [num]RandomValue
+  if (sysFuncMatch(argS->callId, "rnd", s)) {
+
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_s = svp_random();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Quit program
+  //#!    sys.os.exit();
+  //#!Stops program execution after exiting *update* function and performing *exit* function.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "exit", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    svpSGlobal.systemXBtnClick = 1;
+    return 1;
+  }
+
+  //#!##### Check API level
+  //#!    sys.os.checkVer([num] API_Level);
+  //#!Checks for API Lvl support.
+  //#!If host level is below given API_Level, error is thrown and app is terminated.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "checkVer", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (argS->arg[1].val_s > SDA_OS_VERSION_NUM) {
+      errSoft((uint8_t *)"checkSVSVer: Application needs higher level of SDA_os API.", s);
+      errSoftSetParam((uint8_t *)"Needed", (varType)argS->arg[1].val_s, s);
+      errSoftSetParam((uint8_t *)"Got", (varType)(uint16_t)SDA_OS_VERSION_NUM, s);
+      return 1;
+    }
+    return 1;
+  }
+
+  //#!##### Get API level
+  //#!    sys.os.getVer();
+  //#!Checks for API Lvl support.
+  //#!Return: [num] SDA_OS version number
+  if (sysFuncMatch(argS->callId, "getVer", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    result->value.val_u = (uint16_t) SDA_OS_VERSION_NUM;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get system language
+  //#!    sys.os.getLang();
+  //#!Returns SDA_OS language.
+  //#!Return: 0 if czech, 1 if english, also defines SVP_LANG_CZ SVP_LANG_ENG
+  if (sysFuncMatch(argS->callId, "getLang", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    result->value.val_u = (uint16_t) LANG_VAL;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!#### Subprocess
+
+  //#!##### Set process as singular
+  //#!    sys.os.setSingular();
+  //#!Sets current process as singular.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setSingular", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    svmSetSingular(sdaSvmGetId());
+    return 1;
+  }
+
+  //#!##### Launch subprocess
+  //#!    sys.os.subProcess([str]fileName, [str/ref] callback, [str] arg0, [str] arg1, [str] arg2);
+  //#!Runs child process
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "subProcess", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_STR;
+    argType[3] = 3;
+    argType[4] = 3;
+    argType[5] = 3;
+    if(sysExecTypeCheck(argS, argType, 5, s)) {
+      return 0;
+    }
+    sdaSvmCall(
+        s->stringField + argS->arg[1].val_str,
+        s->stringField + argS->arg[2].val_str,
+        argS->arg[3], argS->argType[3],
+        argS->arg[4], argS->argType[4],
+        argS->arg[5], argS->argType[5]
+    );
+    return 1;
+  }
+
+  //#!##### Enable launching subprocess from cwd
+  //#!    sys.os.subProcCWD([num] val);
+  //#!Sets if subprocesses are launched from cwd or from APPS folder.
+  //#!val: 0 - APPS folder,1 - cwd
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "subProcCWD", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    svmSetLaunchCWDflag(argS->arg[1].val_s);
+    return 1;
+  }
+
+  //#!##### Return data to parent process
+  //#!    sys.os.subRetval([str] arg0, [str] arg1, [str] arg2);
+  //#!Sets values that will be returned to parent process
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "subRetval", s)) {
+    argType[1] = 3;
+    argType[2] = 3;
+    argType[3] = 3;
+    if(sysExecTypeCheck(argS, argType, 3, s)) {
+      return 0;
+    }
+    sdaSvmRetval(
+        argS->arg[1], argS->argType[1],
+        argS->arg[2], argS->argType[2],
+        argS->arg[3], argS->argType[3]
+    );
+    return 1;
+  }
+
+  return 0;
+}
+
+
 uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   uint8_t argType[11];
+
+  //#!#### Sound
 
   //#!##### Beep the speaker
   //#!    sys.snd.beep();
@@ -517,223 +742,5 @@ uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   return 0;
 }
 
-uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
-  uint8_t argType[11];
-  result->value.val_u = 0;
-  result->type = SVS_TYPE_NUM;
 
-  //#!##### Get redraw flag
-  //#!    sys.os.getRedraw();
-  //#!Gets redraw flag. *getRedraw* also works.
-  //#!Return: [num] 1 if redraw flag is set, otherwise 0
-  if (sysFuncMatch(argS->callId, "getRedraw", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    result->value.val_u = sdaGetRedrawDetect();
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Set redraw
-  //#!    sys.os.setRedraw();
-  //#!Sets redraw flag
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "setRedraw", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    setRedrawFlag();
-    return 1;
-  }
-
-  //#!##### Show Error
-  //#!    sys.os.error([str]errorText);
-  //#!Throws error message
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "error", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    sda_show_error_message(s->stringField + argS->arg[1].val_str);
-    return 1;
-  }
-
-  //#!#### Keyboard
-
-  //#!##### Hide keyboard
-  //#!    sys.os.hideKbd();
-  //#!Hides system keyboard.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "hideKbd", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    hideKeyboard();
-    return 1;
-  }
-
-  //#!##### Show keyboard
-  //#!    sys.os.showKbd();
-  //#!Shows system keyboard
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "showKbd", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    showKeyboard();
-    return 1;
-  }
-
-  //#!
-  //#!#### Misc
-  //#!
-
-  //#!##### Get random number
-  //#!    sys.os.rnd();
-  //#!Returns random number
-  //#!Return: [num]RandomValue
-  if (sysFuncMatch(argS->callId, "rnd", s)) {
-
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    result->value.val_s = svp_random();
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Quit program
-  //#!    sys.os.exit();
-  //#!Stops program execution after exiting *update* function and performing *exit* function.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "exit", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    svpSGlobal.systemXBtnClick = 1;
-    return 1;
-  }
-
-  //#!##### Check API level
-  //#!    sys.os.checkVer([num] API_Level);
-  //#!Checks for API Lvl support.
-  //#!If host level is below given API_Level, error is thrown and app is terminated.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "checkVer", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-
-    if (argS->arg[1].val_s > SDA_OS_VERSION_NUM) {
-      errSoft((uint8_t *)"checkSVSVer: Application needs higher level of SDA_os API.", s);
-      errSoftSetParam((uint8_t *)"Needed", (varType)argS->arg[1].val_s, s);
-      errSoftSetParam((uint8_t *)"Got", (varType)(uint16_t)SDA_OS_VERSION_NUM, s);
-      return 1;
-    }
-    return 1;
-  }
-
-  //#!##### Get API level
-  //#!    sys.os.getVer();
-  //#!Checks for API Lvl support.
-  //#!Return: [num] SDA_OS version number
-  if (sysFuncMatch(argS->callId, "getVer", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-
-    result->value.val_u = (uint16_t) SDA_OS_VERSION_NUM;
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Get system language
-  //#!    sys.os.getLang();
-  //#!Returns SDA_OS language.
-  //#!Return: 0 if czech, 1 if english, also defines SVP_LANG_CZ SVP_LANG_ENG
-  if (sysFuncMatch(argS->callId, "getLang", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-
-    result->value.val_u = (uint16_t) LANG_VAL;
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!#### Subprocess
-
-  //#!##### Set process as singular
-  //#!    sys.os.setSingular();
-  //#!Sets current process as singular.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "setSingular", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    svmSetSingular(sdaSvmGetId());
-    return 1;
-  }
-
-  //#!##### Launch subprocess
-  //#!    sys.os.subProcess([str]fileName, [str/ref] callback, [str] arg0, [str] arg1, [str] arg2);
-  //#!Runs child process
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "subProcess", s)) {
-    argType[1] = SVS_TYPE_STR;
-    argType[2] = SVS_TYPE_STR;
-    argType[3] = 3;
-    argType[4] = 3;
-    argType[5] = 3;
-    if(sysExecTypeCheck(argS, argType, 5, s)) {
-      return 0;
-    }
-    sdaSvmCall(
-        s->stringField + argS->arg[1].val_str,
-        s->stringField + argS->arg[2].val_str,
-        argS->arg[3], argS->argType[3],
-        argS->arg[4], argS->argType[4],
-        argS->arg[5], argS->argType[5]
-    );
-    return 1;
-  }
-
-  //#!##### Enable launching subprocess from cwd
-  //#!    sys.os.subProcCWD([num] val);
-  //#!Sets if subprocesses are launched from cwd or from APPS folder.
-  //#!val: 0 - APPS folder,1 - cwd
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "subProcCWD", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    svmSetLaunchCWDflag(argS->arg[1].val_s);
-    return 1;
-  }
-
-  //#!##### Return data to parent process
-  //#!    sys.os.subRetval([str] arg0, [str] arg1, [str] arg2);
-  //#!Sets values that will be returned to parent process
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "subRetval", s)) {
-    argType[1] = 3;
-    argType[2] = 3;
-    argType[3] = 3;
-    if(sysExecTypeCheck(argS, argType, 3, s)) {
-      return 0;
-    }
-    sdaSvmRetval(
-        argS->arg[1], argS->argType[1],
-        argS->arg[2], argS->argType[2],
-        argS->arg[3], argS->argType[3]
-    );
-    return 1;
-  }
-
-  return 0;
-}
 

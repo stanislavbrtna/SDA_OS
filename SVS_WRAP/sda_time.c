@@ -288,6 +288,8 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   uint8_t argType[11];
 
+  //#!#### Alarm API
+
   //#!##### Register alarm
   //#!    sys.alarm.setFixed([num]timestamp, [num]param);
   //#!Returns id of the new alarm.

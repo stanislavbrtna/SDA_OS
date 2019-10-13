@@ -155,22 +155,22 @@ Return: [num]1 on succes.
 Close conf file.
 Return: [num]1 on succes.
 ##### Check if key exists
-    sys.fs.conf.keyExists([str]key);
+    sys.fs.conf.exists([str]key);
 Checks if key exists in conf file
 Return: [num] 1 if key exists.
 ##### Read key
-    sys.fs.conf.keyRead([str]key);
+    sys.fs.conf.read([str]key);
 Reads key from config file as a string, 128 chars max.
 Return: [str]Value
 ##### Read Key as int
-    sys.fs.conf.keyReadInt([str]key, [num]default);
+    sys.fs.conf.readInt([str]key, [num]default);
 Reads key from config file as num (integrer). To be removed.
 Return: [num]Value
 ##### Write key
-    sys.fs.conf.keyWrite([str]key, [str]val);
+    sys.fs.conf.write([str]key, [str]val);
 Writes value in specified key.
 Return: None
 ##### Remove key
-    sys.fs.conf.keyRemove([str]key);
+    sys.fs.conf.remove([str]key);
 Removes given key.
 Return: None

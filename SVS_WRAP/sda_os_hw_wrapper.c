@@ -35,6 +35,8 @@ uint8_t wrap_get_lcdOffButtons() {
 uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   uint8_t argType[11];
 
+  //#!#### SDA OS HW functions
+
   //#!##### Lock LCD sleep
   //#!    sys.hw.lockSleep([num]val);
   //#!Sets sleep lock value. On 1 system wont go to sleep.
@@ -77,7 +79,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Get Usb State
+  //#!##### Get USB State
   //#!    sys.getUsbState();
   //#!Gets state of usb port. Useful for determining if the SDA is connected to PC.
   //#!Return: 1 when powered from usb, otherwise 0
