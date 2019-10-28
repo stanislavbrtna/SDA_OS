@@ -22,7 +22,9 @@ SDA applications are written in SVS language using APIs of SDA_OS, documentation
 ### SDA_OS SVS wrappers
 SDA_OS uses wrappers to provide its functions to applications running in the SVS environment. These wrappers extends the **sys** keyword and they have automatically generated documentation. This API is quite stable and its intended to have long backward compatibility.
 
-- [Main functions](Docs/sda_main.md)
+- [Main OS functions](Docs/sda_main.md)
+
+- [OS Overlays](Docs/sda_overlays.md)
 
 - [GUI](Docs/sda_gr2_wrapper.md)
 
@@ -30,10 +32,11 @@ SDA_OS uses wrappers to provide its functions to applications running in the SVS
 
 - [Time](Docs/sda_time.md)
 
-- [Overlays](Docs/sda_overlays.md)
+- [Native graphics](Docs/sda_directS.md)
 
-- [Graphics](Docs/sda_directS.md)
-
+- [Hardware](Docs/sda_hw.md)
 
 ### SDA_OS native API
 Native (C) API of SDA_OS is not strictly defined yet and it is work-in-progress. Expect breaking changes.
+
+[Native API](Docs/sda_napi.md)
