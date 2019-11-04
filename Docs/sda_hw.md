@@ -12,72 +12,15 @@ Return: None
 Gets state of lcd.
 Return: 1 if lcd is on, otherwise 0
 ##### Get USB State
-    sys.getUsbState();
+    sys.hw.getUsbState();
 Gets state of usb port. Useful for determining if the SDA is connected to PC.
 Return: 1 when powered from usb, otherwise 0
-##### Wake the SDA from sleep
-    sys.sdaWake();
-Wakes SDA without turning the screen on.
-SDA will wake in the low power mode and will sleep again after the lcd shutdown time.
-Return: None
-#### Buttons
-##### Get button event
-    sys.btnGetEv([num] btn)
-Return last button event
-Return: 0 - none, 1-pressed, 2 - hold, 3 - released
-##### Clears button events
-    sys.btnClrEv([num]btn)
-Sets button event to EV_NONE
-Return: None
-##### Enable button events with LCD off
-    sys.btnStdbyEn([num]val)
-Enables button readout with LCD off
-Return: None
-#### Expansion Ports
-##### USB serial expansion transmit
-    sys.usbTrs([str]data);
-Sends given string to usb serial port.
-Return: None
-##### Usb serial expansion transmit queue
-    sys.usbTrsQ();
-Sends previously stored queue to the initialized serial port.
-Queue can be filled with sys.srlTrsQAdd and cleared with sys.srlTrsQClr.
-Max 32 bytes.
-Return: None
-##### USB serial expansion receive
-    sys.usbRcv([num]timeout);
-Gets string (max 512 bytes) from USB serial port.
-If nothing is sent during timeout (in ms), empty string is returned.
-Return: [str] data
-##### Serial expansion transmit
-    sys.serialTrs([str]data);
-Sends given string to serial port on internal or external expansion connector.
-Depends on what is initialized.
-Return: None
-##### Serial expansion transmit queue
-    sys.srlTrsQAdd([num]data);
-Queues given hex value to transmit buffer.
-Max 32 bytes.
-Return: [num] 1-ok, 0-error
-##### Serial expansion transmit queue clear
-    sys.srlTrsQClr();
-Clears transmit buffer.
-Return: None
-##### Serial expansion transmit queue
-    sys.srlTrsQ();
-Sends previously stored queue to the initialized serial port.
-Max 32 bytes.
-Return: None
-##### Serial expansion recieve
-    sys.serialRcv([num]timeout);
-Gets string (max 512 bytes) from currently initialized serial port.
-If nothing is sent during timeout (in ms), empty string is returned.
-Return: [str] data
 ##### Set notification led pattern
-    sys.sdaSetLed([num]led_type);
+    sys.hw.setLed([num]led_type);
 Sets notification led to a given pattern, uses:
 LED_ON, LED_OFF ,LED_BLINK, LED_SHORTBLINK, LED_ALARM
 Return: None
+#### Expansion Ports
 ##### Define direction of pins on the internal expansion
     sys.iPinDef([num]Pin, [num]type, [num]pullUp);
 Sets direction of internal expansion pins.
@@ -117,3 +60,58 @@ Return: 1 if the pin is high, 0 if it is low.
 Gets state of external expansion pin.
 Pin number is number of pin on the connector, can be read from schematics.
 Return: [float] measured voltage in volts.
+#### Buttons
+##### Get button event
+    sys.hw.btn.getEvent([num] btn)
+Return last button event
+Return: 0 - none, 1-pressed, 2 - hold, 3 - released
+##### Clears button events
+    sys.hw.btn.clrEvent([num]btn)
+Sets button event to EV_NONE
+Return: None
+##### Enable button events with LCD off
+    sys.hw.btn.stdbyEn([num]val)
+Enables button readout with LCD off
+Return: None
+### Communication
+#### Serial transmit queue
+Could be used for all the transmission modes.
+##### Serial expansion transmit queue
+    sys.com.qAdd([num]data);
+Queues given hex value to transmit buffer.
+Max 32 bytes.
+Return: [num] 1-ok, 0-error
+##### Serial expansion transmit queue clear
+    sys.com.qClr();
+Clears transmit buffer.
+Return: None
+##### USB serial expansion transmit
+    sys.com.usbTrs([str]data);
+Sends given string to usb serial port.
+Return: None
+##### Usb serial expansion transmit queue
+    sys.com.usbTrsQ();
+Sends previously stored queue to the initialized serial port.
+Queue can be filled with sys.srlTrsQAdd and cleared with sys.srlTrsQClr.
+Max 32 bytes.
+Return: None
+##### USB serial expansion receive
+    sys.com.usbRcv([num]timeout);
+Gets string (max 512 bytes) from USB serial port.
+If nothing is sent during timeout (in ms), empty string is returned.
+Return: [str] data
+##### Serial expansion transmit
+    sys.com.uartTrs([str]data);
+Sends given string to serial port on internal or external expansion connector.
+Depends on what is initialized.
+Return: None
+##### Serial expansion transmit queue
+    sys.com.uartTrsQ();
+Sends previously stored queue to the initialized serial port.
+Max 32 bytes.
+Return: None
+##### Serial expansion recieve
+    sys.com.uartRcv([num]timeout);
+Gets string (max 512 bytes) from currently initialized serial port.
+If nothing is sent during timeout (in ms), empty string is returned.
+Return: [str] data

@@ -48,6 +48,11 @@ Return: [num] 1 if redraw flag is set, otherwise 0
     sys.os.setRedraw();
 Sets redraw flag
 Return: None
+##### Wake the SDA from sleep
+    sys.os.wake();
+Wakes SDA without turning the screen on.
+SDA will wake in the low power mode and will sleep again after the lcd shutdown time.
+Return: None
 ##### Show Error
     sys.os.error([str]errorText);
 Throws error message

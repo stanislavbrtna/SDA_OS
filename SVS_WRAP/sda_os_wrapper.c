@@ -33,6 +33,8 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_overlay_date_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 
 //#!  Automatically generated documentation on wrap_umc_svp.c
 
@@ -114,6 +116,8 @@ void svsSVPWrapInit() {
   addSysWrapper(sda_os_sound_wrapper, (uint8_t *)"snd");
   addSysWrapper(sda_os_crypto_wrapper, (uint8_t *)"cr");
   addSysWrapper(sda_os_hw_wrapper, (uint8_t *)"hw");
+  addSysWrapper(sda_os_hw_buttons_wrapper, (uint8_t *)"hw.btn");
+  addSysWrapper(sda_os_hw_com_wrapper, (uint8_t *)"com");
   addSysWrapper(sda_counter_wrapper, (uint8_t *)"cnt");
   addSysWrapper(sda_time_sub_wrapper, (uint8_t *)"time");
   addSysWrapper(sda_overlay_sub_wrapper, (uint8_t *)"o");
@@ -154,6 +158,19 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     setRedrawFlag();
+    return 1;
+  }
+
+  //#!##### Wake the SDA from sleep
+  //#!    sys.os.wake();
+  //#!Wakes SDA without turning the screen on.
+  //#!SDA will wake in the low power mode and will sleep again after the lcd shutdown time.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "sdaWake", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    sda_interrupt_sleep();
     return 1;
   }
 

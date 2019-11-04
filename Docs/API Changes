@@ -140,11 +140,36 @@ sys.setSingular - sys.os.setSingular
 sys.subProcess - sys.os.subProcess
 sys.subProcCWD - sys.os.subProcCWD
 sys.subRetval - sys.os.subRetval
+sys.sdaWake - sys.os.wake
 
 hw:
 sys.sleepLock - sys.hw.lockSleep
 sys.lcdWake - sys.hw.wakeLcd
 sys.getLcdState - sys.hw.getLcdState
+sys.getUsbState - sys.hw.getUsbState
+sys.sdaSetLed - sys.hw.setLed
+sys.iPinDef - sys.hw.iPinDef
+sys.iPinSet - sys.hw.iPinSet
+sys.iPinGet - sys.hw.iPinGet
+sys.ePinDef - sys.hw.ePinDef
+sys.ePinSet - sys.hw.ePinSet
+sys.ePinGet - sys.hw.ePinGet
+sys.eADCRead - sys.hw.eADCRead
+
+hw.btn:
+sys.btnGetEv - sys.hw.btn.getEvent
+sys.btnClrEv - sys.hw.btn.clrEvent
+sys.btnStdbyEn - sys.hw.btn.stdbyEn
+
+com:
+sys.srlTrsQAdd - sys.com.qAdd
+sys.srlTrsQClr - sys.com.qClr
+sys.usbTrs - sys.com.usbTrs
+sys.usbTrsQ - sys.com.usbTrsQ
+sys.usbRcv - sys.com.usbRcv
+sys.srlTrsQ - sys.com.uartTrs
+sys.serialTrs - sys.com.uartTrsQ
+sys.serialRcv - sys.com.uartRcv
 
 time:
 sys.getTime - sys.time.get
