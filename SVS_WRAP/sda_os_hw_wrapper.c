@@ -293,7 +293,7 @@ uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   //#!    sys.hw.btn.getEvent([num] btn)
   //#!Return last button event
   //#!Return: 0 - none, 1-pressed, 2 - hold, 3 - released
-  if (sysFuncMatch(argS->callId, "getEv", s)) {
+  if (sysFuncMatch(argS->callId, "getEvent", s)) {
     gr2EventType ev;
     argType[1] = SVS_TYPE_NUM;
 
