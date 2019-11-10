@@ -167,8 +167,8 @@ sys.srlTrsQClr - sys.com.qClr
 sys.usbTrs - sys.com.usbTrs
 sys.usbTrsQ - sys.com.usbTrsQ
 sys.usbRcv - sys.com.usbRcv
-sys.srlTrsQ - sys.com.uartTrs
-sys.serialTrs - sys.com.uartTrsQ
+sys.srlTrsQ - sys.com.uartTrsQ
+sys.serialTrs - sys.com.uartTrs
 sys.serialRcv - sys.com.uartRcv
 
 time:
