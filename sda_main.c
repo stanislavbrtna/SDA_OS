@@ -314,6 +314,7 @@ void setInitStructDefaults() {
   svpSGlobal.systemXBtnVisible = 1;
   svpSGlobal.kbdVisible = 0;
   svpSGlobal.mute = 0;
+
   // 101 is non-valid init value, displays questionmark
   svpSGlobal.battPercentage = 101;
   svpSGlobal.battString[0] = ' ';
@@ -322,6 +323,7 @@ void setInitStructDefaults() {
   svpSGlobal.battString[3] = '?';
   svpSGlobal.battString[4] = 'V';
   svpSGlobal.battString[5] = 0;
+
   svpSGlobal.powerState = PWR_MID;
   svpSGlobal.pwrType = POWER_BATT;
   svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;

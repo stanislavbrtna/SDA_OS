@@ -65,7 +65,8 @@ void sda_handle_battery_status() {
   static systemPwrType oldBattState;
   static uint8_t unpluggedCount;
 
-  if (sda_is_battery_measured()) {
+  // if battery measured flag is up or if we have non-valid value
+  if (sda_is_battery_measured() || (svpSGlobal.battPercentage == 101)) {
 
     batteryVoltage = sda_get_battery_voltage();
 
