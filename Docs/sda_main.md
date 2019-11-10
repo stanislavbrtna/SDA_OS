@@ -21,23 +21,6 @@ Api level changes:
 |   ---    |    ---      |
 | SVP_LANG_CZ | Czech language |
 | SVP_LANG_ENG | English language |
-| LED_ON | Nonification led on |
-| LED_OFF | Nonification led off |
-| LED_BLINK | Nonification led pattern |
-| LED_SHORTBLINK | Nonification led pattern |
-| LED_ALARM | Nonification led pattern |
-| BTN_A | Button define |
-| BTN_LEFT | Button define |
-| BTN_UP | Button define |
-| BTN_DOWN | Button define |
-| BTN_RIGHT | Button define |
-| BTN_B | Button define |
-| PIN_IN | Expansion pin setup define |
-| PIN_OUT | Expansion pin setup define |
-| PIN_ALT | Expansion pin setup define |
-| PIN_NOPULL | Expansion pin setup define |
-| PIN_PULLUP | Expansion pin setup define |
-| PIN_PULLDOWN | Expansion pin setup define |
 
 #### Main OS functions
 ##### Get redraw flag
