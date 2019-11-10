@@ -73,25 +73,32 @@ void sda_handle_battery_status() {
 
     battPercentRealValue = get_batt_percent(batteryVoltage);
 
+    // wait for unplugged count
     if (unplugged_flag) {
       unpluggedCount--;
 
+      // get the lowest measured value from  n(unplugged_count) measurements
       if (battUnpluggedVal < battPercentRealValue) {
         battUnpluggedVal = battPercentRealValue;
       }
 
+      // then set the value and continue with normal measurement
       if (unpluggedCount == 0) {
         unplugged_flag = 0;
         svpSGlobal.battPercentage = (battUnpluggedVal / 5) * 5;
       }
-    } else {
 
+    } else {
+      // if there is no value, get the real value
       if (svpSGlobal.battPercentage == 101) {
         svpSGlobal.battPercentage = (battPercentRealValue / 5) * 5;
       }
+
       if (svpSGlobal.pwrType == POWER_BATT) {
+        // on battery power use the "battery wont go up" function
         reload_batt_percent(battPercentRealValue);
       } else {
+        // just get what we got
         svpSGlobal.battPercentage = (battPercentRealValue / 5) * 5;
       }
 
@@ -101,9 +108,8 @@ void sda_handle_battery_status() {
   // reset batt state after unplugging device from charger
   if (oldBattState != svpSGlobal.pwrType && svpSGlobal.pwrType == POWER_BATT) {
     unplugged_flag = 1;
-    unpluggedCount = 2;
+    unpluggedCount = 5;
     battUnpluggedVal = 0;
-    svpSGlobal.battPercentage = 101;
   }
 
   oldBattState = svpSGlobal.pwrType;
