@@ -317,7 +317,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### New progress bar
-  //#!    sys.addBar([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
+  //#!    sys.gui.addBar([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
   //#!Adds progress bar. Orientation depends on bar dimensions.
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "addBar", s)) {

@@ -519,6 +519,8 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 
     if (gr2_clicked(optSecuSel, &sda_sys_con)) {
       mainScr = optSecuScr;
+      optSecuNewStr[0] = 0;
+      optSecuOldStr[0] = 0;
       pscg_set_visible(optSecuMsg, 0, &sda_sys_con);
       pscg_set_visible(optSecuMsg2, 0, &sda_sys_con);
       setRedrawFlag();
