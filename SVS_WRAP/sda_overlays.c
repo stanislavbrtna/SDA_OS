@@ -232,17 +232,34 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Create time overlay
   //#!    sys.o.time.add();
+  //#!    sys.o.time.add([num]hr, [num]min);
   //#!Adds a time overlay, returns it's id
   //#!Return: [num]overlay id
   if (sysFuncMatch(argS->callId, "add", s)) {
 
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
+    if (argS->usedup == 2) {
+      argType[1] = 0;
+      argType[2] = 0;
+      if(sysExecTypeCheck(argS, argType, 2, s)) {
+        return 0;
+      }
 
-    result->value.val_s = time_overlay_init();
-    result->type = 0;
-    return 1;
+      result->value.val_s = time_overlay_init();
+      result->type = 0;
+      time_overlay_set_time(
+        (uint16_t)result->value.val_s,
+        (uint16_t)argS->arg[1].val_s,
+        (uint16_t)argS->arg[2].val_s
+      );
+      return 1;
+    } else {
+      if(sysExecTypeCheck(argS, argType, 0, s)) {
+        return 0;
+      }
+      result->value.val_s = time_overlay_init();
+      result->type = 0;
+      return 1;
+    }
   }
 
   //#!##### Set time overlay time

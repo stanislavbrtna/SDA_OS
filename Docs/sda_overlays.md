@@ -55,6 +55,7 @@ Return: [num]Month
 
 ##### Create time overlay
     sys.o.time.add();
+    sys.o.time.add([num]hr, [num]min);
 Adds a time overlay, returns it's id
 Return: [num]overlay id
 ##### Set time overlay time

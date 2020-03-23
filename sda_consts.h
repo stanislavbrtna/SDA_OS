@@ -28,13 +28,13 @@ File description:
 #define SDA_CONSTS_H
 
 // version number string and version number,
-#define SDA_OS_VERSION "0.8.0.2"
-#define SDA_OS_VERSION_NUM 802
+#define SDA_OS_VERSION "0.8.0.3B"
+#define SDA_OS_VERSION_NUM 803
 
 // shows where the screen is redrawn, works only in simulator, usefull for debug
 // define SIM_SHOW_REDRAW
 
-//have at least 160 elements for system
+// have at least 160 elements for system
 #define SDA_SYS_ELEM_MAX 190
 #define SDA_SYS_SCREEN_MAX 40
 
