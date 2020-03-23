@@ -45,7 +45,7 @@ Creates new .ppm image container. Name of image is stored in str_value
 Size attribute is stored in value, (one by default)
 Return: [num]id
 ##### New vertical slider
-    sys.addSliderV([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
+    sys.gui.addSliderV([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
 Adds a new vertical slider. (pAddSlider is also accepted)
 Return: [num]id
 ##### New horizontal slider
@@ -53,7 +53,7 @@ Return: [num]id
 Adds a new horizontal slider.
 Return: [num]id
 ##### New progress bar
-    sys.addBar([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
+    sys.gui.addBar([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
 Adds progress bar. Orientation depends on bar dimensions.
 Return: [num]id
 #### Destructors

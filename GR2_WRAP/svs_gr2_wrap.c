@@ -255,7 +255,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### New vertical slider
-  //#!    sys.addSliderV([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
+  //#!    sys.gui.addSliderV([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
   //#!Adds a new vertical slider. (pAddSlider is also accepted)
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "addSlider", s) || sysFuncMatch(argS->callId, "addSliderV", s)) {
