@@ -30,6 +30,7 @@ typedef struct {
   uint8_t startDay;
   uint16_t buttons[43];
   uint8_t selectedDay;
+  uint8_t useHighlight;
 } dateSelectorWidgetType;
 
 extern const uint8_t *date_month_names[];
@@ -47,6 +48,12 @@ uint16_t date_select_widget_update(dateSelectorWidgetType *d);
 
 // higliths day
 uint16_t date_select_highlight(dateSelectorWidgetType *d, uint8_t day);
+
+// returns ID of given day button
+uint16_t date_select_widget_get_day_id(dateSelectorWidgetType *d, uint8_t day);
+
+// use highlighting (buttons except those hghlighted are ghosted)
+void date_select_set_highlight(dateSelectorWidgetType *d, uint8_t val);
 
 //return: date of selected day
 uint8_t date_select_widget_get_day(dateSelectorWidgetType *d);

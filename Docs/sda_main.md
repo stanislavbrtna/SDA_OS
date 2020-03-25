@@ -163,6 +163,10 @@ Return: [num]1 when callendar is clicked.
     sys.w.cal.mark([num]day);
 Marks day in callendar widget.
 Return: None
+##### Set highlighting
+    sys.w.cal.highlight([num]val);
+Enable that all buttons except marked are rendered as ghost buttons.
+Return: None
 ##### Get selected day
     sys.w.cal.getDay();
 Returns selected day.

@@ -692,6 +692,19 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
     return 1;
   }
 
+  //#!##### Set highlighting
+  //#!    sys.w.cal.highlight([num]val);
+  //#!Enable that all buttons except marked are rendered as ghost buttons.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "highlight", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    date_select_set_highlight(&date, (uint8_t) argS->arg[1].val_s);
+    return 1;
+  }
+
   //#!##### Get selected day
   //#!    sys.w.cal.getDay();
   //#!Returns selected day.
