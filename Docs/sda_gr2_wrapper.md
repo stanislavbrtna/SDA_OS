@@ -39,6 +39,10 @@ Return: [num]id
     sys.gui.addCheckBox([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
 Creates new checkbox. Checkbox state is stored in its value.
 Return: [num]id
+##### New icon
+    sys.gui.addIcon([num]x1, [num]y1, [num]x2, [num]y2, [str]description, [str]image, [num]scrId);
+Adds icon. Image must be a file in current working directory, with resolution 64x64px.
+Return: [num]id
 ##### New image
     sys.gui.addImage([num]x1, [num]y1, [num]x2, [num]y2, [str]fname, [num]scrId);
 Creates new .ppm image container. Name of image is stored in str_value

@@ -224,6 +224,37 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### New icon
+  //#!    sys.gui.addIcon([num]x1, [num]y1, [num]x2, [num]y2, [str]description, [str]image, [num]scrId);
+  //#!Adds icon. Image must be a file in current working directory, with resolution 64x64px.
+  //#!Return: [num]id
+  if (sysFuncMatch(argS->callId, "addIcon", s)) {
+    argType[1] = 0; //x1
+    argType[2] = 0; //y1
+    argType[3] = 0; //x2
+    argType[4] = 0; //y2
+    argType[5] = 1; //str
+    argType[6] = 1; //path to image
+    argType[7] = 0; //scrId
+
+    if(sysExecTypeCheck(argS, argType, 7, s)) {
+      return 0;
+    }
+
+    result->value.val_s = pscg_add_icon(
+      argS->arg[1].val_s,
+      argS->arg[2].val_s,
+      argS->arg[3].val_s,
+      argS->arg[4].val_s,
+      s->stringField + argS->arg[5].val_str,
+      s->stringField + argS->arg[6].val_str,
+      argS->arg[7].val_s,
+      &sda_app_con
+    );
+    result->type = 0;
+    return 1;
+  }
+
   //#!##### New image
   //#!    sys.gui.addImage([num]x1, [num]y1, [num]x2, [num]y2, [str]fname, [num]scrId);
   //#!Creates new .ppm image container. Name of image is stored in str_value
