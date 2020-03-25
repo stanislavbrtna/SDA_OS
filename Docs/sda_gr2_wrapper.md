@@ -20,7 +20,7 @@
 Creates new screen.
 Return: [num]scrId
 ##### New frame
-    sys.addFrame([num]x1, [num]y1, [num]x2, [num]y2, [num]value, [num]scrId);
+    sys.gui.addFrame([num]x1, [num]y1, [num]x2, [num]y2, [num]value, [num]scrId);
 Creates new pscg frame. Value contains id of screen inside frame.
 Return: [num]elementId
 ##### New text field
