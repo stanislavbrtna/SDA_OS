@@ -760,6 +760,9 @@ uint8_t sda_main_loop() {
     pscg_draw_screen(overlayX1, overlayY1, overlayX2, overlayY2, overlayScr, 0, overlayCont);
   }
   pscg_draw_end(sda_current_con);
+  if (overlayScr != 0) {
+    pscg_draw_end(overlayCont);
+  }
 
   tick_lock = SDA_LOCK_UNLOCKED;
 
