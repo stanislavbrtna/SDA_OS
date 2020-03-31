@@ -189,6 +189,8 @@ void date_select_widget_load_days(
       y++; // counts day in month
   }
   d->selectedDay = day;
+  d->currentMonth = month;
+  d->currentYear = year;
 }
 
 
@@ -211,6 +213,8 @@ uint16_t date_select_widget_init(
   pscg_add_text(6, 0, 7, 1, OVRL_DAY7, scr, sda_current_con);
   d->dateSelectorId = scr;
   d->selectedDay = day;
+  d->currentMonth = month;
+  d->currentYear = year;
   date_select_widget_load_days(d, year, month, day);
 
   return scr;
@@ -223,12 +227,19 @@ void date_select_widget_set_date(
     uint8_t day) {
 
   uint16_t y;
-  //remove days
-  for (y = 1; y <= d->dayCount; y++) {
-    pscg_destroy(d->buttons[y], sda_current_con);
+
+  if (year == d->currentYear && month == d->currentMonth) {
+    pscg_set_select(d->buttons[d->selectedDay], 0, sda_current_con);
+    pscg_set_select(d->buttons[day], 1, sda_current_con);
+    d->selectedDay = day;
+  } else {
+    //remove days
+    for (y = 1; y <= d->dayCount; y++) {
+      pscg_destroy(d->buttons[y], sda_current_con);
+    }
+    //load new ones
+    date_select_widget_load_days(d, year, month, day);
   }
-  //load new ones
-  date_select_widget_load_days(d,year,month,day);
 }
 
 uint16_t date_select_widget_update(dateSelectorWidgetType *d) {

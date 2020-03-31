@@ -30,6 +30,8 @@ typedef struct {
   uint8_t startDay;
   uint16_t buttons[43];
   uint8_t selectedDay;
+  uint8_t currentMonth;
+  uint16_t currentYear;
   uint8_t useHighlight;
 } dateSelectorWidgetType;
 
