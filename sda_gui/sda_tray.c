@@ -79,16 +79,32 @@ void sda_tray_alarm_disable() {
 }
 
 
-static uint8_t tray_clicked(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
+static gr2EventType tray_clicked(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
+  static uint16_t touch_origin_x;
+  static uint16_t touch_origin_y;
+
+  if (svpSGlobal.touchType == EV_PRESSED) {
+    touch_origin_x = svpSGlobal.touchX;
+    touch_origin_y = svpSGlobal.touchY;
+  }
+
   if ((svpSGlobal.touchX > x1) &&
       (svpSGlobal.touchX < x2) &&
       (svpSGlobal.touchY > y1) &&
-      (svpSGlobal.touchY < y2) &&
-      (svpSGlobal.touchValid)) {
-    return 1;
-  } else {
-    return 0;
+      (svpSGlobal.touchY < y2)
+  ) {
+    if (svpSGlobal.touchType != EV_NONE) {
+      if ((touch_origin_x > x1) &&
+          (touch_origin_x < x2) &&
+          (touch_origin_y > y1) &&
+          (touch_origin_y < y2)
+        ) {
+        return svpSGlobal.touchType;
+        }
+    }
   }
+
+  return EV_NONE;
 }
 
 
@@ -169,7 +185,7 @@ void svp_tray_battery(int16_t x1, int16_t y1, int16_t w) {
     redraw = 1;
   }
 
-  if ( tray_clicked(x1 - 1, y1, x1 + w, y1 + 31)) {
+  if (tray_clicked(x1 - 1, y1, x1 + w, y1 + 31) == EV_RELEASED) {
     systemBattClick = 1;
   }
 
@@ -181,8 +197,8 @@ void svp_tray_battery(int16_t x1, int16_t y1, int16_t w) {
 
 uint8_t svp_tray_XBtn(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t reset) {
   static uint8_t init;
-  static uint8_t xbtnPrev;
-  static uint8_t xbtn;
+  static uint8_t selected;
+  uint8_t touch_event;
 
   if((init == 0) || (reset == 1) || (irq_redraw)) {
     LCD_FillRect(x1, y1, x2, y2, pscg_get_fill_color(&sda_sys_con));
@@ -191,25 +207,25 @@ uint8_t svp_tray_XBtn(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t re
     init = 1;
   }
 
-  if (tray_clicked(x1, y1, x2, y2)) {
+  touch_event = tray_clicked(x1, y1, x2, y2);
 
-    if (xbtnPrev == 0) {
-      LCD_FillRect(x1, y1, x2, y2, pscg_get_active_color(&sda_sys_con));
-      LCD_DrawRectangle(x1, y1, x2, y2, pscg_get_border_color(&sda_sys_con));
-      LCD_FillRect(x1 + 6, y1 + 14, x2 - 6, y2 - 14, pscg_get_text_color(&sda_sys_con));
-    }
-
-    xbtn = 1;
-  } else {
-    xbtn = 0;
+  if (touch_event == EV_PRESSED) {
+    LCD_FillRect(x1, y1, x2, y2, pscg_get_active_color(&sda_sys_con));
+    LCD_DrawRectangle(x1, y1, x2, y2, pscg_get_border_color(&sda_sys_con));
+    LCD_FillRect(x1 + 6, y1 + 14, x2 - 6, y2 - 14, pscg_get_text_color(&sda_sys_con));
+    selected = 1;
   }
 
-  if ((xbtn == 0) && (xbtnPrev == 1) && (svpSGlobal.systemXBtnClick == 0)) {
+  if (touch_event == EV_NONE && selected) {
+    selected = 0;
+    init = 0;
+  }
+
+  if ((touch_event == EV_RELEASED) && (svpSGlobal.systemXBtnClick == 0)) {
     svpSGlobal.systemXBtnClick = 1;
     init = 0;
   }
 
-  xbtnPrev = xbtn;
   return 0;
 }
 

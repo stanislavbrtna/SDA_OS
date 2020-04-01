@@ -28,11 +28,11 @@ File description:
 #define SDA_CONSTS_H
 
 // version number string and version number,
-#define SDA_OS_VERSION "0.8.0.3B"
-#define SDA_OS_VERSION_NUM 803
+#define SDA_OS_VERSION "0.8.1.0B"
+#define SDA_OS_VERSION_NUM 810
 
 // shows where the screen is redrawn, works only in simulator, usefull for debug
-// define SIM_SHOW_REDRAW
+#define SIM_SHOW_REDRAW
 
 // have at least 160 elements for system
 #define SDA_SYS_ELEM_MAX 190
@@ -79,7 +79,7 @@ File description:
 #define BUTTON_B 5
 
 // App screen (launcher) debug switch
-//#define APP_SCREEN_DEBUG
+// #define APP_SCREEN_DEBUG
 
 // Driver options
 #ifndef TOUCH_USE_BATTERY_MEASUREMENT

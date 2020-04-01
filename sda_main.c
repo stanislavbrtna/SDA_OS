@@ -828,8 +828,8 @@ uint8_t sda_main_loop() {
   }
 
   // batt button handler
-  static uint8_t batt_prev;
-  if ((systemBattClick == 1 || svpSGlobal.systemPwrLongPress == 1) && (batt_prev == 0)) {
+
+  if ((systemBattClick == 1 || svpSGlobal.systemPwrLongPress == 1)) {
     systemBattClick = 0;
 
     if (svpSGlobal.systemPwrLongPress == 1) {
@@ -847,7 +847,6 @@ uint8_t sda_main_loop() {
       setOverlayY2(172);
     }
   }
-  batt_prev = systemBattClick;
 
 /*****************************************************************************/
 /*                          end of main loop                                 */
