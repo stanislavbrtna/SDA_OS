@@ -214,7 +214,11 @@ Sets automatic line-breaking on.
 Return: None
 
     sys.gui.setTexEd([num]Id, [num]val);
-Sets text fiels as editable.
+Sets text field as editable.
+Return: None
+
+    sys.gui.setTexPwd([num]Id, [num]val);
+Sets text field as password field.
 Return: None
 ##### Colours
 

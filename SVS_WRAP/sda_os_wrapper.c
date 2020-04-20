@@ -474,8 +474,9 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
     if (pscg_get_value(argS->arg[1].val_s, &sda_app_con)) {
       //nastavování kurzoru
-      if ((pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED) \
-          || (pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD)) {
+      if (((pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED) \
+          || (pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD))
+          && (pscg_text_get_pwd(argS->arg[1].val_s, &sda_app_con) == 0)) {
         uint16_t temp;
         temp = LCD_Text_Get_Cursor_Pos(s->stringField + argS->arg[2].val_str, pscg_get_tmx(&sda_app_con), pscg_get_tmy(&sda_app_con));
         if (temp == 0) {

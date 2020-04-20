@@ -366,6 +366,9 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
   static uint16_t optSecuOld;
   static uint16_t optSecuNew;
 
+  static uint16_t optSecuOldBtn;
+  static uint16_t optSecuNewBtn;
+
   static uint8_t optSecuNewStr[33];
   static uint8_t optSecuOldStr[33];
   static uint16_t optSecuOk;
@@ -471,12 +474,17 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
     optSecuOld = pscg_add_text(1, 4, 8, 5, (uint8_t *)"", optSecuScr, &sda_sys_con);
     pscg_add_text(1, 5, 10, 6, SCR_NEW_PASSWORD, optSecuScr, &sda_sys_con);
     optSecuNew = pscg_add_text(1, 6, 8, 7, (uint8_t *)"", optSecuScr, &sda_sys_con);
+    optSecuOldBtn = pscg_add_button(8, 4, 9, 5, (uint8_t *)"*", optSecuScr, &sda_sys_con);
+    optSecuNewBtn = pscg_add_button(8, 6, 9, 7, (uint8_t *)"*", optSecuScr, &sda_sys_con);
     optSecuOk = pscg_add_button(1, 8, 4, 9, SCR_CHANGE_PASSWORD, optSecuScr, &sda_sys_con);
     optSecuMsg = pscg_add_text(4, 8, 10, 9, SCR_WRONG_PASSWORD, optSecuScr, &sda_sys_con);
     optSecuMsg2 = pscg_add_text(4, 8, 10, 9, SCR_PASSWORD_STORED, optSecuScr, &sda_sys_con);
 
     pscg_text_set_editable(optSecuNew, 1, &sda_sys_con);
     pscg_text_set_editable(optSecuOld, 1, &sda_sys_con);
+
+    pscg_text_set_pwd(optSecuNew, 1, &sda_sys_con);
+    pscg_text_set_pwd(optSecuOld, 1, &sda_sys_con);
 
     optSecuBack = pscg_add_button(1, 10, 4, 11, SCR_BACK, optSecuScr, &sda_sys_con);
 
@@ -820,6 +828,14 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
     svp_input_handler(optSecuNewStr, 32, optSecuNew);
 
     svp_input_handler(optSecuOldStr, 32, optSecuOld);
+
+    if (gr2_clicked(optSecuNewBtn, &sda_sys_con)) {
+      pscg_text_set_pwd(optSecuNew, 1 - pscg_text_get_pwd(optSecuNew, &sda_sys_con), &sda_sys_con);
+    }
+
+    if (gr2_clicked(optSecuOldBtn, &sda_sys_con)) {
+      pscg_text_set_pwd(optSecuOld, 1 - pscg_text_get_pwd(optSecuOld, &sda_sys_con), &sda_sys_con);
+    }
 
     if (gr2_clicked(optSecuOk, &sda_sys_con)) {
       uint8_t retval;

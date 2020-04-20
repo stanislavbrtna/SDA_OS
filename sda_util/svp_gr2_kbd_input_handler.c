@@ -85,8 +85,9 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
 
   if (pscg_get_value(input_id, &sda_sys_con)) {
     // set the cursor position
-    if ((pscg_get_event(input_id, &sda_sys_con) == EV_PRESSED)
-        || (pscg_get_event(input_id, &sda_sys_con) == EV_HOLD)) {
+    if (((pscg_get_event(input_id, &sda_sys_con) == EV_PRESSED)
+        || (pscg_get_event(input_id, &sda_sys_con) == EV_HOLD))
+        && pscg_text_get_pwd(input_id, &sda_sys_con) == 0) {
       uint16_t temp;
       temp = LCD_Text_Get_Cursor_Pos(str, pscg_get_tmx(&sda_sys_con), pscg_get_tmy(&sda_sys_con));
       if (temp == 0) {

@@ -1024,7 +1024,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!
   //#!    sys.gui.setTexEd([num]Id, [num]val);
-  //#!Sets text fiels as editable.
+  //#!Sets text field as editable.
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setTexEd", s)) {
     argType[1] = 0; // id
@@ -1035,6 +1035,23 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     pscg_text_set_editable(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+
+    return 1;
+  }
+
+  //#!
+  //#!    sys.gui.setTexPwd([num]Id, [num]val);
+  //#!Sets text field as password field.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setTexPwd", s)) {
+    argType[1] = 0; // id
+    argType[2] = 0; // val
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    pscg_text_set_pwd(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
 
     return 1;
   }
