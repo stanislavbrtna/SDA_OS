@@ -220,6 +220,10 @@ Return: None
     sys.gui.setTexPwd([num]Id, [num]val);
 Sets text field as password field.
 Return: None
+
+    sys.gui.getTexPwd([num]Id);
+Gets if text field is a password field.
+Return: [num]isPassword
 ##### Colours
 
     sys.gui.setColor([num]Col, [num]val);

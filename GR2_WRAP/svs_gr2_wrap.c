@@ -1056,6 +1056,23 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!
+  //#!    sys.gui.getTexPwd([num]Id);
+  //#!Gets if text field is a password field.
+  //#!Return: [num]isPassword
+  if (sysFuncMatch(argS->callId, "getTexPwd", s)) {
+    argType[1] = 0; // id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = pscg_text_get_pwd(argS->arg[1].val_s, &sda_app_con);
+    result->type = 0;
+
+    return 1;
+  }
+
   //#!##### Colours
   //#!
   //#!    sys.gui.setColor([num]Col, [num]val);
