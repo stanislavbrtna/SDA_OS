@@ -32,7 +32,7 @@ File description:
 #define SDA_OS_VERSION_NUM 810
 
 // shows where the screen is redrawn, works only in simulator, usefull for debug
-#define SIM_SHOW_REDRAW
+// #define SIM_SHOW_REDRAW
 
 // have at least 160 elements for system
 #define SDA_SYS_ELEM_MAX 190
