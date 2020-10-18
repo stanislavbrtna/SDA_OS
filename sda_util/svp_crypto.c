@@ -56,14 +56,17 @@ void svp_crypto_lock() {
 
 
 uint8_t svp_crypto_change_key(uint8_t * new_key) {
+  uint16_t i;
 
   if (!svp_crpyto_unlocked) {
     return 1;
   }
 
-  for(uint16_t i = 0; (new_key[i] != 0) && (i < KEY_LEN_MAX); i++) {
+  for(i = 0; (new_key[i] != 0) && (i < KEY_LEN_MAX); i++) {
     svp_crypto_key[i] = new_key[i];
   }
+  svp_crypto_key[i] = 0;
+
   rtc_write_password(svp_crypto_key);
 
   return 0;
