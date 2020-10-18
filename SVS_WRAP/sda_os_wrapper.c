@@ -392,8 +392,8 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Set period of beep
-  //#!    sys.snd.beepFreq([num]period of ~20kHz pulses to one pulse);
-  //#!Sets period of ~20kHz pulses to one pulse.
+  //#!    sys.snd.beepFreq([num]frequency (Hz));
+  //#!Sets frequency of the beep in Hz in range from 27 to 20000.
   //#!Return: None
   if (sysFuncMatch(argS->callId, "beepFreq", s)) {
     argType[1] = SVS_TYPE_NUM;

@@ -105,8 +105,8 @@ Return: None
 Sets lenght of beep.
 Return: None
 ##### Set period of beep
-    sys.snd.beepFreq([num]period of ~20kHz pulses to one pulse);
-Sets period of ~20kHz pulses to one pulse.
+    sys.snd.beepFreq([num]frequency (Hz));
+Sets frequency of the beep in Hz in range from 27 to 20000.
 Return: None
 ##### Get if system sound is disabled
     sys.snd.getMute();
