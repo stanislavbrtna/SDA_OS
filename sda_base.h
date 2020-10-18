@@ -90,4 +90,8 @@ void sda_usb_serial_transmit(uint8_t *str, uint32_t len);
 void svp_set_calibration_data(touchCalibDataStruct input);
 uint8_t svp_getLcdCalibrationFlag();
 
+// [HW] RTC Backup registers
+void rtc_write_password(uint8_t *pwd);
+uint8_t rtc_read_password(uint8_t *pwd);
+
 #endif

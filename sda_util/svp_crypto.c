@@ -7,10 +7,13 @@ void svp_crypto_init() {
   uint16_t i = 0;
   uint8_t default_key[] = "def";
 
-  for(i = 0; default_key[i] != 0; i++) {
-    svp_crypto_key[i] = default_key[i];
-  }
-  svp_crypto_key[i] = 0;
+  if (rtc_read_password(svp_crypto_key)) {
+    for(i = 0; default_key[i] != 0; i++) {
+      svp_crypto_key[i] = default_key[i];
+    }
+    svp_crypto_key[i] = 0;
+    }
+
   svp_crpyto_unlocked = 0;
   return;
 }
@@ -61,6 +64,7 @@ uint8_t svp_crypto_change_key(uint8_t * new_key) {
   for(uint16_t i = 0; (new_key[i] != 0) && (i < KEY_LEN_MAX); i++) {
     svp_crypto_key[i] = new_key[i];
   }
+  rtc_write_password(svp_crypto_key);
 
   return 0;
 }
