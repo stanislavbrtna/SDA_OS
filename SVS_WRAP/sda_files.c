@@ -887,7 +887,11 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
     conf_open = 1;
     sda_strcp(s->stringField + argS->arg[1].val_str, conf_filename, sizeof(conf_filename));
-    result->value.val_s = svp_conf_open(&conFile, s->stringField + argS->arg[1].val_str);
+    if (svp_conf_open(&conFile, s->stringField + argS->arg[1].val_str)) {
+      result->value.val_s = 1;
+    } else {
+      result->value.val_s = 0;
+    }
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -901,8 +905,12 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    conf_open = 0;
-    result->value.val_s = svp_conf_close(&conFile);
+    if (conf_open == 1 && (svp_conf_close(&conFile) == 0)) {
+      conf_open = 0;
+      result->value.val_s = 1;
+    } else {
+      result->value.val_s = 0;
+    }
     result->type = SVS_TYPE_NUM;
     return 1;
   }
