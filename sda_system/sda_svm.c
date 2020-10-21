@@ -637,6 +637,8 @@ void sdaSvmKillApp_handle() {
   svpSGlobal.systemXBtnVisible = 0;
   svmValid = 0;
   svpSGlobal.kbdVisible = 0;
+  svpSGlobal.touchType = EV_NONE;
+  svpSGlobal.touchValid = 0;
   if (sdaGetSlotScreen(4) != 0) {
     pscg_destroy_screen(sdaGetSlotScreen(4), &sda_app_con);
   }

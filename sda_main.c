@@ -857,6 +857,7 @@ uint8_t sda_main_loop() {
   svpSGlobal.btnFlag = 0;
   timeUpdateFlag = 0;
   sdaSetRedrawDetect(0);
+  svpSGlobal.systemXBtnTime = 0; // foreced app kill flag
 
   // check for notification
   uint8_t notifAppName[APP_NAME_LEN];

@@ -214,6 +214,9 @@ uint8_t svp_tray_XBtn(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t re
     LCD_DrawRectangle(x1, y1, x2, y2, pscg_get_border_color(&sda_sys_con));
     LCD_FillRect(x1 + 6, y1 + 14, x2 - 6, y2 - 14, pscg_get_text_color(&sda_sys_con));
     selected = 1;
+    if (svpSGlobal.systemXBtnTime == 0) {
+      svpSGlobal.systemXBtnTime = svpSGlobal.timestamp;
+    }
   }
 
   if (touch_event == EV_NONE && selected) {
@@ -223,7 +226,7 @@ uint8_t svp_tray_XBtn(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t re
 
   if ((touch_event == EV_RELEASED) && (svpSGlobal.systemXBtnClick == 0)) {
     svpSGlobal.systemXBtnClick = 1;
-    svpSGlobal.systemXBtnTime = svpSGlobal.timestamp;
+    svpSGlobal.systemXBtnTime = 0;
     init = 0;
   }
 
@@ -320,7 +323,9 @@ uint8_t svp_tray() {
   LCD_drawArea area;
 
   // Unresponsive app killer
-  if ((svpSGlobal.systemXBtnClick == 1) && ((svpSGlobal.systemXBtnTime + 15) < svpSGlobal.timestamp)) {
+  if ((svpSGlobal.systemXBtnTime != 0) && ((svpSGlobal.systemXBtnTime + 5) < svpSGlobal.timestamp)) {
+    svpSGlobal.systemXBtnTime = 0;
+    sdaSvmSetError((uint8_t *) "App not responding.");
     sdaSvmKillApp();
   }
 
