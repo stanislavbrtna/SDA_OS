@@ -223,6 +223,7 @@ uint8_t svp_tray_XBtn(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t re
 
   if ((touch_event == EV_RELEASED) && (svpSGlobal.systemXBtnClick == 0)) {
     svpSGlobal.systemXBtnClick = 1;
+    svpSGlobal.systemXBtnTime = svpSGlobal.timestamp;
     init = 0;
   }
 
@@ -317,6 +318,11 @@ uint8_t svp_tray() {
   static uint8_t init;
   static uint8_t XbtnVisibleOld;
   LCD_drawArea area;
+
+  // Unresponsive app killer
+  if ((svpSGlobal.systemXBtnClick == 1) && ((svpSGlobal.systemXBtnTime + 15) < svpSGlobal.timestamp)) {
+    sdaSvmKillApp();
+  }
 
   if (irq_redraw_block == 1) {
     return 0;

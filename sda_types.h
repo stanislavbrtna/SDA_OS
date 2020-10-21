@@ -100,6 +100,7 @@ typedef struct {
   volatile uint16_t systemMessage;
   volatile uint8_t systemXBtnVisible;
   volatile uint8_t systemXBtnClick;
+  volatile uint32_t systemXBtnTime;
   volatile clickType systemOptClick;
   volatile uint8_t systemPwrLongPress;
 
