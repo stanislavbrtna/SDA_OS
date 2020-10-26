@@ -99,5 +99,6 @@ void clearNotificationFlag();
 
 uint8_t sdaSvmLoadApp(uint8_t *fname, uint8_t *name, uint8_t mode);
 void sdaSvmGetGR2Settings();
+void svmSetRestoreSlot(uint8_t slot);
 
 #endif

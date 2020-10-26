@@ -100,6 +100,7 @@ void sdaSlotSetInValid(uint16_t slot);
 uint16_t sdaSlotGetValid(uint16_t slot);
 uint16_t sdaGetSlotScreen(uint8_t slot);
 void sdaSlotOnTop(uint8_t slot);
+uint8_t sdaGetSlotOnTop();
 
 // errors
 void sda_show_error_message(uint8_t * text);

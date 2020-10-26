@@ -62,6 +62,8 @@ extern gr2context sda_app_con; //
 
 static uint16_t pscg_last_elements_count; //pro kontrolu zda po sobě aplikace uklidila
 
+static uint8_t slot_restore; // what appslot to restore after close
+
 // Globals:
 
 // main screen
@@ -351,6 +353,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
 
 
 void sdaSvmCloseApp() {
+
   if (sdaSlotGetValid(4) == 0) {
     return;
   }
@@ -417,14 +420,24 @@ void sdaSvmCloseApp() {
     pscg_destroy_screen(sdaGetSlotScreen(4), &sda_app_con);
   }
   sdaSlotSetInValid(4);
-  sdaSlotOnTop(1);
+
+  if (slot_restore == 0) {
+    sdaSlotOnTop(1);
+  }
+
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
+}
 
+
+void svmSetRestoreSlot(uint8_t slot) {
+  slot_restore = slot;
 }
 
 
 void svmCloseAll() {
+  svmSetRestoreSlot(sdaGetSlotOnTop());
+
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProcValid[x] == 1) {
       svmClose(svmSavedProcId[x]);
@@ -433,6 +446,11 @@ void svmCloseAll() {
 
   if (sda_serial_is_enabled()) {
     sda_serial_disable();
+  }
+
+  if (slot_restore != 0) {
+    sdaSlotOnTop(slot_restore);
+    slot_restore = 0;
   }
 }
 
@@ -551,8 +569,16 @@ uint8_t *svmGetSuspendedName(uint16_t id) {
 
 
 void svmClose(uint16_t id) {
-  svmWake(id);
-  sdaSvmCloseApp();
+  if (slot_restore != 0) {
+    svmWake(id);
+    sdaSvmCloseApp();
+  } else {
+    slot_restore = sdaGetSlotOnTop();
+    svmWake(id);
+    sdaSvmCloseApp();
+    sdaSlotOnTop(slot_restore);
+    slot_restore = 0;
+  }
 }
 
 

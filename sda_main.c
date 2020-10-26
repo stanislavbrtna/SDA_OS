@@ -305,6 +305,16 @@ void sdaSlotOnTop(uint8_t slot) {
   prev_top_slot = slot;
 }
 
+uint8_t sdaGetSlotOnTop() {
+  uint8_t x;
+  for (x = 0; x < APP_SLOT_MAX; x++) {
+    if (slotOnTop[x] == 1 && slotValid[x]) {
+      return x;
+    }
+  }
+  return 0;
+}
+
 void setInitStructDefaults() {
   svpSGlobal.uptime = 0;
   svpSGlobal.lcdOnTime = 0;
