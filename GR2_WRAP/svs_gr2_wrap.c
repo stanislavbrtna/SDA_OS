@@ -57,7 +57,7 @@ svsConstType gr2WrapConsts[] = {
 uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s);
 
 void svsGr2WrapInit(){
-  addSysWrapper(svsGr2Wrap, "gui");
+  addSysWrapper(svsGr2Wrap, (uint8_t *)"gui");
   addSysConsts(gr2WrapConsts);
 }
 

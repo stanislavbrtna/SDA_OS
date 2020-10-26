@@ -244,7 +244,6 @@ void date_select_widget_set_date(
 
 uint16_t date_select_widget_update(dateSelectorWidgetType *d) {
   uint16_t y;
-  uint16_t prac;
   uint16_t retval = 0;
 
   for(y = 1; y <= d->dayCount; y++) {
@@ -266,7 +265,6 @@ uint16_t date_select_widget_update(dateSelectorWidgetType *d) {
 
 
 uint16_t date_select_highlight(dateSelectorWidgetType *d, uint8_t day) {
-  uint16_t prac;
 
   // input validation
   if ((day == 0) || (day > 31)) {
