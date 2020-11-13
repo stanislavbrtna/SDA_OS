@@ -206,3 +206,26 @@ void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
     }
   }
 }
+
+void sda_draw_overlay_shadow(
+  int16_t overlayX1,
+  int16_t overlayY1,
+  int16_t overlayX2,
+  int16_t overlayY2,
+  gr2context *c
+) {
+  LCD_FillRect(
+        overlayX2 + 1,
+        overlayY1 + 10,
+        overlayX2 + 11,
+        overlayY2 + 1,
+        LCD_get_gray16(c->background_color)
+  );
+  LCD_FillRect(
+        overlayX1 + 10,
+        overlayY2 + 1,
+        overlayX2 + 11,
+        overlayY2 + 11,
+        LCD_get_gray16(c->background_color)
+  );
+}

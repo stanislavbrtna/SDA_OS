@@ -51,4 +51,12 @@ void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len);
 uint32_t  sda_strcp(uint8_t *in, uint8_t *out, uint32_t len);
 uint32_t sda_strlen(uint8_t * str);
 
+void sda_draw_overlay_shadow(
+  int16_t overlayX1,
+  int16_t overlayY1,
+  int16_t overlayX2,
+  int16_t overlayY2,
+  gr2context *c
+);
+
 #endif

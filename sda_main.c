@@ -756,6 +756,13 @@ uint8_t sda_main_loop() {
   } else {
     if (svpSGlobal.systemRedraw == 1) {
       pscg_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 1, sda_current_con);
+      sda_draw_overlay_shadow(
+            overlayX1,
+            overlayY1,
+            overlayX2,
+            overlayY2,
+            overlayCont
+      );
       pscg_draw_screen(
             overlayX1,
             overlayY1,
@@ -767,6 +774,13 @@ uint8_t sda_main_loop() {
       );
       svpSGlobal.systemRedraw = 0;
     }
+    sda_draw_overlay_shadow(
+          overlayX1,
+          overlayY1,
+          overlayX2,
+          overlayY2,
+          overlayCont
+    );
     pscg_draw_screen(overlayX1, overlayY1, overlayX2, overlayY2, overlayScr, 0, overlayCont);
   }
   pscg_draw_end(sda_current_con);
