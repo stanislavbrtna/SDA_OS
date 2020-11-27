@@ -207,6 +207,25 @@ void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
   }
 }
 
+uint16_t sda_get_shadow_color16(uint16_t color) {
+  uint8_t r = 0;
+  uint8_t g = 0;
+  uint8_t b = 0;
+  uint8_t round, round_light;
+  r = (uint8_t)(((float)((color >> 11) & 0x1F) / 32) * 256);
+  g = (uint8_t)(((float)(((color & 0x07E0) >> 5) & 0x3F) / 64) * 256);
+  b = (uint8_t)(((float)(color & 0x1F) / 32) * 256);
+
+  round = (uint8_t)(((uint16_t)r + (uint16_t)g + (uint16_t)b) / 4);
+  round_light = (uint8_t)(((uint16_t)r + (uint16_t)g + (uint16_t)b) / 3);
+
+  if ((round - round_light) < 20) {
+    round += 20;
+  }
+
+  return LCD_MixColor(round, round, round);
+}
+
 void sda_draw_overlay_shadow(
   int16_t overlayX1,
   int16_t overlayY1,
@@ -219,13 +238,13 @@ void sda_draw_overlay_shadow(
         overlayY1 + 10,
         overlayX2 + 11,
         overlayY2 + 1,
-        LCD_get_gray16(c->background_color)
+        sda_get_shadow_color16(c->background_color)
   );
   LCD_FillRect(
         overlayX1 + 10,
         overlayY2 + 1,
         overlayX2 + 11,
         overlayY2 + 11,
-        LCD_get_gray16(c->background_color)
+        sda_get_shadow_color16(c->background_color)
   );
 }
