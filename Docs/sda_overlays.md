@@ -13,11 +13,11 @@ Destroys current overlay, also destroys its screen.
 Return: None
 ##### Set position and size of overlay
     sys.o.setXYXY([num]x1, [num]y1, [num]x2, [num]y2);
-Sets position and size of current overlay.
+Sets position and size of current overlay (in screen pixels).
 Return: None
 ##### Set overlay height
     sys.o.setY( val); set Overlay Y2
-Sets lower coordinates of current overlay.
+Sets lower coordinates of current overlay (in screen pixels).
 Return: None
 
 #### Date overlay

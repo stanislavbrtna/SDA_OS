@@ -70,7 +70,7 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Set position and size of overlay
   //#!    sys.o.setXYXY([num]x1, [num]y1, [num]x2, [num]y2);
-  //#!Sets position and size of current overlay.
+  //#!Sets position and size of current overlay (in screen pixels).
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setXYXY", s)) {
     argType[1] = 0;
@@ -91,7 +91,7 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Set overlay height
   //#!    sys.o.setY( val); set Overlay Y2
-  //#!Sets lower coordinates of current overlay.
+  //#!Sets lower coordinates of current overlay (in screen pixels).
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setY", s)) {
     argType[1] = 0;
