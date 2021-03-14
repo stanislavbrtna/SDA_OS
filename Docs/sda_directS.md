@@ -42,9 +42,13 @@ Return: None
     sys.ds.clearArea([num]col)
 Clears draw area with goven color
 Return: None
+##### Draws P16 image
+    sys.ds.drawImage([num]x, [num]y, [num]width, [num]height, [str]name);
+Draws p16 image from the working directory.
+Return: None
 ##### Draws PPM
     sys.ds.drawPPM([num]x, [num]y, [num]scale, [str]name);
-Draws ppm image.
+Draws ppm image (To be removed).
 Return: None
 #### Touch API
 ##### Get if screen is touched

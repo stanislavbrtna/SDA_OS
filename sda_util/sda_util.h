@@ -34,6 +34,7 @@ void draw_ppm(uint16_t x,uint16_t y, uint8_t scale, uint8_t *filename);
 uint16_t ppm_get_width(uint8_t *filename);
 
 uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename);
+uint8_t sda_draw_p16_scaled(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t *filename);
 uint16_t sda_p16_get_width(uint8_t *filename);
 void sda_p16_set_pmc(uint8_t enable, uint16_t color);
 

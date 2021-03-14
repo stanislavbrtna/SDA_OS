@@ -330,9 +330,35 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
     return 1;
   }
 
+  //#!##### Draws P16 image
+  //#!    sys.ds.drawImage([num]x, [num]y, [num]width, [num]height, [str]name);
+  //#!Draws p16 image from the working directory.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "drawImage", s)) {
+    argType[1] = 0; //x
+    argType[2] = 0; //y
+    argType[3] = 0; //width
+    argType[4] = 0; //height
+    argType[5] = 1; //fname
+    if(sysExecTypeCheck(argS, argType, 5, s)) {
+      return 0;
+    }
+
+    if (getOverlayId() != 0){
+      return 1;
+    }
+
+#ifdef PPM_SUPPORT_ENABLED
+    IRQ_BLOCK
+    sda_draw_p16_scaled(argS->arg[1].val_s, argS->arg[2].val_s, argS->arg[3].val_s,argS->arg[4].val_s, s->stringField + argS->arg[5].val_str);
+    IRQ_ENABLE
+#endif
+    return 1;
+  }
+
   //#!##### Draws PPM
   //#!    sys.ds.drawPPM([num]x, [num]y, [num]scale, [str]name);
-  //#!Draws ppm image.
+  //#!Draws ppm image (To be removed).
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawPPM", s)) {
     argType[1] = 0; //x
