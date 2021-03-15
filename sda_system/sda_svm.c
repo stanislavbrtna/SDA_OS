@@ -135,6 +135,15 @@ void sdaSvmSetTimer(uint32_t time_ms, uint8_t *callback) {
 }
 
 
+void sdaSvmClearTimer() {
+  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+    if (svmSavedProcId[x] == svmMeta.id && svmSavedProcValid[x] == 1) {
+      svmSavedProcTimer[x] = 0;
+    }
+  }
+}
+
+
 void sdaSvmHandleTimers() {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProcValid[x] == 1) {

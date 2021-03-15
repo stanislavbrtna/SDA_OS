@@ -77,6 +77,10 @@ System timer will call the callback after given time, it will wake up the app if
     sys.time.setTimer([num]time_ms, [str]callaback);
 Sets the timer.
 Return: none
+##### Clear timer
+    sys.time.clearTimer([num]time_ms, [str]callaback);
+Clears the timer if it is running.
+Return: none
 #### Alarm API
 Alarm API creates system handled, repeatable alarms, that will be stored during reboots and will automatically launch the app.
 ##### Register alarm
