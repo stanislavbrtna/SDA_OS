@@ -155,14 +155,13 @@ void sdaSvmHandleTimers() {
 
           if (timer_wkup_flag == 1) {
             sdaSvmOnTop();
+            timer_wkup_flag = 0;
           }
         } else {
           uint16_t prev_id;
-          uint8_t timer_wkup_flag_prev;
           prev_id = svmMeta.id;
           //wakeup
           svmWake(svmSavedProcId[x]);
-          timer_wkup_flag_prev = timer_wkup_flag;
 
           //execute
           commExec(svmSavedProcTimerCallback[x], &svm);
@@ -176,11 +175,10 @@ void sdaSvmHandleTimers() {
 
           //go back
           if (timer_wkup_flag == 0) {
-            timer_wkup_flag = timer_wkup_flag_prev;
             svmWake(prev_id);
             return;
           }
-          timer_wkup_flag = timer_wkup_flag_prev;
+          timer_wkup_flag = 0;
           sdaSvmOnTop();
           setRedrawFlag();
         }
