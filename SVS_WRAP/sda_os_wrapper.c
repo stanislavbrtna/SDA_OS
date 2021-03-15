@@ -157,6 +157,18 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Pushes app to foreground
+  //#!    sys.os.arise();
+  //#!If called from timer callback, the app is promoted to the foreground.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "arise", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    sdaSvmSetTimerWkup();
+    return 1;
+  }
+
   //#!##### Show Error
   //#!    sys.os.error([str]errorText);
   //#!Throws error message

@@ -36,6 +36,10 @@ Return: None
 Wakes SDA without turning the screen on.
 SDA will wake in the low power mode and will sleep again after the lcd shutdown time.
 Return: None
+##### Pushes app to foreground
+    sys.os.arise();
+If called from timer callback, the app is promoted to the foreground.
+Return: None
 ##### Show Error
     sys.os.error([str]errorText);
 Throws error message

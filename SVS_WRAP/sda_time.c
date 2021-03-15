@@ -283,7 +283,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!#### Timer API
   //#!
-  //#!System timer will call the callback after given time, it will wake up the app if it is in the background.
+  //#!System timer will call the callback after given time, it will wake up the app if it is in the background. You can push app to foreground by calling sys.os.arise(); from the callback.
 
   //#!##### Set timer
   //#!    sys.time.setTimer([num]time_ms, [str]callaback);

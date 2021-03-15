@@ -54,6 +54,8 @@ static int32_t notificationId;
 static int32_t notificationParam;
 static uint8_t notificationFlag;
 
+static uint8_t timer_wkup_flag;
+
 static uint8_t redrawDetect;
 
 extern uint16_t svsLoadCounter;
@@ -150,11 +152,18 @@ void sdaSvmHandleTimers() {
           if (svmCheckAndExit()) { // handle potential exit call
             return 0;
           }
+
+          if (timer_wkup_flag == 1) {
+            sdaSvmOnTop();
+          }
         } else {
           uint16_t prev_id;
+          uint8_t timer_wkup_flag_prev;
           prev_id = svmMeta.id;
           //wakeup
           svmWake(svmSavedProcId[x]);
+          timer_wkup_flag_prev = timer_wkup_flag;
+
           //execute
           commExec(svmSavedProcTimerCallback[x], &svm);
           if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
@@ -164,12 +173,25 @@ void sdaSvmHandleTimers() {
           if (svmCheckAndExit()) { // handle potential exit call
             return 0;
           }
+
           //go back
-          svmWake(prev_id);
+          if (timer_wkup_flag == 0) {
+            timer_wkup_flag = timer_wkup_flag_prev;
+            svmWake(prev_id);
+            return;
+          }
+          timer_wkup_flag = timer_wkup_flag_prev;
+          sdaSvmOnTop();
+          setRedrawFlag();
         }
       }
     }
   }
+}
+
+
+void sdaSvmSetTimerWkup() {
+  timer_wkup_flag = 1;
 }
 
 
