@@ -1,6 +1,5 @@
   - lockscreen/autolock
   - system log
-  - file specifying init state of internal expansion pins
 
 Docs:
   - specify the native API
