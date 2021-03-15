@@ -70,7 +70,15 @@ Return: [num]Months
     sys.time.getTsYear([num]timestamp);
 Returns seconds from given timestamp.
 Return: [num]Years
+#### Timer API
+
+System timer will call the callback after given time, it will wake up the app if it is in the background.
+##### Set timer
+    sys.time.setTimer([num]time_ms, [str]callaback);
+Sets the timer.
+Return: none
 #### Alarm API
+Alarm API creates system handled, repeatable alarms, that will be stored during reboots and will automatically launch the app.
 ##### Register alarm
     sys.alarm.setFixed([num]timestamp, [num]param);
 Returns id of the new alarm.

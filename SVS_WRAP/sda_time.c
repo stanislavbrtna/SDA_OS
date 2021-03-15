@@ -281,6 +281,27 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!#### Timer API
+  //#!
+  //#!System timer will call the callback after given time, it will wake up the app if it is in the background.
+
+  //#!##### Set timer
+  //#!    sys.time.setTimer([num]time_ms, [str]callaback);
+  //#!Sets the timer.
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "setTimer", s)) {
+    argType[1] = 0;
+    argType[2] = 1;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    sdaSvmSetTimer(argS->arg[1].val_s, s->stringField + argS->arg[2].val_str);
+
+    result->type = 0;
+    return 1;
+  }
+
   return 0;
 }
 
@@ -289,6 +310,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   uint8_t argType[11];
 
   //#!#### Alarm API
+  //#!Alarm API creates system handled, repeatable alarms, that will be stored during reboots and will automatically launch the app.
 
   //#!##### Register alarm
   //#!    sys.alarm.setFixed([num]timestamp, [num]param);

@@ -391,7 +391,7 @@ void sda_lcd_off_handler() {
   svpSGlobal.powerState = PWR_LOW;
   svpSGlobal.powerMode = SDA_PWR_MODE_SLEEP;
 
-  if ((wrap_get_lcdOffButtons() == 1) && slotValid[4] && slotOnTop[4]) {
+  if ((wrap_get_lcdOffButtons() == 1 && slotOnTop[4] && slotValid[4]) || sdaSvmIsTimerSet()) {
     svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_LOW;
   } else if (sdaGetActiveAlarm() == 1) {
     svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_NORMAL;
@@ -892,6 +892,9 @@ uint8_t sda_main_loop() {
     setNotificationFlag(id, param);
     sdaSvmLaunch(notifAppName, 0);
   }
+
+  // local timers
+  sdaSvmHandleTimers();
 
   // power management
   sda_power_main_handler();

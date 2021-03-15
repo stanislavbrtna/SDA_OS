@@ -47,6 +47,9 @@ static uint16_t svmSavedProcId[MAX_OF_SAVED_PROC];
 static uint8_t svmSavedProcValid[MAX_OF_SAVED_PROC];
 static uint8_t svmSavedProcSingular[MAX_OF_SAVED_PROC];
 
+static uint32_t svmSavedProcTimer[MAX_OF_SAVED_PROC];
+static uint8_t svmSavedProcTimerCallback[MAX_OF_SAVED_PROC][NAME_LENGTH];
+
 static int32_t notificationId;
 static int32_t notificationParam;
 static uint8_t notificationFlag;
@@ -114,6 +117,69 @@ int8_t getNotificationFlag() {
 
 void clearNotificationFlag() {
   notificationFlag = 0;
+}
+
+
+// timers
+
+void sdaSvmSetTimer(uint32_t time_ms, uint8_t *callback) {
+  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+    if (svmSavedProcId[x] == svmMeta.id && svmSavedProcValid[x] == 1) {
+      svmSavedProcTimer[x] = svpSGlobal.uptimeMs + time_ms;
+      sda_strcp(callback, svmSavedProcTimerCallback[x], sizeof(svmSavedProcTimerCallback[x]));
+      //printf("setting %u, %s\n", svmSavedProcTimer[x], svmSavedProcTimerCallback[x]);
+    }
+  }
+}
+
+
+void sdaSvmHandleTimers() {
+  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+    if (svmSavedProcValid[x] == 1) {
+      //printf("checking %u, %u\n", svpSGlobal.uptimeMs, svmSavedProcTimer[x]);
+      if (svmSavedProcTimer[x] <= svpSGlobal.uptimeMs && svmSavedProcTimer[x] != 0) {
+        //printf("triggered!\n");
+        svmSavedProcTimer[x] = 0; // reset
+        if (svmSavedProcId[x] == svmMeta.id) {
+          //execute
+          commExec(svmSavedProcTimerCallback[x], &svm);
+          if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
+            svp_errSoftPrint(&svm);
+            return 1;
+          }
+          if (svmCheckAndExit()) { // handle potential exit call
+            return 0;
+          }
+        } else {
+          uint16_t prev_id;
+          prev_id = svmMeta.id;
+          //wakeup
+          svmWake(svmSavedProcId[x]);
+          //execute
+          commExec(svmSavedProcTimerCallback[x], &svm);
+          if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
+            svp_errSoftPrint(&svm);
+            return 1;
+          }
+          if (svmCheckAndExit()) { // handle potential exit call
+            return 0;
+          }
+          //go back
+          svmWake(prev_id);
+        }
+      }
+    }
+  }
+}
+
+
+uint8_t sdaSvmIsTimerSet() {
+  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+    if (svmSavedProcTimer[x] !=0 && svmSavedProcValid[x] == 1) {
+      return 1;
+    }
+  }
+  return 0;
 }
 
 
