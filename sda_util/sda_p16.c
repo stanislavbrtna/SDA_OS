@@ -135,40 +135,6 @@ uint16_t p16_get_pixel(svp_file * fp, p16Header * header, p16State * state) {
   return 0;
 }
 
-
-uint8_t sda_draw_p16_scaled(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t *filename) {
-  svp_file fp;
-  p16Header header;
-
-  if (width == 0 && height == 0) {
-    sda_draw_p16(x, y, filename);
-    return 0;
-  }
-
-  if (!svp_fopen_read(&fp, filename)) {
-    printf("sda_draw_p16: Error while opening file %s!\n", filename);
-    return 1;
-  }
-
-  p16_get_header(&fp, &header);
-  svp_fclose(&fp);
-
-  // upscale
-  if (header.imageWidth < width || header.imageHeight < height) {
-
-    sda_draw_p16_scaled_up(x, y, width, height, filename);
-    return 0;
-  } else  {
-
-    sda_draw_p16(x, y, filename);
-    return 0;
-  }
-
-  return 0;
-
-}
-
-
 uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
   svp_file fp;
   p16Header header;
@@ -211,12 +177,11 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
 }
 
 
-uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t *filename) {
+uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_t height_n, uint8_t *filename) {
   svp_file fp;
   p16Header header;
   p16State imageState;
-  uint16_t repetition_x, repetition_y, count_x, count_y, rest_x;
-  uint32_t fpos;
+  uint32_t fpos, init;
   uint16_t prevVal;
   uint16_t repeat;
 
@@ -228,85 +193,43 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width, uint16_t 
 
   p16_get_header(&fp, &header);
 
-  LCD_setSubDrawArea(x, y, x + width, y + height);
-  LCD_canvas_set(x, y, x + width - 1, y + height - 1);
-
-  repetition_x = width / (width - header.imageWidth);
-  count_x = (width - header.imageWidth) / header.imageWidth;
-  rest_x = (width - header.imageWidth) - count_x * header.imageWidth;
-  repetition_y = height / (height - header.imageHeight);
-  count_y = (height - header.imageHeight) / header.imageHeight;
-
-  //printf("x: %u, y:%u cx: %u, cy: %u, rx:%u\n", repetition_x, repetition_y, count_x, count_y, rest_x);
+  LCD_setSubDrawArea(x, y, x + header.imageWidth * width_n, y + header.imageHeight * height_n);
+  LCD_canvas_set(x, y, x + header.imageWidth * width_n - 1, y + header.imageHeight * height_n - 1);
 
   imageState.init = 0;
+  imageState.repeat = 0;
 
   uint16_t color;
-  for(uint32_t n = 0; n < header.imageWidth*header.imageHeight ; n++) {
+  uint16_t pix=0;
 
-    if (n % header.imageWidth == 0 && n > 0 && (n/header.imageWidth)%repetition_y == 0 ) {
-      fpos = svp_ftell(&fp);
-      prevVal = imageState.prevVal;
-      repeat = imageState.repeat;
+  for(uint32_t n = 0; n < header.imageHeight; n++) {
+    fpos = svp_ftell(&fp);
+    prevVal = imageState.prevVal;
+    repeat = imageState.repeat;
+    init = imageState.init;
 
-      for (int c = 0; c < count_y; c++){
-        for(int n = 0; n < rest_x; n++) {
-          LCD_canvas_putcol(color);
+    for (int a = 0; a < height_n; a++) {
+      svp_fseek(&fp, fpos);
+      imageState.prevVal = prevVal;
+      imageState.repeat = repeat;
+      imageState.init = init;
+
+      for(uint32_t b = 0; b < header.imageWidth; b++) {
+        color = p16_get_pixel(&fp, &header, &imageState);
+
+        if (p16_use_pmc) {
+          uint8_t r, g, b;
+          r = (uint8_t)((color>>11)&0x1F);
+          g = (uint8_t)(((color&0x07E0)>>5)&0x3F);
+          b = (uint8_t)(color&0x1F);
+
+          color = (((r+p16_R)/2) & 0x1F)<<11 | (((g+p16_G)/2)<<5  & 0x7E0 ) | (((b+p16_B)/2)&0x1F);
         }
-        for (int a = 0; a<header.imageWidth; a++) {
-          color = p16_get_pixel(&fp, &header, &imageState);
 
-          if (p16_use_pmc) {
-            uint8_t r, g, b;
-
-            r = (uint8_t)((color>>11)&0x1F);
-            g = (uint8_t)(((color&0x07E0)>>5)&0x3F);
-            b = (uint8_t)(color&0x1F);
-
-            color = (((r+p16_R)/2) & 0x1F)<<11 | (((g+p16_G)/2)<<5  & 0x7E0 ) | (((b+p16_B)/2)&0x1F);
-
-          }
-
+        for (int c = 0; c < width_n; c++) {
           LCD_canvas_putcol(color);
-
-          if (a % repetition_x == 0) {
-            for(int n = 0; n < count_x; n++) {
-              LCD_canvas_putcol(color);
-            }
-          }
-
+          pix++;
         }
-        svp_fseek(&fp, fpos);
-        imageState.prevVal = prevVal;
-        imageState.repeat = repeat;
-      }
-    }
-
-    color = p16_get_pixel(&fp, &header, &imageState);
-
-    if (p16_use_pmc) {
-      uint8_t r, g, b;
-
-      r = (uint8_t)((color>>11)&0x1F);
-      g = (uint8_t)(((color&0x07E0)>>5)&0x3F);
-      b = (uint8_t)(color&0x1F);
-
-      color = (((r+p16_R)/2) & 0x1F)<<11 | (((g+p16_G)/2)<<5  & 0x7E0 ) | (((b+p16_B)/2)&0x1F);
-
-    }
-
-    LCD_canvas_putcol(color);
-
-    if (n % repetition_x == 0) {
-      for(int n = 0; n < count_x; n++) {
-        LCD_canvas_putcol(color);
-      }
-    }
-
-    // End of line detection
-    if (n % header.imageWidth == 0 && n > 0) {
-      for(int n = 0; n < rest_x; n++) {
-        LCD_canvas_putcol(color);
       }
     }
   }

@@ -331,8 +331,8 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draws P16 image
-  //#!    sys.ds.drawImage([num]x, [num]y, [num]width, [num]height, [str]name);
-  //#!Draws p16 image from the working directory.
+  //#!    sys.ds.drawImage([num]x, [num]y, [num]scale_w, [num]scale_h, [str]name);
+  //#!Draws p16 image from the working directory. Supports upscaling.
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawImage", s)) {
     argType[1] = 0; //x
@@ -350,7 +350,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 
 #ifdef PPM_SUPPORT_ENABLED
     IRQ_BLOCK
-    sda_draw_p16_scaled(argS->arg[1].val_s, argS->arg[2].val_s, argS->arg[3].val_s,argS->arg[4].val_s, s->stringField + argS->arg[5].val_str);
+    sda_draw_p16_scaled_up(argS->arg[1].val_s, argS->arg[2].val_s, argS->arg[3].val_s,argS->arg[4].val_s, s->stringField + argS->arg[5].val_str);
     IRQ_ENABLE
 #endif
     return 1;

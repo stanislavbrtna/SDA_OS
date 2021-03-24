@@ -43,8 +43,8 @@ Return: None
 Clears draw area with goven color
 Return: None
 ##### Draws P16 image
-    sys.ds.drawImage([num]x, [num]y, [num]width, [num]height, [str]name);
-Draws p16 image from the working directory.
+    sys.ds.drawImage([num]x, [num]y, [num]scale_w, [num]scale_h, [str]name);
+Draws p16 image from the working directory. Supports upscaling.
 Return: None
 ##### Draws PPM
     sys.ds.drawPPM([num]x, [num]y, [num]scale, [str]name);
