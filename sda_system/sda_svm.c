@@ -144,7 +144,7 @@ void sdaSvmClearTimer() {
 }
 
 
-void sdaSvmHandleTimers() {
+uint8_t sdaSvmHandleTimers() {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProcValid[x] == 1) {
       //printf("checking %u, %u\n", svpSGlobal.uptimeMs, svmSavedProcTimer[x]);
@@ -185,7 +185,7 @@ void sdaSvmHandleTimers() {
           //go back
           if (timer_wkup_flag == 0) {
             svmWake(prev_id);
-            return;
+            return 0;
           }
           timer_wkup_flag = 0;
           sdaSvmOnTop();
