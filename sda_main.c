@@ -422,7 +422,7 @@ void sda_power_main_handler() {
   // when lcd is turned OFF
   if ((svpSGlobal.lcdState == LCD_OFF) && (lcdStateOld == LCD_ON)) {
 
-    if ((wrap_get_lcdOffButtons() == 1) && slotValid[4] && slotOnTop[4]) {
+    if (((wrap_get_lcdOffButtons() == 1) && slotValid[4] && slotOnTop[4]) || sdaSvmIsTimerSet()) {
       lcdOffBlinkTimer = svpSGlobal.uptimeMs + 100;
     } else if (sdaGetActiveAlarm()){
       lcdOffBlinkTimer = svpSGlobal.uptimeMs + 500;
