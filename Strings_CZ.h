@@ -27,7 +27,7 @@
 #define SCR_ACTIVE_COLOR              (uint8_t *)"Active color"
 #define SCR_SET_DEFAULTS              (uint8_t *)"Nastavit výchozí"
 #define SCR_NOTIFICATIONS             (uint8_t *)"Nastavení zvuku:"
-#define SCR_SOUND_OFF                 (uint8_t *)"Zvuk vypnut"
+#define SCR_SOUND_OFF                 (uint8_t *)"Ztlumit zvuk"
 #define SCR_SECURITY_SCREEN           (uint8_t *)"Nastavení zabezpečení:"
 #define SCR_OLD_PASSWORD              (uint8_t *)"Původní heslo:"
 #define SCR_NEW_PASSWORD              (uint8_t *)"Nové heslo:"
@@ -73,7 +73,7 @@
 
 #define ASCR_CARD_ERROR               (uint8_t *)"Chyba Karty"
 #define ASCR_FILE_ERROR               (uint8_t *)"Chyba Souboru"
-#define ASCR_NONAME                   (uint8_t *)"Neni nazev"
+#define ASCR_NONAME                   (uint8_t *)"Není název"
 #define ASCR_APPLICATIONS             (uint8_t *)"Programy:"
 #define ASCR_RUNNING_APP              (uint8_t *)"Běžící aplikace"
 

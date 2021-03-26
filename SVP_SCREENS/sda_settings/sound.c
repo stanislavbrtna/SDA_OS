@@ -34,18 +34,13 @@ uint16_t svp_opt_notifications(uint8_t init) {
     // notifiacations screen
     optNotifyScr = pscg_add_screen(&sda_sys_con);
     pscg_add_text(1, 1, 10, 2, SCR_NOTIFICATIONS, optNotifyScr, &sda_sys_con);
-    optSoundLoud = pscg_add_checkbox(1, 2, 7, 3, SCR_SOUND_ON, optNotifyScr, &sda_sys_con);
-    optSoundMute = pscg_add_checkbox(1, 3, 7, 4, SCR_SOUND_OFF, optNotifyScr, &sda_sys_con);
+    optSoundMute = pscg_add_checkbox(1, 2, 7, 3, SCR_SOUND_OFF, optNotifyScr, &sda_sys_con);
 
     //pscg_add_text(1, 4, 10, 5, SCR_LED_NOTIFICATIONS, optNotifyScr);
 
     optSoundBack = pscg_add_button(1, 10, 4, 11, SCR_BACK, optNotifyScr, &sda_sys_con);
 
-    if (svpSGlobal.mute == 1){
-      pscg_set_value(optSoundMute, 1, &sda_sys_con);
-    } else {
-      pscg_set_value(optSoundLoud, 1, &sda_sys_con);
-    }
+    pscg_set_value(optSoundMute, svpSGlobal.mute, &sda_sys_con);
 
     return optNotifyScr;
   }
@@ -53,24 +48,14 @@ uint16_t svp_opt_notifications(uint8_t init) {
   if (init == 2) {
     if (svpSGlobal.mute) {
       pscg_set_value(optSoundMute, 1, &sda_sys_con);
-      pscg_set_value(optSoundLoud, 0, &sda_sys_con);
     } else {
       pscg_set_value(optSoundMute, 0, &sda_sys_con);
-      pscg_set_value(optSoundLoud, 1, &sda_sys_con);
     }
   }
 
-  if (gr2_clicked(optSoundLoud, &sda_sys_con)) {
-    svpSGlobal.mute = 0;
-    pscg_set_value(optSoundMute, 0, &sda_sys_con);
-    pscg_set_value(optSoundLoud, 1, &sda_sys_con);
-    sda_store_mute_config();
-  }
-
   if (gr2_clicked(optSoundMute, &sda_sys_con)) {
-    svpSGlobal.mute = 1;
-    pscg_set_value(optSoundMute, 1, &sda_sys_con);
-    pscg_set_value(optSoundLoud, 0, &sda_sys_con);
+    svpSGlobal.mute = 1 - svpSGlobal.mute;
+    pscg_set_value(optSoundMute, svpSGlobal.mute, &sda_sys_con);
     sda_store_mute_config();
   }
 
