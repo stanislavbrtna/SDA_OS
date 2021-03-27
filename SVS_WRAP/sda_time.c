@@ -303,13 +303,11 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Clear timer
-  //#!    sys.time.clearTimer([num]time_ms, [str]callaback);
+  //#!    sys.time.clearTimer();
   //#!Clears the timer if it is running.
   //#!Return: none
   if (sysFuncMatch(argS->callId, "clearTimer", s)) {
-    argType[1] = 0;
-    argType[2] = 1;
-    if(sysExecTypeCheck(argS, argType, 2, s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
     sdaSvmClearTimer();
