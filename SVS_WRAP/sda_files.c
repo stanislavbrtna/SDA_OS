@@ -359,8 +359,8 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Change working directory
   //#!    sys.fs.chDir([str] pathInData);
   //#!Changes working directory.
-  //#!call sys.fChDir(); to get to the DATA directory
-  //#!call sys.fChDir(1); to get to the APPS directory
+  //#!call sys.fs.chDir(); to get to the DATA directory
+  //#!call sys.fs.chDir(1); to get to the APPS directory
   //#!Return: None
   if (sysFuncMatch(argS->callId, "chDir", s)) {
 
