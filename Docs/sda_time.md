@@ -78,7 +78,7 @@ System timer will call the callback after given time, it will wake up the app if
 Sets the timer.
 Return: none
 ##### Clear timer
-    sys.time.clearTimer([num]time_ms, [str]callaback);
+    sys.time.clearTimer();
 Clears the timer if it is running.
 Return: none
 #### Alarm API
