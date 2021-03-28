@@ -139,6 +139,7 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
   svp_file fp;
   p16Header header;
   p16State imageState;
+  LCD_drawArea area;
 
   if (!svp_fopen_read(&fp, filename)) {
     printf("sda_draw_p16: Error while opening file %s!\n", filename);
@@ -148,6 +149,7 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
 
   p16_get_header(&fp, &header);
 
+  LCD_getDrawArea(&area);
   LCD_setSubDrawArea(x, y, x + header.imageWidth, y + header.imageHeight);
   LCD_canvas_set(x, y, x + header.imageWidth - 1, y + header.imageHeight - 1);
 
@@ -171,6 +173,7 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
     LCD_canvas_putcol(color);
   }
 
+  LCD_setDrawAreaS(&area);
   svp_fclose(&fp);
   touch_lock = SDA_LOCK_UNLOCKED;
   return 0;
@@ -184,6 +187,7 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
   uint32_t fpos, init;
   uint16_t prevVal;
   uint16_t repeat;
+  LCD_drawArea area;
 
   if (!svp_fopen_read(&fp, filename)) {
     printf("sda_draw_p16: Error while opening file %s!\n", filename);
@@ -192,7 +196,7 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
   touch_lock = SDA_LOCK_LOCKED;
 
   p16_get_header(&fp, &header);
-
+  LCD_getDrawArea(&area);
   LCD_setSubDrawArea(x, y, x + header.imageWidth * width_n, y + header.imageHeight * height_n);
   LCD_canvas_set(x, y, x + header.imageWidth * width_n - 1, y + header.imageHeight * height_n - 1);
 
@@ -235,6 +239,7 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
   }
 
   svp_fclose(&fp);
+  LCD_setDrawAreaS(&area);
   touch_lock = SDA_LOCK_UNLOCKED;
   return 0;
 }
