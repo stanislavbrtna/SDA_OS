@@ -57,6 +57,7 @@ void destroyOverlay() {
       pscg_destroy(overlayScr, overlayCont);
     }
     overlayScr = 0;
+    sx_set_touch_ev(EV_NONE, 0, 0);
   }
 }
 
