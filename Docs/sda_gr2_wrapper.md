@@ -7,11 +7,14 @@
 |EV_RELEASED|3| Event: released|
 |EV_HOLD|2| Event: hold|
 |EV_NONE|0| Event: none|
-|COL_BORDER|1| Event: none|
-|COL_TEXT|2| Event: none|
-|COL_BACKGROUND|3| Event: none|
-|COL_FILL|4| Event: none|
-|COL_ACTIVE|5| Event: none|
+|COL_BORDER|1| Color: Border|
+|COL_TEXT|2| Color: Text|
+|COL_BACKGROUND|3| Color: Background|
+|COL_FILL|4| Color: Fill|
+|COL_ACTIVE|5| Color: active|
+|ALIGN_LEFT|5| Text align: Left|
+|ALIGN_RIGHT|5| Text align: Right|
+|ALIGN_CENTER|5| Text align: Center|
 
 #### Element constructors
 
@@ -149,7 +152,7 @@ Return: None
     sys.gui.setTxtSize([num]Id, [num]val);
 Sets size of text inside buttons or text fields.
 Possible values are those used by LCD_Set_Sys_Font
-By default they are: 18, 32, 70, 87
+By default they are: 12, 18, 32, 70, 87
 Return: None
 ##### Size and placement
 
@@ -224,6 +227,14 @@ Return: None
     sys.gui.getTexPwd([num]Id);
 Gets if text field is a password field.
 Return: [num]isPassword
+
+    sys.gui.setTexAlign([num]Id, [num]val);
+Sets text alignment. (uses consts: ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER)
+Return: None
+
+    sys.gui.getTexAlign([num]Id);
+Gets text alignment.
+Return: [num]alignment (uses consts: ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER)
 ##### Colours
 
     sys.gui.setColor([num]Col, [num]val);
