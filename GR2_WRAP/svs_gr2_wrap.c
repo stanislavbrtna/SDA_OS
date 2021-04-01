@@ -32,11 +32,14 @@ SOFTWARE.
 //#!|EV_HOLD|2| Event: hold|
 //#!|EV_NONE|0| Event: none|
 
-//#!|COL_BORDER|1| Event: none|
-//#!|COL_TEXT|2| Event: none|
-//#!|COL_BACKGROUND|3| Event: none|
-//#!|COL_FILL|4| Event: none|
-//#!|COL_ACTIVE|5| Event: none|
+//#!|COL_BORDER|1| Color: Border|
+//#!|COL_TEXT|2| Color: Text|
+//#!|COL_BACKGROUND|3| Color: Background|
+//#!|COL_FILL|4| Color: Fill|
+//#!|COL_ACTIVE|5| Color: active|
+//#!|ALIGN_LEFT|5| Text align: Left|
+//#!|ALIGN_RIGHT|5| Text align: Right|
+//#!|ALIGN_CENTER|5| Text align: Center|
 
 svsConstType gr2WrapConsts[] = {
   {"EV_PRESSED", 1},
@@ -49,6 +52,10 @@ svsConstType gr2WrapConsts[] = {
   {"COL_BACKGROUND", 3},
   {"COL_FILL", 4},
   {"COL_ACTIVE", 5},
+
+  {"ALIGN_LEFT", 0},
+  {"ALIGN_RIGHT", 1},
+  {"ALIGN_CENTER", 2},
 
   {"end", 0}
 };
@@ -749,7 +756,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.gui.setTxtSize([num]Id, [num]val);
   //#!Sets size of text inside buttons or text fields.
   //#!Possible values are those used by LCD_Set_Sys_Font
-  //#!By default they are: 18, 32, 70, 87
+  //#!By default they are: 12, 18, 32, 70, 87
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setTxtSize", s)) {
     argType[1] = 0; // id
@@ -1072,6 +1079,41 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
     return 1;
   }
+
+  //#!
+  //#!    sys.gui.setTexAlign([num]Id, [num]val);
+  //#!Sets text alignment. (uses consts: ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER)
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setTexAlign", s)) {
+    argType[1] = 0; // id
+    argType[2] = 0; // val
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    pscg_text_set_align(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+
+    return 1;
+  }
+
+  //#!
+  //#!    sys.gui.getTexAlign([num]Id);
+  //#!Gets text alignment.
+  //#!Return: [num]alignment (uses consts: ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER)
+  if (sysFuncMatch(argS->callId, "getTexAlign", s)) {
+    argType[1] = 0; // id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = pscg_text_get_align(argS->arg[1].val_s, &sda_app_con);
+    result->type = 0;
+
+    return 1;
+  }
+
 
   //#!##### Colours
   //#!
