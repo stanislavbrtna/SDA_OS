@@ -360,7 +360,6 @@ uint8_t sdaSvmLoadApp(uint8_t *fname, uint8_t *name, uint8_t mode) {
 #else
     printf("Loading time: %ums\n", svsLoadCounter);
 #endif
-    // Set filename/path
     svmInit = 0;
   }
   return 0;
