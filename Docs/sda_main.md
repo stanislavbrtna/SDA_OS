@@ -44,6 +44,10 @@ Return: None
     sys.os.error([str]errorText);
 Throws error message
 Return: None
+##### Get path to executable
+    sys.os.getAppPath();
+Get path to the executable
+Return: [str] Path
 #### Keyboard
 ##### Hide keyboard
     sys.os.hideKbd();

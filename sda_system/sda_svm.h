@@ -57,6 +57,7 @@ void sdaSetRedrawDetect(uint8_t val);
 uint8_t sdaGetRedrawDetect();
 void sdaSvmSetError(uint8_t * str);
 void svmSetLaunchCWDflag(uint8_t val);
+uint8_t * sdaSvmGetName();
 
 // multiprocess
 void sdaSvmSave();

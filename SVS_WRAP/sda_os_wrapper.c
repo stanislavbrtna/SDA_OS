@@ -182,6 +182,19 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get path to executable
+  //#!    sys.os.getAppPath();
+  //#!Get path to the executable
+  //#!Return: [str] Path
+  if (sysFuncMatch(argS->callId, "getAppPath", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_s = strNew(sdaSvmGetName(), s);
+    result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
   //#!#### Keyboard
 
   //#!##### Hide keyboard
