@@ -91,6 +91,7 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
       if (svp_strlen(appHumanName[x]) <= 8) {
         pscg_text_set_align(appFNameBtn[x], GR2_ALIGN_CENTER, &sda_sys_con);
       }
+      pscg_set_param(appFNameBtn[x], 1, &sda_sys_con);
 
 #ifdef APP_SCREEN_DEBUG
       printf("%u\n", appFNameBtn[x]);

@@ -45,6 +45,7 @@ Return: [num]id
 ##### New icon
     sys.gui.addIcon([num]x1, [num]y1, [num]x2, [num]y2, [str]description, [str]image, [num]scrId);
 Adds icon. Image must be a file in current working directory, with resolution 64x64px.
+When parameter of icon element is not zero, color of value param - 1 (16bit RGB565) is drawn as transparent.
 Return: [num]id
 ##### New image
     sys.gui.addImage([num]x1, [num]y1, [num]x2, [num]y2, [str]fname, [num]scrId);

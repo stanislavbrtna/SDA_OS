@@ -28,6 +28,10 @@ static uint8_t p16_G;
 static uint8_t p16_B;
 static uint8_t p16_use_pmc;
 
+static uint8_t p16_use_alpha;
+static uint16_t p16_alpha_color;
+static uint16_t p16_bg_color;
+
 uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t *filename);
 
 
@@ -36,6 +40,13 @@ void sda_p16_set_pmc(uint8_t enable, uint16_t color) {
   p16_R = (uint8_t)((color>>11)&0x1F);
   p16_G = (uint8_t)(((color&0x07E0)>>5)&0x3F);
   p16_B = (uint8_t)(color&0x1F);
+}
+
+
+void sda_p16_set_alpha(uint8_t enable, uint16_t color, uint16_t bg_color) {
+  p16_use_alpha = enable;
+  p16_alpha_color = color;
+  p16_bg_color = bg_color;
 }
 
 
@@ -159,6 +170,12 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
   for(uint32_t n = 0; n < header.imageWidth*header.imageHeight ; n++) {
     color = p16_get_pixel(&fp, &header, &imageState);
 
+    if (p16_use_alpha) {
+      if (color == p16_alpha_color) {
+        color = p16_bg_color;
+      }
+    }
+
     if (p16_use_pmc) {
       uint8_t r, g, b;
 
@@ -220,6 +237,12 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
 
       for(uint32_t b = 0; b < header.imageWidth; b++) {
         color = p16_get_pixel(&fp, &header, &imageState);
+
+        if (p16_use_alpha) {
+          if (color == p16_alpha_color) {
+            color = p16_bg_color;
+          }
+        }
 
         if (p16_use_pmc) {
           uint8_t r, g, b;
