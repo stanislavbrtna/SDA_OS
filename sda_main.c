@@ -404,6 +404,7 @@ void sda_lcd_off_handler() {
 void sda_power_main_handler() {
   static lcdStateType lcdStateOld;
   static volatile uint32_t lcdOffBlinkTimer;
+  static volatile uint32_t btnSleepTimer;
   static uint32_t pwrDelay;
 
   if (svpSGlobal.touchValid) {
@@ -439,6 +440,13 @@ void sda_power_main_handler() {
     // after we blink the led, system will underclock itself
     // to gave time for apps or system to do stuff after lcd shutdown
     system_clock_set_low();
+  }
+
+  if ((btnSleepTimer != 0) && (btnSleepTimer < svpSGlobal.uptimeMs)) {
+    btnSleepTimer = 0;
+    // to handle the scenario when button is pressed with screen off
+    system_clock_set_low();
+    sda_power_sleep();
   }
 
   // lcd auto shut down, this must be at the bottom, so it does not turn off before the sda wakes.
@@ -484,6 +492,11 @@ void sda_power_main_handler() {
       svpSGlobal.btnFlag = 0;
       lastInputTime = svpSGlobal.uptime;
       svpSGlobal.powerState = PWR_MAX;
+      // TODO: this needs cleanup
+      // when called from lcd off, we go to sleep after 30s
+      if (svpSGlobal.lcdState == LCD_OFF) {
+        btnSleepTimer = svpSGlobal.uptimeMs + 5000;
+      }
       break;
     }
   }
