@@ -248,3 +248,23 @@ void sda_draw_overlay_shadow(
         sda_get_shadow_color16(c->background_color)
   );
 }
+
+
+void sda_check_fs() {
+  if (svp_fexists((uint8_t *)"svp.cfg") == 0) {
+    printf("Config file not found!\n");
+
+    // halt for now
+    // TODO: check and rebuild directory structure and configs
+
+    LCD_Fill(LCD_MixColor(255, 0, 0));
+    LCD_DrawText_ext(32, 100, 0xFFFF, (uint8_t *)"SDA Error:\nConfig file not found!\nFix SD card and press Reset.");
+
+    LCD_DrawText_ext(32, 320, 0xFFFF, (uint8_t *)"SDA-OS v."SDA_OS_VERSION);
+#ifdef PC
+    getchar();
+#else
+    while(1);
+#endif
+  }
+}

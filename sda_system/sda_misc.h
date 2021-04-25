@@ -59,4 +59,6 @@ void sda_draw_overlay_shadow(
   gr2context *c
 );
 
+void sda_check_fs();
+
 #endif

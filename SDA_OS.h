@@ -60,6 +60,7 @@ SOFTWARE.
 #include "sda_system/sda_settings.h"
 #include "sda_system/sda_irq.h"
 #include "sda_system/sda_battery.h"
+#include "sda_system/sda_screen_slots.h"
 #include "SVS_WRAP/sda_wrapper.h"
 #include "SVS_WRAP/sda_files.h"
 
@@ -93,14 +94,6 @@ uint8_t sda_main_loop();
 uint8_t svp_irq();
 
 //========================== misc SVP functions ==============================//
-
-// appSlots
-void sdaSlotSetValid(uint16_t slot);
-void sdaSlotSetInValid(uint16_t slot);
-uint16_t sdaSlotGetValid(uint16_t slot);
-uint16_t sdaGetSlotScreen(uint8_t slot);
-void sdaSlotOnTop(uint8_t slot);
-uint8_t sda_get_top_slot();
 
 // errors
 void sda_show_error_message(uint8_t * text);

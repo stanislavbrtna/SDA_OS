@@ -262,7 +262,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
     if (gr2_clicked(optMntSel, &sda_sys_con)) {
       if (sd_mounted == 1) {
         svmCloseAll();
-        sdaSlotOnTop(2);
+        sda_slot_on_top(2);
         svp_umount();
         sd_mounted = 0;
         pscg_set_str(optMntSel, SCR_SD_MOUNT, &sda_sys_con);
@@ -279,7 +279,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
           pscg_destroy_screen( prac_screen, &sda_sys_con);
           slotScreen[1] = svp_appScreen(1, 0);
           sd_mounted = 1;
-          sdaSlotOnTop(2);
+          sda_slot_on_top(2);
         }
       }
     }

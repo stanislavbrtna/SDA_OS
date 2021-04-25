@@ -22,12 +22,6 @@ SOFTWARE.
 
 #include "SDA_OS.h"
 
-uint16_t slotScreen[APP_SLOT_MAX];
-gr2context * slotScreenContext[APP_SLOT_MAX];
-
-uint16_t slotOnTop[APP_SLOT_MAX];
-uint16_t slotValid[APP_SLOT_MAX];
-
 // GR2 system data structure
 pscgElement sda_system_gr2_elements[SDA_SYS_ELEM_MAX];
 pscgScreen sda_system_gr2_screens[SDA_SYS_SCREEN_MAX];
@@ -55,7 +49,7 @@ uint8_t sleepLock; // flag to disable automatic sleep
 
 uint8_t mainDir[258]; // name of main directory
 
-uint8_t prev_top_slot;
+
 
 // time of the last input
 static uint32_t lastInputTime;
@@ -78,24 +72,9 @@ void testCode() {
   return;
 }
 
-void sdaSlotSetValid(uint16_t slot) {
-  slotValid[slot] = 1;
-}
-
-void sdaSlotSetInValid(uint16_t slot) {
-  slotValid[slot] = 0;
-}
-
-uint16_t sdaSlotGetValid(uint16_t slot) {
-  return slotValid[slot];
-}
 
 void sdaSetSleepLock(uint8_t val) {
   sleepLock = val;
-}
-
-uint16_t sdaGetSlotScreen(uint8_t slot) {
-  return slotScreen[slot];
 }
 
 
@@ -108,36 +87,6 @@ void setRedrawFlag() {
   svpSGlobal.systemRedraw = 1;
 }
 
-
-void sdaSlotOnTop(uint8_t slot) {
-  uint8_t x;
-  if (!(slotValid[slot]) && (slot <= APP_SLOT_MAX)) {
-    printf("sdaSlotOnTop: invalid slot!\n");
-    return;
-  }
-
-  for (x = 0; x < APP_SLOT_MAX; x++) {
-    slotOnTop[x] = 0;
-  }
-  slotOnTop[slot] = 1;
-  if ((mainScr != slotScreen[slot]) || (sda_current_con != slotScreenContext[slot])) {
-    mainScr = slotScreen[slot];
-    sda_current_con = slotScreenContext[slot];
-    setRedrawFlag();
-  }
-
-  prev_top_slot = slot;
-}
-
-uint8_t sda_get_top_slot() {
-  uint8_t x;
-  for (x = 0; x < APP_SLOT_MAX; x++) {
-    if (slotOnTop[x] == 1 && slotValid[x]) {
-      return x;
-    }
-  }
-  return 0;
-}
 
 void set_init_struct_defaults() {
   svpSGlobal.uptime = 0;
@@ -164,25 +113,6 @@ void set_init_struct_defaults() {
   svpSGlobal.lcdBacklight = 255;
 }
 
-// just simple check for now
-void sda_check_fs() {
-  if (svp_fexists((uint8_t *)"svp.cfg") == 0) {
-    printf("Config file not found!\n");
-
-    // halt for now
-    // TODO: check and rebuild directory structure and configs
-
-    LCD_Fill(LCD_MixColor(255, 0, 0));
-    LCD_DrawText_ext(32, 100, 0xFFFF, (uint8_t *)"SDA Error:\nConfig file not found!\nFix SD card and press Reset.");
-
-    LCD_DrawText_ext(32, 320, 0xFFFF, (uint8_t *)"SDA-OS v."SDA_OS_VERSION);
-#ifdef PC
-    getchar();
-#else
-    while(1);
-#endif
-  }
-}
 
 void sda_power_sleep() {
   if (svpSGlobal.lcdState == LCD_ON) {
@@ -397,24 +327,12 @@ uint8_t sda_main_loop() {
     sda_load_config();
 
     // initialize screens: home, apps and options
-    slotScreen[0] = svp_homeScreen(1, 0);
-    slotScreenContext[0] = &sda_sys_con;
-    slotValid[0] = 1;
-    slotOnTop[0] = 1;
-
-    slotScreen[1] = svp_appScreen(1, 0);
-    slotScreenContext[1] = &sda_sys_con;
-    slotValid[1] = 1;
-    slotOnTop[1] = 0;
-
-    slotScreen[2] = svp_optScreen(1, 0);
-    slotScreenContext[2] = &sda_sys_con;
-    slotValid[2] = 1;
-    slotOnTop[2] = 0;
-
+    sda_slot_init(0, svp_homeScreen(1, 0), &sda_sys_con, 1, 1);
+    sda_slot_init(1, svp_appScreen(1, 0), &sda_sys_con, 1, 0);
+    sda_slot_init(2, svp_optScreen(1, 0), &sda_sys_con, 1, 0);
     sdaSvmRun(1, 0);
+    sda_slot_init(4, 0, &sda_app_con, 0, 0);
 
-    slotScreenContext[4] = &sda_app_con;
     mainScr = slotScreen[0];
     sda_current_con = &sda_sys_con;
     led_set_pattern(LED_ON); // after init, we set led to on
@@ -442,7 +360,7 @@ uint8_t sda_main_loop() {
         sdaSvmRun(0, 1);
       }
     }
-    sdaSlotOnTop(0);
+    sda_slot_on_top(0);
     init = 2;
   }
 
@@ -643,27 +561,27 @@ uint8_t sda_main_loop() {
   taskSwitcherUpdate();
 
   // updating screens
-  if (slotValid[0]) {
-    svp_homeScreen(0, slotOnTop[0]);
+  if (sda_slot_get_valid(0)) {
+    svp_homeScreen(0, sda_if_slot_on_top(0));
   }
 
-  if (slotValid[1]) {
-    svp_appScreen(0, slotOnTop[1]);
+  if (sda_slot_get_valid(1)) {
+    svp_appScreen(0, sda_if_slot_on_top(1));
   }
 
-  if (slotValid[2]) {
-    svp_optScreen(0, slotOnTop[2]);
+  if (sda_slot_get_valid(2)) {
+    svp_optScreen(0, sda_if_slot_on_top(2));
   }
 
-  if (slotValid[4]) {
-    sdaSvmRun(0, slotOnTop[4]);
+  if (sda_slot_get_valid(4)) {
+    sdaSvmRun(0, sda_if_slot_on_top(4));
   }
 
 
   // top bar button handlers
   // handler for that big S! button
   if ((svpSGlobal.systemOptClick == CLICKED_SHORT)) {
-    if(prev_top_slot != 0) {
+    if(sda_get_prev_top_screen_slot() != 0) {
 
       svpSGlobal.systemXBtnClick = 0;
       svpSGlobal.systemXBtnVisible = 0;
@@ -674,7 +592,7 @@ uint8_t sda_main_loop() {
       }
 
       hideKeyboard();
-      sdaSlotOnTop(0);
+      sda_slot_on_top(0);
       svp_chdir(mainDir);
       svp_chdir((uint8_t *)"APPS");
       sleepLock = 0;
