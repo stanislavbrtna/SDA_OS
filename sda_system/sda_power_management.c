@@ -28,6 +28,8 @@ static uint32_t lastInputTime;
 // flag to disable automatic sleep
 uint8_t sleepLock;
 
+volatile uint32_t btnSleepTimer;
+
 void sda_set_sleep_lock(uint8_t val) {
   sleepLock = val;
 }
@@ -72,6 +74,7 @@ void sda_lcd_off_handler() {
 
 }
 
+
 void sda_power_wait_for_input_UMC() {
 #ifndef PC
   uint32_t pwrDelay = 10000;
@@ -88,7 +91,7 @@ void sda_power_wait_for_input_UMC() {
 
       // when called from lcd off, we go to sleep after 30s
       if (svpSGlobal.lcdState == LCD_OFF) {
-        //btnSleepTimer = svpSGlobal.uptimeMs + 5000;
+        btnSleepTimer = svpSGlobal.uptime + 10;
       }
       break;
     }
@@ -100,8 +103,7 @@ void sda_power_wait_for_input_UMC() {
 void sda_power_management_handler() {
   static lcdStateType lcdStateOld;
   static volatile uint32_t lcdOffBlinkTimer;
-  static volatile uint32_t btnSleepTimer;
-  static uint32_t pwrDelay;
+
 
   if (svpSGlobal.touchValid) {
     lastInputTime = svpSGlobal.uptime;
@@ -137,10 +139,9 @@ void sda_power_management_handler() {
     system_clock_set_low();
   }
 
-  if ((btnSleepTimer != 0) && (btnSleepTimer < svpSGlobal.uptimeMs)) {
+  // to handle the scenario when button is pressed with screen off
+  if ((btnSleepTimer != 0) && (btnSleepTimer < svpSGlobal.uptime)) {
     btnSleepTimer = 0;
-    // to handle the scenario when button is pressed with screen off
-    system_clock_set_low();
     sda_power_sleep();
   }
 

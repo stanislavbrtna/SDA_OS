@@ -467,13 +467,6 @@ uint8_t sda_main_loop() {
 /*                          end of main loop                                 */
 /*****************************************************************************/
 
-  // cleaning input flags
-  svpSGlobal.touchValid = 0; //if the touch event was not handled, we discard it
-  svpSGlobal.btnFlag = 0;
-  timeUpdateFlag = 0;
-  sdaSetRedrawDetect(0);
-  svpSGlobal.systemXBtnTime = 0; // foreced app kill flag
-
   // check for notification
   uint8_t notifAppName[APP_NAME_LEN];
   int32_t id;
@@ -495,6 +488,14 @@ uint8_t sda_main_loop() {
 
   // wait for input on UMC
   sda_power_wait_for_input_UMC();
+
+  // cleaning input flags
+  timeUpdateFlag = 0;
+  sdaSetRedrawDetect(0);
+  svpSGlobal.systemXBtnTime = 0; // foreced app kill flag
+
+  svpSGlobal.touchValid = 0; //if the touch event was not handled, we discard it
+  svpSGlobal.btnFlag = 0;
 
   return 0;
 }
