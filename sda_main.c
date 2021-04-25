@@ -45,12 +45,8 @@ uint16_t ov_id; // current overlay id
 
 uint8_t soft_error_flag; // 1 if error overlay is displayed
 uint8_t timeUpdateFlag; // 1 if time is updated
-uint8_t sleepLock; // flag to disable automatic sleep
 
 uint8_t mainDir[258]; // name of main directory
-
-// time of the last input
-static uint32_t lastInputTime;
 
 // battery overlay handling
 volatile uint8_t systemBattClick;
@@ -67,10 +63,6 @@ void testCode() {
 
 
 // misc functions
-void sdaSetSleepLock(uint8_t val) {
-  sleepLock = val;
-}
-
 
 void svp_switch_main_dir() {
   svp_chdir(mainDir);
@@ -102,153 +94,9 @@ void set_init_struct_defaults() {
   svpSGlobal.battString[4] = 'V';
   svpSGlobal.battString[5] = 0;
 
-  svpSGlobal.powerState = PWR_MID;
   svpSGlobal.pwrType = POWER_BATT;
   svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
   svpSGlobal.lcdBacklight = 255;
-}
-
-
-void sda_power_sleep() {
-  if (svpSGlobal.lcdState == LCD_ON) {
-    svp_set_lcd_state(LCD_OFF);
-  }
-  svpSGlobal.powerMode = SDA_PWR_MODE_SLEEP;
-  system_clock_set_low();
-  svpSGlobal.powerState = PWR_LOW;
-}
-
-void sda_lcd_on_handle() {
-  system_clock_set_normal();
-  svp_set_irq_redraw();
-  svpSGlobal.powerState = PWR_MAX;
-  svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
-}
-
-// wakes from sleep to low power mode with screen off,
-// goes to sleep again after lcd shutdown time
-void sda_interrupt_sleep() {
-  if (svpSGlobal.powerMode == SDA_PWR_MODE_NORMAL) {
-    return;
-  }
-  svpSGlobal.powerState = PWR_LOW;
-  svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
-  lastInputTime = svpSGlobal.uptime;
-}
-
-void sda_lcd_off_handler() {
-  svpSGlobal.powerState = PWR_LOW;
-  svpSGlobal.powerMode = SDA_PWR_MODE_SLEEP;
-
-  if ((wrap_get_lcdOffButtons() == 1 && slotOnTop[4] && slotValid[4]) || sdaSvmIsTimerSet()) {
-    svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_LOW;
-  } else if (sdaGetActiveAlarm() == 1) {
-    svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_NORMAL;
-  } else {
-    svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_DEEP;
-  }
-
-}
-
-void sda_power_main_handler() {
-  static lcdStateType lcdStateOld;
-  static volatile uint32_t lcdOffBlinkTimer;
-  static volatile uint32_t btnSleepTimer;
-  static uint32_t pwrDelay;
-
-  if (svpSGlobal.touchValid) {
-    lastInputTime = svpSGlobal.uptime;
-    svpSGlobal.powerState = PWR_MAX;
-  }
-
-  // when lcd is turned ON
-  if ((svpSGlobal.lcdState == LCD_ON) && (lcdStateOld == LCD_OFF)) {
-    lastInputTime = svpSGlobal.uptime;
-    sda_lcd_on_handle();
-    lcdOffBlinkTimer = 0;
-    led_set_pattern(LED_OFF);
-  }
-
-  // when lcd is turned OFF
-  if ((svpSGlobal.lcdState == LCD_OFF) && (lcdStateOld == LCD_ON)) {
-
-    if (((wrap_get_lcdOffButtons() == 1) && slotValid[4] && slotOnTop[4]) || sdaSvmIsTimerSet()) {
-      lcdOffBlinkTimer = svpSGlobal.uptimeMs + 100;
-    } else if (sdaGetActiveAlarm()){
-      lcdOffBlinkTimer = svpSGlobal.uptimeMs + 500;
-    } else {
-      lcdOffBlinkTimer = svpSGlobal.uptimeMs + 1000;
-    }
-    led_set_pattern(LED_ON);
-    sda_lcd_off_handler();
-  }
-
-  if ((lcdOffBlinkTimer != 0) && (lcdOffBlinkTimer < svpSGlobal.uptimeMs)) {
-    led_set_pattern(LED_OFF);
-    lcdOffBlinkTimer = 0;
-    // after we blink the led, system will underclock itself
-    // to gave time for apps or system to do stuff after lcd shutdown
-    system_clock_set_low();
-  }
-
-  if ((btnSleepTimer != 0) && (btnSleepTimer < svpSGlobal.uptimeMs)) {
-    btnSleepTimer = 0;
-    // to handle the scenario when button is pressed with screen off
-    system_clock_set_low();
-    sda_power_sleep();
-  }
-
-  // lcd auto shut down, this must be at the bottom, so it does not turn off before the sda wakes.
-  if (((svpSGlobal.lcdShutdownTime * 60) < (svpSGlobal.uptime - lastInputTime))
-        && (sleepLock == 0) && (svpSGlobal.powerMode != SDA_PWR_MODE_SLEEP)) {
-    sda_power_sleep();
-  }
-
-  lcdStateOld = svpSGlobal.lcdState;
-
-  // mid power after 30s
-  if ((15 < (svpSGlobal.uptime - lastInputTime))
-        && (svpSGlobal.powerState == PWR_MAX)) {
-    svpSGlobal.powerState = PWR_MID;
-  }
-
-  if (svpSGlobal.powerMode == SDA_PWR_MODE_SLEEP) {
-    return;
-  }
-
-  if (svpSGlobal.powerState == PWR_MAX) {
-    pwrDelay = 10000;
-  }
-
-  if (svpSGlobal.powerState == PWR_MID) {
-    pwrDelay = 22000;
-  }
-
-  if (svpSGlobal.powerState == PWR_LOW) {
-    pwrDelay = 50000;
-  }
-
-  for (uint32_t x = 0; x < pwrDelay; x++) { // waiting for next touch event
-  #ifdef PC
-      break;
-  #endif
-    if (svpSGlobal.touchValid == 1) {
-      lastInputTime = svpSGlobal.uptime;
-      break;
-    }
-
-    if (svpSGlobal.btnFlag == 1) {
-      svpSGlobal.btnFlag = 0;
-      lastInputTime = svpSGlobal.uptime;
-      svpSGlobal.powerState = PWR_MAX;
-      // TODO: this needs cleanup, also it does not work
-      // when called from lcd off, we go to sleep after 30s
-      if (svpSGlobal.lcdState == LCD_OFF) {
-        btnSleepTimer = svpSGlobal.uptimeMs + 5000;
-      }
-      break;
-    }
-  }
 }
 
 /*****************************************************************************/
@@ -590,7 +438,7 @@ uint8_t sda_main_loop() {
       sda_slot_on_top(0);
       svp_chdir(mainDir);
       svp_chdir((uint8_t *)"APPS");
-      sleepLock = 0;
+      sda_set_sleep_lock(0);
     }
     svpSGlobal.systemOptClick = CLICKED_NONE;
   }
@@ -640,10 +488,13 @@ uint8_t sda_main_loop() {
   sdaSvmHandleTimers();
 
   // power management
-  sda_power_main_handler();
+  sda_power_management_handler();
 
   // battery status handling
   sda_handle_battery_status();
+
+  // wait for input on UMC
+  sda_power_wait_for_input_UMC();
 
   return 0;
 }

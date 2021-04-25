@@ -62,6 +62,7 @@ SOFTWARE.
 #include "sda_system/sda_irq.h"
 #include "sda_system/sda_battery.h"
 #include "sda_system/sda_screen_slots.h"
+#include "sda_system/sda_power_management.h"
 #include "SVS_WRAP/sda_wrapper.h"
 #include "SVS_WRAP/sda_files.h"
 
@@ -101,7 +102,7 @@ void sda_show_error_message(uint8_t * text);
 void svp_errSoftPrint(svsVM *s);
 void svs_hardErrHandler();
 
-void sdaSetSleepLock(uint8_t val);
+void sda_set_sleep_lock(uint8_t val);
 
 void setRedrawFlag();
 

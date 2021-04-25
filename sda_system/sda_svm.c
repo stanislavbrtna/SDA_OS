@@ -473,7 +473,7 @@ void sdaSvmCloseApp() {
   }
   svp_crypto_lock();
   svmInValidate(svmMeta.id);
-  sdaSetSleepLock(0);
+  sda_set_sleep_lock(0);
   svpSGlobal.kbdVisible = 0;
   clearNotificationFlag();
   sda_files_close();
@@ -770,7 +770,7 @@ void sdaSvmKillApp_handle() {
   sda_slot_set_invalid(4);
 
   svmInValidate(svmMeta.id);
-  sdaSetSleepLock(0);
+  sda_set_sleep_lock(0);
 
   clearNotificationFlag();
   sda_files_close();
@@ -780,7 +780,7 @@ void sdaSvmKillApp_handle() {
   sda_slot_on_top(1);
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
-  sdaSetSleepLock(0);
+  sda_set_sleep_lock(0);
 }
 
 

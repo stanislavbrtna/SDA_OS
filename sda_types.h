@@ -106,8 +106,7 @@ typedef struct {
 
   volatile pwrModeType  powerMode; // normal or sleep
   volatile pwrSleepModeType powerSleepMode;
-  volatile pwrStateType powerState; // specifies for how long the sda waits for input
-} svpStatusStruct;
+  } svpStatusStruct;
 
 //TODO: specify what should be part of os and what should be part of touch driver
 #ifdef PC
