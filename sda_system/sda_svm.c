@@ -535,7 +535,7 @@ void svmSetRestoreSlot(uint8_t slot) {
 
 
 void svmCloseAll() {
-  svmSetRestoreSlot(sdaGetSlotOnTop());
+  svmSetRestoreSlot(sda_get_top_slot());
 
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProcValid[x] == 1) {
@@ -672,7 +672,7 @@ void svmClose(uint16_t id) {
     svmWake(id);
     sdaSvmCloseApp();
   } else {
-    slot_restore = sdaGetSlotOnTop();
+    slot_restore = sda_get_top_slot();
     svmWake(id);
     sdaSvmCloseApp();
     sdaSlotOnTop(slot_restore);

@@ -25,7 +25,7 @@ SOFTWARE.
 
 #include "../SDA_OS.h"
 
-//time selector overlay
+// time selector overlay
 uint16_t time_overlay_init(); //ret: overlay id
 void time_overlay_set_time(uint16_t ovId, uint16_t hour, uint16_t min);
 void time_overlay_update(uint16_t ovId); //updates given overlay
@@ -36,7 +36,7 @@ uint16_t time_overlay_get_hours(uint16_t ovId); //ret: hours
 uint16_t time_overlay_get_minutes(uint16_t ovId); //ret: seconds
 void time_overlay_destructor();
 
-//color overlay
+// color overlay
 uint16_t color_overlay_init();
 void color_overlay_update(uint16_t ovId);
 uint16_t color_overlay_get_color(uint16_t ovId);
@@ -45,7 +45,7 @@ uint16_t color_overlay_get_ok(uint16_t ovId);
 void color_overlay_clear_ok(uint16_t ovId);
 void color_overlay_destructor();
 
-//date overlay
+// date overlay
 uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy);
 void date_overlay_update(uint16_t ovId);
 uint16_t date_overlay_get_ok(uint16_t ovId);
@@ -55,5 +55,17 @@ uint8_t date_overlay_get_day(uint16_t ovId);
 uint16_t date_overlay_get_ok(uint16_t ovId);
 void date_overlay_clear_ok(uint16_t ovId);
 void date_overlay_destructor();
+
+// error overlay
+void sda_error_overlay_destructor();
+void svp_errSoftPrint(svsVM *s);
+void sda_show_error_message(uint8_t * text);
+void sda_error_overlay_handle();
+
+// battery overlay
+void sda_batt_overlay_init();
+void batt_overlay_handle(uint8_t init);
+uint8_t sda_batt_overlay_shown();
+void sda_batt_overlay_destructor();
 
 #endif

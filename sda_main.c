@@ -60,14 +60,7 @@ uint8_t prev_top_slot;
 // time of the last input
 static uint32_t lastInputTime;
 
-// error overlays
-uint16_t error_overlay_scr;
-uint16_t error_overlay_ok;
-uint16_t error_overlay = 0xFFFF;
-
-// power options overlay
-uint16_t batt_overlay;
-uint8_t batt_overlay_flag;
+// battery overlay handling
 volatile uint8_t systemBattClick;
 
 /*****************************************************************************/
@@ -105,127 +98,6 @@ uint16_t sdaGetSlotScreen(uint8_t slot) {
   return slotScreen[slot];
 }
 
-void sda_batt_overlay_destructor() {
-  pscg_destroy(batt_overlay, &sda_sys_con);
-  setRedrawFlag();
-  batt_overlay_flag = 0;
-  batt_overlay = 0xFFFF;
-}
-
-void batt_overlay_handle(uint8_t init) {
-  static uint16_t backlightSlider;
-  static uint16_t backlightButton;
-  static uint16_t soundEnable;
-  static uint8_t backlightOld;
-
-  if (init == 1) {
-    batt_overlay = pscg_add_screen(&sda_sys_con);
-    pscg_set_x_cell(batt_overlay, 16, &sda_sys_con);
-    pscg_set_y_cell(batt_overlay, 16, &sda_sys_con);
-    backlightSlider
-      = pscg_add_slider_h(
-          1, 1, 15,  3,
-          255 - MIN_BACKLIGHT_VALUE,
-          svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
-          batt_overlay,
-          &sda_sys_con
-      );
-    backlightButton
-      = pscg_add_button(
-          11, 4, 15, 6,
-          OVRL_OK,
-          batt_overlay,
-          &sda_sys_con
-      );
-    soundEnable
-      = pscg_add_checkbox(
-          1, 4, 10, 6,
-          OVRL_SILENT,
-          batt_overlay,
-          &sda_sys_con
-      );
-
-    pscg_set_value(soundEnable, svpSGlobal.mute, &sda_sys_con);
-    return;
-  }
-
-  if (pscg_get_event(backlightSlider, &sda_sys_con)) {
-    if ((pscg_get_value(backlightSlider, &sda_sys_con) + MIN_BACKLIGHT_VALUE) > 255){
-      svpSGlobal.lcdBacklight = 255;
-    } else {
-      svpSGlobal.lcdBacklight
-        = (uint8_t) (pscg_get_value(backlightSlider, &sda_sys_con) + MIN_BACKLIGHT_VALUE);
-    }
-    svp_set_backlight(svpSGlobal.lcdBacklight);
-  }
-  pscg_set_event(backlightSlider, EV_NONE, &sda_sys_con);
-
-  if (sda_wrap_get_button(BUTTON_RIGHT) || sda_wrap_get_button(BUTTON_UP)) {
-    if (svpSGlobal.lcdBacklight < 255) {
-      svpSGlobal.lcdBacklight++;
-      svp_set_backlight(svpSGlobal.lcdBacklight);
-      pscg_set_value(
-        backlightSlider,
-        svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
-        &sda_sys_con
-      );
-    }
-    sda_wrap_clear_button(BUTTON_RIGHT);
-    sda_wrap_clear_button(BUTTON_UP);
-  }
-
-  if (sda_wrap_get_button(BUTTON_LEFT) || sda_wrap_get_button(BUTTON_DOWN)) {
-    if (svpSGlobal.lcdBacklight > MIN_BACKLIGHT_VALUE) {
-      svpSGlobal.lcdBacklight--;
-      svp_set_backlight(svpSGlobal.lcdBacklight);
-      pscg_set_value(
-        backlightSlider,
-        svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
-        &sda_sys_con
-      );
-    }
-    sda_wrap_clear_button(BUTTON_LEFT);
-    sda_wrap_clear_button(BUTTON_DOWN);
-  }
-
-  if (svpSGlobal.systemPwrLongPress == 1) {
-    svpSGlobal.systemPwrLongPress = 0;
-    svpSGlobal.lcdBacklight = 255;
-    svp_set_backlight(svpSGlobal.lcdBacklight);
-    pscg_set_value(
-      backlightSlider,
-      svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
-      &sda_sys_con
-    );
-  }
-
-  if (pscg_get_event(backlightButton, &sda_sys_con) == EV_RELEASED || svpSGlobal.lcdState == LCD_OFF) {
-    batt_overlay_flag = 0;
-    setRedrawFlag();
-    destroyOverlay();
-    return;
-  }
-  pscg_set_event(backlightButton, EV_NONE, &sda_sys_con);
-
-  if (pscg_get_event(soundEnable, &sda_sys_con) == EV_RELEASED) {
-    svpSGlobal.mute = pscg_get_value(soundEnable, &sda_sys_con);
-    sda_store_mute_config();
-  }
-  pscg_set_event(soundEnable, EV_NONE, &sda_sys_con);
-
-  if (svpSGlobal.mute != pscg_get_value(soundEnable, &sda_sys_con))
-  pscg_set_value(soundEnable, svpSGlobal.mute, &sda_sys_con);
-
-  if (svpSGlobal.lcdBacklight != backlightOld) {
-    pscg_set_value(
-        backlightSlider,
-        svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
-        &sda_sys_con
-    );
-  }
-
-  backlightOld = svpSGlobal.lcdBacklight;
-}
 
 void svp_switch_main_dir() {
   svp_chdir(mainDir);
@@ -236,54 +108,6 @@ void setRedrawFlag() {
   svpSGlobal.systemRedraw = 1;
 }
 
-void sda_error_overlay_destructor() {
-  setRedrawFlag();
-  soft_error_flag = 0;
-  error_overlay = 0xFFFF;
-}
-
-void svp_errSoftPrint(svsVM *s) {
-  if (errCheck(s)) {
-    sda_show_error_message((uint8_t *)s->errString);
-  }
-  svp_chdir(mainDir);
-  svp_chdir((uint8_t *)"APPS");
-  errSoftPrint(s);
-  printf("\n");
-}
-
-void sda_show_error_message(uint8_t * text) {
-  soft_error_flag = 1;
-  error_overlay_scr = pscg_add_screen(&sda_sys_con);
-  pscg_set_x_cell(error_overlay_scr, 16, &sda_sys_con);
-  pscg_add_text(
-      2, 1, 14, 2,
-      (uint8_t *)"Error occured:",
-      error_overlay_scr,
-      &sda_sys_con
-  );
-  pscg_text_set_fit(
-      pscg_add_text(1, 2, 15, 7, text, error_overlay_scr, &sda_sys_con),
-      1,
-      &sda_sys_con
-      );
-  error_overlay_ok
-    = pscg_add_button(6, 8, 10, 9, OVRL_OK, error_overlay_scr, &sda_sys_con);
-  error_overlay = setOverlayScreen(error_overlay_scr, &sda_sys_con);
-  setOverlayDestructor(sda_error_overlay_destructor);
-}
-
-void sda_error_overlay_handle() {
-  if (error_overlay != getOverlayId()) {
-    return;
-  }
-
-  if (pscg_get_event(error_overlay_ok, &sda_sys_con) == EV_RELEASED) {
-    destroyOverlay();
-    return;
-  }
-  pscg_set_event(error_overlay_ok, EV_NONE, &sda_sys_con);
-}
 
 void sdaSlotOnTop(uint8_t slot) {
   uint8_t x;
@@ -305,7 +129,7 @@ void sdaSlotOnTop(uint8_t slot) {
   prev_top_slot = slot;
 }
 
-uint8_t sdaGetSlotOnTop() {
+uint8_t sda_get_top_slot() {
   uint8_t x;
   for (x = 0; x < APP_SLOT_MAX; x++) {
     if (slotOnTop[x] == 1 && slotValid[x]) {
@@ -315,7 +139,7 @@ uint8_t sdaGetSlotOnTop() {
   return 0;
 }
 
-void setInitStructDefaults() {
+void set_init_struct_defaults() {
   svpSGlobal.uptime = 0;
   svpSGlobal.lcdOnTime = 0;
   svpSGlobal.dateUpdated = 0;
@@ -341,7 +165,7 @@ void setInitStructDefaults() {
 }
 
 // just simple check for now
-void sdaCheckFs() {
+void sda_check_fs() {
   if (svp_fexists((uint8_t *)"svp.cfg") == 0) {
     printf("Config file not found!\n");
 
@@ -492,7 +316,7 @@ void sda_power_main_handler() {
       svpSGlobal.btnFlag = 0;
       lastInputTime = svpSGlobal.uptime;
       svpSGlobal.powerState = PWR_MAX;
-      // TODO: this needs cleanup
+      // TODO: this needs cleanup, also it does not work
       // when called from lcd off, we go to sleep after 30s
       if (svpSGlobal.lcdState == LCD_OFF) {
         btnSleepTimer = svpSGlobal.uptimeMs + 5000;
@@ -530,7 +354,7 @@ uint8_t sda_main_loop() {
     LCD_Set_Sys_Font(18);
     svp_setMounted(1); // because SD or FS is already mounted
 
-    sdaCheckFs(); // but better to be sure
+    sda_check_fs(); // but better to be sure
 
     // init wrappers
     svsDirectSWrapInit();
@@ -561,7 +385,7 @@ uint8_t sda_main_loop() {
     // Init
     svp_crypto_init();
 
-    setInitStructDefaults();
+    set_init_struct_defaults();
 
     oldsec = 99;
     kbdVisibleOld = 0;
@@ -808,7 +632,7 @@ uint8_t sda_main_loop() {
 /*****************************************************************************/
 
   // System overlays are updated before screens
-  if (batt_overlay_flag == 1) {
+  if (sda_batt_overlay_shown()) {
     batt_overlay_handle(0);
   }
 
@@ -875,14 +699,7 @@ uint8_t sda_main_loop() {
     }
 
     svpSGlobal.systemPwrLongPress = 0;
-    if (batt_overlay_flag == 0) {
-      destroyOverlay();
-      batt_overlay_handle(1);
-      setOverlayScreen(batt_overlay, &sda_sys_con);
-      setOverlayDestructor(sda_batt_overlay_destructor);
-      batt_overlay_flag = 1;
-      setOverlayY2(172);
-    }
+    sda_batt_overlay_init();
   }
 
 /*****************************************************************************/
