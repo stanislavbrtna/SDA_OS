@@ -16,4 +16,10 @@ typedef struct {
   uint16_t repeat;
 } p16State;
 
+void sda_p16_set_alpha(uint8_t enable, uint16_t color, uint16_t bg_color);
+void sda_p16_set_pmc(uint8_t enable, uint16_t color);
+uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename);
+uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_t height_n, uint8_t *filename);
+uint16_t sda_p16_get_width(uint8_t *filename);
+
 #endif
