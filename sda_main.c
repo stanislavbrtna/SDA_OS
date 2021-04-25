@@ -49,23 +49,16 @@ uint8_t sleepLock; // flag to disable automatic sleep
 
 uint8_t mainDir[258]; // name of main directory
 
-
-
 // time of the last input
 static uint32_t lastInputTime;
 
 // battery overlay handling
 volatile uint8_t systemBattClick;
 
-/*****************************************************************************/
-/*                       headers of svs wrappers                             */
-/*****************************************************************************/
+// SVS wrapper headers
 void pcBasicWrapInit();
 void svsGr2WrapInit();
 
-/*****************************************************************************/
-/*                            misc SDA functions                             */
-/*****************************************************************************/
 
 void testCode() {
   // Testcode section is used for testing new things, it is called once after init
@@ -73,6 +66,7 @@ void testCode() {
 }
 
 
+// misc functions
 void sdaSetSleepLock(uint8_t val) {
   sleepLock = val;
 }
@@ -81,6 +75,7 @@ void sdaSetSleepLock(uint8_t val) {
 void svp_switch_main_dir() {
   svp_chdir(mainDir);
 }
+
 
 void setRedrawFlag() {
   svp_set_irq_redraw();
