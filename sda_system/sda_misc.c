@@ -76,11 +76,6 @@ uint16_t get_sda_counter() {
 }
 
 
-void sda_set_sleep_lock(uint8_t val) {
-  sleepLock = val;
-}
-
-
 void pscg_error_callback(uint8_t *str, gr2context * c) {
   if (c == &sda_sys_con) {
     // error occured in system gui, perform reset
