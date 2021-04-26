@@ -27,8 +27,9 @@ SOFTWARE.
 void sda_set_sleep_lock(uint8_t val);
 void sda_power_sleep();
 void sda_interrupt_sleep();
-void sda_power_wait_for_input_UMC();
+void sda_power_wait_for_input();
 void sda_power_management_handler();
+void sda_power_sleep_after(uint32_t seconds);
 
 // internal
 void sda_lcd_on_handler();

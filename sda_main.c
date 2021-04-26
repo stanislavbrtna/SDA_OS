@@ -487,7 +487,7 @@ uint8_t sda_main_loop() {
   sda_handle_battery_status();
 
   // wait for input on UMC
-  sda_power_wait_for_input_UMC();
+  sda_power_wait_for_input();
 
   // cleaning input flags
   timeUpdateFlag = 0;
