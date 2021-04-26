@@ -382,8 +382,8 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
 
   sda_int_to_str(numbuff, (int32_t)nextId, sizeof(numbuff));
   sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
-  svp_str_add(cacheBuffer, numbuff);
-  svp_str_add(cacheBuffer,(uint8_t *) ".stc");
+  sda_str_add(cacheBuffer, numbuff);
+  sda_str_add(cacheBuffer,(uint8_t *) ".stc");
 
   if (sda_strlen(fname) > APP_NAME_LEN) {
     printf("Application name %s is too long!\n", fname);
@@ -687,8 +687,8 @@ static void svmRemoveCachedFile(uint16_t id, uint8_t * tail) {
 
   sda_int_to_str(numbuff, (int32_t)id, sizeof(numbuff));
   sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
-  svp_str_add(cacheBuffer, numbuff);
-  svp_str_add(cacheBuffer, tail);
+  sda_str_add(cacheBuffer, numbuff);
+  sda_str_add(cacheBuffer, tail);
 
   svp_unlink(cacheBuffer);
 }
@@ -932,8 +932,8 @@ static void sdaSvmSaver(uint16_t id, uint8_t * tail, void *target, uint32_t size
 
   sda_int_to_str(numbuff, (int32_t)id, sizeof(numbuff));
   sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
-  svp_str_add(cacheBuffer, numbuff);
-  svp_str_add(cacheBuffer, tail);
+  sda_str_add(cacheBuffer, numbuff);
+  sda_str_add(cacheBuffer, tail);
 
   if(svp_fopen_rw(&svmFile, cacheBuffer) == 0) {
     printf("sdaSvmSaver: file open error\n");
@@ -955,8 +955,8 @@ static uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t 
 
   sda_int_to_str(numbuff, (int32_t)id, sizeof(numbuff));
   sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
-  svp_str_add(cacheBuffer, numbuff);
-  svp_str_add(cacheBuffer, tail);
+  sda_str_add(cacheBuffer, numbuff);
+  sda_str_add(cacheBuffer, tail);
 
   if(svp_fopen_read(&svmFile, cacheBuffer) == 0) {
     printf("sdaSvmLoader: file open error\n");

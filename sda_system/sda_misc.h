@@ -25,16 +25,16 @@ SOFTWARE.
 #include "../SDA_OS.h"
 
 uint8_t getKbdKey(); //returns 1 when key is ready, key is stored in global struct
-uint16_t svp_get_uptime();
+uint16_t sda_get_uptime();
 uint8_t getTimeUpdateFlag();
 void setTimeUpdateFlag();
 
 void showKeyboard();
 void hideKeyboard();
 
-void set_svp_counter(uint16_t val);
-uint16_t get_svp_counter();
-void svp_set_sleep_lock(uint8_t val);
+void set_sda_counter(uint16_t val);
+uint16_t get_sda_counter();
+void sda_set_sleep_lock(uint8_t val);
 
 void pscg_error_callback(uint8_t *str, gr2context * c);
 
@@ -45,7 +45,7 @@ void sda_wrap_clear_button(uint8_t num);
 void sda_store_buttons();
 
 // strings
-uint32_t  svp_str_add(uint8_t *str, uint8_t *str2);
+uint32_t  sda_str_add(uint8_t *str, uint8_t *str2);
 void sda_setbuff(uint8_t * source, uint8_t * target);
 void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len);
 uint32_t  sda_strcp(uint8_t *in, uint8_t *out, uint32_t len);

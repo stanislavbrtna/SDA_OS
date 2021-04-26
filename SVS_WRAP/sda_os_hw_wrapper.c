@@ -68,7 +68,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    svp_set_sleep_lock(argS->arg[1].val_s);
+    sda_set_sleep_lock(argS->arg[1].val_s);
     return 1;
   }
 

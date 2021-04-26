@@ -24,7 +24,7 @@ SOFTWARE.
 
 // globals
 extern uint8_t timeUpdateFlag;
-extern volatile uint16_t svsCounter;
+extern volatile uint16_t sdaAppCounter;
 extern uint8_t sleepLock;
 
 static gr2EventType keyEvLocal[6];
@@ -38,7 +38,7 @@ uint8_t getKbdKey() {
 }
 
 
-uint16_t svp_get_uptime() {
+uint16_t sda_get_uptime() {
   return svpSGlobal.uptime;
 }
 
@@ -66,17 +66,17 @@ void hideKeyboard() {
 }
 
 
-void set_svp_counter(uint16_t val) {
-  svsCounter = val;
+void set_sda_counter(uint16_t val) {
+  sdaAppCounter = val;
 }
 
 
-uint16_t get_svp_counter() {
-  return svsCounter;
+uint16_t get_sda_counter() {
+  return sdaAppCounter;
 }
 
 
-void svp_set_sleep_lock(uint8_t val) {
+void sda_set_sleep_lock(uint8_t val) {
   sleepLock = val;
 }
 
@@ -123,90 +123,6 @@ void sda_store_buttons() {
 }
 
 
-uint32_t svp_str_add(uint8_t *str, uint8_t *str2) {
-  uint32_t i, n;
-  i = 0;
-  while(str[i] != 0) {
-    i++;
-  }
-
-  n = 0;
-  while(str2[n] != 0) {
-    str[i] = str2[n];
-    i++;
-    n++;
-  }
-  str[i] = 0;
-  return n+1;
-}
-
-
-uint32_t sda_strcp(uint8_t *in, uint8_t *out, uint32_t len) {
-  uint32_t x;
-  for (x = 0; x < (len - 1); x++) {
-    out[x] = in[x];
-    if (in[x] == 0) {
-      return (x + 1);
-    }
-  }
-  out[len] = 0;
-  return 0;
-}
-
-
-uint32_t sda_strlen(uint8_t * str) {
-  uint32_t len = 0;
-
-  while (str[len] != 0) {
-    len++;
-  }
-
-  return len;
-}
-
-
-void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
-  uint16_t a;
-  uint8_t negative = 0;
-
-  if (val == 0) {
-    buff[0] = '0';
-    buff[1] = 0;
-    return;
-  }
-
-  for(uint16_t x = 0; x < len; x++) {
-    buff[x] = ' ';
-  }
-  buff[len - 1] = 0;
-
-  if (val < 0) {
-    val *= -1;
-    negative = 1;
-  }
-
-  a = 1;
-  while (0 != val) {
-    buff[len - a - 1] = (val % 10 + 48);
-    val = val / 10;
-    a++;
-    if ((uint32_t)a == len){
-      buff[0] = 0;
-      return;
-    }
-  }
-
-  if (negative) {
-    buff[len - a - 1] = '-';
-  }
-
-  while(buff[0] == ' ') {
-    for(uint16_t x = 0; x < len ; x++) {
-      buff[x] = buff[x + 1];
-    }
-  }
-}
-
 uint16_t sda_get_shadow_color16(uint16_t color) {
   uint8_t r = 0;
   uint8_t g = 0;
@@ -225,6 +141,7 @@ uint16_t sda_get_shadow_color16(uint16_t color) {
 
   return LCD_MixColor(round, round, round);
 }
+
 
 void sda_draw_overlay_shadow(
   int16_t overlayX1,

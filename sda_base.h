@@ -30,12 +30,12 @@ File description:
 uint32_t svp_random();
 
 //time&alarm functions
-void set_svp_counter(uint16_t val);
-uint16_t get_svp_counter();
+void set_sda_counter(uint16_t val);
+uint16_t get_sda_counter();
 
 uint8_t getTimeUpdateFlag();
 void setTimeUpdateFlag();
-uint16_t svp_get_uptime();
+uint16_t sda_get_uptime();
 
 // [HW] beeper
 void svp_beep();

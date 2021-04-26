@@ -92,21 +92,21 @@ void svp_write_date_string(
 
   str[0] = 0;
 
-  svp_str_add(str, (uint8_t *)date_days_strs[svpSGlobal.day]);
+  sda_str_add(str, (uint8_t *)date_days_strs[svpSGlobal.day]);
 
-  svp_str_add(str, (uint8_t *)". ");
+  sda_str_add(str, (uint8_t *)". ");
 
   if (month_as_num) {
-    svp_str_add(str, (uint8_t *)date_days_strs[svpSGlobal.month]);
-    svp_str_add(str, (uint8_t *)". ");
+    sda_str_add(str, (uint8_t *)date_days_strs[svpSGlobal.month]);
+    sda_str_add(str, (uint8_t *)". ");
   } else {
-    svp_str_add(str, (uint8_t *)date_month_names[svpSGlobal.month]);
-    svp_str_add(str, (uint8_t *)" ");
+    sda_str_add(str, (uint8_t *)date_month_names[svpSGlobal.month]);
+    sda_str_add(str, (uint8_t *)" ");
   }
 
   if(write_year) {
     set_year_string(year_str, svpSGlobal.year);
-    svp_str_add(str, year_str);
+    sda_str_add(str, year_str);
   }
 }
 

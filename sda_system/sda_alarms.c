@@ -89,13 +89,13 @@ int32_t sdaRegisterAlarm(
 
   sda_int_to_str(numbuff, maxId, sizeof(numbuff));
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
 
   while (svp_conf_key_exists(&conffile, keybuff)) {
     maxId++;
     sda_int_to_str(numbuff, maxId, sizeof(numbuff));
     sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
   }
 
   // now we have empty new id
@@ -103,32 +103,32 @@ int32_t sdaRegisterAlarm(
 
   if (timestamp != 0) {
     sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
     svp_conf_key_write_i32(&conffile, keybuff, timestamp);
   } else {
     sda_strcp((uint8_t *) "ttime_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
     svp_conf_key_write_i32(&conffile, keybuff, hour*100 + min);
 
     sda_strcp((uint8_t *) "twkday_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
     svp_conf_key_write_i32(&conffile, keybuff, wkday);
 
     sda_strcp((uint8_t *) "tday_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
     svp_conf_key_write_i32(&conffile, keybuff, day);
 
     sda_strcp((uint8_t *) "tmonth_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
     svp_conf_key_write_i32(&conffile, keybuff, month);
 
     sda_strcp((uint8_t *) "last_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
     svp_conf_key_write_i32(&conffile, keybuff, svpSGlobal.timestamp);
   }
 
   sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
   svp_conf_key_write_i32(&conffile, keybuff, param);
 
   if (svp_conf_key_read_i32(&conffile, (uint8_t *)"maxId", 0) < maxId) {
@@ -166,7 +166,7 @@ void sdaReloadAlarms() {
 
   sda_int_to_str(numbuff, maxId, sizeof(numbuff));
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
 
   while (svp_conf_key_exists(&conffile, keybuff)) {
     int32_t time = 0;
@@ -179,14 +179,14 @@ void sdaReloadAlarms() {
     int32_t param = 0;
 
     sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
     time = svp_conf_key_read_i32(&conffile, keybuff, 0);
 
     if (time == 0) {
       int32_t timeTmp = 0;
 
       sda_strcp((uint8_t *) "ttime_", keybuff, sizeof(keybuff));
-      svp_str_add(keybuff, numbuff);
+      sda_str_add(keybuff, numbuff);
       timeTmp = svp_conf_key_read_i32(&conffile, keybuff, 0);
 
       hour = timeTmp / 100;
@@ -194,23 +194,23 @@ void sdaReloadAlarms() {
       min = timeTmp % 100;
 
       sda_strcp((uint8_t *) "twkday_", keybuff, sizeof(keybuff));
-      svp_str_add(keybuff, numbuff);
+      sda_str_add(keybuff, numbuff);
       wkday = svp_conf_key_read_i32(&conffile, keybuff, 0);
 
       sda_strcp((uint8_t *) "tday_", keybuff, sizeof(keybuff));
-      svp_str_add(keybuff, numbuff);
+      sda_str_add(keybuff, numbuff);
       day = svp_conf_key_read_i32(&conffile, keybuff, 0);
 
       sda_strcp((uint8_t *) "tmonth_", keybuff, sizeof(keybuff));
-      svp_str_add(keybuff, numbuff);
+      sda_str_add(keybuff, numbuff);
       month = svp_conf_key_read_i32(&conffile, keybuff, 0);
 
       sda_strcp((uint8_t *) "last_", keybuff, sizeof(keybuff));
-      svp_str_add(keybuff, numbuff);
+      sda_str_add(keybuff, numbuff);
       last = svp_conf_key_read_i32(&conffile, keybuff, svpSGlobal.timestamp);
 
       sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
-      svp_str_add(keybuff, numbuff);
+      sda_str_add(keybuff, numbuff);
       param = svp_conf_key_read_i32(&conffile, keybuff, 0);
 
       time = resolveReapeating(hour, min, wkday, day, month, last);
@@ -245,12 +245,12 @@ void sdaReloadAlarms() {
     maxId++;
     sda_int_to_str(numbuff, maxId, sizeof(numbuff));
     sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
   }
 
   sda_int_to_str(numbuff, alarmId, sizeof(numbuff));
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
   svp_conf_key_read(&conffile, keybuff, currentAlarmAppName, APP_NAME_LEN);
 
   currentAlarmTime = alarmTime;
@@ -339,23 +339,23 @@ void sdaResolveAlarm() {
   sda_int_to_str(numbuff, currentAlarmId, sizeof(numbuff));
 
   sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
 
   if (svp_conf_key_exists(&conffile, keybuff)) {
     sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
     svp_conf_key_remove(&conffile, keybuff);
     sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
     svp_conf_key_remove(&conffile, keybuff);
 
     sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
     svp_conf_key_remove(&conffile, keybuff);
 
   } else {
     sda_strcp((uint8_t *) "last_", keybuff, sizeof(keybuff));
-    svp_str_add(keybuff, numbuff);
+    sda_str_add(keybuff, numbuff);
     svp_conf_key_write_i32(&conffile, keybuff, svpSGlobal.timestamp);
   }
 
@@ -399,7 +399,7 @@ uint8_t removeAlarm(int32_t id, uint8_t * appName) {
   // check appname
   sda_int_to_str(numbuff, id, sizeof(numbuff));
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
 
   svp_conf_key_read(&conffile, keybuff, confAppName, APP_NAME_LEN);
 
@@ -411,35 +411,35 @@ uint8_t removeAlarm(int32_t id, uint8_t * appName) {
   }
 
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
   svp_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
   svp_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
   svp_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "last_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
   svp_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "ttime_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
   svp_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "twkday_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
   svp_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "tday_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
   svp_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "tmonth_", keybuff, sizeof(keybuff));
-  svp_str_add(keybuff, numbuff);
+  sda_str_add(keybuff, numbuff);
   svp_conf_key_remove(&conffile, keybuff);
 
   svp_conf_close(&conffile);

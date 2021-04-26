@@ -761,7 +761,7 @@ uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    set_svp_counter(argS->arg[1].val_s);
+    set_sda_counter(argS->arg[1].val_s);
     return 1;
   }
 
@@ -773,7 +773,7 @@ uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_s = get_svp_counter();
+    result->value.val_s = get_sda_counter();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
