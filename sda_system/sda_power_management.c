@@ -61,6 +61,7 @@ void sda_lcd_on_handler() {
   system_clock_set_normal();
   svp_set_irq_redraw();
   svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
+  sleepTimer = 0;
 }
 
 
@@ -96,7 +97,7 @@ void sda_power_wait_for_input() {
       lastInputTime = svpSGlobal.uptime;
 
       // when called from lcd off, we go to sleep after 30s
-      if (svpSGlobal.lcdState == LCD_OFF) {
+      if (svpSGlobal.lcdState == LCD_OFF && wrap_get_lcdOffButtons() == 1) {
         sda_power_sleep_after(10);
       }
       break;
