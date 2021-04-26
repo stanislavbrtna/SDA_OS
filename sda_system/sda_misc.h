@@ -38,7 +38,7 @@ void svp_set_sleep_lock(uint8_t val);
 
 void pscg_error_callback(uint8_t *str, gr2context * c);
 
-void svp_clr_button_ev();
+void sda_clr_button_ev();
 
 gr2EventType sda_wrap_get_button(uint8_t num);
 void sda_wrap_clear_button(uint8_t num);

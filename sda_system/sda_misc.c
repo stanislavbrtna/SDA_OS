@@ -96,7 +96,7 @@ void pscg_error_callback(uint8_t *str, gr2context * c) {
 }
 
 
-void svp_clr_button_ev() {
+void sda_clr_button_ev() {
   svpSGlobal.keyEv[0] = EV_NONE;
   svpSGlobal.keyEv[1] = EV_NONE;
   svpSGlobal.keyEv[2] = EV_NONE;
