@@ -105,16 +105,12 @@ uint8_t svp_conf_key_exists(svp_conf *fc, uint8_t* key) {
   startPosition = svp_ftell(&(fc->fil));
 
   while (!svp_feof(&(fc->fil))) {
-    // process line
     keystart = svp_ftell(&(fc->fil));
     if (sda_conf_get_key(fc, buffer, sizeof(buffer))) {
       if (svp_strcmp(buffer, key)) {
         svp_fseek(&(fc->fil), keystart);
         return 1;
       }
-      sda_conf_skip_line(fc);
-    } else {
-      // could not be read, skip
       sda_conf_skip_line(fc);
     }
   }
@@ -123,16 +119,12 @@ uint8_t svp_conf_key_exists(svp_conf *fc, uint8_t* key) {
   keystart = 0;
 
   while (keystart < startPosition) {
-    // process line
     keystart = svp_ftell(&(fc->fil));
     if (sda_conf_get_key(fc, buffer, sizeof(buffer))) {
       if (svp_strcmp(buffer, key)) {
         svp_fseek(&(fc->fil), keystart);
         return 1;
       }
-      sda_conf_skip_line(fc);
-    } else {
-      // could not be read, skip
       sda_conf_skip_line(fc);
     }
   }
@@ -226,7 +218,8 @@ void svp_conf_key_write(svp_conf *fc, uint8_t* key, uint8_t* val_buff){
     } else {
       svp_fseek(&(fc->fil), 0);
     }
-    //zápis klíče
+
+    // key write
     for (x = 0; x < MAX_KEY_LEN; x++) {
       if (key[x] != 0) {
           svp_fwrite_u8(&(fc->fil), key[x]);
@@ -234,9 +227,8 @@ void svp_conf_key_write(svp_conf *fc, uint8_t* key, uint8_t* val_buff){
         break;
       }
     }
-    //rovnítko
-    svp_fwrite_u8(&(fc->fil), '=');
 
+    svp_fwrite_u8(&(fc->fil), '=');
     svp_conf_write_str(fc, val_buff);
 
     svp_fwrite_u8(&(fc->fil), SVP_ENDLINE);
