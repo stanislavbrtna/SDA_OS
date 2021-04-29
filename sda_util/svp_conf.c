@@ -49,7 +49,6 @@ uint16_t svp_strlen_ext(uint8_t *str, uint8_t escaping) {
 
   while(str[x] != 0) {
     if ((str[x] == '#') && (escaping == 1)) {
-      //printf("escaping: %u\n", escaping);
       len++;
     }
     x++;
@@ -59,137 +58,131 @@ uint16_t svp_strlen_ext(uint8_t *str, uint8_t escaping) {
   return len; //vrátí len i s terminátorem
 }
 
-
-uint8_t svp_conf_key_exists(svp_conf *fc, uint8_t* key) {
-  uint8_t buffer[MAX_KEY_LEN];
-  uint16_t x;
-  uint8_t skip = 0, pass = 0;
-  uint32_t keystart;
-
-  keystart = svp_ftell(&(fc->fil));
-
-  while (!svp_feof(&(fc->fil)) || (pass == 0)) {
-    skip = 0; //flag pro přeskočení neplatného klíče (za klíčem není =)
-            //je to hlavně k přeskakování prázdných řádků
-    for(x = 0; x < MAX_KEY_LEN; x++) {
-      buffer[x] = svp_fread_u8(&(fc->fil));
-      if (buffer[x] == '=') {
-        buffer[x] = 0;
-        //printf("testoid: buff:%s key:%s\n", buffer, key);
-        if (svp_strcmp(buffer, key)) {
-          return 1;
-        } else {
-          break;
-        }
-      } else if (buffer[x] == SVP_ENDLINE) {
-        skip = 1;
-        break;
-      }
-    }
-    if (skip == 0) {
-      while(!svp_feof(&(fc->fil))){
-        if (svp_fread_u8(&(fc->fil)) == SVP_ENDLINE) {
-          break;
-        }
-      }
-    }
-
-    if (pass == 1){
-      if (svp_ftell(&(fc->fil)) >= keystart) {
-        break;
-      }
-    }
-
-    if (svp_feof(&(fc->fil))) {
-      svp_fseek(&(fc->fil), 0); //fseek na začátek
-      pass = 1;
+uint8_t sda_conf_get_key(svp_conf *fc, uint8_t *buffer, uint16_t len) {
+  for(uint16_t x = 0; x < len; x++) {
+    buffer[x] = svp_fread_u8(&(fc->fil));
+    if (buffer[x] == '=') {
+      buffer[x] = 0;
+      return 1;
+    } else if ((buffer[x] == SVP_ENDLINE) || svp_feof(&(fc->fil))) {
+      return 0;
     }
   }
+}
+
+uint8_t sda_conf_skip_key(svp_conf *fc) {
+  uint8_t c;
+  for(uint16_t x = 0; x < MAX_KEY_LEN; x++) {
+    c = svp_fread_u8(&(fc->fil));
+    if (c == '=') {
+      return 1;
+    } else if ((c == SVP_ENDLINE) || svp_feof(&(fc->fil))) {
+      return 0;
+    }
+  }
+}
+
+uint32_t sda_conf_skip_line(svp_conf *fc) {
+  uint8_t c = 0;
+  uint32_t skipped = 0;
+
+  while(!(svp_feof(&(fc->fil))) && !(c == SVP_ENDLINE)) {
+    c = svp_fread_u8(&(fc->fil));
+    skipped++;
+  };
+  return skipped;
+}
+
+
+// seeks to the start of the key, when successfull
+uint8_t svp_conf_key_exists(svp_conf *fc, uint8_t* key) {
+  uint8_t buffer[MAX_KEY_LEN];
+  uint32_t keystart;
+  uint32_t startPosition;
+
+  startPosition = svp_ftell(&(fc->fil));
+
+  while (!svp_feof(&(fc->fil))) {
+    // process line
+    keystart = svp_ftell(&(fc->fil));
+    if (sda_conf_get_key(fc, buffer, sizeof(buffer))) {
+      if (svp_strcmp(buffer, key)) {
+        svp_fseek(&(fc->fil), keystart);
+        return 1;
+      }
+      sda_conf_skip_line(fc);
+    } else {
+      // could not be read, skip
+      sda_conf_skip_line(fc);
+    }
+  }
+
+  svp_fseek(&(fc->fil), 0);
+  keystart = 0;
+
+  while (keystart < startPosition) {
+    // process line
+    keystart = svp_ftell(&(fc->fil));
+    if (sda_conf_get_key(fc, buffer, sizeof(buffer))) {
+      if (svp_strcmp(buffer, key)) {
+        svp_fseek(&(fc->fil), keystart);
+        return 1;
+      }
+      sda_conf_skip_line(fc);
+    } else {
+      // could not be read, skip
+      sda_conf_skip_line(fc);
+    }
+  }
+
   return 0;
 }
 
 
 uint8_t svp_conf_key_read(svp_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_t len) {
   uint8_t buffer[MAX_KEY_LEN];
-  uint16_t x;
-  uint8_t skip;
-  uint8_t pass = 0;
-  uint32_t keystart;
+  uint32_t x = 0;
+  uint32_t startPosition = 0;
 
-  // pass zero is to scan file from current position to the end of file,
-  // pass one is from start of file to keystart
+  if (svp_conf_key_exists(fc, key)) {
+    startPosition = svp_ftell(&(fc->fil));
+    sda_conf_skip_key(fc);
 
-  keystart = svp_ftell(&(fc->fil));
+    while (!svp_feof(&(fc->fil))) {
+      if (x < len) {
+        ret_buff[x] = svp_fread_u8(&(fc->fil));
 
-  while (!svp_feof(&(fc->fil)) | (pass == 0)) {
-    skip = 0;
-    for(x = 0; x < MAX_KEY_LEN; x++) {
-        buffer[x] = svp_fread_u8(&(fc->fil));
-        if (buffer[x] == '=') {
-          buffer[x] = 0;
-          if (svp_strcmp(buffer, key)) {
-            x = 0;
-            while (!svp_feof(&(fc->fil))) {
-              if (x < len) {
-                ret_buff[x] = svp_fread_u8(&(fc->fil));
+        if (ret_buff[x] == 13) { // CR, our endline is LF, so we ignore that
+          continue;
+        }
 
-                if (ret_buff[x] == 13) { // cr
-                  continue;
-                }
-
-                if (fc->escaping == 1) {
-                  if (ret_buff[x] == '#') {
-                    ret_buff[x + 1] = svp_fread_u8(&(fc->fil));
-                    if (ret_buff[x + 1] != '#') {
-                      ret_buff[x] = '\n';
-                      x++;
-                    }
-                  }
-                }
-
-                if (ret_buff[x] == SVP_ENDLINE) {
-                  ret_buff[x] = 0;
-                  return 1;
-                } else if(svp_feof(&(fc->fil))) {
-                  ret_buff[x] = 0;
-                  return 1;
-                }
-                x++;
-              }else{
-                ret_buff[x] = 0;
-                return 1;
-              }
+        if (fc->escaping == 1) {
+          if (ret_buff[x] == '#') {
+            ret_buff[x + 1] = svp_fread_u8(&(fc->fil));
+            if (ret_buff[x + 1] != '#') {
+              ret_buff[x] = '\n';
+              x++;
             }
-          } else {
-            break;
           }
-        }else if(buffer[x] == SVP_ENDLINE) {
-          skip = 1;
-          break;
         }
-    }
-    if (skip == 0) {
-      while(!svp_feof(&(fc->fil))) {
-        if (svp_fread_u8(&(fc->fil)) == SVP_ENDLINE) {
-          break;
+
+        if ((ret_buff[x] == SVP_ENDLINE) || svp_feof(&(fc->fil))) {
+          break; // got key
         }
+
+        x++;
+      } else {
+        break; // value too long
       }
     }
-
-    if (pass == 1){
-      if (svp_ftell(&(fc->fil)) >= keystart) {
-        break;
-      }
-    }
-
-    if (svp_feof(&(fc->fil))) {
-      svp_fseek(&(fc->fil), 0); //fseek na začátek
-      pass = 1;
-    }
+    ret_buff[x] = 0;
+    svp_fseek(&(fc->fil), startPosition);
+    return 1;
   }
-  ret_buff[0] = 0;
+  ret_buff[x] = 0;
   return 0;
 }
+
 
 // writes key with right escaping
 void svp_conf_write_str(svp_conf *fc, uint8_t * val_buff) {
@@ -226,7 +219,9 @@ void svp_conf_key_write(svp_conf *fc, uint8_t* key, uint8_t* val_buff){
 
     if (svp_get_size(&(fc->fil))!= 0) {
       svp_fseek(&(fc->fil), svp_get_size(&(fc->fil)) - 1);
-      svp_fwrite_u8(&(fc->fil), SVP_ENDLINE);
+      if (svp_fread_u8(&(fc->fil)) != SVP_ENDLINE) {
+        svp_fwrite_u8(&(fc->fil), SVP_ENDLINE);
+      }
     } else {
       svp_fseek(&(fc->fil), 0);
     }
@@ -245,8 +240,7 @@ void svp_conf_key_write(svp_conf *fc, uint8_t* key, uint8_t* val_buff){
 
     svp_fwrite_u8(&(fc->fil), SVP_ENDLINE);
   } else {
-    //hard part
-    //key exists posunul ukazatel za rovnítko, tudíž můžem rovnou měřit dick
+    sda_conf_skip_key(fc);
     keystart = svp_ftell(&(fc->fil));
 
     while(!svp_feof(&(fc->fil))) {
@@ -258,10 +252,6 @@ void svp_conf_key_write(svp_conf *fc, uint8_t* key, uint8_t* val_buff){
     }
 
     strlen = svp_strlen_ext(val_buff, fc->escaping);
-
-    //printf("strlen: %u, keylen: %u\n", strlen, keylen);
-
-    //printf("a: %u, b: %u\n", svp_strlen_ext("karelGkrdel", 1), svp_strlen_ext("karel#krdel", 1));
 
     if (strlen <= keylen) {
 
@@ -310,19 +300,6 @@ void svp_conf_key_remove(svp_conf *fc, uint8_t* key) {
   uint8_t cbuff = 0;
 
   if (svp_conf_key_exists(fc, key)) {
-    svp_fseek(&(fc->fil), svp_ftell(&(fc->fil)) - 1);
-    cbuff = svp_fread_u8(&(fc->fil));
-    while (cbuff != SVP_ENDLINE) {
-      if (svp_ftell(&(fc->fil)) > 2) {
-        svp_fseek(&(fc->fil), svp_ftell(&(fc->fil)) - 2);
-        cbuff = svp_fread_u8(&(fc->fil));
-      } else {
-        svp_fseek(&(fc->fil), 0);
-        break;
-      }
-
-    }
-
     keystart = svp_ftell(&(fc->fil)); // behind endline
 
     while(!svp_feof(&(fc->fil))) {
@@ -333,7 +310,6 @@ void svp_conf_key_remove(svp_conf *fc, uint8_t* key) {
       }
     }
     keylen++;
-    //printf("keylen: %s %u\n", key, keylen);
 
     svp_fseek(&(fc->fil), keystart);
 
@@ -345,6 +321,7 @@ void svp_conf_key_remove(svp_conf *fc, uint8_t* key) {
       svp_fseek(&(fc->fil), x - keylen);
       svp_fwrite_u8(&(fc->fil), cbuff);
     }
+
     svp_fseek(&(fc->fil), fsize - keylen);
     svp_truncate(&(fc->fil));
   }
