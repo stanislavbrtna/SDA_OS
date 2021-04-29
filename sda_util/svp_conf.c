@@ -68,6 +68,7 @@ uint8_t sda_conf_get_key(svp_conf *fc, uint8_t *buffer, uint16_t len) {
       return 0;
     }
   }
+  return 0;
 }
 
 uint8_t sda_conf_skip_key(svp_conf *fc) {
@@ -80,6 +81,7 @@ uint8_t sda_conf_skip_key(svp_conf *fc) {
       return 0;
     }
   }
+  return 0;
 }
 
 uint32_t sda_conf_skip_line(svp_conf *fc) {
@@ -140,7 +142,6 @@ uint8_t svp_conf_key_exists(svp_conf *fc, uint8_t* key) {
 
 
 uint8_t svp_conf_key_read(svp_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_t len) {
-  uint8_t buffer[MAX_KEY_LEN];
   uint32_t x = 0;
   uint32_t startPosition = 0;
 
