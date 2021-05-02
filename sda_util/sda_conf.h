@@ -20,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SVP_CONF_H
-#define SVP_CONF_H
+#ifndef SDA_CONF_H
+#define SDA_CONF_H
 #include "svp_fs.h"
 
 #define MAX_KEY_LEN 128
@@ -29,19 +29,19 @@ SOFTWARE.
 typedef struct {
   svp_file fil;
   uint8_t escaping;
-}svp_conf;
+}sda_conf;
 
-uint8_t svp_conf_open(svp_conf *fc, uint8_t * fname);
-uint8_t svp_conf_close(svp_conf *fc);
+uint8_t sda_conf_open(sda_conf *fc, uint8_t * fname);
+uint8_t sda_conf_close(sda_conf *fc);
 
-void svp_conf_set_escaping(svp_conf *fc, uint8_t val);
+void sda_conf_set_escaping(sda_conf *fc, uint8_t val);
 
-uint8_t svp_conf_key_exists(svp_conf *fc, uint8_t* key);
+uint8_t sda_conf_key_exists(sda_conf *fc, uint8_t* key);
 
-uint8_t svp_conf_key_read(svp_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_t len);
-int32_t svp_conf_key_read_i32(svp_conf *fc, uint8_t* key, int32_t def);
-void svp_conf_key_write(svp_conf *fc, uint8_t* key, uint8_t* val_buff);
-void svp_conf_key_write_i32(svp_conf *fc, uint8_t* key, int32_t val);
+uint8_t sda_conf_key_read(sda_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_t len);
+int32_t sda_conf_key_read_i32(sda_conf *fc, uint8_t* key, int32_t def);
+void sda_conf_key_write(sda_conf *fc, uint8_t* key, uint8_t* val_buff);
+void sda_conf_key_write_i32(sda_conf *fc, uint8_t* key, int32_t val);
 
-void svp_conf_key_remove(svp_conf *fc, uint8_t* key);
+void sda_conf_key_remove(sda_conf *fc, uint8_t* key);
 #endif

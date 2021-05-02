@@ -20,10 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "svp_conf.h"
+#include "sda_conf.h"
 
 
-uint8_t svp_conf_open(svp_conf *fc, uint8_t * fname) {
+uint8_t sda_conf_open(sda_conf *fc, uint8_t * fname) {
   fc->escaping = 1;
   if (svp_fopen_rw(&(fc->fil), fname) == 0) {
     return 0;
@@ -32,18 +32,18 @@ uint8_t svp_conf_open(svp_conf *fc, uint8_t * fname) {
 }
 
 
-uint8_t svp_conf_close(svp_conf *fc) {
+uint8_t sda_conf_close(sda_conf *fc) {
   svp_fclose(&(fc->fil));
   return 0;
 }
 
 
-void svp_conf_set_escaping(svp_conf *fc, uint8_t val) {
+void sda_conf_set_escaping(sda_conf *fc, uint8_t val) {
   fc->escaping = val;
 }
 
 
-uint16_t svp_strlen_ext(uint8_t *str, uint8_t escaping) {
+uint16_t sda_strlen_ext(uint8_t *str, uint8_t escaping) {
   uint16_t x = 0;
   uint16_t len = 0;
 
@@ -58,7 +58,7 @@ uint16_t svp_strlen_ext(uint8_t *str, uint8_t escaping) {
   return len; //vrátí len i s terminátorem
 }
 
-uint8_t sda_conf_get_key(svp_conf *fc, uint8_t *buffer, uint16_t len) {
+uint8_t sda_conf_get_key(sda_conf *fc, uint8_t *buffer, uint16_t len) {
   for(uint16_t x = 0; x < len; x++) {
     buffer[x] = svp_fread_u8(&(fc->fil));
     if (buffer[x] == '=') {
@@ -71,7 +71,7 @@ uint8_t sda_conf_get_key(svp_conf *fc, uint8_t *buffer, uint16_t len) {
   return 0;
 }
 
-uint8_t sda_conf_skip_key(svp_conf *fc) {
+uint8_t sda_conf_skip_key(sda_conf *fc) {
   uint8_t c;
   for(uint16_t x = 0; x < MAX_KEY_LEN; x++) {
     c = svp_fread_u8(&(fc->fil));
@@ -84,7 +84,7 @@ uint8_t sda_conf_skip_key(svp_conf *fc) {
   return 0;
 }
 
-uint32_t sda_conf_skip_line(svp_conf *fc) {
+uint32_t sda_conf_skip_line(sda_conf *fc) {
   uint8_t c = 0;
   uint32_t skipped = 0;
 
@@ -97,7 +97,7 @@ uint32_t sda_conf_skip_line(svp_conf *fc) {
 
 
 // seeks to the start of the key, when successfull
-uint8_t svp_conf_key_exists(svp_conf *fc, uint8_t* key) {
+uint8_t sda_conf_key_exists(sda_conf *fc, uint8_t* key) {
   uint8_t buffer[MAX_KEY_LEN];
   uint32_t keystart;
   uint32_t startPosition;
@@ -133,11 +133,11 @@ uint8_t svp_conf_key_exists(svp_conf *fc, uint8_t* key) {
 }
 
 
-uint8_t svp_conf_key_read(svp_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_t len) {
+uint8_t sda_conf_key_read(sda_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_t len) {
   uint32_t x = 0;
   uint32_t startPosition = 0;
 
-  if (svp_conf_key_exists(fc, key)) {
+  if (sda_conf_key_exists(fc, key)) {
     startPosition = svp_ftell(&(fc->fil));
     sda_conf_skip_key(fc);
 
@@ -178,7 +178,7 @@ uint8_t svp_conf_key_read(svp_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_
 
 
 // writes key with right escaping
-void svp_conf_write_str(svp_conf *fc, uint8_t * val_buff) {
+void sda_conf_write_str(sda_conf *fc, uint8_t * val_buff) {
   uint32_t x = 0;
 
   while(val_buff[x] != 0) {
@@ -199,7 +199,7 @@ void svp_conf_write_str(svp_conf *fc, uint8_t * val_buff) {
 }
 
 
-void svp_conf_key_write(svp_conf *fc, uint8_t* key, uint8_t* val_buff){
+void sda_conf_key_write(sda_conf *fc, uint8_t* key, uint8_t* val_buff){
   uint32_t x;
   uint32_t keystart = 0;
   uint16_t keylen = 0;
@@ -208,7 +208,7 @@ void svp_conf_key_write(svp_conf *fc, uint8_t* key, uint8_t* val_buff){
   uint8_t cbuff = 0;
 
   //easy part:
-  if (!svp_conf_key_exists(fc, key)) {
+  if (!sda_conf_key_exists(fc, key)) {
 
     if (svp_get_size(&(fc->fil))!= 0) {
       svp_fseek(&(fc->fil), svp_get_size(&(fc->fil)) - 1);
@@ -229,7 +229,7 @@ void svp_conf_key_write(svp_conf *fc, uint8_t* key, uint8_t* val_buff){
     }
 
     svp_fwrite_u8(&(fc->fil), '=');
-    svp_conf_write_str(fc, val_buff);
+    sda_conf_write_str(fc, val_buff);
 
     svp_fwrite_u8(&(fc->fil), SVP_ENDLINE);
   } else {
@@ -244,13 +244,13 @@ void svp_conf_key_write(svp_conf *fc, uint8_t* key, uint8_t* val_buff){
       }
     }
 
-    strlen = svp_strlen_ext(val_buff, fc->escaping);
+    strlen = sda_strlen_ext(val_buff, fc->escaping);
 
     if (strlen <= keylen) {
 
       svp_fseek(&(fc->fil), keystart);
 
-      svp_conf_write_str(fc, val_buff);
+      sda_conf_write_str(fc, val_buff);
 
       fsize = svp_get_size(&(fc->fil));
 
@@ -279,20 +279,20 @@ void svp_conf_key_write(svp_conf *fc, uint8_t* key, uint8_t* val_buff){
       }
 
       svp_fseek(&(fc->fil), keystart);
-      svp_conf_write_str(fc, val_buff);
+      sda_conf_write_str(fc, val_buff);
     }
   }
 }
 
 
-void svp_conf_key_remove(svp_conf *fc, uint8_t* key) {
+void sda_conf_key_remove(sda_conf *fc, uint8_t* key) {
   uint32_t x;
   uint32_t keystart = 0;
   uint16_t keylen = 0;
   uint32_t fsize = 0;
   uint8_t cbuff = 0;
 
-  if (svp_conf_key_exists(fc, key)) {
+  if (sda_conf_key_exists(fc, key)) {
     keystart = svp_ftell(&(fc->fil)); // behind endline
 
     while(!svp_feof(&(fc->fil))) {
@@ -322,14 +322,14 @@ void svp_conf_key_remove(svp_conf *fc, uint8_t* key) {
 
 // misc functions
 
-int32_t svp_conf_key_read_i32(svp_conf *fc, uint8_t* key, int32_t def) {
+int32_t sda_conf_key_read_i32(sda_conf *fc, uint8_t* key, int32_t def) {
   uint8_t strBuff[23];
   uint16_t x = 0;
   uint16_t y = 0;
   uint8_t sign = 0;
   int32_t result = 0;
 
-  if (svp_conf_key_read(fc, key, strBuff, 22) == 0) {
+  if (sda_conf_key_read(fc, key, strBuff, 22) == 0) {
     return def;
   }
 
@@ -358,14 +358,14 @@ int32_t svp_conf_key_read_i32(svp_conf *fc, uint8_t* key, int32_t def) {
 }
 
 
-void svp_conf_key_write_i32(svp_conf *fc, uint8_t* key, int32_t val) {
+void sda_conf_key_write_i32(sda_conf *fc, uint8_t* key, int32_t val) {
   uint8_t i[22];
 
   if (val == 0){
-    svp_conf_key_write(fc, key, (uint8_t *)"0");
+    sda_conf_key_write(fc, key, (uint8_t *)"0");
     return;
   }
 
   sda_int_to_str(i, val, sizeof(i));
-  svp_conf_key_write(fc, key, i);
+  sda_conf_key_write(fc, key, i);
 }

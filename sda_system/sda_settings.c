@@ -27,7 +27,7 @@ extern touchCalibDataStruct touchCalibData;
 
 void sda_load_config() {
   uint8_t dirbuf[258];
-  svp_conf conffile;
+  sda_conf conffile;
   svp_file calib;
   touchCalibDataStruct calibData;
 
@@ -35,26 +35,26 @@ void sda_load_config() {
   svp_switch_main_dir();
 
   printf("Loading config: (svp.cfg)\n");
-  if (svp_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
+  if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
     printf("Failed to open cfg file\n");
   }
 
-  pscg_set_border_color((uint16_t) svp_conf_key_read_i32(&conffile, (uint8_t *)"border_color", 0), &sda_sys_con);
-  pscg_set_text_color((uint16_t) svp_conf_key_read_i32(&conffile, (uint8_t *)"text_color", 0), &sda_sys_con);
-  pscg_set_background_color((uint16_t) svp_conf_key_read_i32(&conffile, (uint8_t *)"background_color", 0xF800), &sda_sys_con);
-  pscg_set_fill_color((uint16_t) svp_conf_key_read_i32(&conffile, (uint8_t *)"fill_color", 0x07E0), &sda_sys_con);
-  pscg_set_active_color((uint16_t) svp_conf_key_read_i32(&conffile, (uint8_t *)"active_color", 0xFFFF), &sda_sys_con);
+  pscg_set_border_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"border_color", 0), &sda_sys_con);
+  pscg_set_text_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"text_color", 0), &sda_sys_con);
+  pscg_set_background_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"background_color", 0xF800), &sda_sys_con);
+  pscg_set_fill_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"fill_color", 0x07E0), &sda_sys_con);
+  pscg_set_active_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"active_color", 0xFFFF), &sda_sys_con);
 
   //sleepTimer
-  svpSGlobal.lcdShutdownTime = svp_conf_key_read_i32(&conffile, (uint8_t *)"sleep_time", 5);
+  svpSGlobal.lcdShutdownTime = sda_conf_key_read_i32(&conffile, (uint8_t *)"sleep_time", 5);
 
-  svpSGlobal.mute = svp_conf_key_read_i32(&conffile, (uint8_t *)"mute", 0);
+  svpSGlobal.mute = sda_conf_key_read_i32(&conffile, (uint8_t *)"mute", 0);
 
   if ((svpSGlobal.lcdShutdownTime < 2)||(svpSGlobal.lcdShutdownTime > 10)) {
     svpSGlobal.lcdShutdownTime = 5;
   }
   svp_set_irq_redraw(); //po nastavení barev překreslíme panel / redraw the tray after loading color settings
-  svp_conf_close(&conffile);
+  sda_conf_close(&conffile);
 
   // handle possible on-boot calibration
   if (svp_getLcdCalibrationFlag() == 0) {
@@ -77,33 +77,33 @@ void sda_load_config() {
 
 
 void sda_store_config_gui(uint8_t set_def) {
-  svp_conf conffile;
+  sda_conf conffile;
   uint8_t dirbuf[258];
 
   svp_getcwd(dirbuf, 256);
   svp_switch_main_dir();
 
   printf("Storing config: (svp.cfg)\n");
-  if (svp_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
+  if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
     printf("Failed to open cfg file\n");
     return;
   }
   if (set_def == 0) {
-    svp_conf_key_write_i32(&conffile, (uint8_t *)"border_color", pscg_get_border_color(&sda_sys_con));
-    svp_conf_key_write_i32(&conffile, (uint8_t *)"text_color", pscg_get_text_color(&sda_sys_con));
-    svp_conf_key_write_i32(&conffile, (uint8_t *)"background_color", pscg_get_background_color(&sda_sys_con));
-    svp_conf_key_write_i32(&conffile, (uint8_t *)"fill_color", pscg_get_fill_color(&sda_sys_con));
-    svp_conf_key_write_i32(&conffile, (uint8_t *)"active_color", pscg_get_active_color(&sda_sys_con));
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"border_color", pscg_get_border_color(&sda_sys_con));
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"text_color", pscg_get_text_color(&sda_sys_con));
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"background_color", pscg_get_background_color(&sda_sys_con));
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"fill_color", pscg_get_fill_color(&sda_sys_con));
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"active_color", pscg_get_active_color(&sda_sys_con));
   } else {
     printf("Setting Default Values.\n");
-    svp_conf_key_write_i32(&conffile, (uint8_t *)"border_color", 0);
-    svp_conf_key_write_i32(&conffile, (uint8_t *)"text_color",0);
-    svp_conf_key_write_i32(&conffile, (uint8_t *)"background_color", 0xF800);
-    svp_conf_key_write_i32(&conffile, (uint8_t *)"fill_color", 0x07E0);
-    svp_conf_key_write_i32(&conffile, (uint8_t *)"active_color", 0xFFFF);
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"border_color", 0);
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"text_color",0);
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"background_color", 0xF800);
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"fill_color", 0x07E0);
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"active_color", 0xFFFF);
   }
-  svp_conf_key_write_i32(&conffile, (uint8_t *)"sleep_time", svpSGlobal.lcdShutdownTime);
-  svp_conf_close(&conffile);
+  sda_conf_key_write_i32(&conffile, (uint8_t *)"sleep_time", svpSGlobal.lcdShutdownTime);
+  sda_conf_close(&conffile);
   svp_chdir(dirbuf);
   printf("Done.\n");
 
@@ -111,34 +111,34 @@ void sda_store_config_gui(uint8_t set_def) {
 
 
 void sda_store_config() {
-  svp_conf conffile;
+  sda_conf conffile;
   uint8_t dirbuf[258];
   svp_getcwd(dirbuf, 256);
   svp_switch_main_dir();
   printf("Storing config: (svp.cfg)\n");
-  if (svp_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
+  if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
     printf("Failed to open cfg file\n");
     return;
   }
-  svp_conf_key_write_i32(&conffile, (uint8_t *)"sleep_time", svpSGlobal.lcdShutdownTime);
-  svp_conf_close(&conffile);
+  sda_conf_key_write_i32(&conffile, (uint8_t *)"sleep_time", svpSGlobal.lcdShutdownTime);
+  sda_conf_close(&conffile);
   svp_chdir(dirbuf);
   printf("Done.\n");
 }
 
 
 void sda_store_mute_config() {
-  svp_conf conffile;
+  sda_conf conffile;
   uint8_t dirbuf[258];
   svp_getcwd(dirbuf, 256);
   svp_switch_main_dir();
   printf("Storing mute config: (svp.cfg)\n");
-  if (svp_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
+  if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
     printf("Failed to open cfg file\n");
     return;
   }
-  svp_conf_key_write_i32(&conffile, (uint8_t *)"mute", svpSGlobal.mute);
-  svp_conf_close(&conffile);
+  sda_conf_key_write_i32(&conffile, (uint8_t *)"mute", svpSGlobal.mute);
+  sda_conf_close(&conffile);
   svp_chdir(dirbuf);
   printf("Done.\n");
 }

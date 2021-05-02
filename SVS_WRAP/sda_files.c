@@ -28,7 +28,7 @@ uint8_t fr_filename[64];
 uint8_t fr_open;
 
 //Conf file
-svp_conf conFile;
+sda_conf conFile;
 uint8_t conf_filename[64];
 uint8_t conf_open;
 
@@ -80,7 +80,7 @@ void sda_files_close() {
 
   if (conf_open) {
     conf_open = 0;
-    svp_conf_close(&conFile);
+    sda_conf_close(&conFile);
   }
 
   if (csv_open) {
@@ -121,7 +121,7 @@ uint8_t sda_fr_fname_open(uint8_t * fname) {
 
 uint8_t sda_files_conf_open(uint8_t * fname) {
   sda_strcp(fname, conf_filename, sizeof(conf_filename));
-  conf_open = svp_conf_open(&conFile, fname);
+  conf_open = sda_conf_open(&conFile, fname);
   return conf_open;
 }
 
@@ -887,7 +887,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
     conf_open = 1;
     sda_strcp(s->stringField + argS->arg[1].val_str, conf_filename, sizeof(conf_filename));
-    if (svp_conf_open(&conFile, s->stringField + argS->arg[1].val_str)) {
+    if (sda_conf_open(&conFile, s->stringField + argS->arg[1].val_str)) {
       result->value.val_s = 1;
     } else {
       result->value.val_s = 0;
@@ -905,7 +905,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    if (conf_open == 1 && (svp_conf_close(&conFile) == 0)) {
+    if (conf_open == 1 && (sda_conf_close(&conFile) == 0)) {
       conf_open = 0;
       result->value.val_s = 1;
     } else {
@@ -925,7 +925,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = svp_conf_key_exists(&conFile, s->stringField+argS->arg[1].val_str);
+    result->value.val_s = sda_conf_key_exists(&conFile, s->stringField+argS->arg[1].val_str);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -941,7 +941,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     // TODO: Make loading in stream mode, with checking free string mem
-    svp_conf_key_read(&conFile, s->stringField+argS->arg[1].val_str, buff, 512);
+    sda_conf_key_read(&conFile, s->stringField+argS->arg[1].val_str, buff, 512);
     buff[511] = 0;
     result->value.val_u = strNew(buff, s);
     result->type = SVS_TYPE_STR;
@@ -958,7 +958,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 2, s)) {
       return 0;
     }
-    result->value.val_s = svp_conf_key_read_i32(&conFile, s->stringField + argS->arg[1].val_str,argS->arg[2].val_s);
+    result->value.val_s = sda_conf_key_read_i32(&conFile, s->stringField + argS->arg[1].val_str,argS->arg[2].val_s);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -973,7 +973,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 2, s)) {
       return 0;
     }
-    svp_conf_key_write(&conFile, s->stringField + argS->arg[1].val_str, s->stringField + argS->arg[2].val_str);
+    sda_conf_key_write(&conFile, s->stringField + argS->arg[1].val_str, s->stringField + argS->arg[2].val_str);
     return 1;
   }
 
@@ -986,7 +986,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    svp_conf_key_remove(&conFile, s->stringField + argS->arg[1].val_str);
+    sda_conf_key_remove(&conFile, s->stringField + argS->arg[1].val_str);
     return 1;
   }
 

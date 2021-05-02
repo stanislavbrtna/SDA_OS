@@ -76,12 +76,12 @@ int32_t sdaRegisterAlarm(
   uint8_t keybuff[25];
   uint8_t numbuff[10];
   int32_t maxId;
-  svp_conf conffile;
+  sda_conf conffile;
 
   svp_getcwd(dirbuf, sizeof(dirbuf));
   svp_switch_main_dir();
 
-  if (svp_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
+  if (sda_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
     printf("Failed to open notification config file\n");
   }
 
@@ -91,7 +91,7 @@ int32_t sdaRegisterAlarm(
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
 
-  while (svp_conf_key_exists(&conffile, keybuff)) {
+  while (sda_conf_key_exists(&conffile, keybuff)) {
     maxId++;
     sda_int_to_str(numbuff, maxId, sizeof(numbuff));
     sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
@@ -99,43 +99,43 @@ int32_t sdaRegisterAlarm(
   }
 
   // now we have empty new id
-  svp_conf_key_write(&conffile, keybuff, appname);
+  sda_conf_key_write(&conffile, keybuff, appname);
 
   if (timestamp != 0) {
     sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
-    svp_conf_key_write_i32(&conffile, keybuff, timestamp);
+    sda_conf_key_write_i32(&conffile, keybuff, timestamp);
   } else {
     sda_strcp((uint8_t *) "ttime_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
-    svp_conf_key_write_i32(&conffile, keybuff, hour*100 + min);
+    sda_conf_key_write_i32(&conffile, keybuff, hour*100 + min);
 
     sda_strcp((uint8_t *) "twkday_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
-    svp_conf_key_write_i32(&conffile, keybuff, wkday);
+    sda_conf_key_write_i32(&conffile, keybuff, wkday);
 
     sda_strcp((uint8_t *) "tday_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
-    svp_conf_key_write_i32(&conffile, keybuff, day);
+    sda_conf_key_write_i32(&conffile, keybuff, day);
 
     sda_strcp((uint8_t *) "tmonth_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
-    svp_conf_key_write_i32(&conffile, keybuff, month);
+    sda_conf_key_write_i32(&conffile, keybuff, month);
 
     sda_strcp((uint8_t *) "last_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
-    svp_conf_key_write_i32(&conffile, keybuff, svpSGlobal.timestamp);
+    sda_conf_key_write_i32(&conffile, keybuff, svpSGlobal.timestamp);
   }
 
   sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
-  svp_conf_key_write_i32(&conffile, keybuff, param);
+  sda_conf_key_write_i32(&conffile, keybuff, param);
 
-  if (svp_conf_key_read_i32(&conffile, (uint8_t *)"maxId", 0) < maxId) {
-    svp_conf_key_write_i32(&conffile, (uint8_t *)"maxId", maxId);
+  if (sda_conf_key_read_i32(&conffile, (uint8_t *)"maxId", 0) < maxId) {
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"maxId", maxId);
   }
 
-  svp_conf_close(&conffile);
+  sda_conf_close(&conffile);
 
   svp_chdir(dirbuf);
 
@@ -153,12 +153,12 @@ void sdaReloadAlarms() {
   int32_t alarmTime = 0;
   uint32_t alarmId = 0;
   int32_t alarmParam = 0;
-  svp_conf conffile;
+  sda_conf conffile;
 
   svp_getcwd(dirbuf, sizeof(dirbuf));
   svp_switch_main_dir();
 
-  if (svp_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
+  if (sda_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
     printf("Failed to open notification config file\n");
   }
 
@@ -168,7 +168,7 @@ void sdaReloadAlarms() {
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
 
-  while (svp_conf_key_exists(&conffile, keybuff)) {
+  while (sda_conf_key_exists(&conffile, keybuff)) {
     int32_t time = 0;
     uint8_t hour = 0;
      uint8_t min = 0;
@@ -180,14 +180,14 @@ void sdaReloadAlarms() {
 
     sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
-    time = svp_conf_key_read_i32(&conffile, keybuff, 0);
+    time = sda_conf_key_read_i32(&conffile, keybuff, 0);
 
     if (time == 0) {
       int32_t timeTmp = 0;
 
       sda_strcp((uint8_t *) "ttime_", keybuff, sizeof(keybuff));
       sda_str_add(keybuff, numbuff);
-      timeTmp = svp_conf_key_read_i32(&conffile, keybuff, 0);
+      timeTmp = sda_conf_key_read_i32(&conffile, keybuff, 0);
 
       hour = timeTmp / 100;
 
@@ -195,23 +195,23 @@ void sdaReloadAlarms() {
 
       sda_strcp((uint8_t *) "twkday_", keybuff, sizeof(keybuff));
       sda_str_add(keybuff, numbuff);
-      wkday = svp_conf_key_read_i32(&conffile, keybuff, 0);
+      wkday = sda_conf_key_read_i32(&conffile, keybuff, 0);
 
       sda_strcp((uint8_t *) "tday_", keybuff, sizeof(keybuff));
       sda_str_add(keybuff, numbuff);
-      day = svp_conf_key_read_i32(&conffile, keybuff, 0);
+      day = sda_conf_key_read_i32(&conffile, keybuff, 0);
 
       sda_strcp((uint8_t *) "tmonth_", keybuff, sizeof(keybuff));
       sda_str_add(keybuff, numbuff);
-      month = svp_conf_key_read_i32(&conffile, keybuff, 0);
+      month = sda_conf_key_read_i32(&conffile, keybuff, 0);
 
       sda_strcp((uint8_t *) "last_", keybuff, sizeof(keybuff));
       sda_str_add(keybuff, numbuff);
-      last = svp_conf_key_read_i32(&conffile, keybuff, svpSGlobal.timestamp);
+      last = sda_conf_key_read_i32(&conffile, keybuff, svpSGlobal.timestamp);
 
       sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
       sda_str_add(keybuff, numbuff);
-      param = svp_conf_key_read_i32(&conffile, keybuff, 0);
+      param = sda_conf_key_read_i32(&conffile, keybuff, 0);
 
       time = resolveReapeating(hour, min, wkday, day, month, last);
 
@@ -251,13 +251,13 @@ void sdaReloadAlarms() {
   sda_int_to_str(numbuff, alarmId, sizeof(numbuff));
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
-  svp_conf_key_read(&conffile, keybuff, currentAlarmAppName, APP_NAME_LEN);
+  sda_conf_key_read(&conffile, keybuff, currentAlarmAppName, APP_NAME_LEN);
 
   currentAlarmTime = alarmTime;
   currentAlarmId = alarmId;
   currentAlarmParam = alarmParam;
 
-  svp_conf_close(&conffile);
+  sda_conf_close(&conffile);
   svp_chdir(dirbuf);
 
   sdaReloadAlarmIcon();
@@ -325,12 +325,12 @@ void sdaResolveAlarm() {
   uint8_t dirbuf[258];
   uint8_t keybuff[25];
   uint8_t numbuff[10];
-  svp_conf conffile;
+  sda_conf conffile;
 
   svp_getcwd(dirbuf, sizeof(dirbuf));
   svp_switch_main_dir();
 
-  if (svp_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
+  if (sda_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
     printf("Failed to open alarm config file\n");
   }
 
@@ -341,25 +341,25 @@ void sdaResolveAlarm() {
   sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
 
-  if (svp_conf_key_exists(&conffile, keybuff)) {
+  if (sda_conf_key_exists(&conffile, keybuff)) {
     sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
-    svp_conf_key_remove(&conffile, keybuff);
+    sda_conf_key_remove(&conffile, keybuff);
     sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
-    svp_conf_key_remove(&conffile, keybuff);
+    sda_conf_key_remove(&conffile, keybuff);
 
     sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
-    svp_conf_key_remove(&conffile, keybuff);
+    sda_conf_key_remove(&conffile, keybuff);
 
   } else {
     sda_strcp((uint8_t *) "last_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
-    svp_conf_key_write_i32(&conffile, keybuff, svpSGlobal.timestamp);
+    sda_conf_key_write_i32(&conffile, keybuff, svpSGlobal.timestamp);
   }
 
-  svp_conf_close(&conffile);
+  sda_conf_close(&conffile);
   svp_chdir(dirbuf);
 }
 
@@ -382,7 +382,7 @@ uint8_t removeAlarm(int32_t id, uint8_t * appName) {
   uint8_t keybuff[25];
   uint8_t numbuff[10];
   uint8_t confAppName[APP_NAME_LEN];
-  svp_conf conffile;
+  sda_conf conffile;
 
   if (id == 0) {
     //printf("Note: Notification delete: zero id!");
@@ -392,7 +392,7 @@ uint8_t removeAlarm(int32_t id, uint8_t * appName) {
   svp_getcwd(dirbuf, sizeof(dirbuf));
   svp_switch_main_dir();
 
-  if (svp_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
+  if (sda_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
     printf("Failed to open notification config file\n");
   }
 
@@ -401,48 +401,48 @@ uint8_t removeAlarm(int32_t id, uint8_t * appName) {
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
 
-  svp_conf_key_read(&conffile, keybuff, confAppName, APP_NAME_LEN);
+  sda_conf_key_read(&conffile, keybuff, confAppName, APP_NAME_LEN);
 
   if (! strCmp(appName, confAppName)) {
     printf("Warning: Notification delete: appnames does not match!");
-    svp_conf_close(&conffile);
+    sda_conf_close(&conffile);
     svp_chdir(dirbuf);
     return 1;
   }
 
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
-  svp_conf_key_remove(&conffile, keybuff);
+  sda_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
-  svp_conf_key_remove(&conffile, keybuff);
+  sda_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
-  svp_conf_key_remove(&conffile, keybuff);
+  sda_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "last_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
-  svp_conf_key_remove(&conffile, keybuff);
+  sda_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "ttime_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
-  svp_conf_key_remove(&conffile, keybuff);
+  sda_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "twkday_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
-  svp_conf_key_remove(&conffile, keybuff);
+  sda_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "tday_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
-  svp_conf_key_remove(&conffile, keybuff);
+  sda_conf_key_remove(&conffile, keybuff);
 
   sda_strcp((uint8_t *) "tmonth_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
-  svp_conf_key_remove(&conffile, keybuff);
+  sda_conf_key_remove(&conffile, keybuff);
 
-  svp_conf_close(&conffile);
+  sda_conf_close(&conffile);
   svp_chdir(dirbuf);
 
   sdaReloadAlarms();

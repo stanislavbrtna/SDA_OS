@@ -48,7 +48,7 @@ SOFTWARE.
 #include "sda_util/sda_util.h"
 #include "sda_util/sda_keyboard.h"
 #include "sda_util/svp_fs.h"
-#include "sda_util/svp_conf.h"
+#include "sda_util/sda_conf.h"
 #include "sda_util/svp_fs_misc.h"
 #include "sda_util/svp_csv_parse.h"
 #include "sda_util/svp_crypto.h"
