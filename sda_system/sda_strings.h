@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2018 Stanislav Brtna
+Copyright (c) 2021 Stanislav Brtna
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,38 +20,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SDA_MISC_H
-#define SDA_MISC_H
+#ifndef SDA_SYSTEM_STRINGS_H
+#define SDA_SYSTEM_STRINGS_H
 #include "../SDA_OS.h"
 
-uint8_t getKbdKey(); //returns 1 when key is ready, key is stored in global struct
-uint16_t sda_get_uptime();
-uint8_t getTimeUpdateFlag();
-void setTimeUpdateFlag();
-
-void showKeyboard();
-void hideKeyboard();
-
-void set_sda_counter(uint16_t val);
-uint16_t get_sda_counter();
-void sda_set_sleep_lock(uint8_t val);
-
-void pscg_error_callback(uint8_t *str, gr2context * c);
-
-void sda_clr_button_ev();
-
-gr2EventType sda_wrap_get_button(uint8_t num);
-void sda_wrap_clear_button(uint8_t num);
-void sda_store_buttons();
-
-void sda_draw_overlay_shadow(
-  int16_t overlayX1,
-  int16_t overlayY1,
-  int16_t overlayX2,
-  int16_t overlayY2,
-  gr2context *c
-);
-
-void sda_check_fs();
+uint32_t  sda_str_add(uint8_t *str, uint8_t *str2);
+void sda_setbuff(uint8_t * source, uint8_t * target);
+void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len);
+uint32_t  sda_strcp(uint8_t *in, uint8_t *out, uint32_t len);
+uint32_t sda_strlen(uint8_t * str);
+void sda_time_to_str(uint8_t * buff, uint32_t val);
 
 #endif

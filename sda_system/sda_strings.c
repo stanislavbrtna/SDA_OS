@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "sda_misc.h"
+#include "sda_strings.h"
 
 uint32_t sda_str_add(uint8_t *str, uint8_t *str2) {
   uint32_t i, n;
@@ -102,6 +102,54 @@ void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
   while(buff[0] == ' ') {
     for(uint16_t x = 0; x < len ; x++) {
       buff[x] = buff[x + 1];
+    }
+  }
+}
+
+void sda_time_to_str(uint8_t * buff, uint32_t val) {
+  uint8_t a = 0;
+
+  for (a = 0; a < 16; a++) {
+    buff[a] = ' ';
+  }
+
+  buff[16] = 0;
+
+  if (val < 60) {
+    buff[15] = 's';
+    buff[14] = val % 10 + 48;
+    buff[13] = (val) / 10 % 6 + 48;
+    buff[12] = ' ';
+  }
+
+  if (val > 60) {
+    buff[11] = 'm';
+    buff[10] = (val / 60) % 10 + 48;
+    buff[9] = (val / 60) / 10 % 6 + 48;
+  }
+
+  if (val > 3600) {
+    buff[8] = ' ';
+    buff[7] = 'h';
+
+    buff[6] = ((val / 3600) % 24) % 10 + 48;
+    buff[5] = ((val / 3600) % 24) / 10 % 6 + 48;
+
+  }
+
+  if (val > 3600 * 24) {
+    buff[4] = ' ';
+    buff[3] = 'd';
+
+
+    buff[2] = ((val / 3600) / 24) % 10 + 48;
+    buff[1] = ((val / 3600) / 24) / 10 % 10 + 48;
+    buff[0] = ((val / 3600) / 24) / 100 % 10 + 48;
+  }
+
+  while (buff[0] == ' ') {
+    for (a = 0; a < 16; a++) {
+      buff[a] = buff[a + 1];
     }
   }
 }
