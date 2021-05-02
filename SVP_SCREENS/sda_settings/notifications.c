@@ -22,7 +22,7 @@ SOFTWARE.
 
 #include "settings.h"
 
-uint16_t svp_opt_notifications(uint8_t init) {
+uint16_t sda_settings_notif_screen(uint8_t init) {
 
   // sound & notification settings
   static uint16_t optSoundMute;

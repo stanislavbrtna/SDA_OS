@@ -25,8 +25,12 @@ SOFTWARE.
 
 #include "../../SDA_OS.h"
 
-uint16_t svp_opt_info(uint8_t init);
-uint16_t svp_opt_debug(uint8_t init);
-uint16_t svp_opt_notifications(uint8_t init);
+uint16_t sda_settings_info_screen(uint8_t init);
+uint16_t sda_settings_debug_screen(uint8_t init);
+uint16_t sda_settings_notif_screen(uint8_t init);
+uint16_t sda_settings_time_screen(uint8_t init);
+uint16_t sda_settings_display_screen(uint8_t init);
+uint16_t sda_settings_color_screen(uint8_t init);
+uint16_t sda_settings_security_screen(uint8_t init);
 
 #endif

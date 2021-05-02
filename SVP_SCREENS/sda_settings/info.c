@@ -26,59 +26,10 @@ uint8_t uptime[20];
 uint8_t uptimeL[20];
 uint8_t uptimePWR[20];
 
-void timeToStr(uint8_t * buff, uint32_t val) {
-  uint8_t a = 0;
-
-  for (a = 0; a < 16; a++) {
-    buff[a] = ' ';
-  }
-
-  buff[16] = 0;
-
-  if (val < 60) {
-    buff[15] = 's';
-    buff[14] = val % 10 + 48;
-    buff[13] = (val) / 10 % 6 + 48;
-    buff[12] = ' ';
-  }
-
-  if (val > 60) {
-    buff[11] = 'm';
-    buff[10] = (val / 60) % 10 + 48;
-    buff[9] = (val / 60) / 10 % 6 + 48;
-  }
-
-  if (val > 3600) {
-    buff[8] = ' ';
-    buff[7] = 'h';
-
-    buff[6] = ((val / 3600) % 24) % 10 + 48;
-    buff[5] = ((val / 3600) % 24) / 10 % 6 + 48;
-
-  }
-
-  if (val > 3600 * 24) {
-    buff[4] = ' ';
-    buff[3] = 'd';
-
-
-    buff[2] = ((val / 3600) / 24) % 10 + 48;
-    buff[1] = ((val / 3600) / 24) / 10 % 10 + 48;
-    buff[0] = ((val / 3600) / 24) / 100 % 10 + 48;
-  }
-
-  while (buff[0] == ' ') {
-    for (a = 0; a < 16; a++) {
-      buff[a] = buff[a + 1];
-    }
-  }
-}
-
-
 uint8_t update_uptime() {
   static uint32_t uptime_prev;
   if (svpSGlobal.uptime != uptime_prev) {
-    timeToStr(uptime, svpSGlobal.uptime);
+    sda_time_to_str(uptime, svpSGlobal.uptime);
     uptime_prev = svpSGlobal.uptime;
     return 1;
   }
@@ -88,7 +39,7 @@ uint8_t update_uptime() {
 uint8_t update_uptimeL() {
   static uint32_t  uptime_prev;
   if (svpSGlobal.lcdOnTime != uptime_prev) {
-    timeToStr(uptimeL, svpSGlobal.lcdOnTime);
+    sda_time_to_str(uptimeL, svpSGlobal.lcdOnTime);
     uptime_prev = svpSGlobal.lcdOnTime;
     return 1;
   }
@@ -98,7 +49,7 @@ uint8_t update_uptimeL() {
 uint8_t update_uptimePWR() {
   static uint32_t  uptime_prev;
   if (svpSGlobal.battTime != uptime_prev) {
-    timeToStr(uptimePWR, svpSGlobal.battTime);
+    sda_time_to_str(uptimePWR, svpSGlobal.battTime);
     uptime_prev = svpSGlobal.battTime;
     return 1;
   }
@@ -106,7 +57,7 @@ uint8_t update_uptimePWR() {
 }
 
 
-uint16_t svp_opt_info(uint8_t init) {
+uint16_t sda_settings_info_screen(uint8_t init) {
   // system info screen
   static uint16_t infoBattStr;
   static uint16_t infoUptime;

@@ -22,7 +22,7 @@ SOFTWARE.
 
 #include "settings.h"
 
-uint16_t svp_opt_debug(uint8_t init) {
+uint16_t sda_settings_debug_screen(uint8_t init) {
 
   static uint16_t dbgUartEnable;
   static uint16_t dbgUartDisable;
