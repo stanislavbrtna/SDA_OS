@@ -41,7 +41,7 @@ uint16_t svp_load_file_to_svs(uint8_t * fname, svsVM *s) {
   return strNew((uint8_t *)"FILE INPUT ERROR", s);
 }
 
-uint16_t svp_store_svs_to_file( uint8_t * fname, uint8_t* str, svsVM *s) {
+uint16_t svp_store_svs_to_file(uint8_t * fname, uint8_t* str, svsVM *s) {
   svp_file fil;
   uint16_t i = 0;
   (void) (s);
