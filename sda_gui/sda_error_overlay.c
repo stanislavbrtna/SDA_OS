@@ -49,7 +49,6 @@ void svp_errSoftPrint(svsVM *s) {
 
 
 void sda_show_error_message(uint8_t * text) {
-  soft_error_flag = 1;
   error_overlay_scr = pscg_add_screen(&sda_sys_con);
   pscg_set_x_cell(error_overlay_scr, 16, &sda_sys_con);
   pscg_add_text(
@@ -67,6 +66,8 @@ void sda_show_error_message(uint8_t * text) {
     = pscg_add_button(6, 8, 10, 9, OVRL_OK, error_overlay_scr, &sda_sys_con);
   error_overlay = setOverlayScreen(error_overlay_scr, &sda_sys_con);
   setOverlayDestructor(sda_error_overlay_destructor);
+  soft_error_flag = 1;
+  printf("sda_show_error_message: %s\n", text);
 }
 
 void sda_error_overlay_handle() {
