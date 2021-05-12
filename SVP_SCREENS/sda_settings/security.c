@@ -59,6 +59,8 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     pscg_text_set_pwd(optSecuOld, 1, &sda_sys_con);
 
     optSecuBack = pscg_add_button(1, 10, 4, 11, SCR_BACK, optSecuScr, &sda_sys_con);
+
+    return optSecuScr;
   }
 
   if (init == 2) {
