@@ -70,7 +70,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
     result->value.val_u
       = LCD_MixColor(argS->arg[1].val_u, argS->arg[2].val_u, argS->arg[3].val_u);
 
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -79,10 +79,10 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Sets the draw area
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setArea", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 0;
-    argType[4] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
 
     if(sysExecTypeCheck(argS, argType, 4, s)) {
       return 0;
@@ -112,11 +112,11 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Draws rectangle
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawRect", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 0;
-    argType[4] = 0;
-    argType[5] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
+    argType[5] = SVS_TYPE_NUM;
 
     if(sysExecTypeCheck(argS, argType, 5, s)) {
       return 0;
@@ -143,11 +143,11 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Draws rectangle
   //#!Return: None
   if (sysFuncMatch(argS->callId, "fillRect", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 0;
-    argType[4] = 0;
-    argType[5] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
+    argType[5] = SVS_TYPE_NUM;
 
     if(sysExecTypeCheck(argS, argType, 5, s)) {
       return 0;
@@ -174,16 +174,16 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Draws circle
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawCircle", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 0;
-    argType[4] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
 
     if(sysExecTypeCheck(argS, argType, 4, s)) {
       return 0;
     }
 
-    if (getOverlayId() != 0){
+    if (getOverlayId() != 0) {
       return 1;
     }
 
@@ -203,16 +203,16 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Fills circle
   //#!Return: None
   if (sysFuncMatch(argS->callId, "fillCircle", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 0;
-    argType[4] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
 
     if(sysExecTypeCheck(argS, argType, 4, s)) {
       return 0;
     }
 
-    if (getOverlayId() != 0){
+    if (getOverlayId() != 0) {
       return 1;
     }
 
@@ -232,17 +232,17 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Draws line
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawLine", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 0;
-    argType[4] = 0;
-    argType[5] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
+    argType[5] = SVS_TYPE_NUM;
 
     if(sysExecTypeCheck(argS, argType, 5, s)) {
       return 0;
     }
 
-    if (getOverlayId() != 0){
+    if (getOverlayId() != 0) {
       return 1;
     }
 
@@ -263,16 +263,16 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Draws text
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawText", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 1;
-    argType[4] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_STR;
+    argType[4] = SVS_TYPE_NUM;
 
     if(sysExecTypeCheck(argS, argType, 4, s)) {
       return 0;
     }
 
-    if (getOverlayId() != 0){
+    if (getOverlayId() != 0) {
       return 1;
     }
 
@@ -292,14 +292,14 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Sets max width for next drawn text
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setTextFit", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
 
     if(sysExecTypeCheck(argS, argType, 2, s)) {
       return 0;
     }
 
-    if (getOverlayId() != 0){
+    if (getOverlayId() != 0) {
       return 1;
     }
 
@@ -314,13 +314,13 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Clears draw area with goven color
   //#!Return: None
   if (sysFuncMatch(argS->callId, "clearArea", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
 
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
 
-    if (getOverlayId() != 0){
+    if (getOverlayId() != 0) {
       return 1;
     }
 
@@ -335,16 +335,16 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Draws p16 image from the working directory. Supports upscaling.
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawImage", s)) {
-    argType[1] = 0; //x
-    argType[2] = 0; //y
-    argType[3] = 0; //width
-    argType[4] = 0; //height
-    argType[5] = 1; //fname
+    argType[1] = SVS_TYPE_NUM; //x
+    argType[2] = SVS_TYPE_NUM; //y
+    argType[3] = SVS_TYPE_NUM; //width
+    argType[4] = SVS_TYPE_NUM; //height
+    argType[5] = SVS_TYPE_STR; //fname
     if(sysExecTypeCheck(argS, argType, 5, s)) {
       return 0;
     }
 
-    if (getOverlayId() != 0){
+    if (getOverlayId() != 0) {
       return 1;
     }
 
@@ -363,15 +363,15 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Draws ppm image (To be removed).
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawPPM", s)) {
-    argType[1] = 0; //x
-    argType[2] = 0; //y
-    argType[3] = 0; //scale
-    argType[4] = 1; //fname
+    argType[1] = SVS_TYPE_NUM; //x
+    argType[2] = SVS_TYPE_NUM; //y
+    argType[3] = SVS_TYPE_NUM; //scale
+    argType[4] = SVS_TYPE_STR; //fname
     if(sysExecTypeCheck(argS, argType, 4, s)) {
       return 0;
     }
 
-    if (getOverlayId() != 0){
+    if (getOverlayId() != 0) {
       return 1;
     }
 
@@ -404,7 +404,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       result->value.val_s  = 0;
     }
 
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -419,7 +419,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
     }
     touchEv = EV_NONE;
 
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -435,7 +435,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 
     result->value.val_s  = touchY;
 
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -451,7 +451,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 
     result->value.val_s  = touchX;
 
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 

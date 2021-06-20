@@ -32,12 +32,12 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Sets overlay screen, returns overlay id.
   //#!Return: [num] Overlay id
   if (sysFuncMatch(argS->callId, "setScr", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = setOverlayScreen((uint16_t) argS->arg[1].val_s, &sda_app_con);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -50,7 +50,7 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     result->value.val_s =  getOverlayId();
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -64,7 +64,7 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
     destroyOverlay();
     setRedrawFlag();
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -73,10 +73,10 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Sets position and size of current overlay (in screen pixels).
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setXYXY", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 0;
-    argType[4] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 4, s)) {
       return 0;
     }
@@ -84,7 +84,7 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     setOverlayY1(argS->arg[2].val_s);
     setOverlayX2(argS->arg[3].val_s);
     setOverlayY2(argS->arg[4].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -99,7 +99,7 @@ uint8_t sda_overlay_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    setOverlayY2((uint16_t) argS->arg[1].val_s );
+    setOverlayY2((uint16_t) argS->arg[1].val_s);
     return 1;
   }
 
@@ -119,9 +119,9 @@ uint8_t sda_overlay_date_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Creates date overlay id, returns id
   //#!Return: [num]Date overlay id
   if (sysFuncMatch(argS->callId, "add", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
 
     if(sysExecTypeCheck(argS, argType, 3, s)) {
       return 0;
@@ -132,7 +132,7 @@ uint8_t sda_overlay_date_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       (uint16_t)argS->arg[2].val_s,
       (uint16_t)argS->arg[3].val_s
     );
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -141,12 +141,12 @@ uint8_t sda_overlay_date_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Updates date overlay
   //#!Return: None
   if (sysFuncMatch(argS->callId, "update", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     date_overlay_update((uint16_t)argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -155,12 +155,12 @@ uint8_t sda_overlay_date_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Gets if overlay ok button was pressed.
   //#!Return: 1 if overlay ok button was pressed
   if (sysFuncMatch(argS->callId, "getOk", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = date_overlay_get_ok((uint16_t) argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -169,12 +169,12 @@ uint8_t sda_overlay_date_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Clears ok flag from overlay
   //#!Return: None
   if (sysFuncMatch(argS->callId, "clrOk", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     date_overlay_clear_ok((uint16_t) argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -183,12 +183,12 @@ uint8_t sda_overlay_date_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Gets year from overlay with given id.
   //#!Return: [num]Year
   if (sysFuncMatch(argS->callId, "getYr", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = date_overlay_get_year((uint16_t)argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -197,12 +197,12 @@ uint8_t sda_overlay_date_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Gets day from overlay with given id.
   //#!Return: [num]Day
   if (sysFuncMatch(argS->callId, "getDay", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = date_overlay_get_day((uint16_t)argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -211,12 +211,12 @@ uint8_t sda_overlay_date_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Gets month from overlay with given id.
   //#!Return: [num]Month
   if (sysFuncMatch(argS->callId, "getMon", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = date_overlay_get_month((uint16_t)argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -238,14 +238,14 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   if (sysFuncMatch(argS->callId, "add", s)) {
 
     if (argS->usedup == 2) {
-      argType[1] = 0;
-      argType[2] = 0;
+      argType[1] = SVS_TYPE_NUM;
+      argType[2] = SVS_TYPE_NUM;
       if(sysExecTypeCheck(argS, argType, 2, s)) {
         return 0;
       }
 
       result->value.val_s = time_overlay_init();
-      result->type = 0;
+      result->type = SVS_TYPE_NUM;
       time_overlay_set_time(
         (uint16_t)result->value.val_s,
         (uint16_t)argS->arg[1].val_s,
@@ -257,7 +257,7 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         return 0;
       }
       result->value.val_s = time_overlay_init();
-      result->type = 0;
+      result->type = SVS_TYPE_NUM;
       return 1;
     }
   }
@@ -267,9 +267,9 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Sets time in overlay with given id.
   //#!Return: None
   if (sysFuncMatch(argS->callId, "set", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 3, s)) {
       return 0;
     }
@@ -285,13 +285,13 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.o.time.update([num]overlay_id);
   //#!Updates time overlay.
   //#!Return: None
-  if (sysFuncMatch(argS->callId,"update",s)){
-    argType[1]=0;
-    if(sysExecTypeCheck(argS, argType, 1,s)){
+  if (sysFuncMatch(argS->callId,"update", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
 
-    time_overlay_update((uint16_t) argS->arg[1].val_s );
+    time_overlay_update((uint16_t) argS->arg[1].val_s);
     return 1;
   }
 
@@ -300,13 +300,13 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Gets ok from time overlay.
   //#!Return: 1 if ok was pressed
   if (sysFuncMatch(argS->callId, "getOk", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
 
     result->value.val_s = time_overlay_get_ok((uint16_t)argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -315,12 +315,12 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns minutes from overlay.
   //#!Return: [num]Minutes
   if (sysFuncMatch(argS->callId, "getMin", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = time_overlay_get_minutes((uint16_t)argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -329,13 +329,13 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns hours from overlay.
   //#!Return: [num]Hours
   if (sysFuncMatch(argS->callId, "getHr", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
 
     result->value.val_s = time_overlay_get_hours((uint16_t)argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -344,7 +344,7 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Clears ok from time overlay
   //#!Return: None
   if (sysFuncMatch(argS->callId, "clrOk", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }

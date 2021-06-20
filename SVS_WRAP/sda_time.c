@@ -46,7 +46,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       svpSGlobal.min,
       svpSGlobal.sec
     );
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -60,7 +60,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     result->value.val_s = getTimeUpdateFlag();
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -74,7 +74,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     result->value.val_s = svpSGlobal.sec;
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -87,7 +87,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     result->value.val_s = svpSGlobal.min;
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -100,7 +100,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     result->value.val_s = svpSGlobal.hour;
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -113,7 +113,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     result->value.val_s = svpSGlobal.day;
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -126,7 +126,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     result->value.val_s = svpSGlobal.month;
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -139,7 +139,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     result->value.val_s = svpSGlobal.year;
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -152,7 +152,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     result->value.val_s = sda_get_uptime();
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -161,12 +161,12 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns timestamp of given time, works only for years 2007 and above.
   //#!Return: [num]Timestamp
   if (sysFuncMatch(argS->callId, "setTs", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 0;
-    argType[4] = 0;
-    argType[5] = 0;
-    argType[6] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
+    argType[5] = SVS_TYPE_NUM;
+    argType[6] = SVS_TYPE_NUM;
 
     if(sysExecTypeCheck(argS, argType, 6, s)) {
       return 0;
@@ -179,7 +179,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       argS->arg[5].val_s,
       argS->arg[6].val_s
     );
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -188,12 +188,12 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns seconds from given timestamp.
   //#!Return: [num]Seconds
   if (sysFuncMatch(argS->callId, "getTsSec", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = (int32_t)sdaTimeGetSeconds(argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -202,12 +202,12 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns seconds from given timestamp.
   //#!Return: [num]Minutes
   if (sysFuncMatch(argS->callId, "getTsMin", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = (int32_t)sdaTimeGetMinutes(argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -216,12 +216,12 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns seconds from given timestamp.
   //#!Return: [num]Seconds
   if (sysFuncMatch(argS->callId, "getTsHr", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = (int32_t)sdaTimeGetHours(argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -230,12 +230,12 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns seconds from given timestamp.
   //#!Return: [num]Days
   if (sysFuncMatch(argS->callId, "getTsDay", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = (int32_t)sdaTimeGetDays(argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -244,12 +244,12 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns weekday from given timestamp.
   //#!Return: [num]Weekday (starting with monday)
   if (sysFuncMatch(argS->callId, "getTsWkDay", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = (int32_t)sdaTimeGetWeekDay(argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -258,12 +258,12 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns seconds from given timestamp.
   //#!Return: [num]Months
   if (sysFuncMatch(argS->callId, "getTsMonth", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = (int32_t)sdaTimeGetMonths(argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -272,12 +272,12 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns seconds from given timestamp.
   //#!Return: [num]Years
   if (sysFuncMatch(argS->callId, "getTsYear", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
     result->value.val_s = (int32_t)sdaTimeGetYears(argS->arg[1].val_s);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -290,15 +290,15 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Sets the timer.
   //#!Return: none
   if (sysFuncMatch(argS->callId, "setTimer", s)) {
-    argType[1] = 0;
-    argType[2] = 1;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 2, s)) {
       return 0;
     }
 
     sdaSvmSetTimer(argS->arg[1].val_s, s->stringField + argS->arg[2].val_str);
 
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -311,7 +311,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     sdaSvmClearTimer();
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -330,8 +330,8 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns id of the new alarm.
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "setFixed", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 2, s)) {
       return 0;
     }
@@ -346,7 +346,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       0,
       argS->arg[2].val_s
     );
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -355,12 +355,12 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns id of the new alarm.
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "setRep", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 0;
-    argType[4] = 0;
-    argType[5] = 0;
-    argType[6] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
+    argType[5] = SVS_TYPE_NUM;
+    argType[6] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 6, s)) {
       return 0;
     }
@@ -375,7 +375,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       argS->arg[5].val_s, //month
       argS->arg[6].val_s  //param
     );
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -384,13 +384,13 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Returns if alarm was deleted.
   //#!Return: [num] 0 - Ok, 1 - Fail
   if (sysFuncMatch(argS->callId, "destroy", s)) {
-    argType[1] = 0;
+    argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
 
     result->value.val_s = removeAlarm(argS->arg[1].val_s, s->fName);
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -404,7 +404,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     result->value.val_s = getNotificationFlag();
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -418,7 +418,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     clearNotificationFlag();
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -432,7 +432,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     result->value.val_s = getNotificationId();
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -446,7 +446,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     result->value.val_s = getNotificationParam();
-    result->type = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
