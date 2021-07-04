@@ -125,16 +125,18 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
 
   pscg_set_x_cell(date_screen, 16, sda_current_con);
 
-  pscg_add_text(1, 0, 16, 1, OVRL_ENTER_DATE, date_screen, sda_current_con);
+  pscg_text_set_align(pscg_add_text(0, 0, 15, 1, OVRL_ENTER_DATE, date_screen, sda_current_con), GR2_ALIGN_CENTER, sda_current_con);
 
   set_year_string(date_year_name, date_year_val);
 
-  date_year_text = pscg_add_text(5, 1, 12, 2, date_year_name, date_screen, sda_current_con);
+  date_year_text = pscg_add_text(3, 1, 12, 2, date_year_name, date_screen, sda_current_con);
+  pscg_text_set_align(date_year_text, GR2_ALIGN_CENTER, sda_current_con);
   date_year_prev = pscg_add_button(1, 1, 3, 2, (uint8_t *)"<", date_screen, sda_current_con);
   date_year_next = pscg_add_button(13, 1, 15, 2, (uint8_t *)">", date_screen, sda_current_con);
 
   date_month_text
-    = pscg_add_text(5, 2, 12, 3, (uint8_t *)date_month_names[date_month_val], date_screen, sda_current_con);
+    = pscg_add_text(3, 2, 12, 3, (uint8_t *)date_month_names[date_month_val], date_screen, sda_current_con);
+  pscg_text_set_align(date_month_text, GR2_ALIGN_CENTER, sda_current_con);
   date_month_prev = pscg_add_button(1, 2, 3, 3, (uint8_t *)"<", date_screen, sda_current_con);
   date_month_next = pscg_add_button(13, 2, 15, 3, (uint8_t *)">", date_screen, sda_current_con);
 
@@ -147,6 +149,9 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
 
   date_ok = pscg_add_button(10, 10, 14, 11, OVRL_OK, date_screen, sda_current_con);
   date_cancel = pscg_add_button(2, 10, 6, 11, OVRL_CANCEL, date_screen, sda_current_con);
+
+  pscg_text_set_align(date_ok, GR2_ALIGN_CENTER, sda_current_con);
+  pscg_text_set_align(date_cancel, GR2_ALIGN_CENTER, sda_current_con);
 
   date_id = setOverlayScreen(date_screen, sda_current_con);
 

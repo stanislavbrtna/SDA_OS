@@ -179,6 +179,8 @@ void date_select_widget_load_days(
           sda_current_con
       );
 
+      pscg_text_set_align(d->buttons[y], GR2_ALIGN_CENTER, sda_current_con);
+
       if (d->useHighlight) {
         pscg_set_ghost(d->buttons[y], 1, sda_current_con);
       }
