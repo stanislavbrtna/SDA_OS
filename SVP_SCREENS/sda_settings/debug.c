@@ -37,6 +37,7 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
     dbgUartDisable = pscg_add_checkbox(1, 3, 7, 4, (uint8_t *)"Disabled", optDbgScr, &sda_sys_con);
 
     optDbgBack = pscg_add_button(1, 10, 4, 11, SCR_BACK, optDbgScr, &sda_sys_con);
+    pscg_text_set_align(optDbgBack, GR2_ALIGN_CENTER, &sda_sys_con);
 
     if (sda_dbg_serial_is_enabled()) {
       pscg_set_value(dbgUartEnable, 1, &sda_sys_con);

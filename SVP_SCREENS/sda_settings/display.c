@@ -63,6 +63,9 @@ uint16_t sda_settings_display_screen(uint8_t init) {
     optLcdBack = pscg_add_button(1, 10, 4, 11, SCR_BACK, optLcdScr, &sda_sys_con);
     optLcdStore = pscg_add_button(5, 10, 8, 11, SCR_STORE, optLcdScr, &sda_sys_con);
 
+    pscg_text_set_align(optLcdBack, GR2_ALIGN_CENTER, &sda_sys_con);
+    pscg_text_set_align(optLcdStore, GR2_ALIGN_CENTER, &sda_sys_con);
+
     return optLcdScr;
   }
 

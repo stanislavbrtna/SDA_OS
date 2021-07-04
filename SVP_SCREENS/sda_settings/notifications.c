@@ -39,6 +39,7 @@ uint16_t sda_settings_notif_screen(uint8_t init) {
     //pscg_add_text(1, 4, 10, 5, SCR_LED_NOTIFICATIONS, optNotifyScr);
 
     optSoundBack = pscg_add_button(1, 10, 4, 11, SCR_BACK, optNotifyScr, &sda_sys_con);
+    pscg_text_set_align(optSoundBack, GR2_ALIGN_CENTER, &sda_sys_con);
 
     pscg_set_value(optSoundMute, svpSGlobal.mute, &sda_sys_con);
 

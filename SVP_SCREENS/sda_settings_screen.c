@@ -67,14 +67,14 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
     // options screen init
     pscg_add_text(1, 1, 10, 2, SCR_SETTINGS, optScreen, &sda_sys_con);
 
-    optTimSel = pscg_add_button(1, 2, 8, 3, SCR_SET_DATE_TIME, optScreen, &sda_sys_con);
-    optLcdSel = pscg_add_button(1, 3, 8, 4, SCR_SET_DISPLAY, optScreen, &sda_sys_con);
-    optSound = pscg_add_button(1, 4, 8, 5, SCR_SETTINGS_SND, optScreen, &sda_sys_con);
-    optSecuSel = pscg_add_button(1, 5, 8, 6, SCR_SET_SECU, optScreen, &sda_sys_con);
-    optMntSel = pscg_add_button(1, 8, 8, 9, SD_UMOUNT, optScreen, &sda_sys_con);
-    optInfoSel = pscg_add_button(1, 10, 8, 11, SCR_ABOUT_SYSTEM, optScreen, &sda_sys_con);
+    optTimSel = pscg_add_button(1, 2, 9, 3, SCR_SET_DATE_TIME, optScreen, &sda_sys_con);
+    optLcdSel = pscg_add_button(1, 3, 9, 4, SCR_SET_DISPLAY, optScreen, &sda_sys_con);
+    optSound = pscg_add_button(1, 4, 9, 5, SCR_SETTINGS_SND, optScreen, &sda_sys_con);
+    optSecuSel = pscg_add_button(1, 5, 9, 6, SCR_SET_SECU, optScreen, &sda_sys_con);
+    optMntSel = pscg_add_button(1, 8, 9, 9, SD_UMOUNT, optScreen, &sda_sys_con);
+    optInfoSel = pscg_add_button(1, 10, 9, 11, SCR_ABOUT_SYSTEM, optScreen, &sda_sys_con);
 
-    optDbgSel = pscg_add_button(1, 6, 8, 7, (uint8_t *)"Debug", optScreen, &sda_sys_con);
+    optDbgSel = pscg_add_button(1, 6, 9, 7, (uint8_t *)"Debug", optScreen, &sda_sys_con);
 
     return optScreen;
   }

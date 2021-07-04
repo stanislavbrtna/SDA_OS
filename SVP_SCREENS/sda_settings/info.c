@@ -100,6 +100,7 @@ uint16_t sda_settings_info_screen(uint8_t init) {
     pscg_add_text(0, 9, 10, 12,(uint8_t *)"Compiled:\n"__DATE__" "__TIME__"\n(c) Standa", internalScr, &sda_sys_con);
 
     optInfoBack = pscg_add_button(1, 11, 5, 12, SCR_BACK, optInfoScr, &sda_sys_con);
+    pscg_text_set_align(optInfoBack, GR2_ALIGN_CENTER, &sda_sys_con);
     return optInfoScr;
   }
 

@@ -48,9 +48,12 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     optSecuNew = pscg_add_text(1, 6, 8, 7, (uint8_t *)"", optSecuScr, &sda_sys_con);
     optSecuOldBtn = pscg_add_button(8, 4, 9, 5, (uint8_t *)"*", optSecuScr, &sda_sys_con);
     optSecuNewBtn = pscg_add_button(8, 6, 9, 7, (uint8_t *)"*", optSecuScr, &sda_sys_con);
-    optSecuOk = pscg_add_button(1, 8, 4, 9, SCR_CHANGE_PASSWORD, optSecuScr, &sda_sys_con);
-    optSecuMsg = pscg_add_text(4, 8, 10, 9, SCR_WRONG_PASSWORD, optSecuScr, &sda_sys_con);
-    optSecuMsg2 = pscg_add_text(4, 8, 10, 9, SCR_PASSWORD_STORED, optSecuScr, &sda_sys_con);
+    optSecuOk = pscg_add_button(6, 9, 9, 10, SCR_CHANGE_PASSWORD, optSecuScr, &sda_sys_con);
+    optSecuMsg = pscg_add_text(1, 8, 9, 9, SCR_WRONG_PASSWORD, optSecuScr, &sda_sys_con);
+    optSecuMsg2 = pscg_add_text(1, 8, 9, 9, SCR_PASSWORD_STORED, optSecuScr, &sda_sys_con);
+
+    pscg_text_set_align(optSecuMsg, GR2_ALIGN_RIGHT, &sda_sys_con);
+    pscg_text_set_align(optSecuMsg2, GR2_ALIGN_RIGHT, &sda_sys_con);
 
     pscg_text_set_editable(optSecuNew, 1, &sda_sys_con);
     pscg_text_set_editable(optSecuOld, 1, &sda_sys_con);
@@ -58,7 +61,10 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     pscg_text_set_pwd(optSecuNew, 1, &sda_sys_con);
     pscg_text_set_pwd(optSecuOld, 1, &sda_sys_con);
 
-    optSecuBack = pscg_add_button(1, 10, 4, 11, SCR_BACK, optSecuScr, &sda_sys_con);
+    optSecuBack = pscg_add_button(1, 9, 4, 10, SCR_BACK, optSecuScr, &sda_sys_con);
+
+    pscg_text_set_align(optSecuBack, GR2_ALIGN_CENTER, &sda_sys_con);
+    pscg_text_set_align(optSecuOk, GR2_ALIGN_CENTER, &sda_sys_con);
 
     return optSecuScr;
   }

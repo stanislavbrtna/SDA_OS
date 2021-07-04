@@ -2,10 +2,10 @@
 #define STRINGS_EN_H
 
 #define SCR_SETTINGS                                  (uint8_t*)"Settings:"
-#define SCR_SET_DATE_TIME                             (uint8_t*)"Set time and date"
-#define SCR_SET_DISPLAY                               (uint8_t*)"Display settings"
-#define SCR_SETTINGS_SND                              (uint8_t*)"Notifications settings"
-#define SCR_SET_SECU                                  (uint8_t*)"Security settings"
+#define SCR_SET_DATE_TIME                             (uint8_t*)"Time and date"
+#define SCR_SET_DISPLAY                               (uint8_t*)"Display"
+#define SCR_SETTINGS_SND                              (uint8_t*)"Notifications"
+#define SCR_SET_SECU                                  (uint8_t*)"Security"
 #define SD_UMOUNT                                     (uint8_t*)"Unmount the SD card"
 #define SCR_ABOUT_SYSTEM                              (uint8_t*)"About"
 #define SCR_SET_TIME_SCR                              (uint8_t*)"Time and date settings:"
