@@ -1016,7 +1016,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!
   //#!    sys.gui.setTexFit([num]Id, [num]val);
-  //#!Sets automatic line-breaking on.
+  //#!Sets automatic line-breaking. Position of first line break is stored in the parameter.
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setTexFit", s)) {
     argType[1] = 0; // id

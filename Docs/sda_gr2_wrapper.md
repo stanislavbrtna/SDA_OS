@@ -214,7 +214,7 @@ Sets given editable text field as currently active.
 Return: None
 
     sys.gui.setTexFit([num]Id, [num]val);
-Sets automatic line-breaking on.
+Sets automatic line-breaking. Position of first line break is stored in the parameter.
 Return: None
 
     sys.gui.setTexEd([num]Id, [num]val);
