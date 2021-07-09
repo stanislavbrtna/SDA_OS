@@ -35,7 +35,7 @@ uint16_t sda_settings_display_screen(uint8_t init) {
   static uint16_t optLcdStore;
   static uint16_t optLcdCalib;
   static uint16_t optLcdBacklight;
-  static optColScr;
+  static uint16_t optColScr;
 
   if (init == 1) {
 
@@ -45,23 +45,27 @@ uint16_t sda_settings_display_screen(uint8_t init) {
     optLcdMins[0] = svpSGlobal.lcdShutdownTime + 48;
     pscg_add_text(1, 1, 10, 2, SCR_DISPLAY_SETTINGS_SCREEN, optLcdScr, &sda_sys_con);
 
-    optLcdCol = pscg_add_button(1, 2, 8, 3, SCR_COLOR_SETTINGS, optLcdScr, &sda_sys_con);
-    optLcdCalib = pscg_add_button(1, 3, 8, 4, SCR_LCD_CALIB, optLcdScr, &sda_sys_con);
+    optLcdCol = pscg_add_button(1, 2, 9, 3, SCR_COLOR_SETTINGS, optLcdScr, &sda_sys_con);
+    optLcdCalib = pscg_add_button(1, 3, 9, 4, SCR_LCD_CALIB, optLcdScr, &sda_sys_con);
+    svp_settings_set_spacing(optLcdCol);
+    svp_settings_set_spacing(optLcdCalib);
 
     pscg_add_text(1, 4, 8, 5, SCR_DISPLAY_SHDN_TIME, optLcdScr, &sda_sys_con);
-    optLcdNum = pscg_add_text(3, 5, 4, 6, optLcdMins, optLcdScr, &sda_sys_con);
-    pscg_add_text(4, 5, 6, 6, (uint8_t *)"min", optLcdScr, &sda_sys_con);
+    optLcdNum = pscg_add_text(4, 5, 5, 6, optLcdMins, optLcdScr, &sda_sys_con);
+    pscg_add_text(5, 5, 7, 6, (uint8_t *)"min", optLcdScr, &sda_sys_con);
 
     optLcdDecr = pscg_add_button(1, 5, 3, 6, (uint8_t *)"-", optLcdScr, &sda_sys_con);
 
-    optLcdIncr = pscg_add_button(6, 5, 8, 6, (uint8_t *)"+", optLcdScr, &sda_sys_con);
+    optLcdIncr = pscg_add_button(7, 5, 9, 6, (uint8_t *)"+", optLcdScr, &sda_sys_con);
+    pscg_text_set_align(optLcdDecr, GR2_ALIGN_CENTER, &sda_sys_con);
+    pscg_text_set_align(optLcdIncr, GR2_ALIGN_CENTER, &sda_sys_con);
 
     pscg_add_text(1, 6, 10, 7, SCR_BACKLIGHT, optLcdScr, &sda_sys_con);
 
-    optLcdBacklight = pscg_add_slider_h(1, 7, 8, 8, 255 - MIN_BACKLIGHT_VALUE, svpSGlobal.lcdBacklight, optLcdScr, &sda_sys_con);
+    optLcdBacklight = pscg_add_slider_h(1, 7, 9, 8, 255 - MIN_BACKLIGHT_VALUE, svpSGlobal.lcdBacklight, optLcdScr, &sda_sys_con);
 
     optLcdBack = pscg_add_button(1, 10, 4, 11, SCR_BACK, optLcdScr, &sda_sys_con);
-    optLcdStore = pscg_add_button(5, 10, 8, 11, SCR_STORE, optLcdScr, &sda_sys_con);
+    optLcdStore = pscg_add_button(6, 10, 9, 11, SCR_STORE, optLcdScr, &sda_sys_con);
 
     pscg_text_set_align(optLcdBack, GR2_ALIGN_CENTER, &sda_sys_con);
     pscg_text_set_align(optLcdStore, GR2_ALIGN_CENTER, &sda_sys_con);
@@ -164,19 +168,34 @@ uint16_t sda_settings_color_screen(uint8_t init) {
   if (init == 1) {
     //color screen
     pscg_add_text(1, 1, 10, 2, SCR_COLOR_SETTINGS_SCREEN, optColScr, &sda_sys_con);
-    b_border = pscg_add_cbutton(1, 2, 7, 3, SCR_BORDER_COLOR, optColScr, &sda_sys_con);
+    b_border = pscg_add_cbutton(2, 2, 8, 3, SCR_BORDER_COLOR, optColScr, &sda_sys_con);
+    pscg_text_set_align(b_border, GR2_ALIGN_CENTER, &sda_sys_con);
     pscg_set_value(b_border,pscg_get_border_color(&sda_sys_con), &sda_sys_con);
-    b_text = pscg_add_cbutton(1, 3, 7, 4, SCR_TEXT_COLOR, optColScr, &sda_sys_con);
+
+    b_text = pscg_add_cbutton(2, 3, 8, 4, SCR_TEXT_COLOR, optColScr, &sda_sys_con);
     pscg_set_value(b_text,pscg_get_text_color(&sda_sys_con), &sda_sys_con);
-    b_back = pscg_add_cbutton(1, 4, 7, 5, SCR_BG_COLOR, optColScr, &sda_sys_con);
+    pscg_text_set_align(b_text, GR2_ALIGN_CENTER, &sda_sys_con);
+
+    b_back = pscg_add_cbutton(2, 4, 8, 5, SCR_BG_COLOR, optColScr, &sda_sys_con);
     pscg_set_value(b_back,pscg_get_background_color(&sda_sys_con), &sda_sys_con);
-    b_fill = pscg_add_cbutton(1, 5, 7, 6, SCR_FILL_COLOR, optColScr, &sda_sys_con);
+    pscg_text_set_align(b_back, GR2_ALIGN_CENTER, &sda_sys_con);
+
+    b_fill = pscg_add_cbutton(2, 5, 8, 6, SCR_FILL_COLOR, optColScr, &sda_sys_con);
     pscg_set_value(b_fill, pscg_get_fill_color(&sda_sys_con), &sda_sys_con);
-    b_active = pscg_add_cbutton(1, 6, 7, 7, SCR_ACTIVE_COLOR, optColScr, &sda_sys_con);
+    pscg_text_set_align(b_fill, GR2_ALIGN_CENTER, &sda_sys_con);
+
+    b_active = pscg_add_cbutton(2, 6, 8, 7, SCR_ACTIVE_COLOR, optColScr, &sda_sys_con);
     pscg_set_value(b_active,pscg_get_active_color(&sda_sys_con), &sda_sys_con);
-    b_def = pscg_add_button(1, 8, 7, 9, SCR_SET_DEFAULTS, optColScr, &sda_sys_con);
-    b_store = pscg_add_button(5, 10, 8, 11, SCR_STORE, optColScr, &sda_sys_con);
+    pscg_text_set_align(b_active, GR2_ALIGN_CENTER, &sda_sys_con);
+
+    b_def = pscg_add_button(2, 8, 8, 9, SCR_SET_DEFAULTS, optColScr, &sda_sys_con);
+    pscg_text_set_align(b_def, GR2_ALIGN_CENTER, &sda_sys_con);
+
+    b_store = pscg_add_button(6, 10, 9, 11, SCR_STORE, optColScr, &sda_sys_con);
     optColBack = pscg_add_button(1, 10, 4, 11, SCR_BACK, optColScr, &sda_sys_con);
+
+    pscg_text_set_align(b_store, GR2_ALIGN_CENTER, &sda_sys_con);
+    pscg_text_set_align(optColBack, GR2_ALIGN_CENTER, &sda_sys_con);
 
     return optColScr;
   }

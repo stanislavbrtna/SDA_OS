@@ -23,6 +23,10 @@ SOFTWARE.
 #include "svp_screens.h"
 #include "sda_settings/settings.h"
 
+void svp_settings_set_spacing(uint16_t id) {
+  pscg_set_param(id, SDA_SETTINGS_SPACER, &sda_sys_con);
+}
+
 uint16_t svp_optScreen(uint8_t init, uint8_t top) {
   static uint16_t optScreen;
 
@@ -74,7 +78,17 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
     optMntSel = pscg_add_button(1, 8, 9, 9, SD_UMOUNT, optScreen, &sda_sys_con);
     optInfoSel = pscg_add_button(1, 10, 9, 11, SCR_ABOUT_SYSTEM, optScreen, &sda_sys_con);
 
+    svp_settings_set_spacing(optTimSel);
+    svp_settings_set_spacing(optLcdSel);
+    svp_settings_set_spacing(optSound);
+    svp_settings_set_spacing(optSecuSel);
+    svp_settings_set_spacing(optMntSel);
+    svp_settings_set_spacing(optInfoSel);
+
     optDbgSel = pscg_add_button(1, 6, 9, 7, (uint8_t *)"Debug", optScreen, &sda_sys_con);
+
+    svp_settings_set_spacing(optDbgSel);
+
 
     return optScreen;
   }

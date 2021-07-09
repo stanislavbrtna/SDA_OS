@@ -37,8 +37,8 @@ uint16_t sda_settings_time_screen(uint8_t init) {
 
     optTimeScr = pscg_add_screen(&sda_sys_con);
     pscg_add_text(1, 1, 10, 2, SCR_SET_TIME_SCR, optTimeScr, &sda_sys_con);
-    optTimeBtn = pscg_add_button(1, 2, 6, 3, SCR_SET_TIME, optTimeScr, &sda_sys_con);
-    optDateBtn = pscg_add_button(1, 3, 6, 4, SCR_SET_DATE, optTimeScr, &sda_sys_con);
+    optTimeBtn = pscg_add_button(2, 2, 7, 3, SCR_SET_TIME, optTimeScr, &sda_sys_con);
+    optDateBtn = pscg_add_button(2, 3, 7, 4, SCR_SET_DATE, optTimeScr, &sda_sys_con);
     optTimBack = pscg_add_button(1, 6, 4, 7, SCR_BACK, optTimeScr, &sda_sys_con);
     pscg_text_set_align(optTimBack, GR2_ALIGN_CENTER, &sda_sys_con);
 

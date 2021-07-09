@@ -33,4 +33,8 @@ uint16_t sda_settings_display_screen(uint8_t init);
 uint16_t sda_settings_color_screen(uint8_t init);
 uint16_t sda_settings_security_screen(uint8_t init);
 
+#define SDA_SETTINGS_SPACER 40
+
+void svp_settings_set_spacing(uint16_t id);
+
 #endif
