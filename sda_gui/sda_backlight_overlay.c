@@ -76,6 +76,7 @@ void batt_overlay_handle(uint8_t init) {
           batt_overlay,
           &sda_sys_con
       );
+    pscg_text_set_align(backlightButton, GR2_ALIGN_CENTER, &sda_sys_con);
     soundEnable
       = pscg_add_checkbox(
           1, 4, 10, 6,

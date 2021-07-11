@@ -78,7 +78,11 @@ uint16_t time_overlay_init() {
   tov_th1 = pscg_add_text(1, 2, 2, 3, tov_hr1_str, tov_screen, sda_current_con);
   tov_th2 = pscg_add_text(2, 2, 3, 3, tov_hr2_str, tov_screen, sda_current_con);
 
-  pscg_add_text(3, 2, 4, 3, (uint8_t *)":", tov_screen, sda_current_con);
+  pscg_text_set_align(
+    pscg_add_text(3, 2, 4, 3, (uint8_t *)":", tov_screen, sda_current_con),
+    GR2_ALIGN_CENTER,
+    sda_current_con
+  );
 
   tov_tm1 = pscg_add_text(4, 2, 5, 3, tov_min1_str, tov_screen, sda_current_con);
   tov_tm2 = pscg_add_text(5, 2, 6, 3, tov_min2_str, tov_screen, sda_current_con);
@@ -92,9 +96,14 @@ uint16_t time_overlay_init() {
   tov_ok = pscg_add_button(4, 5, 6, 6, OVRL_OK, tov_screen, sda_current_con);
   tov_cancel = pscg_add_button(1, 5, 3, 6, OVRL_CANCEL, tov_screen, sda_current_con);
 
+  pscg_text_set_align(tov_ok, GR2_ALIGN_CENTER, sda_current_con);
+  pscg_text_set_align(tov_cancel, GR2_ALIGN_CENTER, sda_current_con);
+
+  pscg_set_xscroll(tov_screen, -16, sda_current_con);
+
   tov_id = setOverlayScreen(tov_screen, sda_current_con);
 
-  setOverlayY2(288);
+  setOverlayY2(272);
   setOverlayDestructor(time_overlay_destructor);
 
   return tov_id;
