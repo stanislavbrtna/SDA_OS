@@ -109,7 +109,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     } else {
       pscg_set_visible(optSecuMsg2, 1, &sda_sys_con);
       pscg_set_visible(optSecuMsg, 0, &sda_sys_con);
-      svp_crypto_change_key(optSecuNewStr);
+      svp_crypto_change_password(optSecuNewStr);
       svp_crypto_lock();
     }
     optSecuNewStr[0] = 0;
