@@ -43,6 +43,7 @@
 #define SCR_SD_NOT_PRESENT_WARNING    (uint8_t *)"Nejprv připojte SD kartu"
 #define SCR_CARD_ERROR_REPEAT         (uint8_t *)"Chyba karty, opakovat?"
 #define SCR_SOUND_ON                  (uint8_t *)"Zvuk zapnut"
+#define SCR_KEY_ERROR_MSG             (uint8_t *)"Zadané heslo nesouhlasí se šifrovacím klíčem."
 
 #define OVRL_ENTER_TIME               (uint8_t *)"Zadejte Čas:"
 #define OVRL_OK                       (uint8_t *)"Ok"
@@ -70,6 +71,8 @@
 #define OVRL_ENTER_DATE               (uint8_t *)"Zvolte datum:"
 #define OVRL_SILENT                   (uint8_t *)"Tichý režim"
 #define OVRL_ERROR                    (uint8_t *)"Nastala chyba:"
+
+#define OVRL_ENTER_PASSWORD           (uint8_t *)"Zadejte heslo:"
 
 #define ASCR_CARD_ERROR               (uint8_t *)"Chyba Karty"
 #define ASCR_FILE_ERROR               (uint8_t *)"Chyba Souboru"

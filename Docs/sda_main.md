@@ -135,13 +135,53 @@ Return: [num]id
 Handles text input fields. Id is field id. Text is default text value.
 Return: [str] New modified text value
 #### Text obfuscation
-##### Unlock
+##### Unlock TBR
     sys.cr.unLock([str]password);
 Unlocks svp encryption
 Return: [num] 0 if success, 2 if error, 3 if locked
+##### Unlock overlay init
+    sys.cr.unLockInit();
+Creates unlock overlay
+Return: [num] overlay ID
+##### Unlock overlay update
+    sys.cr.update([num] ovId);
+Updates unlock overlay
+Return: None
+##### Unlock overlay get ok
+    sys.cr.getOk([num] ovId);
+Gets if unlock was successfull
+Return: [num] 1 - unlock success, 0 - unlock not successfull
+##### Unlock overlay clear ok
+    sys.cr.clrOk([num] ovId);
+Creates unlock overlay
+Return: None
+##### Get if is locked
+    sys.cr.getLock();
+Gets if crypto is unlocked
+Return: [num] 1 - crypto unlocked, 0 - crypto locked
+##### Loads password as a key
+    sys.cr.loadPass();
+Loads OS password as a key
+Return: None
+##### Load custom key string
+    sys.cr.loadStr([str]key);
+Loads custom string as a crypto key
+Return: 0 if success, 1 if error
+##### Load custom keyfile
+    sys.cr.loadKey([str]keyfile);
+Loads custom keyfile as a crypto key
+Return: 0 if success, 1 if error
+##### Load OS keyfile
+    sys.cr.loadKey([str]keyfile);
+Loads OS keyfile as a crypto key
+Return: 0 if success, 1 if error
+##### Generate keyfile
+    sys.cr.genKey([str]keyfile);
+Generates custom keyfile.
+Return: 0 if success, 1 if error
 ##### Lock
     sys.cr.lock();
-Locks svp encryption
+Locks sda encryption
 Return: None
 ##### Encrypt file
     sys.cr.encrypt([str]fname);

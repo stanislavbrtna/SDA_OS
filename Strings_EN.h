@@ -70,6 +70,8 @@
 #define OVRL_ENTER_DATE                               (uint8_t*)"Enter date:"
 #define OVRL_SILENT                                   (uint8_t*)"Silent mode"
 #define OVRL_ERROR                                    (uint8_t*)"Error occurred:"
+#define OVRL_ENTER_PASSWORD                           (uint8_t*)"Enter password:"
+#define SCR_KEY_ERROR_MSG                             (uint8_t*)"Given password doesn\'t match the device encryption key."
 
 #define ASCR_CARD_ERROR                               (uint8_t*)"Card error!"
 #define ASCR_FILE_ERROR                               (uint8_t*)"File error!"

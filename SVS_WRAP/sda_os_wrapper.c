@@ -595,7 +595,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!#### Text obfuscation
 
-  //#!##### Unlock
+  //#!##### Unlock TBR
   //#!    sys.cr.unLock([str]password);
   //#!Unlocks svp encryption
   //#!Return: [num] 0 if success, 2 if error, 3 if locked
@@ -609,9 +609,148 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Unlock overlay init
+  //#!    sys.cr.unLockInit();
+  //#!Creates unlock overlay
+  //#!Return: [num] overlay ID
+  if (sysFuncMatch(argS->callId, "unLockInit", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_u = password_overlay_init();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Unlock overlay update
+  //#!    sys.cr.update([num] ovId);
+  //#!Updates unlock overlay
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "update", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    password_overlay_update(argS->arg[1].val_u);
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Unlock overlay get ok
+  //#!    sys.cr.getOk([num] ovId);
+  //#!Gets if unlock was successfull
+  //#!Return: [num] 1 - unlock success, 0 - unlock not successfull
+  if (sysFuncMatch(argS->callId, "getOk", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    result->value.val_u = password_overlay_get_ok(argS->arg[1].val_u);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Unlock overlay clear ok
+  //#!    sys.cr.clrOk([num] ovId);
+  //#!Creates unlock overlay
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "clrOk", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    password_overlay_clear_ok(argS->arg[1].val_u);
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get if is locked
+  //#!    sys.cr.getLock();
+  //#!Gets if crypto is unlocked
+  //#!Return: [num] 1 - crypto unlocked, 0 - crypto locked
+  if (sysFuncMatch(argS->callId, "getLock", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_u = svp_crypto_get_lock();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Loads password as a key
+  //#!    sys.cr.loadPass();
+  //#!Loads OS password as a key
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "loadPass", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    svp_crypto_set_pass_as_key();
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Load custom key string
+  //#!    sys.cr.loadStr([str]key);
+  //#!Loads custom string as a crypto key
+  //#!Return: 0 if success, 1 if error
+  if (sysFuncMatch(argS->callId, "loadStr", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    result->value.val_u = svp_crypto_set_key(s->stringField + argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Load custom keyfile
+  //#!    sys.cr.loadKey([str]keyfile);
+  //#!Loads custom keyfile as a crypto key
+  //#!Return: 0 if success, 1 if error
+  if (sysFuncMatch(argS->callId, "loadKey", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    result->value.val_u = svp_crypto_load_keyfile(s->stringField + argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Load OS keyfile
+  //#!    sys.cr.loadKey([str]keyfile);
+  //#!Loads OS keyfile as a crypto key
+  //#!Return: 0 if success, 1 if error
+  if (sysFuncMatch(argS->callId, "loadKey", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_u = svp_crypto_load_os_keyfile();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Generate keyfile
+  //#!    sys.cr.genKey([str]keyfile);
+  //#!Generates custom keyfile.
+  //#!Return: 0 if success, 1 if error
+  if (sysFuncMatch(argS->callId, "genKey", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    result->value.val_u = svp_crypto_generate_keyfile(s->stringField + argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Lock
   //#!    sys.cr.lock();
-  //#!Locks svp encryption
+  //#!Locks sda encryption
   //#!Return: None
   if (sysFuncMatch(argS->callId, "lock", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {

@@ -48,9 +48,9 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     optSecuNew = pscg_add_text(1, 6, 8, 7, (uint8_t *)"", optSecuScr, &sda_sys_con);
     optSecuOldBtn = pscg_add_button(8, 4, 9, 5, (uint8_t *)"*", optSecuScr, &sda_sys_con);
     optSecuNewBtn = pscg_add_button(8, 6, 9, 7, (uint8_t *)"*", optSecuScr, &sda_sys_con);
-    optSecuOk = pscg_add_button(6, 9, 9, 10, SCR_CHANGE_PASSWORD, optSecuScr, &sda_sys_con);
-    optSecuMsg = pscg_add_text(1, 8, 9, 9, SCR_WRONG_PASSWORD, optSecuScr, &sda_sys_con);
-    optSecuMsg2 = pscg_add_text(1, 8, 9, 9, SCR_PASSWORD_STORED, optSecuScr, &sda_sys_con);
+    optSecuOk = pscg_add_button(6, 8, 9, 9, SCR_CHANGE_PASSWORD, optSecuScr, &sda_sys_con);
+    optSecuMsg = pscg_add_text(1, 7, 9, 8, SCR_WRONG_PASSWORD, optSecuScr, &sda_sys_con);
+    optSecuMsg2 = pscg_add_text(1, 7, 9, 8, SCR_PASSWORD_STORED, optSecuScr, &sda_sys_con);
 
     pscg_text_set_align(optSecuMsg, GR2_ALIGN_RIGHT, &sda_sys_con);
     pscg_text_set_align(optSecuMsg2, GR2_ALIGN_RIGHT, &sda_sys_con);
@@ -61,7 +61,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     pscg_text_set_pwd(optSecuNew, 1, &sda_sys_con);
     pscg_text_set_pwd(optSecuOld, 1, &sda_sys_con);
 
-    optSecuBack = pscg_add_button(1, 9, 4, 10, SCR_BACK, optSecuScr, &sda_sys_con);
+    optSecuBack = pscg_add_button(1, 8, 4, 9, SCR_BACK, optSecuScr, &sda_sys_con);
 
     pscg_text_set_align(optSecuBack, GR2_ALIGN_CENTER, &sda_sys_con);
     pscg_text_set_align(optSecuOk, GR2_ALIGN_CENTER, &sda_sys_con);
@@ -109,7 +109,15 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     } else {
       pscg_set_visible(optSecuMsg2, 1, &sda_sys_con);
       pscg_set_visible(optSecuMsg, 0, &sda_sys_con);
-      svp_crypto_change_password(optSecuNewStr);
+      if (svp_crypto_get_if_set_up()){
+        svp_crypto_change_password(optSecuNewStr);
+        svp_crypto_reencrypt_os_keyfile(optSecuOldStr, optSecuNewStr);
+      } else {
+        svp_crypto_change_password(optSecuNewStr);
+      }    
+      if (sda_crypto_keyfile_init_check() != 0) {
+        sda_show_error_message(SCR_KEY_ERROR_MSG);
+      }
       svp_crypto_lock();
     }
     optSecuNewStr[0] = 0;

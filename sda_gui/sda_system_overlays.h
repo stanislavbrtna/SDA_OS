@@ -68,4 +68,10 @@ void batt_overlay_handle(uint8_t init);
 uint8_t sda_batt_overlay_shown();
 void sda_batt_overlay_destructor();
 
+// password overlay
+uint16_t password_overlay_init();
+void password_overlay_update(uint16_t ovId);
+uint16_t password_overlay_get_ok(uint16_t ovId);
+void password_overlay_clear_ok(uint16_t ovId);
+
 #endif

@@ -26,5 +26,14 @@ uint8_t svp_crypto_stream_decrypt(uint8_t c);
 
 uint8_t svp_crypto_set_pass_as_key();
 
+uint8_t svp_crypto_get_lock();
+
+uint32_t crc32b(unsigned char *message);
+uint8_t svp_crypto_get_if_set_up();
+uint32_t svp_crypto_get_key_crc(uint8_t *fname);
+uint8_t svp_crypto_write_keyfile(uint8_t *fname, uint8_t *key);
+
 void svp_crypto_test();
+
+
 #endif
