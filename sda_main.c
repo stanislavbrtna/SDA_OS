@@ -104,6 +104,7 @@ static void set_init_struct_defaults() {
   svpSGlobal.lcdBacklight = 255;
 }
 
+
 static void sda_main_init() {
   printf(
       "SDA OS Init: %d:%d:%d %d.%d. %d\n",
@@ -172,6 +173,8 @@ static void sda_main_init() {
 
   sdaReloadAlarms();
   sdaPrintActiveAlarm();
+
+  sda_crypto_keyfile_boot_check();
 
   // screen redraw for the first time
   tick_lock = SDA_LOCK_LOCKED;

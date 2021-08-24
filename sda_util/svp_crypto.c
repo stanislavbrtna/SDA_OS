@@ -176,16 +176,50 @@ uint8_t svp_crypto_load_keyfile(uint8_t * fname) {
 }
 
 
+uint8_t svp_crypto_write_keyfile(uint8_t *fname, uint8_t *key) {
+  svp_file source;
+  uint32_t i;
+
+  if (!svp_crpyto_unlocked) {
+    return 1;
+  }
+
+  if(!svp_fopen_rw(&source, fname)) {
+    return 1;
+  }
+
+  svp_crypto_stream_init();
+
+  svp_fseek(&source, 0);
+  svp_truncate(&source);
+
+  i = 0;
+  while(i < KEY_LEN_MAX) {
+    svp_fwrite_u8(&source, svp_crypto_stream_encrypt(key[i]));
+    i++;
+  }
+
+  svp_fclose(&source);
+
+  return 0;
+}
+
+
 uint8_t svp_crypto_generate_keyfile(uint8_t * fname) {
   uint32_t i;
   uint8_t key[KEY_LEN_MAX];
+  uint8_t val = 0;
 
   if(svp_fexists(fname)) {
     return 1;
   }
 
   for(i = 0; (i < KEY_LEN_MAX - 1); i++) {
-    key[i] = 16; //(uint8_t) svp_random());
+    do {
+      val = (uint8_t) svp_random();
+    } while(val == 0);
+
+    key[i] = val;
   }
 
   svp_crypto_write_keyfile(fname, key);
@@ -353,34 +387,6 @@ uint32_t svp_crypto_get_key_crc(uint8_t *fname) {
 
 }
 
-uint8_t svp_crypto_write_keyfile(uint8_t *fname, uint8_t *key) {
-  svp_file source;
-  uint32_t i;
-
-  if (!svp_crpyto_unlocked) {
-    return 1;
-  }
-
-  if(!svp_fopen_rw(&source, fname)) {
-    return 1;
-  }
-
-  svp_crypto_stream_init();
-
-  svp_fseek(&source, 0);
-  svp_truncate(&source);
-
-  i = 0;
-  while(key[i] != 0) {
-    svp_fwrite_u8(&source, svp_crypto_stream_encrypt(key[i]));
-    i++;
-  }
-
-  svp_fclose(&source);
-
-  return 0;
-}
-
 uint8_t svp_crypto_reencrypt_key(uint8_t *fname, uint8_t *oldpass, uint8_t *newpass) {
   uint8_t new_key[KEY_LEN_MAX];
   svp_file source;
@@ -400,7 +406,8 @@ uint8_t svp_crypto_reencrypt_key(uint8_t *fname, uint8_t *oldpass, uint8_t *newp
   svp_printkey(new_key);
   printf("CRC: %u\n", crc32b(new_key));
 
-  svp_crypto_write_keyfile(fname, newpass);
+  svp_crypto_set_key(newpass);
+  svp_crypto_write_keyfile(fname, new_key);
 
   printf("crc after: %u\n",svp_crypto_get_key_crc(fname));
   
