@@ -135,10 +135,9 @@ uint16_t password_overlay_get_ok(uint16_t ovId) {
   if (povId != ovId || ovId == 0) {
     return 0;
   }
-  if (povDone == 1) {
-    return 1;
-  } else {
-    return 0;
+
+  if (povDone != 0) {
+    return povDone;
   }
 }
 

@@ -135,10 +135,6 @@ Return: [num]id
 Handles text input fields. Id is field id. Text is default text value.
 Return: [str] New modified text value
 #### Text obfuscation
-##### Unlock TBR
-    sys.cr.unLock([str]password);
-Unlocks svp encryption
-Return: [num] 0 if success, 2 if error, 3 if locked
 ##### Unlock overlay init
     sys.cr.unLockInit();
 Creates unlock overlay
@@ -150,7 +146,7 @@ Return: None
 ##### Unlock overlay get ok
     sys.cr.getOk([num] ovId);
 Gets if unlock was successfull
-Return: [num] 1 - unlock success, 0 - unlock not successfull
+Return: [num] 1 - unlock success, 2 - unlock canceled
 ##### Unlock overlay clear ok
     sys.cr.clrOk([num] ovId);
 Creates unlock overlay

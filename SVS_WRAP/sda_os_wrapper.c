@@ -595,26 +595,6 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!#### Text obfuscation
 
-  //#!##### Unlock TBR
-  //#!    sys.cr.unLock([str]password);
-  //#!Unlocks svp encryption
-  //#!Return: [num] 0 if success, 2 if error, 3 if locked
-  if (sysFuncMatch(argS->callId, "unLock", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    if (svp_crypto_get_lock() == 0) {
-      result->value.val_u = svp_crypto_unlock(s->stringField + argS->arg[1].val_str);
-      if (result->value.val_u == 0) {
-        sdaSvmSetCryptoUnlock(1);
-      }
-    } else {
-      result->value.val_u = 2;
-    }
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
 
   //#!##### Unlock overlay init
   //#!    sys.cr.unLockInit();
@@ -651,7 +631,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Unlock overlay get ok
   //#!    sys.cr.getOk([num] ovId);
   //#!Gets if unlock was successfull
-  //#!Return: [num] 1 - unlock success, 0 - unlock not successfull
+  //#!Return: [num] 1 - unlock success, 2 - unlock canceled
   if (sysFuncMatch(argS->callId, "getOk", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
