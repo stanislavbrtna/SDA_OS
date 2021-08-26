@@ -28,7 +28,7 @@ File description:
 #define SDA_CONSTS_H
 
 // version number string and version number,
-#define SDA_OS_VERSION "1.0.0.0B"
+#define SDA_OS_VERSION "1.0.0.0RC1"
 #define SDA_OS_VERSION_NUM 1000
 
 // shows where the screen is redrawn, works only in simulator, usefull for debug
