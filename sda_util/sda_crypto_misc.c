@@ -22,6 +22,7 @@ SOFTWARE.
 
 #include "sda_crypto_misc.h"
 
+
 void sda_crypto_keyfile_boot_check() {
   uint8_t dirbuf[258];
   sda_conf conffile;
@@ -60,6 +61,7 @@ void sda_crypto_keyfile_boot_check() {
   svp_chdir(dirbuf);
   return;
 }
+
 
 uint8_t sda_crypto_keyfile_init_check() {
   uint8_t dirbuf[258];
@@ -144,6 +146,7 @@ uint8_t svp_crypto_load_os_keyfile() {
     return 1;
   }
 }
+
 
 uint8_t svp_crypto_reencrypt_os_keyfile(uint8_t* oldpass, uint8_t* newpass) {
   uint8_t dirbuf[258];

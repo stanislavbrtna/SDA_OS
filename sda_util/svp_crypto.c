@@ -30,6 +30,11 @@ uint8_t svp_crypto_get_if_set_up() {
 }
 
 
+uint8_t svp_crypto_get_lock() {
+  return svp_crpyto_unlocked;
+}
+
+
 uint8_t svp_crypto_unlock(uint8_t * key) {
   static uint8_t fails;
   uint16_t i = 0;
@@ -66,11 +71,6 @@ uint8_t svp_crypto_unlock(uint8_t * key) {
 
 void svp_crypto_lock() {
   svp_crpyto_unlocked = 0;
-}
-
-
-uint8_t svp_crypto_get_lock() {
-  return svp_crpyto_unlocked;
 }
 
 
@@ -117,6 +117,7 @@ uint8_t svp_crypto_set_pass_as_key() {
   svp_crypto_set_key(svp_crypto_password);
 }
 
+
 uint8_t svp_crypto_load_key_to_str(uint8_t * fname, uint8_t* str) {
   svp_file source;
   uint8_t nextchar;
@@ -157,21 +158,8 @@ uint8_t svp_crypto_load_key_to_str(uint8_t * fname, uint8_t* str) {
       break;
     }
   }
+
   svp_fclose(&source);
-  return 0;
-}
-
-
-uint8_t svp_crypto_load_keyfile(uint8_t * fname) {
-  uint8_t new_key[KEY_LEN_MAX];
-
-  if (!svp_crpyto_unlocked) {
-    return 1;
-  }
-
-  svp_crypto_load_key_to_str(fname, new_key);
-  svp_crypto_set_key(new_key);
-
   return 0;
 }
 
@@ -200,6 +188,20 @@ uint8_t svp_crypto_write_keyfile(uint8_t *fname, uint8_t *key) {
   }
 
   svp_fclose(&source);
+
+  return 0;
+}
+
+
+uint8_t svp_crypto_load_keyfile(uint8_t * fname) {
+  uint8_t new_key[KEY_LEN_MAX];
+
+  if (!svp_crpyto_unlocked) {
+    return 1;
+  }
+
+  svp_crypto_load_key_to_str(fname, new_key);
+  svp_crypto_set_key(new_key);
 
   return 0;
 }
@@ -391,26 +393,24 @@ uint8_t svp_crypto_reencrypt_key(uint8_t *fname, uint8_t *oldpass, uint8_t *newp
   uint8_t new_key[KEY_LEN_MAX];
   svp_file source;
   uint32_t i;
+  uint32_t crc;
 
   if (!svp_crpyto_unlocked) {
     return 1;
   }
 
   svp_crypto_set_key(oldpass);
-  printf("password: %s\n", oldpass);
-
   svp_crypto_load_key_to_str(fname, new_key);
 
   // write & encrypt
-  printf("key in cleartext:\n");
-  svp_printkey(new_key);
-  printf("CRC: %u\n", crc32b(new_key));
-
   svp_crypto_set_key(newpass);
   svp_crypto_write_keyfile(fname, new_key);
 
-  printf("crc after: %u\n",svp_crypto_get_key_crc(fname));
-  
+  crc = svp_crypto_get_key_crc(fname);
+  if (crc != crc32b(new_key)) {
+    printf("Error: CRC does not match! CRC before: %u, after : %u\n", crc32b(new_key), crc);
+  }
+
   return 0;
 }
 
@@ -423,6 +423,7 @@ void svp_printkey(uint8_t *key) {
     i++;
   }
 }
+
 
 void svp_crypto_test() {
   puts("crypto test begin");
