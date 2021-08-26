@@ -68,6 +68,16 @@ uint16_t password_overlay_init() {
   setOverlayDestructor(time_overlay_destructor);
 
   pscg_activate_text(passInput, &sda_sys_con);
+
+  if (svp_crypto_get_if_set_up() == 0) {
+    pscg_text_deactivate(&sda_sys_con);
+    kbdInit = 7;
+    pscg_set_grayout(passInput, 1, &sda_sys_con);
+    pscg_set_grayout(okButton, 1, &sda_sys_con);
+    pscg_set_grayout(passButton, 1, &sda_sys_con);
+    pscg_text_set_pwd(passInput, 0, &sda_sys_con);
+    pscg_set_str(passInput, OVRL_SEC_NOT_SET_UP, &sda_sys_con);
+  }
   
   povDone = 0;
 
@@ -76,7 +86,7 @@ uint16_t password_overlay_init() {
 
 void password_overlay_update(uint16_t ovId) {
 
-  if (povId != ovId) {
+  if (povId != ovId || ovId == 0) {
     return;
   }
 
@@ -122,7 +132,7 @@ void password_overlay_update(uint16_t ovId) {
 
 
 uint16_t password_overlay_get_ok(uint16_t ovId) {
-  if (povId != ovId) {
+  if (povId != ovId || ovId == 0) {
     return 0;
   }
   if (povDone == 1) {

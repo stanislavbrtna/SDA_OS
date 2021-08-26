@@ -133,6 +133,7 @@ typedef struct {
   uint8_t openCsvUsed;
   uint8_t lcdOffButtons;
   uint8_t launchFromCWD;
+  uint8_t cryptoUnlocked;
 } sdaSvmMetadata;
 
 #endif

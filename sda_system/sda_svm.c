@@ -366,6 +366,15 @@ uint8_t sdaSvmLoadApp(uint8_t *fname, uint8_t *name, uint8_t mode) {
 }
 
 
+void sdaSvmSetCryptoUnlock(uint8_t unlock) {
+  svmMeta.cryptoUnlocked = unlock;
+}
+
+uint8_t sdaSvmGetCryptoUnlock() {
+  return svmMeta.cryptoUnlocked;
+}
+
+
 uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   uint8_t cacheBuffer[256];
   uint8_t numbuff[25];
@@ -431,6 +440,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   sda_strcp((uint8_t *)"DATA", svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
   svmMeta.lcdOffButtons = 0;
   svmMeta.launchFromCWD = 0;
+  svmMeta.cryptoUnlocked = 0;
   wrap_set_lcdOffButtons(0);
 
   // move to DATA
@@ -471,7 +481,9 @@ void sdaSvmCloseApp() {
       }
     }
   }
-  svp_crypto_lock();
+  if (svmMeta.cryptoUnlocked) {
+    svp_crypto_lock();
+  }
   svmInValidate(svmMeta.id);
   sda_set_sleep_lock(0);
   svpSGlobal.kbdVisible = 0;

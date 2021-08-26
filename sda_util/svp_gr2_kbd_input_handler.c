@@ -83,7 +83,7 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
     }
   }
 
-  if (pscg_get_value(input_id, &sda_sys_con)) {
+  if (pscg_get_value(input_id, &sda_sys_con) && !pscg_get_grayout(input_id, &sda_sys_con)) {
     // set the cursor position
     if (((pscg_get_event(input_id, &sda_sys_con) == EV_PRESSED)
         || (pscg_get_event(input_id, &sda_sys_con) == EV_HOLD))
@@ -148,7 +148,7 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
 
       }
     }
-    if (pscg_get_str(input_id, &sda_sys_con) != str) {
+    if (pscg_get_str(input_id, &sda_sys_con) != str && !pscg_get_grayout(input_id, &sda_sys_con)) {
       pscg_set_str(input_id, str, &sda_sys_con); // still set/update
     }
     return 0;

@@ -159,3 +159,26 @@ uint8_t svp_crypto_reencrypt_os_keyfile(uint8_t* oldpass, uint8_t* newpass) {
   svp_chdir(dirbuf);
 }
 
+uint8_t svp_crypto_reset_os_keyfile() {
+  uint8_t dirbuf[258];
+  uint32_t fileCRC = 0;
+  sda_conf conffile;
+
+  svp_getcwd(dirbuf, 256);
+  svp_switch_main_dir();
+
+  svp_unlink("sys_keyfile.svk");
+
+  if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
+    printf("Failed to open cfg file\n");
+  }
+
+  puts("Reseting OS keyfile!");
+  svp_crypto_generate_keyfile("sys_keyfile.svk");
+  fileCRC = svp_crypto_get_key_crc("sys_keyfile.svk");
+  printf("init_check CRC: %u\n", fileCRC);
+
+  sda_conf_key_write_i32(&conffile, (uint8_t *)"key_crc", fileCRC);
+
+  svp_chdir(dirbuf);
+}

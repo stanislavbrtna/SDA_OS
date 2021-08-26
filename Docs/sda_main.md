@@ -142,7 +142,7 @@ Return: [num] 0 if success, 2 if error, 3 if locked
 ##### Unlock overlay init
     sys.cr.unLockInit();
 Creates unlock overlay
-Return: [num] overlay ID
+Return: [num] overlay ID, 0 when error
 ##### Unlock overlay update
     sys.cr.update([num] ovId);
 Updates unlock overlay
@@ -162,7 +162,7 @@ Return: [num] 1 - crypto unlocked, 0 - crypto locked
 ##### Loads password as a key
     sys.cr.loadPass();
 Loads OS password as a key
-Return: None
+Return: 0 if success, 1 if error
 ##### Load custom key string
     sys.cr.loadStr([str]key);
 Loads custom string as a crypto key
@@ -172,7 +172,7 @@ Return: 0 if success, 1 if error
 Loads custom keyfile as a crypto key
 Return: 0 if success, 1 if error
 ##### Load OS keyfile
-    sys.cr.loadKey([str]keyfile);
+    sys.cr.loadOSKey();
 Loads OS keyfile as a crypto key
 Return: 0 if success, 1 if error
 ##### Generate keyfile

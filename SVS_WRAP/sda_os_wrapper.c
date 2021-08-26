@@ -604,7 +604,14 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    result->value.val_u = svp_crypto_unlock(s->stringField + argS->arg[1].val_str);
+    if (svp_crypto_get_lock() == 0) {
+      result->value.val_u = svp_crypto_unlock(s->stringField + argS->arg[1].val_str);
+      if (result->value.val_u == 0) {
+        sdaSvmSetCryptoUnlock(1);
+      }
+    } else {
+      result->value.val_u = 2;
+    }
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -612,12 +619,16 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Unlock overlay init
   //#!    sys.cr.unLockInit();
   //#!Creates unlock overlay
-  //#!Return: [num] overlay ID
+  //#!Return: [num] overlay ID, 0 when error
   if (sysFuncMatch(argS->callId, "unLockInit", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_u = password_overlay_init();
+    if (svp_crypto_get_lock() == 0) {
+      result->value.val_u = password_overlay_init();
+    } else {
+      result->value.val_u = 0;
+    }
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -647,6 +658,9 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     result->value.val_u = password_overlay_get_ok(argS->arg[1].val_u);
+    if (result->value.val_u == 1) {
+      sdaSvmSetCryptoUnlock(1);
+    }
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -674,7 +688,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_u = svp_crypto_get_lock();
+    result->value.val_u = sdaSvmGetCryptoUnlock() && svp_crypto_get_lock();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -682,13 +696,18 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Loads password as a key
   //#!    sys.cr.loadPass();
   //#!Loads OS password as a key
-  //#!Return: None
+  //#!Return: 0 if success, 1 if error
   if (sysFuncMatch(argS->callId, "loadPass", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    svp_crypto_set_pass_as_key();
-    result->value.val_u = 0;
+    if (sdaSvmGetCryptoUnlock()) {
+      svp_crypto_set_pass_as_key();
+      result->value.val_u = 0;
+    } else {
+      result->value.val_u = 1;
+    }
+    
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -702,7 +721,11 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    result->value.val_u = svp_crypto_set_key(s->stringField + argS->arg[1].val_str);
+    if (sdaSvmGetCryptoUnlock()) {
+      result->value.val_u = svp_crypto_set_key(s->stringField + argS->arg[1].val_str);
+    } else {
+      result->value.val_u = 1;
+    }
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -716,20 +739,28 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    result->value.val_u = svp_crypto_load_keyfile(s->stringField + argS->arg[1].val_str);
+    if (sdaSvmGetCryptoUnlock()) {
+      result->value.val_u = svp_crypto_load_keyfile(s->stringField + argS->arg[1].val_str);
+    } else {
+      result->value.val_u = 1;
+    }
     result->type = SVS_TYPE_NUM;
     return 1;
   }
 
   //#!##### Load OS keyfile
-  //#!    sys.cr.loadKey([str]keyfile);
+  //#!    sys.cr.loadOSKey();
   //#!Loads OS keyfile as a crypto key
   //#!Return: 0 if success, 1 if error
-  if (sysFuncMatch(argS->callId, "loadKey", s)) {
+  if (sysFuncMatch(argS->callId, "loadOSKey", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_u = svp_crypto_load_os_keyfile();
+    if (sdaSvmGetCryptoUnlock()) {
+      result->value.val_u = svp_crypto_load_os_keyfile();
+    } else {
+      result->value.val_u = 1;
+    }
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -743,7 +774,11 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    result->value.val_u = svp_crypto_generate_keyfile(s->stringField + argS->arg[1].val_str);
+    if (sdaSvmGetCryptoUnlock()) {
+      result->value.val_u = svp_crypto_generate_keyfile(s->stringField + argS->arg[1].val_str);
+    } else {
+      result->value.val_u = 1;
+    }
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -756,7 +791,10 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    svp_crypto_lock();
+    if (sdaSvmGetCryptoUnlock()) {
+      sdaSvmSetCryptoUnlock(0);
+      svp_crypto_lock();
+    }
     return 1;
   }
 
@@ -769,7 +807,11 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    result->value.val_u = svp_encrypt(s->stringField + argS->arg[1].val_str);
+    if (sdaSvmGetCryptoUnlock()) {
+      result->value.val_u = svp_encrypt(s->stringField + argS->arg[1].val_str);
+    } else {
+      result->value.val_u = 1;
+    }
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -783,7 +825,11 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    result->value.val_u = svp_decrypt(s->stringField + argS->arg[1].val_str);
+    if (sdaSvmGetCryptoUnlock()) {
+      result->value.val_u = svp_decrypt(s->stringField + argS->arg[1].val_str);
+    } else {
+      result->value.val_u = 1;
+    }
     result->type = SVS_TYPE_NUM;
     return 1;
   }

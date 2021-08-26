@@ -29,12 +29,14 @@ uint16_t sda_settings_security_screen(uint8_t init) {
 
   static uint16_t optSecuOldBtn;
   static uint16_t optSecuNewBtn;
+  static uint16_t resetBtn;
 
   static uint8_t optSecuNewStr[33];
   static uint8_t optSecuOldStr[33];
   static uint16_t optSecuOk;
   static uint16_t optSecuMsg;
   static uint16_t optSecuMsg2;
+  static uint16_t optSecuMsg3;
   uint16_t optSecuScr;
 
   if (init == 1) {
@@ -51,6 +53,13 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     optSecuOk = pscg_add_button(6, 8, 9, 9, SCR_CHANGE_PASSWORD, optSecuScr, &sda_sys_con);
     optSecuMsg = pscg_add_text(1, 7, 9, 8, SCR_WRONG_PASSWORD, optSecuScr, &sda_sys_con);
     optSecuMsg2 = pscg_add_text(1, 7, 9, 8, SCR_PASSWORD_STORED, optSecuScr, &sda_sys_con);
+    optSecuMsg3 = pscg_add_text(0, 7, 10, 8, SCR_KEY_MISMATCH, optSecuScr, &sda_sys_con);
+
+    pscg_text_set_align(optSecuMsg3, GR2_ALIGN_CENTER, &sda_sys_con);
+
+    resetBtn = pscg_add_button(1, 10, 9, 11, SCR_RESET_KEY, optSecuScr, &sda_sys_con);
+    pscg_text_set_align(resetBtn, GR2_ALIGN_CENTER, &sda_sys_con);
+    pscg_set_visible(resetBtn, 0, &sda_sys_con);
 
     pscg_text_set_align(optSecuMsg, GR2_ALIGN_RIGHT, &sda_sys_con);
     pscg_text_set_align(optSecuMsg2, GR2_ALIGN_RIGHT, &sda_sys_con);
@@ -74,6 +83,14 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     optSecuOldStr[0] = 0;
     pscg_set_visible(optSecuMsg, 0, &sda_sys_con);
     pscg_set_visible(optSecuMsg2, 0, &sda_sys_con);
+    pscg_set_visible(optSecuMsg3, 0, &sda_sys_con);
+
+    if (svp_crypto_get_if_set_up() == 0) {
+      pscg_set_grayout(optSecuOld, 1, &sda_sys_con);
+    } else {
+      pscg_set_grayout(optSecuOld, 0, &sda_sys_con);
+    }
+
     return 0;
   }
 
@@ -94,9 +111,19 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     pscg_text_set_pwd(optSecuOld, 1 - pscg_text_get_pwd(optSecuOld, &sda_sys_con), &sda_sys_con);
   }
 
+  if (gr2_clicked(resetBtn, &sda_sys_con)) {
+    svp_crypto_reset_os_keyfile();
+    pscg_set_visible(resetBtn, 0, &sda_sys_con);
+    pscg_set_visible(optSecuMsg3, 0, &sda_sys_con);
+  }
+
   if (gr2_clicked(optSecuOk, &sda_sys_con)) {
     uint8_t retval;
-    retval = svp_crypto_unlock(optSecuOldStr);
+    if (svp_crypto_get_if_set_up() == 0) {
+      retval = svp_crypto_unlock("def");
+    } else {
+      retval = svp_crypto_unlock(optSecuOldStr);
+    }
     if (retval != 0) {
       if (retval == 2) {
         pscg_set_visible(optSecuMsg, 1, &sda_sys_con);
@@ -107,6 +134,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
         pscg_set_grayout(optSecuOld, 1, &sda_sys_con);
       }
     } else {
+      pscg_set_grayout(optSecuOld, 0, &sda_sys_con);
       pscg_set_visible(optSecuMsg2, 1, &sda_sys_con);
       pscg_set_visible(optSecuMsg, 0, &sda_sys_con);
       if (svp_crypto_get_if_set_up()){
@@ -117,6 +145,8 @@ uint16_t sda_settings_security_screen(uint8_t init) {
       }    
       if (sda_crypto_keyfile_init_check() != 0) {
         sda_show_error_message(SCR_KEY_ERROR_MSG);
+        pscg_set_visible(optSecuMsg3, 1, &sda_sys_con);
+        pscg_set_visible(resetBtn, 1, &sda_sys_con);
       }
       svp_crypto_lock();
     }

@@ -30,5 +30,6 @@ uint8_t sda_crypto_keyfile_init_check();
 
 uint8_t svp_crypto_load_os_keyfile();
 uint8_t svp_crypto_reencrypt_os_keyfile(uint8_t* oldpass, uint8_t* newpass);
+uint8_t svp_crypto_reset_os_keyfile();
 
 #endif

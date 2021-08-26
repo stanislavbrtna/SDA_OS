@@ -389,6 +389,7 @@ uint32_t svp_crypto_get_key_crc(uint8_t *fname) {
 
 }
 
+
 uint8_t svp_crypto_reencrypt_key(uint8_t *fname, uint8_t *oldpass, uint8_t *newpass) {
   uint8_t new_key[KEY_LEN_MAX];
   svp_file source;

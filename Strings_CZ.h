@@ -32,8 +32,10 @@
 #define SCR_OLD_PASSWORD              (uint8_t *)"Původní heslo:"
 #define SCR_NEW_PASSWORD              (uint8_t *)"Nové heslo:"
 #define SCR_CHANGE_PASSWORD           (uint8_t *)"Změnit"
+#define SCR_RESET_KEY                 (uint8_t *)"Resetovat klíč"
 #define SCR_WRONG_PASSWORD            (uint8_t *)"Špatné heslo!"
 #define SCR_PASSWORD_STORED           (uint8_t *)"Heslo uloženo."
+#define SCR_KEY_MISMATCH              (uint8_t *)"Heslo nesedí, resetujte klíč."
 #define SCR_OS_VERSION                (uint8_t *)"SDA OS verze "
 #define SCR_BATT_VOLTAGE              (uint8_t *)"Napětí baterie:"
 #define SCR_UPTIME                    (uint8_t *)"Doba běhu:"
@@ -71,6 +73,7 @@
 #define OVRL_ENTER_DATE               (uint8_t *)"Zvolte datum:"
 #define OVRL_SILENT                   (uint8_t *)"Tichý režim"
 #define OVRL_ERROR                    (uint8_t *)"Nastala chyba:"
+#define OVRL_SEC_NOT_SET_UP           (uint8_t *)"Nenastaveno!"
 
 #define OVRL_ENTER_PASSWORD           (uint8_t *)"Zadejte heslo:"
 
