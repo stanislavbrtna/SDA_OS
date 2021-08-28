@@ -156,6 +156,19 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get uptime in miliseconds
+  //#!    sys.time.getUptimeMs();
+  //#!Returns system milisecond uptime.
+  //#!Return: [num]Uptime(miliseconds)
+  if (sysFuncMatch(argS->callId, "getUptimeMs", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_s = (int32_t) svpSGlobal.uptimeMs;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Get new timestamp
   //#!    sys.time.setTs([num]Year, [num]Month, [num]Day, [num]Hour, [num]Min, [num]Sec);
   //#!Returns timestamp of given time, works only for years 2007 and above.

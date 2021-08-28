@@ -38,6 +38,10 @@ Return: [num]Year
     sys.time.getUptime();
 Returns system uptime.
 Return: [num]Uptime(secs)
+##### Get uptime in miliseconds
+    sys.time.getUptimeMs();
+Returns system milisecond uptime.
+Return: [num]Uptime(miliseconds)
 ##### Get new timestamp
     sys.time.setTs([num]Year, [num]Month, [num]Day, [num]Hour, [num]Min, [num]Sec);
 Returns timestamp of given time, works only for years 2007 and above.
