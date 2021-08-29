@@ -84,7 +84,7 @@ typedef struct {
   volatile uint32_t uptime;
   volatile uint32_t lcdOnTime;
   volatile uint32_t battTime;
-  volatile uint32_t uptimeMs;
+  volatile uint64_t uptimeMs;
 
   //sound
   volatile uint8_t mute;
@@ -122,18 +122,19 @@ typedef struct {
 typedef struct {
   uint16_t id;
   uint16_t parentId;
-  uint8_t name[APP_NAME_LEN];
-  uint8_t currentWorkDir[APP_NAME_LEN];
+  uint8_t  name[APP_NAME_LEN];
+  uint8_t  currentWorkDir[APP_NAME_LEN];
   uint16_t screen;
-  uint8_t openFileName[64];
-  uint8_t openFileUsed;
-  uint8_t openConfName[64];
-  uint8_t openConfUsed;
-  uint8_t openCsvName[64];
-  uint8_t openCsvUsed;
-  uint8_t lcdOffButtons;
-  uint8_t launchFromCWD;
-  uint8_t cryptoUnlocked;
+  uint8_t  openFileName[64];
+  uint8_t  openFileUsed;
+  uint8_t  openConfName[64];
+  uint8_t  openConfUsed;
+  uint8_t  openCsvName[64];
+  uint8_t  openCsvUsed;
+  uint8_t  lcdOffButtons;
+  uint8_t  launchFromCWD;
+  uint8_t  cryptoUnlocked;
+  uint64_t loadUptime;
 } sdaSvmMetadata;
 
 #endif

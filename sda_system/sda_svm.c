@@ -308,6 +308,10 @@ void svmSetLaunchCWDflag(uint8_t val) {
   svmMeta.launchFromCWD = val;
 }
 
+uint64_t svmGetAppUptime() {
+  return svmMeta.loadUptime;
+}
+
 
 static uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
   uint8_t dirbuf[258];
@@ -441,6 +445,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   svmMeta.lcdOffButtons = 0;
   svmMeta.launchFromCWD = 0;
   svmMeta.cryptoUnlocked = 0;
+  svmMeta.loadUptime = svpSGlobal.uptimeMs;
   wrap_set_lcdOffButtons(0);
 
   // move to DATA

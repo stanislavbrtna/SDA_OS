@@ -157,14 +157,14 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get uptime in miliseconds
-  //#!    sys.time.getUptimeMs();
-  //#!Returns system milisecond uptime.
+  //#!    sys.time.getAppUptime();
+  //#!Returns milisecond uptime of the app.
   //#!Return: [num]Uptime(miliseconds)
-  if (sysFuncMatch(argS->callId, "getUptimeMs", s)) {
+  if (sysFuncMatch(argS->callId, "getAppUptime", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_s = (int32_t) svpSGlobal.uptimeMs;
+    result->value.val_s = (int32_t) (svpSGlobal.uptimeMs - svmGetAppUptime());
     result->type = SVS_TYPE_NUM;
     return 1;
   }

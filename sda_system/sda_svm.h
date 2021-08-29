@@ -60,6 +60,7 @@ void svmSetLaunchCWDflag(uint8_t val);
 uint8_t * sdaSvmGetName();
 void sdaSvmSetCryptoUnlock(uint8_t unlock);
 uint8_t sdaSvmGetCryptoUnlock();
+uint64_t svmGetAppUptime();
 
 // multiprocess
 void sdaSvmSave();
