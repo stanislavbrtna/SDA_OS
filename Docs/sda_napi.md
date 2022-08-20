@@ -1,6 +1,6 @@
 
 # SDA_OS Native API 
-Since the native interfaces of SDA_OS are still unstable, only a few that matured is documented here. Go for the sources for more info.
+Since the native interfaces of SDA_OS are still unstable, only a few that matured are documented here. Go for the sources for more info.
 
 ## Alarms
 Applications running in the SVS runtime can register alarms, these alarms will launch the app at given time. They are not intended to use them in native C part of SDA_OS.
