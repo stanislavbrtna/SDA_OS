@@ -326,6 +326,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 5, s)) {
       return 0;
     }
+    pscg_text_deactivate(&sda_app_con);
     sdaSvmCall(
         s->stringField + argS->arg[1].val_str,
         s->stringField + argS->arg[2].val_str,
