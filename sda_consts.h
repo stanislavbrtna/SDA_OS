@@ -34,10 +34,11 @@ File description:
 // shows where the screen is redrawn, works only in simulator, usefull for debug
 // #define SIM_SHOW_REDRAW
 
-// have at least 160 elements for system
+// GR2 elements for system
 #define SDA_SYS_ELEM_MAX 190
 #define SDA_SYS_SCREEN_MAX 40
 
+// GR2 elements for the apps
 #define SDA_APP_ELEM_MAX 250
 #define SDA_APP_SCREEN_MAX 20
 
