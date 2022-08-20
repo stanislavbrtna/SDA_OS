@@ -263,6 +263,27 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Set icon
+  //#!    sys.gui.setIcon([num]id, [str]image);
+  //#!Sets image for given icon. Image must be a file in current working directory, with resolution 64x64px.
+  //#!When parameter of icon element is not zero, color of value param - 1 (16bit RGB565) is drawn as transparent.
+  //#!Return: none
+
+  if (sysFuncMatch(argS->callId, "setIcon", s)) {
+    argType[1] = 0; //id
+    argType[2] = 1; //path to image
+    
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    pscg_set_str2(argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, &sda_app_con);
+
+    result->value.val_s = 0;    
+    result->type = 0;
+    return 1;
+  }
+
   //#!##### New image
   //#!    sys.gui.addImage([num]x1, [num]y1, [num]x2, [num]y2, [str]fname, [num]scrId);
   //#!Creates new .ppm image container. Name of image is stored in str_value
@@ -1009,6 +1030,22 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     pscg_activate_text(argS->arg[1].val_s, &sda_app_con);
+    result->type = 0;
+
+    return 1;
+  }
+
+  //#!
+  //#!    sys.gui.texDeact();
+  //#!Deactivates currently active text field.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "texDeact", s)) {
+
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    pscg_text_deactivate(&sda_app_con);
     result->type = 0;
 
     return 1;

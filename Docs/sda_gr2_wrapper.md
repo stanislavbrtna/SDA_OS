@@ -47,6 +47,11 @@ Return: [num]id
 Adds icon. Image must be a file in current working directory, with resolution 64x64px.
 When parameter of icon element is not zero, color of value param - 1 (16bit RGB565) is drawn as transparent.
 Return: [num]id
+##### Set icon
+    sys.gui.setIcon([num]id, [str]image);
+Sets image for given icon. Image must be a file in current working directory, with resolution 64x64px.
+When parameter of icon element is not zero, color of value param - 1 (16bit RGB565) is drawn as transparent.
+Return: none
 ##### New image
     sys.gui.addImage([num]x1, [num]y1, [num]x2, [num]y2, [str]fname, [num]scrId);
 Creates new .ppm image container. Name of image is stored in str_value
@@ -211,6 +216,10 @@ Return: [num]isActive
 
     sys.gui.setTexAct([num]Id);
 Sets given editable text field as currently active.
+Return: None
+
+    sys.gui.texDeact();
+Deactivates currently active text field.
 Return: None
 
     sys.gui.setTexFit([num]Id, [num]val);
