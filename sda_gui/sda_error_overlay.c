@@ -53,7 +53,7 @@ void sda_show_error_message(uint8_t * text) {
   pscg_set_x_cell(error_overlay_scr, 16, &sda_sys_con);
   pscg_add_text(
       2, 1, 14, 2,
-      (uint8_t *)"Error occured:",
+      MSG_ERROR_OCCURED,
       error_overlay_scr,
       &sda_sys_con
   );

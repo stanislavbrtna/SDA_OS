@@ -144,7 +144,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
         pscg_add_text(1, 1, 10, 2, SCR_SD_NOT_PRESENT_WARNING, slotScreen[1], &sda_sys_con);
       } else {
         if(svp_mount()) {
-          pscg_set_str(optMntSel, SCR_CARD_ERROR_REPEAT, &sda_sys_con);
+          sda_show_error_message(SCR_CARD_ERROR_MSG);
         } else {
           pscg_set_str(optMntSel, SD_UMOUNT, &sda_sys_con);
           // little hack for reload of app screen
