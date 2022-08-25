@@ -31,7 +31,8 @@
 #define SCR_SECURITY_SCREEN                           (uint8_t*)"Security settings:"
 #define SCR_OLD_PASSWORD                              (uint8_t*)"Old password::"
 #define SCR_NEW_PASSWORD                              (uint8_t*)"New password:"
-#define SCR_CHANGE_PASSWORD                           (uint8_t*)"Apply"
+#define SCR_CHANGE_PASSWORD                           (uint8_t*)"Apply change"
+#define SCR_LOCK_DEVICE                               (uint8_t*)"Lock device"
 #define SCR_RESET_KEY                                 (uint8_t*)"Reset key"
 #define SCR_WRONG_PASSWORD                            (uint8_t*)"Wrong password!"
 #define SCR_PASSWORD_STORED                           (uint8_t*)"Password stored."
@@ -43,7 +44,7 @@
 #define SCR_BATT_PWR_TIME                             (uint8_t*)"Time on battery power:"
 #define SCR_SD_MOUNT                                  (uint8_t*)"Mount SD card"
 #define SCR_SD_NOT_PRESENT_WARNING                    (uint8_t*)"SD Card not mounted!"
-#define SCR_CARD_ERROR_REPEAT                         (uint8_t*)"Card error, retry?"
+#define SCR_CARD_ERROR_MSG                            (uint8_t*)"Failed to mount the card."
 #define SCR_SOUND_ON                                  (uint8_t*)"Sound ON"
 
 #define OVRL_ENTER_TIME                               (uint8_t*)"Enter time:"
@@ -85,5 +86,6 @@
 
 #define SWICH_RUNNING_APPS                            (uint8_t *)"Running applications:"
 #define SWITCH_CLOSE_ALL                              (uint8_t *)"Close all"
+#define MSG_ERROR_OCCURED                             (uint8_t *)"Error occured:"
 
 #endif

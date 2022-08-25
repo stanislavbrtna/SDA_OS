@@ -45,6 +45,8 @@ typedef enum {POWER_USB, POWER_BATT} systemPwrType;
 
 typedef enum {CLICKED_NONE, CLICKED_SHORT, CLICKED_LONG} clickType;
 
+typedef enum {DEVICE_LOCKED, DEVICE_UNLOCKED} sdaDeviceLockType;
+
 typedef struct {
   //touch
   volatile uint8_t   touchValid;
@@ -103,6 +105,8 @@ typedef struct {
   volatile int32_t systemXBtnTime;
   volatile clickType systemOptClick;
   volatile uint8_t systemPwrLongPress;
+
+  volatile sdaDeviceLockType sdaDeviceLock;
 
   volatile pwrModeType  powerMode; // normal or sleep
   volatile pwrSleepModeType powerSleepMode;

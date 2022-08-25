@@ -31,7 +31,8 @@
 #define SCR_SECURITY_SCREEN           (uint8_t *)"Nastavení zabezpečení:"
 #define SCR_OLD_PASSWORD              (uint8_t *)"Původní heslo:"
 #define SCR_NEW_PASSWORD              (uint8_t *)"Nové heslo:"
-#define SCR_CHANGE_PASSWORD           (uint8_t *)"Změnit"
+#define SCR_CHANGE_PASSWORD           (uint8_t *)"Změnit heslo"
+#define SCR_LOCK_DEVICE               (uint8_t *)"Zamknout zařízení"
 #define SCR_RESET_KEY                 (uint8_t *)"Resetovat klíč"
 #define SCR_WRONG_PASSWORD            (uint8_t *)"Špatné heslo!"
 #define SCR_PASSWORD_STORED           (uint8_t *)"Heslo uloženo."
@@ -43,7 +44,7 @@
 #define SCR_BATT_PWR_TIME             (uint8_t *)"Doba běhu z baterie:"
 #define SCR_SD_MOUNT                  (uint8_t *)"Připojit SD kartu"
 #define SCR_SD_NOT_PRESENT_WARNING    (uint8_t *)"Nejprv připojte SD kartu"
-#define SCR_CARD_ERROR_REPEAT         (uint8_t *)"Chyba karty, opakovat?"
+#define SCR_CARD_ERROR_MSG            (uint8_t *)"Připojení karty se nezdařilo."
 #define SCR_SOUND_ON                  (uint8_t *)"Zvuk zapnut"
 #define SCR_KEY_ERROR_MSG             (uint8_t *)"Zadané heslo nesouhlasí se šifrovacím klíčem."
 
@@ -88,6 +89,7 @@
 
 #define SCR_LED_NOTIFICATIONS         (uint8_t *)"Notifikační LED"
 #define IRQ_BATT_CHRG                 (uint8_t *)" NAB."
+#define MSG_ERROR_OCCURED             (uint8_t *)"Nastala chyba:"
 
 
 #endif

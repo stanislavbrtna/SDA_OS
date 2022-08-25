@@ -87,6 +87,11 @@ void taskSwitcherOpen() {
 #ifdef APP_SWITCHER_DEBUG
   printf("task switcher opened\n");
 #endif
+
+  if (svpSGlobal.sdaDeviceLock == DEVICE_LOCKED) {
+    return;
+  }
+
   hideKeyboard();
 
   uint16_t n = 0;

@@ -27,11 +27,14 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
   static uint16_t screen;
   static uint16_t appsBtn;
   static uint16_t optBtn;
+  static uint16_t lockBtn;
   static uint16_t text;
   static uint16_t time;
   static uint16_t date;
   static uint16_t oldtime;
   static uint8_t olddate;
+  static sdaDeviceLockType oldLock;
+  static uint16_t unlockOverlay;
   static uint8_t time_string[6];
   static uint8_t date_string[42];
 
@@ -42,9 +45,12 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     date = pscg_add_text(3, 6, 12, 7,(uint8_t *)"?. ?. 20??", screen, &sda_sys_con);
     appsBtn = pscg_add_icon(2, 10, 5, 13,(uint8_t *)"", (uint8_t *)"Icons/apps.p16", screen, &sda_sys_con);
     optBtn = pscg_add_icon(6, 10, 9, 13,(uint8_t *)"", (uint8_t *)"Icons/options.p16", screen, &sda_sys_con);
+    lockBtn = pscg_add_icon(4, 10, 7, 13,(uint8_t *)"", (uint8_t *)"Icons/lock.p16", screen, &sda_sys_con);
+    pscg_set_visible(lockBtn, 0, &sda_sys_con);
     pscg_text_set_size(text, 70, &sda_sys_con);
     pscg_text_set_size(time, 70, &sda_sys_con);
     oldtime = 5566; // absurd value, so current minute would not equal oldmin and time would update after init
+    oldLock = DEVICE_UNLOCKED;
     return screen;
   }
 
@@ -71,6 +77,37 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
       pscg_set_modified(date, &sda_sys_con);
       olddate = svpSGlobal.day;
       svpSGlobal.dateUpdated = 0;
+    }
+
+    // lock refresh
+    if (svpSGlobal.sdaDeviceLock != oldLock) {
+      if (svpSGlobal.sdaDeviceLock == DEVICE_LOCKED) {
+        pscg_set_visible(lockBtn, 1, &sda_sys_con);
+        pscg_set_visible(optBtn, 0, &sda_sys_con);
+        pscg_set_visible(appsBtn, 0, &sda_sys_con);
+      } else {
+        pscg_set_visible(lockBtn, 0, &sda_sys_con);
+        pscg_set_visible(optBtn, 1, &sda_sys_con);
+        pscg_set_visible(appsBtn, 1, &sda_sys_con);
+      }
+      oldLock = svpSGlobal.sdaDeviceLock;
+    }
+
+    if (pscg_get_event(lockBtn, &sda_sys_con) == EV_RELEASED) {
+      unlockOverlay = password_overlay_init();
+    }
+    pscg_set_event(lockBtn, EV_NONE, &sda_sys_con);
+
+    password_overlay_update(unlockOverlay);
+
+    if(password_overlay_get_ok(unlockOverlay) == 1) {
+      password_overlay_clear_ok(unlockOverlay);
+      svp_crypto_lock();
+      svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
+    }
+
+    if(password_overlay_get_ok(unlockOverlay) == 2) {
+      password_overlay_clear_ok(unlockOverlay);
     }
 
     if (pscg_get_event(appsBtn, &sda_sys_con) == EV_RELEASED) {

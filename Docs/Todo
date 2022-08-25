@@ -1,4 +1,3 @@
-  - lockscreen/autolock
   - system log
 
 Docs:
@@ -15,3 +14,7 @@ Docs:
     - PPM images
     - p16 images
     - autoexec.svs function
+
+
+Misc TODO:
+  - Optimize char draw function

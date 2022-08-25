@@ -37,6 +37,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
   static uint16_t optSecuMsg;
   static uint16_t optSecuMsg2;
   static uint16_t optSecuMsg3;
+  static uint16_t optSecuLock;
   uint16_t optSecuScr;
 
   if (init == 1) {
@@ -50,7 +51,8 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     optSecuNew = pscg_add_text(1, 6, 8, 7, (uint8_t *)"", optSecuScr, &sda_sys_con);
     optSecuOldBtn = pscg_add_button(8, 4, 9, 5, (uint8_t *)"*", optSecuScr, &sda_sys_con);
     optSecuNewBtn = pscg_add_button(8, 6, 9, 7, (uint8_t *)"*", optSecuScr, &sda_sys_con);
-    optSecuOk = pscg_add_button(6, 8, 9, 9, SCR_CHANGE_PASSWORD, optSecuScr, &sda_sys_con);
+    optSecuLock = pscg_add_button(3, 10, 9, 11, SCR_LOCK_DEVICE, optSecuScr, &sda_sys_con);
+    optSecuOk = pscg_add_button(4, 8, 9, 9, SCR_CHANGE_PASSWORD, optSecuScr, &sda_sys_con);
     optSecuMsg = pscg_add_text(1, 7, 9, 8, SCR_WRONG_PASSWORD, optSecuScr, &sda_sys_con);
     optSecuMsg2 = pscg_add_text(1, 7, 9, 8, SCR_PASSWORD_STORED, optSecuScr, &sda_sys_con);
     optSecuMsg3 = pscg_add_text(0, 7, 10, 8, SCR_KEY_MISMATCH, optSecuScr, &sda_sys_con);
@@ -70,7 +72,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     pscg_text_set_pwd(optSecuNew, 1, &sda_sys_con);
     pscg_text_set_pwd(optSecuOld, 1, &sda_sys_con);
 
-    optSecuBack = pscg_add_button(1, 8, 4, 9, SCR_BACK, optSecuScr, &sda_sys_con);
+    optSecuBack = pscg_add_button(7, 12, 9, 13, SCR_BACK, optSecuScr, &sda_sys_con);
 
     pscg_text_set_align(optSecuBack, GR2_ALIGN_CENTER, &sda_sys_con);
     pscg_text_set_align(optSecuOk, GR2_ALIGN_CENTER, &sda_sys_con);
@@ -87,8 +89,10 @@ uint16_t sda_settings_security_screen(uint8_t init) {
 
     if (svp_crypto_get_if_set_up() == 0) {
       pscg_set_grayout(optSecuOld, 1, &sda_sys_con);
+      pscg_set_grayout(optSecuLock, 1, &sda_sys_con);
     } else {
       pscg_set_grayout(optSecuOld, 0, &sda_sys_con);
+      pscg_set_grayout(optSecuLock, 0, &sda_sys_con);
     }
 
     return 0;
@@ -118,6 +122,11 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     pscg_set_visible(optSecuMsg3, 0, &sda_sys_con);
   }
 
+  if (gr2_clicked(optSecuLock, &sda_sys_con)) {
+    svpSGlobal.sdaDeviceLock = DEVICE_LOCKED;
+    sda_slot_on_top(0);
+  }
+
   if (gr2_clicked(optSecuOk, &sda_sys_con)) {
     uint8_t retval;
     if (svp_crypto_get_if_set_up() == 0) {
@@ -136,6 +145,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
       }
     } else {
       pscg_set_grayout(optSecuOld, 0, &sda_sys_con);
+      pscg_set_grayout(optSecuLock, 0, &sda_sys_con);
       pscg_set_visible(optSecuMsg2, 1, &sda_sys_con);
       pscg_set_visible(optSecuMsg, 0, &sda_sys_con);
       if (svp_crypto_get_if_set_up()){
