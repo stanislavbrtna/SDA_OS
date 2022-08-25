@@ -59,7 +59,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
 
     pscg_text_set_align(optSecuMsg3, GR2_ALIGN_CENTER, &sda_sys_con);
 
-    resetBtn = pscg_add_button(1, 10, 9, 11, SCR_RESET_KEY, optSecuScr, &sda_sys_con);
+    resetBtn = pscg_add_button(1, 9, 9, 10, SCR_RESET_KEY, optSecuScr, &sda_sys_con);
     pscg_text_set_align(resetBtn, GR2_ALIGN_CENTER, &sda_sys_con);
     pscg_set_visible(resetBtn, 0, &sda_sys_con);
 
