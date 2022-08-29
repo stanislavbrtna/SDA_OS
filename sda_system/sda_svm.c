@@ -976,7 +976,7 @@ static uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t 
   sda_str_add(cacheBuffer, tail);
 
   if(svp_fopen_read(&svmFile, cacheBuffer) == 0) {
-    printf("sdaSvmLoader: file open error\n");
+    printf("sdaSvmLoader: file open error (%s)\n", cacheBuffer);
     return 0;
   }
 
