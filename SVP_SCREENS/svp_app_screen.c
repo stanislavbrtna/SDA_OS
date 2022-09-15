@@ -294,6 +294,10 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
     svpSGlobal.systemXBtnVisible = 0;
 
+    if (svpSGlobal.sdaDeviceLock == DEVICE_LOCKED) {
+      sda_slot_on_top(0);
+    }
+
     pscg_set_yscroll(inScreen, pscg_get_value(scrollbar, &sda_sys_con) * 96, &sda_sys_con);
 
     appActive = sdaSvmGetRunning();
