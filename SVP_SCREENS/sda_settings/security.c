@@ -125,6 +125,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
   if (gr2_clicked(optSecuLock, &sda_sys_con)) {
     svpSGlobal.sdaDeviceLock = DEVICE_LOCKED;
     sda_slot_on_top(0);
+    rtc_write_locked(1);
   }
 
   if (gr2_clicked(optSecuOk, &sda_sys_con)) {

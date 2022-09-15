@@ -183,6 +183,13 @@ static void sda_main_init() {
   pscg_draw_screen(0, 32, 319, 479, mainScr, 1, &sda_sys_con);
   tick_lock = SDA_LOCK_UNLOCKED;
   led_set_pattern(LED_OFF);
+
+  // check for screen lock
+  if (rtc_read_locked() == 1) {
+    svpSGlobal.sdaDeviceLock = DEVICE_LOCKED;
+    sda_slot_on_top(0);
+  }
+  
 }
 
 static void sda_main_process_touch() {

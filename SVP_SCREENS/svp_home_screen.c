@@ -104,6 +104,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
       password_overlay_clear_ok(unlockOverlay);
       svp_crypto_lock();
       svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
+      rtc_write_locked(0);
     }
 
     if(password_overlay_get_ok(unlockOverlay) == 2) {
