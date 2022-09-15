@@ -10,7 +10,7 @@ void svp_crypto_init() {
   uint16_t i = 0;
   uint8_t default_password[] = "def";
 
-  if (rtc_read_password(svp_crypto_key)) {
+  if (rtc_read_password(svp_crypto_password)) {
     for(i = 0; default_password[i] != 0; i++) {
       svp_crypto_password[i] = default_password[i];
     }
@@ -35,7 +35,7 @@ uint8_t svp_crypto_get_lock() {
 }
 
 
-uint8_t svp_crypto_unlock(uint8_t * key) {
+uint8_t svp_crypto_unlock(uint8_t * password) {
   static uint8_t fails;
   uint16_t i = 0;
 
@@ -44,12 +44,12 @@ uint8_t svp_crypto_unlock(uint8_t * key) {
   }
 
   while (svp_crypto_password[i] != 0) {
-    if ((key[i] == 0) && (svp_crypto_password[i] != 0)) {
+    if ((password[i] == 0) && (svp_crypto_password[i] != 0)) {
       svp_crpyto_unlocked = 0;
       fails++;
       return 2;
     }
-    if (svp_crypto_password[i] != key[i]) {
+    if (svp_crypto_password[i] != password[i]) {
       svp_crpyto_unlocked = 0;
       fails++;
       return 2;
@@ -57,7 +57,7 @@ uint8_t svp_crypto_unlock(uint8_t * key) {
     i++;
   }
 
-  if (key[i] != 0) {
+  if (password[i] != 0) {
     fails++;
     return 2;
   }
