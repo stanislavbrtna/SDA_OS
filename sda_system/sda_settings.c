@@ -35,31 +35,34 @@ void sda_load_config() {
   svp_switch_main_dir();
 
   printf("Loading config: (svp.cfg)\n");
+
   if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
     printf("Failed to open cfg file\n");
   }
 
+  // Load color scheme
   pscg_set_border_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"border_color", 0), &sda_sys_con);
   pscg_set_text_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"text_color", 0), &sda_sys_con);
   pscg_set_background_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"background_color", 0xF800), &sda_sys_con);
   pscg_set_fill_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"fill_color", 0x07E0), &sda_sys_con);
   pscg_set_active_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"active_color", 0xFFFF), &sda_sys_con);
 
-  //sleepTimer
+  // sleep timer
   svpSGlobal.lcdShutdownTime = sda_conf_key_read_i32(&conffile, (uint8_t *)"sleep_time", 5);
 
-  svpSGlobal.mute = sda_conf_key_read_i32(&conffile, (uint8_t *)"mute", 0);
-
-  if ((svpSGlobal.lcdShutdownTime < 2)||(svpSGlobal.lcdShutdownTime > 10)) {
+  if ((svpSGlobal.lcdShutdownTime < 2) || (svpSGlobal.lcdShutdownTime > 10)) {
     svpSGlobal.lcdShutdownTime = 5;
   }
+
+  // mute
+  svpSGlobal.mute = sda_conf_key_read_i32(&conffile, (uint8_t *)"mute", 0);
+  
   svp_set_irq_redraw(); //po nastavení barev překreslíme panel / redraw the tray after loading color settings
   sda_conf_close(&conffile);
 
   // handle possible on-boot calibration
   if (svp_getLcdCalibrationFlag() == 0) {
     // load calibration data
-    // TODO: perform calibration if calib.dat is missing
     if (svp_fexists((uint8_t *)"calib.dat") == 1) {
       svp_fopen_rw(&calib, (uint8_t *)"calib.dat");
       svp_fread(&calib, &calibData, sizeof(calibData));
@@ -67,6 +70,15 @@ void sda_load_config() {
       svp_fclose(&calib);
     } else {
       printf("Warning: calib.dat missing, using default calibration data.\n");
+      sdaLockState tickLockOld;
+      tickLockOld = tick_lock;
+      tick_lock = SDA_LOCK_LOCKED;
+
+      sda_calibrate();
+
+      tick_lock = tickLockOld;
+      sda_store_calibration();
+      setRedrawFlag();
     }
   } else {
     sda_store_calibration();
