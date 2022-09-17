@@ -514,7 +514,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       pscg_set_event(argS->arg[1].val_s, EV_NONE, &sda_app_con);
 
       //čtení z klávesnice a zápis do řetězce
-      if (getKbdKey()) {
+      if (sda_get_keyboard_key_flag()) {
         if ((svpSGlobal.kbdKeyStr[0]) != 2) {
           result->value.val_str
             = strInsert(

@@ -33,8 +33,8 @@ uint32_t svp_random();
 void set_sda_counter(uint16_t val);
 uint16_t get_sda_counter();
 
-uint8_t getTimeUpdateFlag();
-void setTimeUpdateFlag();
+uint8_t sda_get_time_update_flag();
+void sda_set_time_update_flag();
 uint16_t sda_get_uptime();
 
 // [HW] beeper

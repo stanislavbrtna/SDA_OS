@@ -24,10 +24,10 @@ SOFTWARE.
 #define SDA_MISC_H
 #include "../SDA_OS.h"
 
-uint8_t getKbdKey(); //returns 1 when key is ready, key is stored in global struct
+uint8_t sda_get_keyboard_key_flag(); //returns 1 when key is ready, key is stored in global struct
 uint16_t sda_get_uptime();
-uint8_t getTimeUpdateFlag();
-void setTimeUpdateFlag();
+uint8_t sda_get_time_update_flag();
+void sda_set_time_update_flag();
 
 void sda_keyboard_show();
 void sda_keyboard_hide();

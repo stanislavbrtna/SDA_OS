@@ -29,7 +29,7 @@ extern uint8_t sleepLock;
 
 static gr2EventType keyEvLocal[6];
 
-uint8_t getKbdKey() {
+uint8_t sda_get_keyboard_key_flag() {
   if (svpSGlobal.kbdFlag == 1) {
     svpSGlobal.kbdFlag = 0;
     return 1;
@@ -43,12 +43,12 @@ uint16_t sda_get_uptime() {
 }
 
 
-uint8_t getTimeUpdateFlag() {
+uint8_t sda_get_time_update_flag() {
   return timeUpdateFlag;
 }
 
 
-void setTimeUpdateFlag() {
+void sda_set_time_update_flag() {
   timeUpdateFlag = 1;
 }
 

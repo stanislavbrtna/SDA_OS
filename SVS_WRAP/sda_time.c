@@ -59,7 +59,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_s = getTimeUpdateFlag();
+    result->value.val_s = sda_get_time_update_flag();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
