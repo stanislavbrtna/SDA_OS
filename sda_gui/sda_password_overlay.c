@@ -98,7 +98,7 @@ void password_overlay_update(uint16_t ovId) {
   if (kbdInit < 5) {
     kbdInit++;
   } else if (kbdInit == 5) {
-    showKeyboard();
+    sda_keyboard_show();
     kbdInit++;
   }
 
@@ -114,7 +114,7 @@ void password_overlay_update(uint16_t ovId) {
       pscg_set_visible(passMessage, 1, &sda_sys_con);
     } else {
       destroyOverlay();
-      hideKeyboard();
+      sda_keyboard_hide();
       povDone = 1;
       return;
     }
@@ -122,7 +122,7 @@ void password_overlay_update(uint16_t ovId) {
 
   if (pscg_get_event(cancelButton, &sda_sys_con) == EV_RELEASED) {
     destroyOverlay();
-    hideKeyboard();
+    sda_keyboard_hide();
     povDone = 2;
     return;
   }

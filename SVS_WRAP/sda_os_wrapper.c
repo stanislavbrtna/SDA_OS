@@ -205,7 +205,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    hideKeyboard();
+    sda_keyboard_hide();
     return 1;
   }
 
@@ -217,7 +217,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    showKeyboard();
+    sda_keyboard_show();
     return 1;
   }
 

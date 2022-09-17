@@ -39,7 +39,7 @@ static uint16_t col_bsl;
 uint16_t color_overlay_init() {
   col_done = 0;
 
-  hideKeyboard();
+  sda_keyboard_hide();
 
   col_screen = pscg_add_screen(sda_current_con);
 
@@ -53,8 +53,11 @@ uint16_t color_overlay_init() {
   pscg_add_text(1, 7, 2, 8, (uint8_t *)"B:" , col_screen, sda_current_con);
   col_bsl = pscg_add_slider_h(2, 7, 7, 8, 255, 255, col_screen, sda_current_con);
 
-  col_ok = pscg_add_button(4, 9, 6, 10, OVRL_OK, col_screen, sda_current_con);
-  col_cancel = pscg_add_button(1, 9, 3, 10, OVRL_CANCEL, col_screen, sda_current_con);
+  col_ok = pscg_add_button(5, 9, 7, 10, OVRL_OK, col_screen, sda_current_con);
+  col_cancel = pscg_add_button(1, 9, 4, 10, OVRL_CANCEL, col_screen, sda_current_con);
+
+  pscg_text_set_align(col_ok, GR2_ALIGN_CENTER, sda_current_con);
+  pscg_text_set_align(col_cancel, GR2_ALIGN_CENTER, sda_current_con);
 
   col_id = setOverlayScreen(col_screen, sda_current_con);
   setOverlayDestructor(color_overlay_destructor);
@@ -115,6 +118,7 @@ uint16_t color_overlay_get_ok(uint16_t ovId) {
   if (col_id != ovId) {
     return 0;
   }
+
   if (col_done == 1) {
     return 1;
   } else {

@@ -100,7 +100,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
 
   if (gr2_clicked(optSecuBack, &sda_sys_con)) {
     mainScr = slotScreen[2];
-    hideKeyboard();
+    sda_keyboard_hide();
     setRedrawFlag();
   }
 
@@ -167,6 +167,6 @@ uint16_t sda_settings_security_screen(uint8_t init) {
 
     pscg_set_modified(optSecuNew, &sda_sys_con);
     pscg_set_modified(optSecuOld, &sda_sys_con);
-    hideKeyboard();
+    sda_keyboard_hide();
   }
 }

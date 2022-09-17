@@ -51,6 +51,7 @@ static uint8_t tov_min2_str[2];
 static uint8_t tov_hr1_str[2];
 static uint8_t tov_hr2_str[2];
 
+
 uint16_t time_overlay_init() {
   tov_hours = 0;
   tov_minutes = 0;
@@ -60,7 +61,7 @@ uint16_t time_overlay_init() {
   tov_hr1_str[0] = '0';
   tov_hr2_str[0] = '0';
 
-  hideKeyboard();
+  sda_keyboard_hide();
 
   tov_screen = pscg_add_screen(sda_current_con);
 
@@ -109,6 +110,7 @@ uint16_t time_overlay_init() {
   return tov_id;
 }
 
+
 void time_overlay_destructor() {
   tov_done = 2; // set done to cancel
   pscg_clear_screen_ev(tov_screen, sda_current_con);
@@ -116,6 +118,7 @@ void time_overlay_destructor() {
   setRedrawFlag();
   overlayDestructorDone();
 }
+
 
 void time_overlay_update(uint16_t ovId) {
 
@@ -250,6 +253,7 @@ void time_overlay_update(uint16_t ovId) {
   pscg_clear_screen_ev(tov_screen, sda_current_con);
 }
 
+
 void time_overlay_set_time(uint16_t ovId, uint16_t hour, uint16_t min){
   if (tov_id != ovId){
     return;
@@ -270,6 +274,7 @@ void time_overlay_set_time(uint16_t ovId, uint16_t hour, uint16_t min){
   tov_min2_str[0] = 48+min % 10;
 }
 
+
 uint16_t time_overlay_get_hours(uint16_t ovId) {
   if (tov_id != ovId) {
     return 0;
@@ -277,12 +282,14 @@ uint16_t time_overlay_get_hours(uint16_t ovId) {
   return ((tov_hr1_str[0] - 48) * 10 + (tov_hr2_str[0] - 48));
 }
 
+
 uint16_t time_overlay_get_minutes(uint16_t ovId) {
   if (tov_id != ovId) {
     return 0;
   }
   return ((tov_min1_str[0] - 48) * 10 + (tov_min2_str[0] - 48));
 }
+
 
 uint16_t time_overlay_get_ok(uint16_t ovId) {
   if (tov_id != ovId) {
@@ -294,6 +301,7 @@ uint16_t time_overlay_get_ok(uint16_t ovId) {
     return 0;
   }
 }
+
 
 void time_overlay_clear_ok(uint16_t ovId) {
   if (tov_id != ovId) {

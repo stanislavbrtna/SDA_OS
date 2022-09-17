@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2018 Stanislav Brtna
+Copyright (c) 2022 Stanislav Brtna
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,38 +20,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SDA_MISC_H
-#define SDA_MISC_H
+#ifndef SDA_TIMERS_H
+#define SDA_TIMERS_H
 #include "../SDA_OS.h"
 
-uint8_t getKbdKey(); //returns 1 when key is ready, key is stored in global struct
-uint16_t sda_get_uptime();
-uint8_t getTimeUpdateFlag();
-void setTimeUpdateFlag();
-
-void sda_keyboard_show();
-void sda_keyboard_hide();
-
-void set_sda_counter(uint16_t val);
-uint16_t get_sda_counter();
-void sda_set_sleep_lock(uint8_t val);
-
-void pscg_error_callback(uint8_t *str, gr2context * c);
-
-void sda_clr_button_ev();
-
-gr2EventType sda_wrap_get_button(uint8_t num);
-void sda_wrap_clear_button(uint8_t num);
-void sda_store_buttons();
-
-void sda_draw_overlay_shadow(
-  int16_t overlayX1,
-  int16_t overlayY1,
-  int16_t overlayX2,
-  int16_t overlayY2,
-  gr2context *c
-);
-
-void sda_check_fs();
+uint8_t sdaSvmHandleTimers();
+uint8_t sdaSvmIsTimerSet();
+void sdaSvmSetTimer(uint32_t time_ms, uint8_t *callback);
+void sdaSvmClearTimer();
+void sdaSvmSetTimerWkup();
 
 #endif

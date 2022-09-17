@@ -23,9 +23,8 @@ SOFTWARE.
 #include "sda_widgets.h"
 
 // date select widget
-//aby to šlo 1 až 12
 const uint8_t *date_month_names[] = {
-  (uint8_t *)"",
+  (uint8_t *)"", // no month 0
   OVRL_MON1,
   OVRL_MON2,
   OVRL_MON3,
@@ -222,11 +221,13 @@ uint16_t date_select_widget_init(
   return scr;
 }
 
+
 void date_select_widget_set_date(
     dateSelectorWidgetType *d,
     uint16_t year,
     uint8_t month,
-    uint8_t day) {
+    uint8_t day
+  ) {
 
   uint16_t y;
 
@@ -243,6 +244,7 @@ void date_select_widget_set_date(
     date_select_widget_load_days(d, year, month, day);
   }
 }
+
 
 uint16_t date_select_widget_update(dateSelectorWidgetType *d) {
   uint16_t y;
@@ -286,6 +288,7 @@ uint8_t date_select_widget_get_day(dateSelectorWidgetType *d) {
   return d->selectedDay;
 }
 
+
 uint16_t date_select_widget_get_day_id(dateSelectorWidgetType *d, uint8_t day) {
   if ((day == 0) || (day > 31)) {
     return 0;
@@ -293,6 +296,7 @@ uint16_t date_select_widget_get_day_id(dateSelectorWidgetType *d, uint8_t day) {
 
   return d->buttons[day];
 }
+
 
 void date_select_set_highlight(dateSelectorWidgetType *d, uint8_t val) {
   d->useHighlight = val;

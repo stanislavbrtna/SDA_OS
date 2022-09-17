@@ -87,7 +87,8 @@ void set_year_string(uint8_t * str, uint16_t year) {
 void svp_write_date_string(
     uint8_t *str,
     uint8_t month_as_num,
-    uint8_t write_year) {
+    uint8_t write_year
+  ) {
   uint8_t year_str[6];
 
   str[0] = 0;
@@ -117,7 +118,7 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
   date_month_val = mn;
   date_day_val = dy;
 
-  hideKeyboard();
+  sda_keyboard_hide();
 
   date_screen = pscg_add_screen(sda_current_con);
   pscg_set_cell_space_bottom(date_screen, 4, sda_current_con);
@@ -331,5 +332,5 @@ void date_overlay_clear_ok(uint16_t ovId) {
     return;
   }
   date_done = 0;
-  date_id=  0xFFFF;
+  date_id = 0xFFFF;
 }

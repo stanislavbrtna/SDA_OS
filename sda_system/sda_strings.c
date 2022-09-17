@@ -141,7 +141,6 @@ void sda_time_to_str(uint8_t * buff, uint32_t val) {
     buff[4] = ' ';
     buff[3] = 'd';
 
-
     buff[2] = ((val / 3600) / 24) % 10 + 48;
     buff[1] = ((val / 3600) / 24) / 10 % 10 + 48;
     buff[0] = ((val / 3600) / 24) / 100 % 10 + 48;

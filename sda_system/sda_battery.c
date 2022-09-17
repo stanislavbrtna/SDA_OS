@@ -102,7 +102,6 @@ void sda_handle_battery_status() {
         // just get what we got
         svpSGlobal.battPercentage = (battPercentRealValue / 5) * 5;
       }
-
     }
   }
 

@@ -53,12 +53,12 @@ void setTimeUpdateFlag() {
 }
 
 
-void showKeyboard() {
+void sda_keyboard_show() {
   svpSGlobal.kbdVisible = 1;
 }
 
 
-void hideKeyboard() {
+void sda_keyboard_hide() {
   pscg_text_deactivate(&sda_sys_con);
   pscg_text_deactivate(&sda_app_con);
   svpSGlobal.kbdKeyStr[0] = 0;

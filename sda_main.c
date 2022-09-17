@@ -255,7 +255,7 @@ static void sda_main_process_touch() {
       );
 
       if (scr_touch_retval == 2) { // retval 2 means open the keyboard
-        showKeyboard();
+        sda_keyboard_show();
       }
     }
   } else {
@@ -274,7 +274,7 @@ static void sda_main_process_touch() {
         );
 
       if (scr_touch_retval == 2) { // retval 2 means open the keyboard
-        showKeyboard();
+        sda_keyboard_show();
       }
     }
 
@@ -396,7 +396,7 @@ static void sda_main_handle_soft_buttons() {
         destroyOverlay();
       }
 
-      hideKeyboard();
+      sda_keyboard_hide();
       sda_slot_on_top(0);
       svp_chdir(mainDir);
       svp_chdir((uint8_t *)"APPS");

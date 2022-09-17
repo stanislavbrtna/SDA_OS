@@ -97,12 +97,7 @@ int32_t getNotificationParam();
 int8_t getNotificationFlag();
 void clearNotificationFlag();
 
-// timer
-uint8_t sdaSvmHandleTimers();
-uint8_t sdaSvmIsTimerSet();
-void sdaSvmSetTimer(uint32_t time_ms, uint8_t *callback);
-void sdaSvmClearTimer();
-void sdaSvmSetTimerWkup();
+
 
 // *****************************************************************************
 //                                 internal functions
@@ -111,5 +106,10 @@ void sdaSvmSetTimerWkup();
 uint8_t sdaSvmLoadApp(uint8_t *fname, uint8_t *name, uint8_t mode);
 void sdaSvmGetGR2Settings();
 void svmSetRestoreSlot(uint8_t slot);
+
+uint8_t svmCheckAndExit();
+
+uint8_t svmGetSavedProcValid(uint16_t proc_array_index);
+uint16_t svmGetSavedProcId(uint16_t proc_array_index);
 
 #endif

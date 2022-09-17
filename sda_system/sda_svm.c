@@ -23,7 +23,7 @@ SOFTWARE.
 #include "sda_svm.h"
 
 //svs VM
-svsVM   svm;
+svsVM          svm;
 sdaSvmMetadata svmMeta;
 
 static uint16_t nextId;
@@ -47,14 +47,9 @@ static uint16_t svmSavedProcId[MAX_OF_SAVED_PROC];
 static uint8_t svmSavedProcValid[MAX_OF_SAVED_PROC];
 static uint8_t svmSavedProcSingular[MAX_OF_SAVED_PROC];
 
-static uint32_t svmSavedProcTimer[MAX_OF_SAVED_PROC];
-static uint8_t svmSavedProcTimerCallback[MAX_OF_SAVED_PROC][NAME_LENGTH];
-
 static int32_t notificationId;
 static int32_t notificationParam;
 static uint8_t notificationFlag;
-
-static uint8_t timer_wkup_flag;
 
 static uint8_t redrawDetect;
 
@@ -64,8 +59,6 @@ extern uint8_t soft_error_flag;
 extern pscgElement *sda_app_gr2_elements; //[SDA_APP_ELEM_MAX];
 extern pscgScreen *sda_app_gr2_screens; //[SDA_APP_SCREEN_MAX];
 extern gr2context sda_app_con; //
-
-static uint16_t pscg_last_elements_count; //pro kontrolu zda po sobě aplikace uklidila
 
 static uint8_t slot_restore; // what appslot to restore after close
 
@@ -90,8 +83,17 @@ static void svmInValidate(uint16_t id);
 static void svmSuspendAddId(uint16_t id, uint8_t * name);
 static void svmRemoveCachedProc(uint16_t id);
 static void svmRemoveCachedFile(uint16_t id, uint8_t * tail);
-static uint8_t svmCheckAndExit();
 static uint16_t GetIfSingular(uint8_t * name);
+
+
+uint8_t svmGetSavedProcValid(uint16_t proc_array_index) {
+  return svmSavedProcValid[proc_array_index];
+}
+
+uint16_t svmGetSavedProcId(uint16_t proc_array_index) {
+  return svmSavedProcId[proc_array_index];
+}
+
 
 // notification
 
@@ -120,97 +122,6 @@ int8_t getNotificationFlag() {
 void clearNotificationFlag() {
   notificationFlag = 0;
 }
-
-
-// timers
-
-void sdaSvmSetTimer(uint32_t time_ms, uint8_t *callback) {
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProcId[x] == svmMeta.id && svmSavedProcValid[x] == 1) {
-      svmSavedProcTimer[x] = svpSGlobal.uptimeMs + time_ms;
-      sda_strcp(callback, svmSavedProcTimerCallback[x], sizeof(svmSavedProcTimerCallback[x]));
-      //printf("setting %u, %s\n", svmSavedProcTimer[x], svmSavedProcTimerCallback[x]);
-    }
-  }
-}
-
-
-void sdaSvmClearTimer() {
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProcId[x] == svmMeta.id && svmSavedProcValid[x] == 1) {
-      svmSavedProcTimer[x] = 0;
-    }
-  }
-}
-
-
-uint8_t sdaSvmHandleTimers() {
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProcValid[x] == 1) {
-      //printf("checking %u, %u\n", svpSGlobal.uptimeMs, svmSavedProcTimer[x]);
-      if (svmSavedProcTimer[x] <= svpSGlobal.uptimeMs && svmSavedProcTimer[x] != 0) {
-        //printf("triggered!\n");
-        svmSavedProcTimer[x] = 0; // reset
-        if (svmSavedProcId[x] == svmMeta.id) {
-          //execute
-          commExec(svmSavedProcTimerCallback[x], &svm);
-          if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-            svp_errSoftPrint(&svm);
-            return 1;
-          }
-          if (svmCheckAndExit()) { // handle potential exit call
-            return 0;
-          }
-
-          if (timer_wkup_flag == 1) {
-            sdaSvmOnTop();
-            timer_wkup_flag = 0;
-          }
-        } else {
-          uint16_t prev_id;
-          prev_id = svmMeta.id;
-          //wakeup
-          svmWake(svmSavedProcId[x]);
-
-          //execute
-          commExec(svmSavedProcTimerCallback[x], &svm);
-          if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-            svp_errSoftPrint(&svm);
-            return 1;
-          }
-          if (svmCheckAndExit()) { // handle potential exit call
-            return 0;
-          }
-
-          //go back
-          if (timer_wkup_flag == 0) {
-            svmWake(prev_id);
-            return 0;
-          }
-          timer_wkup_flag = 0;
-          sdaSvmOnTop();
-          setRedrawFlag();
-        }
-      }
-    }
-  }
-}
-
-
-void sdaSvmSetTimerWkup() {
-  timer_wkup_flag = 1;
-}
-
-
-uint8_t sdaSvmIsTimerSet() {
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProcTimer[x] !=0 && svmSavedProcValid[x] == 1) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
 
 // screens and stuff
 void sdaSvmSetMainScreen(uint16_t val) {
@@ -409,7 +320,6 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
     }
   }
   svmValid = 0; // invalidate slot before loading
-  pscg_last_elements_count = pscg_get_element_count(&sda_app_con);
   set_pscg_workaround_context(&sda_app_con);
   if (parentId != 0 && svmMeta.launchFromCWD == 1) {
     svp_chdir(dirbuf);
@@ -832,7 +742,7 @@ void sdaSvmInit() {
 }
 
 
-static uint8_t svmCheckAndExit() {
+uint8_t svmCheckAndExit() {
   if((svpSGlobal.systemXBtnClick) || (errCheck(&svm) != 0)) {
     sdaSvmCloseApp();
     return 1;

@@ -92,7 +92,7 @@ void taskSwitcherOpen() {
     return;
   }
 
-  hideKeyboard();
+  sda_keyboard_hide();
 
   uint16_t n = 0;
   task_switcher = pscg_add_screen(&sda_sys_con);
@@ -174,7 +174,7 @@ void taskSwitcherUpdate() {
 
   for(uint16_t x = 0; x < numberOfApps; x++) {
     if (pscg_get_event(appButtons[x], &sda_sys_con) == EV_RELEASED) {
-      hideKeyboard();
+      sda_keyboard_hide();
       if (svmWake(appId[x])) {
         sda_show_error_message((uint8_t *)"Error occured while waking app.");
       }

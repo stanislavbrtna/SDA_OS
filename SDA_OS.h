@@ -65,6 +65,7 @@ SOFTWARE.
 #include "sda_system/sda_screen_slots.h"
 #include "sda_system/sda_power_management.h"
 #include "sda_system/sda_strings.h"
+#include "sda_system/sda_timers.h"
 #include "SVS_WRAP/sda_wrapper.h"
 #include "SVS_WRAP/sda_files.h"
 

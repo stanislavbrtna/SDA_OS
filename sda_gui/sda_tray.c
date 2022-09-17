@@ -79,7 +79,12 @@ void sda_tray_alarm_disable() {
 }
 
 
-static gr2EventType tray_clicked(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
+static gr2EventType tray_clicked(
+  uint16_t x1,
+  uint16_t y1,
+  uint16_t x2,
+  uint16_t y2
+) {
   static uint16_t touch_origin_x;
   static uint16_t touch_origin_y;
 

@@ -78,7 +78,6 @@ uint32_t sda_lcd_off_handler() {
     svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_DEEP;
     return 1000;
   }
-
 }
 
 
@@ -114,7 +113,6 @@ void sda_power_wait_for_input() {
 void sda_power_management_handler() {
   static lcdStateType lcdStateOld;
   static volatile uint32_t lcdOffBlinkTimer;
-
 
   if (svpSGlobal.touchValid) {
     lastInputTime = svpSGlobal.uptime;

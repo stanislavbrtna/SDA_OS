@@ -70,7 +70,8 @@ int32_t sdaRegisterAlarm(
     uint8_t wkday,
     uint8_t day,
     uint8_t month,
-    int32_t param) {
+    int32_t param
+  ) {
 
   uint8_t dirbuf[258];
   uint8_t keybuff[25];
@@ -144,8 +145,8 @@ int32_t sdaRegisterAlarm(
   return maxId;
 }
 
-void sdaReloadAlarms() {
 
+void sdaReloadAlarms() {
   uint8_t dirbuf[258];
   uint8_t keybuff[25];
   uint8_t numbuff[10];
@@ -171,7 +172,7 @@ void sdaReloadAlarms() {
   while (sda_conf_key_exists(&conffile, keybuff)) {
     int32_t time = 0;
     uint8_t hour = 0;
-     uint8_t min = 0;
+    uint8_t min = 0;
     uint8_t wkday = 0;
     uint8_t day = 0;
     uint8_t month = 0;
