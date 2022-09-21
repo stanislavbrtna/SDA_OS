@@ -331,7 +331,9 @@ static void sda_main_redraw() {
     }
   } else {
     if (svpSGlobal.systemRedraw == 1) {
-      pscg_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 1, sda_current_con);
+      if (mainScr != 0) {
+        pscg_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 1, sda_current_con);
+      }
       sda_draw_overlay_shadow(
             overlayX1,
             overlayY1,

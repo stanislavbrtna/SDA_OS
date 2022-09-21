@@ -768,12 +768,7 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
   sda_files_copyer();
 
   if (top == 1) {
-    if (svs_wrap_setScr_flag == 1) {
-      svs_wrap_setScr_flag = 0;
-      mainScr = svs_wrap_setScr_id;
-      slotScreen[4] = svs_wrap_setScr_id;
-    }
-
+    
     if (svmCheckAndExit()) {
       return 0;
     }
@@ -797,6 +792,7 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
     if (flag_svmCall == 1) {
       uint8_t argBuff[2048];
 
+      //TODO: Storing and restoring arguments crashes on emcc
       storeArguments(argBuff, svmCallArg, svmCallArgType, svmCallArgStr, &svm);
 
       if(sdaSvmLaunch(svmCallName, svmMeta.id) == 0) {
@@ -812,6 +808,14 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
       svmInit = 1;
       flag_svmCall = 0;
     }
+
+    // This needs to be after all init calls
+    if (svs_wrap_setScr_flag == 1) {
+      svs_wrap_setScr_flag = 0;
+      mainScr = svs_wrap_setScr_id;
+      slotScreen[4] = svs_wrap_setScr_id;
+    }
+
   }
   return 0;
 }
