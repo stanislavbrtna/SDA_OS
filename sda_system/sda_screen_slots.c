@@ -63,9 +63,11 @@ uint16_t sda_slot_get_screen(uint8_t slot) {
   return slotScreen[slot];
 }
 
+
 uint8_t sda_if_slot_on_top(uint8_t slot) {
   return slotOnTop[slot];
 }
+
 
 void sda_slot_on_top(uint8_t slot) {
   uint8_t x;
@@ -86,6 +88,7 @@ void sda_slot_on_top(uint8_t slot) {
 
   prevTopSlot = slot;
 }
+
 
 uint8_t sda_get_top_slot() {
   uint8_t x;

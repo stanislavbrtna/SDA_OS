@@ -72,6 +72,7 @@ void sda_files_copyer() {
   }
 }
 
+
 void sda_files_close() {
   if (fr_open) {
     svp_fclose(&readFil);
@@ -89,6 +90,7 @@ void sda_files_close() {
   }
 }
 
+
 uint8_t * sda_get_fr_fname() {
   if (fr_open) {
     return fr_filename;
@@ -96,6 +98,7 @@ uint8_t * sda_get_fr_fname() {
     return 0;
   }
 }
+
 
 uint8_t * sda_get_conf_fname() {
   if (conf_open) {
@@ -105,6 +108,7 @@ uint8_t * sda_get_conf_fname() {
   }
 }
 
+
 uint8_t * sda_get_csv_fname() {
   if (csv_open) {
     return csv_filename;
@@ -113,11 +117,13 @@ uint8_t * sda_get_csv_fname() {
   }
 }
 
+
 uint8_t sda_fr_fname_open(uint8_t * fname) {
   sda_strcp(fname, fr_filename, sizeof(fr_filename));
   fr_open = svp_fopen_rw(&readFil, fname);
   return fr_open;
 }
+
 
 uint8_t sda_files_conf_open(uint8_t * fname) {
   sda_strcp(fname, conf_filename, sizeof(conf_filename));
@@ -125,15 +131,18 @@ uint8_t sda_files_conf_open(uint8_t * fname) {
   return conf_open;
 }
 
+
 uint8_t sda_files_csv_open(uint8_t * fname) {
   sda_strcp(fname, csv_filename, sizeof(csv_filename));
   csv_open = svp_csv_open(&csvFile, fname);
   return csv_open;
 }
 
+
 uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+
 
 void sda_files_wrapper_init() {
   addSysWrapper(sda_files_wrapper, (uint8_t *)"fs");

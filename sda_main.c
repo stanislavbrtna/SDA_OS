@@ -370,13 +370,13 @@ static void sda_main_redraw() {
 }
 
 
-static void sda_main_check_for_notifications() {
+static void sda_main_check_for_alarm() {
   uint8_t notifAppName[APP_NAME_LEN];
   int32_t id;
   int32_t param;
   if (sdaGetCurentAlarm(&id, &param, notifAppName, sizeof(notifAppName))) {
     svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
-    setNotificationFlag(id, param);
+    sda_alarm_set_flag(id, param);
     sdaSvmLaunch(notifAppName, 0);
   }
 }
@@ -497,7 +497,7 @@ uint8_t sda_main_loop() {
 
   sda_main_handle_soft_buttons();
 
-  sda_main_check_for_notifications();
+  sda_main_check_for_alarm();
   sdaSvmHandleTimers();
   sda_power_management_handler();
   sda_handle_battery_status();

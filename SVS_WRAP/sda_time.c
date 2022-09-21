@@ -32,7 +32,7 @@ uint8_t sda_time_sub_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get time
   //#!    sys.time.get();
   //#!Returns system time in the timestamp form.
-  //#!Count of seconds from 0:0 1.1. 2007
+  //#!Count of seconds from 00:00 1. 1. 2007
   //#!Return: [num]Timestamp
   if (sysFuncMatch(argS->callId, "get", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -416,7 +416,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = getNotificationFlag();
+    result->value.val_s = sda_alarm_get_flag();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -430,7 +430,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    clearNotificationFlag();
+    sda_alarm_clear_flag();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -444,7 +444,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = getNotificationId();
+    result->value.val_s = sda_alarm_get_id();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -458,7 +458,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = getNotificationParam();
+    result->value.val_s = sda_alarm_get_param();
     result->type = SVS_TYPE_NUM;
     return 1;
   }

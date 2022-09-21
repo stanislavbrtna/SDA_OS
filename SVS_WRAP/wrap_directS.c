@@ -59,9 +59,9 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Mixes the right color
   //#!Return: [num] Color
   if (sysFuncMatch(argS->callId, "mixColor", s)) {
-    argType[1] = 0;
-    argType[2] = 0;
-    argType[3] = 0;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
 
     if(sysExecTypeCheck(argS, argType, 3, s)) {
       return 0;

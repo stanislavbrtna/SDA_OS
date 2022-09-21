@@ -91,11 +91,11 @@ uint8_t *svmGetSuspendedName(uint16_t id);
 void sdaUpdateCurrentWD();
 
 // notification flags
-void setNotificationFlag(int32_t id, int32_t param);
-int32_t getNotificationId();
-int32_t getNotificationParam();
-int8_t getNotificationFlag();
-void clearNotificationFlag();
+void sda_alarm_set_flag(int32_t id, int32_t param);
+int32_t sda_alarm_get_id();
+int32_t sda_alarm_get_param();
+int8_t sda_alarm_get_flag();
+void sda_alarm_clear_flag();
 
 
 

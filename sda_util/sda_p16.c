@@ -146,6 +146,7 @@ uint16_t p16_get_pixel(svp_file * fp, p16Header * header, p16State * state) {
   return 0;
 }
 
+
 uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
   svp_file fp;
   p16Header header;

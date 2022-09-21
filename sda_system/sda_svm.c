@@ -47,9 +47,9 @@ static uint16_t svmSavedProcId[MAX_OF_SAVED_PROC];
 static uint8_t svmSavedProcValid[MAX_OF_SAVED_PROC];
 static uint8_t svmSavedProcSingular[MAX_OF_SAVED_PROC];
 
-static int32_t notificationId;
-static int32_t notificationParam;
-static uint8_t notificationFlag;
+static int32_t alarmId;
+static int32_t alarmParam;
+static uint8_t alarmFlag;
 
 static uint8_t redrawDetect;
 
@@ -97,30 +97,30 @@ uint16_t svmGetSavedProcId(uint16_t proc_array_index) {
 
 // notification
 
-void setNotificationFlag(int32_t id, int32_t param) {
-  notificationId = id;
-  notificationParam = param;
-  notificationFlag = 1;
+void sda_alarm_set_flag(int32_t id, int32_t param) {
+  alarmId = id;
+  alarmParam = param;
+  alarmFlag = 1;
 }
 
 
-int32_t getNotificationId() {
-  return notificationId;
+int32_t sda_alarm_get_id() {
+  return alarmId;
 }
 
 
-int32_t getNotificationParam() {
-  return notificationParam;
+int32_t sda_alarm_get_param() {
+  return alarmParam;
 }
 
 
-int8_t getNotificationFlag() {
-  return notificationFlag;
+int8_t sda_alarm_get_flag() {
+  return alarmFlag;
 }
 
 
-void clearNotificationFlag() {
-  notificationFlag = 0;
+void sda_alarm_clear_flag() {
+  alarmFlag = 0;
 }
 
 // screens and stuff
@@ -402,7 +402,7 @@ void sdaSvmCloseApp() {
   svmInValidate(svmMeta.id);
   sda_set_sleep_lock(0);
   svpSGlobal.kbdVisible = 0;
-  clearNotificationFlag();
+  sda_alarm_clear_flag();
   sda_files_close();
 
   if (svmMeta.parentId != 0) {
@@ -699,7 +699,7 @@ void sdaSvmKillApp_handle() {
   svmInValidate(svmMeta.id);
   sda_set_sleep_lock(0);
 
-  clearNotificationFlag();
+  sda_alarm_clear_flag();
   sda_files_close();
 
   svp_crypto_lock();
