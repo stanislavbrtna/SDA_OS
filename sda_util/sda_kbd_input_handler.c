@@ -89,7 +89,14 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
         || (pscg_get_event(input_id, &sda_sys_con) == EV_HOLD))
         && pscg_text_get_pwd(input_id, &sda_sys_con) == 0) {
       uint16_t temp;
+      uint8_t curr_font;
+      curr_font = LCD_Get_Font_Size();
+      LCD_Set_Sys_Font(pscg_get_param2(input_id, &sda_sys_con));
+
       temp = LCD_Text_Get_Cursor_Pos(str, pscg_get_tmx(&sda_sys_con), pscg_get_tmy(&sda_sys_con));
+
+      LCD_Set_Sys_Font(curr_font);
+
       if (temp == 0) {
         pscg_set_param(input_id, 0, &sda_sys_con);
       } else {

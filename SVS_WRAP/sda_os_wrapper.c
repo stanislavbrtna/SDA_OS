@@ -499,12 +499,19 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     if (pscg_get_value(argS->arg[1].val_s, &sda_app_con)) {
-      //nastavování kurzoru
+      // getting the cursor position
       if (((pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED) \
           || (pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD))
           && (pscg_text_get_pwd(argS->arg[1].val_s, &sda_app_con) == 0)) {
         uint16_t temp;
+        uint8_t curr_font;
+        curr_font = LCD_Get_Font_Size();
+        LCD_Set_Sys_Font(pscg_get_param2(argS->arg[1].val_s, &sda_app_con));
+  
         temp = LCD_Text_Get_Cursor_Pos(s->stringField + argS->arg[2].val_str, pscg_get_tmx(&sda_app_con), pscg_get_tmy(&sda_app_con));
+        
+        LCD_Set_Sys_Font(curr_font);
+
         if (temp == 0) {
           pscg_set_param(argS->arg[1].val_s, 0, &sda_app_con);
         } else {
