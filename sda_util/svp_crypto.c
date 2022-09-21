@@ -121,7 +121,6 @@ uint8_t svp_crypto_set_pass_as_key() {
 uint8_t svp_crypto_load_key_to_str(uint8_t * fname, uint8_t* str) {
   svp_file source;
   uint8_t nextchar;
-  uint8_t prevVal;
   uint32_t keyLen;
   uint32_t i;
 
@@ -137,17 +136,16 @@ uint8_t svp_crypto_load_key_to_str(uint8_t * fname, uint8_t* str) {
 
   //read
   if (svp_feof(&source)) {
-    return 0;
+    return 1;
   }
 
   nextchar = svp_fread_u8(&source);
 
   if (svp_feof(&source)) {
-    return 0;
+    return 1;
   }
 
   i = 0;
-  prevVal = 0;
   while(!svp_feof(&source)) {
     str[i] = svp_crypto_stream_decrypt(nextchar);
     nextchar = svp_fread_u8(&source);
@@ -200,7 +198,10 @@ uint8_t svp_crypto_load_keyfile(uint8_t * fname) {
     return 1;
   }
 
-  svp_crypto_load_key_to_str(fname, new_key);
+  if(svp_crypto_load_key_to_str(fname, new_key)) {
+    return 2;
+  }
+
   svp_crypto_set_key(new_key);
 
   return 0;

@@ -167,6 +167,8 @@ uint16_t sda_settings_color_screen(uint8_t init) {
 
   if (init == 1) {
     //color screen
+    optColScr = pscg_add_screen(&sda_sys_con);
+
     pscg_add_text(1, 1, 10, 2, SCR_COLOR_SETTINGS_SCREEN, optColScr, &sda_sys_con);
     b_border = pscg_add_cbutton(2, 2, 8, 3, SCR_BORDER_COLOR, optColScr, &sda_sys_con);
     pscg_text_set_align(b_border, GR2_ALIGN_CENTER, &sda_sys_con);

@@ -220,9 +220,10 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
 
   imageState.init = 0;
   imageState.repeat = 0;
+  imageState.prevVal = 0;
 
   uint16_t color;
-  uint16_t pix=0;
+  uint16_t pix = 0;
 
   for(uint32_t n = 0; n < header.imageHeight; n++) {
     fpos = svp_ftell(&fp);
