@@ -4,7 +4,7 @@
 ##### Get time
     sys.time.get();
 Returns system time in the timestamp form.
-Count of seconds from 0:0 1.1. 2007
+Count of seconds from 00:00 1. 1. 2007
 Return: [num]Timestamp
 ##### Get time update flag
     sys.time.getUpd()
@@ -87,12 +87,16 @@ Clears the timer if it is running.
 Return: none
 #### Alarm API
 Alarm API creates system handled, repeatable alarms, that will be stored during reboots and will automatically launch the app.
+When alarm is created, alarm id is returned, this id should be stored for future operations with the alarm.
+Every alarm can have an user-defined parameter.
 ##### Register alarm
     sys.alarm.setFixed([num]timestamp, [num]param);
+Creates new one-time alarm.
 Returns id of the new alarm.
 Return: [num]id
 ##### Register repeating alarm
     sys.alarm.setRep([num]hour, [num]min, [num]wkday, [num]day, [num]month,[num]param);
+Creates new repeatable alarm. Zero value in wkday/day/month means repeat every wkday/day/month.
 Returns id of the new alarm.
 Return: [num]id
 ##### Remove alarm
@@ -101,7 +105,7 @@ Returns if alarm was deleted.
 Return: [num] 0 - Ok, 1 - Fail
 ##### Get alarm flag
     sys.alarm.getFlag();
-Returns id of the new alarm.
+Returns 1 when alarm has occured.
 Return: [num]flag
 ##### Clear alarm flag
     sys.alarm.clrFlag();
@@ -109,7 +113,7 @@ Clears alarm flag.
 Return: none
 ##### Get alarm id
     sys.alarm.getId();
-Returns id of the curent alarm.
+Returns id of the current alarm.
 Return: [num]id
 ##### Get alarm parameter
     sys.alarm.getPar();

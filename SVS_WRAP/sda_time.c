@@ -337,9 +337,12 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!#### Alarm API
   //#!Alarm API creates system handled, repeatable alarms, that will be stored during reboots and will automatically launch the app.
+  //#!When alarm is created, alarm id is returned, this id should be stored for future operations with the alarm.
+  //#!Every alarm can have an user-defined parameter.
 
   //#!##### Register alarm
   //#!    sys.alarm.setFixed([num]timestamp, [num]param);
+  //#!Creates new one-time alarm.
   //#!Returns id of the new alarm.
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "setFixed", s)) {
@@ -365,6 +368,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Register repeating alarm
   //#!    sys.alarm.setRep([num]hour, [num]min, [num]wkday, [num]day, [num]month,[num]param);
+  //#!Creates new repeatable alarm. Zero value in wkday/day/month means repeat every wkday/day/month.
   //#!Returns id of the new alarm.
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "setRep", s)) {
@@ -409,7 +413,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Get alarm flag
   //#!    sys.alarm.getFlag();
-  //#!Returns id of the new alarm.
+  //#!Returns 1 when alarm has occured.
   //#!Return: [num]flag
   if (sysFuncMatch(argS->callId, "getFlag", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -437,7 +441,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Get alarm id
   //#!    sys.alarm.getId();
-  //#!Returns id of the curent alarm.
+  //#!Returns id of the current alarm.
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "getId", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
