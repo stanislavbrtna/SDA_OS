@@ -94,14 +94,8 @@ void password_overlay_update(uint16_t ovId) {
     return;
   }
 
-  // TODO: fix this, displaying overlay and keyboard at the same cycle somewhat does not work.
-  if (kbdInit < 5) {
-    kbdInit++;
-  } else if (kbdInit == 5) {
-    sda_keyboard_show();
-    kbdInit++;
-  }
-
+  sda_keyboard_show();
+  
   svp_input_handler(passInputStr, 32, passInput);
 
   if (gr2_clicked(passButton, &sda_sys_con)) {

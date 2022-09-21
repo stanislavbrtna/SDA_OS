@@ -306,9 +306,7 @@ static void sda_main_redraw() {
     ) {
     svp_draw_keyboard(0, 319, &kbdLayout);
     kbdRedraw = 0;
-    if (kbdRedraw == 0) {
-      svpSGlobal.systemRedraw = 1;
-    }
+    svpSGlobal.systemRedraw = 1;
   }
 
   if ((svpSGlobal.kbdVisible == 1) && (kbdVisibleOld == 0)) {
@@ -323,8 +321,8 @@ static void sda_main_redraw() {
 
   kbdVisibleOld = svpSGlobal.kbdVisible;
 
+  LCD_setDrawArea(0, 0, SDA_LCD_W - 1, SDA_LCD_H - 160 * svpSGlobal.kbdVisible);
   if (overlayScr == 0) {
-    LCD_setDrawArea(0, 0, SDA_LCD_W - 1, SDA_LCD_H - 160 * svpSGlobal.kbdVisible);
     if (svpSGlobal.systemRedraw == 1) {
       pscg_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 1, sda_current_con);
       svpSGlobal.systemRedraw = 0;
@@ -352,13 +350,6 @@ static void sda_main_redraw() {
       );
       svpSGlobal.systemRedraw = 0;
     }
-    sda_draw_overlay_shadow(
-          overlayX1,
-          overlayY1,
-          overlayX2,
-          overlayY2,
-          overlayCont
-    );
     pscg_draw_screen(overlayX1, overlayY1, overlayX2, overlayY2, overlayScr, 0, overlayCont);
   }
   pscg_draw_end(sda_current_con);
