@@ -790,17 +790,16 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
     }
 
     if (flag_svmCall == 1) {
-      uint8_t argBuff[2048];
-
-      //TODO: Storing and restoring arguments crashes on emcc
+      uint8_t argBuff[2048]; //1024 magically works with emscripten
+      //TODO: Storing and restoring arguments crashes on emcc     
       storeArguments(argBuff, svmCallArg, svmCallArgType, svmCallArgStr, &svm);
 
       if(sdaSvmLaunch(svmCallName, svmMeta.id) == 0) {
         flag_svmCall = 0;
         return 0;
       }
-
-      restoreArguments(svmCallArgType, svmCallArg, svmCallArgStr, &svm);
+      
+      restoreArguments(svmCallArgType, svmCallArg, svmCallArgStr, &svm);    
 
       // init call here with args
       commExec((uint8_t *)"init", &svm);
