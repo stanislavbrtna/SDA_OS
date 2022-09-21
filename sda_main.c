@@ -305,8 +305,10 @@ static void sda_main_redraw() {
       || kbdRedraw
     ) {
     svp_draw_keyboard(0, 319, &kbdLayout);
+    if (kbdRedraw == 0) {
+      svpSGlobal.systemRedraw = 1;
+    }
     kbdRedraw = 0;
-    svpSGlobal.systemRedraw = 1;
   }
 
   if ((svpSGlobal.kbdVisible == 1) && (kbdVisibleOld == 0)) {
