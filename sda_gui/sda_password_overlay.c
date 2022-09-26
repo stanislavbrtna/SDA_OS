@@ -40,43 +40,43 @@ uint16_t password_overlay_init() {
   passInputStr[0] = 0;
   kbdInit = 0;
   
-  screen = pscg_add_screen(&sda_sys_con);
+  screen = gr2_add_screen(&sda_sys_con);
 
-  pscg_add_text(1, 0, 8, 1, OVRL_ENTER_PASSWORD, screen, &sda_sys_con);
+  gr2_add_text(1, 0, 8, 1, OVRL_ENTER_PASSWORD, screen, &sda_sys_con);
 
-  passInput = pscg_add_text(1, 2, 7, 3, (uint8_t *)"", screen, &sda_sys_con);
+  passInput = gr2_add_text(1, 2, 7, 3, (uint8_t *)"", screen, &sda_sys_con);
 
-  passMessage = pscg_add_text(1, 3, 8, 4, SCR_WRONG_PASSWORD, screen, &sda_sys_con);
-  pscg_set_visible(passMessage, 0, &sda_sys_con);
+  passMessage = gr2_add_text(1, 3, 8, 4, SCR_WRONG_PASSWORD, screen, &sda_sys_con);
+  gr2_set_visible(passMessage, 0, &sda_sys_con);
 
-  pscg_text_set_editable(passInput, 1, &sda_sys_con);
-  pscg_text_set_pwd(passInput, 1, &sda_sys_con);
+  gr2_text_set_editable(passInput, 1, &sda_sys_con);
+  gr2_text_set_pwd(passInput, 1, &sda_sys_con);
 
-  passButton = pscg_add_button(7, 2, 8, 3, (uint8_t *)"*", screen, &sda_sys_con);
+  passButton = gr2_add_button(7, 2, 8, 3, (uint8_t *)"*", screen, &sda_sys_con);
 
-  okButton = pscg_add_button(5, 5, 7, 6, OVRL_OK, screen, &sda_sys_con);
-  cancelButton = pscg_add_button(2, 5, 4, 6, OVRL_CANCEL, screen, &sda_sys_con);
+  okButton = gr2_add_button(5, 5, 7, 6, OVRL_OK, screen, &sda_sys_con);
+  cancelButton = gr2_add_button(2, 5, 4, 6, OVRL_CANCEL, screen, &sda_sys_con);
 
-  pscg_text_set_align(okButton, GR2_ALIGN_CENTER, &sda_sys_con);
-  pscg_text_set_align(cancelButton, GR2_ALIGN_CENTER, &sda_sys_con);
+  gr2_text_set_align(okButton, GR2_ALIGN_CENTER, &sda_sys_con);
+  gr2_text_set_align(cancelButton, GR2_ALIGN_CENTER, &sda_sys_con);
 
   povId = setOverlayScreen(screen, &sda_sys_con);
 
-  pscg_set_xscroll(screen, 16, &sda_sys_con);
+  gr2_set_xscroll(screen, 16, &sda_sys_con);
 
   setOverlayY2(288);
   setOverlayDestructor(time_overlay_destructor);
 
-  pscg_activate_text(passInput, &sda_sys_con);
+  gr2_activate_text(passInput, &sda_sys_con);
 
   if (svp_crypto_get_if_set_up() == 0) {
-    pscg_text_deactivate(&sda_sys_con);
+    gr2_text_deactivate(&sda_sys_con);
     kbdInit = 7;
-    pscg_set_grayout(passInput, 1, &sda_sys_con);
-    pscg_set_grayout(okButton, 1, &sda_sys_con);
-    pscg_set_grayout(passButton, 1, &sda_sys_con);
-    pscg_text_set_pwd(passInput, 0, &sda_sys_con);
-    pscg_set_str(passInput, OVRL_SEC_NOT_SET_UP, &sda_sys_con);
+    gr2_set_grayout(passInput, 1, &sda_sys_con);
+    gr2_set_grayout(okButton, 1, &sda_sys_con);
+    gr2_set_grayout(passButton, 1, &sda_sys_con);
+    gr2_text_set_pwd(passInput, 0, &sda_sys_con);
+    gr2_set_str(passInput, OVRL_SEC_NOT_SET_UP, &sda_sys_con);
   }
   
   povDone = 0;
@@ -99,13 +99,13 @@ void password_overlay_update(uint16_t ovId) {
   svp_input_handler(passInputStr, 32, passInput);
 
   if (gr2_clicked(passButton, &sda_sys_con)) {
-    pscg_text_set_pwd(passInput, 1 - pscg_text_get_pwd(passInput, &sda_sys_con), &sda_sys_con);
+    gr2_text_set_pwd(passInput, 1 - gr2_text_get_pwd(passInput, &sda_sys_con), &sda_sys_con);
   }
 
-  if (pscg_get_event(okButton, &sda_sys_con) == EV_RELEASED) {
+  if (gr2_get_event(okButton, &sda_sys_con) == EV_RELEASED) {
 
     if (svp_crypto_unlock(passInputStr)) {
-      pscg_set_visible(passMessage, 1, &sda_sys_con);
+      gr2_set_visible(passMessage, 1, &sda_sys_con);
     } else {
       destroyOverlay();
       sda_keyboard_hide();
@@ -114,13 +114,13 @@ void password_overlay_update(uint16_t ovId) {
     }
   }
 
-  if (pscg_get_event(cancelButton, &sda_sys_con) == EV_RELEASED) {
+  if (gr2_get_event(cancelButton, &sda_sys_con) == EV_RELEASED) {
     destroyOverlay();
     sda_keyboard_hide();
     povDone = 2;
     return;
   }
-  pscg_clear_screen_ev(screen, &sda_sys_con);
+  gr2_clear_screen_ev(screen, &sda_sys_con);
 
 }
 

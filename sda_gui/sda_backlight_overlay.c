@@ -39,7 +39,7 @@ void sda_batt_overlay_init() {
 
 
 void sda_batt_overlay_destructor() {
-  pscg_destroy(batt_overlay, &sda_sys_con);
+  gr2_destroy(batt_overlay, &sda_sys_con);
   setRedrawFlag();
   batt_overlay_flag = 0;
   batt_overlay = 0xFFFF;
@@ -58,11 +58,11 @@ void batt_overlay_handle(uint8_t init) {
   static uint8_t backlightOld;
 
   if (init == 1) {
-    batt_overlay = pscg_add_screen(&sda_sys_con);
-    pscg_set_x_cell(batt_overlay, 16, &sda_sys_con);
-    pscg_set_y_cell(batt_overlay, 16, &sda_sys_con);
+    batt_overlay = gr2_add_screen(&sda_sys_con);
+    gr2_set_x_cell(batt_overlay, 16, &sda_sys_con);
+    gr2_set_y_cell(batt_overlay, 16, &sda_sys_con);
     backlightSlider
-      = pscg_add_slider_h(
+      = gr2_add_slider_h(
           1, 1, 15,  3,
           255 - MIN_BACKLIGHT_VALUE,
           svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
@@ -70,41 +70,41 @@ void batt_overlay_handle(uint8_t init) {
           &sda_sys_con
       );
     backlightButton
-      = pscg_add_button(
+      = gr2_add_button(
           11, 4, 15, 6,
           OVRL_OK,
           batt_overlay,
           &sda_sys_con
       );
-    pscg_text_set_align(backlightButton, GR2_ALIGN_CENTER, &sda_sys_con);
+    gr2_text_set_align(backlightButton, GR2_ALIGN_CENTER, &sda_sys_con);
     soundEnable
-      = pscg_add_checkbox(
+      = gr2_add_checkbox(
           1, 4, 10, 6,
           OVRL_SILENT,
           batt_overlay,
           &sda_sys_con
       );
 
-    pscg_set_value(soundEnable, svpSGlobal.mute, &sda_sys_con);
+    gr2_set_value(soundEnable, svpSGlobal.mute, &sda_sys_con);
     return;
   }
 
-  if (pscg_get_event(backlightSlider, &sda_sys_con)) {
-    if ((pscg_get_value(backlightSlider, &sda_sys_con) + MIN_BACKLIGHT_VALUE) > 255){
+  if (gr2_get_event(backlightSlider, &sda_sys_con)) {
+    if ((gr2_get_value(backlightSlider, &sda_sys_con) + MIN_BACKLIGHT_VALUE) > 255){
       svpSGlobal.lcdBacklight = 255;
     } else {
       svpSGlobal.lcdBacklight
-        = (uint8_t) (pscg_get_value(backlightSlider, &sda_sys_con) + MIN_BACKLIGHT_VALUE);
+        = (uint8_t) (gr2_get_value(backlightSlider, &sda_sys_con) + MIN_BACKLIGHT_VALUE);
     }
     svp_set_backlight(svpSGlobal.lcdBacklight);
   }
-  pscg_set_event(backlightSlider, EV_NONE, &sda_sys_con);
+  gr2_set_event(backlightSlider, EV_NONE, &sda_sys_con);
 
   if (sda_wrap_get_button(BUTTON_RIGHT) || sda_wrap_get_button(BUTTON_UP)) {
     if (svpSGlobal.lcdBacklight < 255) {
       svpSGlobal.lcdBacklight++;
       svp_set_backlight(svpSGlobal.lcdBacklight);
-      pscg_set_value(
+      gr2_set_value(
         backlightSlider,
         svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
         &sda_sys_con
@@ -118,7 +118,7 @@ void batt_overlay_handle(uint8_t init) {
     if (svpSGlobal.lcdBacklight > MIN_BACKLIGHT_VALUE) {
       svpSGlobal.lcdBacklight--;
       svp_set_backlight(svpSGlobal.lcdBacklight);
-      pscg_set_value(
+      gr2_set_value(
         backlightSlider,
         svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
         &sda_sys_con
@@ -132,32 +132,32 @@ void batt_overlay_handle(uint8_t init) {
     svpSGlobal.systemPwrLongPress = 0;
     svpSGlobal.lcdBacklight = 255;
     svp_set_backlight(svpSGlobal.lcdBacklight);
-    pscg_set_value(
+    gr2_set_value(
       backlightSlider,
       svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
       &sda_sys_con
     );
   }
 
-  if (pscg_get_event(backlightButton, &sda_sys_con) == EV_RELEASED || svpSGlobal.lcdState == LCD_OFF) {
+  if (gr2_get_event(backlightButton, &sda_sys_con) == EV_RELEASED || svpSGlobal.lcdState == LCD_OFF) {
     batt_overlay_flag = 0;
     setRedrawFlag();
     destroyOverlay();
     return;
   }
-  pscg_set_event(backlightButton, EV_NONE, &sda_sys_con);
+  gr2_set_event(backlightButton, EV_NONE, &sda_sys_con);
 
-  if (pscg_get_event(soundEnable, &sda_sys_con) == EV_RELEASED) {
-    svpSGlobal.mute = pscg_get_value(soundEnable, &sda_sys_con);
+  if (gr2_get_event(soundEnable, &sda_sys_con) == EV_RELEASED) {
+    svpSGlobal.mute = gr2_get_value(soundEnable, &sda_sys_con);
     sda_store_mute_config();
   }
-  pscg_set_event(soundEnable, EV_NONE, &sda_sys_con);
+  gr2_set_event(soundEnable, EV_NONE, &sda_sys_con);
 
-  if (svpSGlobal.mute != pscg_get_value(soundEnable, &sda_sys_con))
-  pscg_set_value(soundEnable, svpSGlobal.mute, &sda_sys_con);
+  if (svpSGlobal.mute != gr2_get_value(soundEnable, &sda_sys_con))
+  gr2_set_value(soundEnable, svpSGlobal.mute, &sda_sys_con);
 
   if (svpSGlobal.lcdBacklight != backlightOld) {
-    pscg_set_value(
+    gr2_set_value(
         backlightSlider,
         svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
         &sda_sys_con

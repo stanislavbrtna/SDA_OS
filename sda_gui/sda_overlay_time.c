@@ -63,44 +63,44 @@ uint16_t time_overlay_init() {
 
   sda_keyboard_hide();
 
-  tov_screen = pscg_add_screen(sda_current_con);
+  tov_screen = gr2_add_screen(sda_current_con);
 
-  pscg_add_text(1, 0, 8, 1, OVRL_ENTER_TIME, tov_screen, sda_current_con);
+  gr2_add_text(1, 0, 8, 1, OVRL_ENTER_TIME, tov_screen, sda_current_con);
 
-  tov_th1 = pscg_add_text(1, 2, 2, 3, tov_min1_str, tov_screen, sda_current_con);
-  tov_th2 = pscg_add_text(2, 2, 3, 3, tov_min2_str, tov_screen, sda_current_con);
+  tov_th1 = gr2_add_text(1, 2, 2, 3, tov_min1_str, tov_screen, sda_current_con);
+  tov_th2 = gr2_add_text(2, 2, 3, 3, tov_min2_str, tov_screen, sda_current_con);
 
-  tov_ph1 = pscg_add_button(1, 1, 2, 2, (uint8_t *)"+", tov_screen, sda_current_con);
-  tov_ph2 = pscg_add_button(2, 1, 3, 2, (uint8_t *)"+", tov_screen, sda_current_con);
+  tov_ph1 = gr2_add_button(1, 1, 2, 2, (uint8_t *)"+", tov_screen, sda_current_con);
+  tov_ph2 = gr2_add_button(2, 1, 3, 2, (uint8_t *)"+", tov_screen, sda_current_con);
 
-  tov_mh1 = pscg_add_button(1, 3, 2, 4, (uint8_t *)"-", tov_screen, sda_current_con);
-  tov_mh2 = pscg_add_button(2, 3, 3, 4, (uint8_t *)"-", tov_screen, sda_current_con);
+  tov_mh1 = gr2_add_button(1, 3, 2, 4, (uint8_t *)"-", tov_screen, sda_current_con);
+  tov_mh2 = gr2_add_button(2, 3, 3, 4, (uint8_t *)"-", tov_screen, sda_current_con);
 
-  tov_th1 = pscg_add_text(1, 2, 2, 3, tov_hr1_str, tov_screen, sda_current_con);
-  tov_th2 = pscg_add_text(2, 2, 3, 3, tov_hr2_str, tov_screen, sda_current_con);
+  tov_th1 = gr2_add_text(1, 2, 2, 3, tov_hr1_str, tov_screen, sda_current_con);
+  tov_th2 = gr2_add_text(2, 2, 3, 3, tov_hr2_str, tov_screen, sda_current_con);
 
-  pscg_text_set_align(
-    pscg_add_text(3, 2, 4, 3, (uint8_t *)":", tov_screen, sda_current_con),
+  gr2_text_set_align(
+    gr2_add_text(3, 2, 4, 3, (uint8_t *)":", tov_screen, sda_current_con),
     GR2_ALIGN_CENTER,
     sda_current_con
   );
 
-  tov_tm1 = pscg_add_text(4, 2, 5, 3, tov_min1_str, tov_screen, sda_current_con);
-  tov_tm2 = pscg_add_text(5, 2, 6, 3, tov_min2_str, tov_screen, sda_current_con);
+  tov_tm1 = gr2_add_text(4, 2, 5, 3, tov_min1_str, tov_screen, sda_current_con);
+  tov_tm2 = gr2_add_text(5, 2, 6, 3, tov_min2_str, tov_screen, sda_current_con);
 
-  tov_pm1 = pscg_add_button(4, 1, 5, 2, (uint8_t *)"+", tov_screen, sda_current_con);
-  tov_pm2 = pscg_add_button(5, 1, 6, 2, (uint8_t *)"+", tov_screen, sda_current_con);
+  tov_pm1 = gr2_add_button(4, 1, 5, 2, (uint8_t *)"+", tov_screen, sda_current_con);
+  tov_pm2 = gr2_add_button(5, 1, 6, 2, (uint8_t *)"+", tov_screen, sda_current_con);
 
-  tov_mm1 = pscg_add_button(4, 3, 5, 4, (uint8_t *)"-", tov_screen, sda_current_con);
-  tov_mm2 = pscg_add_button(5, 3, 6, 4, (uint8_t *)"-", tov_screen, sda_current_con);
+  tov_mm1 = gr2_add_button(4, 3, 5, 4, (uint8_t *)"-", tov_screen, sda_current_con);
+  tov_mm2 = gr2_add_button(5, 3, 6, 4, (uint8_t *)"-", tov_screen, sda_current_con);
 
-  tov_ok = pscg_add_button(4, 5, 6, 6, OVRL_OK, tov_screen, sda_current_con);
-  tov_cancel = pscg_add_button(1, 5, 3, 6, OVRL_CANCEL, tov_screen, sda_current_con);
+  tov_ok = gr2_add_button(4, 5, 6, 6, OVRL_OK, tov_screen, sda_current_con);
+  tov_cancel = gr2_add_button(1, 5, 3, 6, OVRL_CANCEL, tov_screen, sda_current_con);
 
-  pscg_text_set_align(tov_ok, GR2_ALIGN_CENTER, sda_current_con);
-  pscg_text_set_align(tov_cancel, GR2_ALIGN_CENTER, sda_current_con);
+  gr2_text_set_align(tov_ok, GR2_ALIGN_CENTER, sda_current_con);
+  gr2_text_set_align(tov_cancel, GR2_ALIGN_CENTER, sda_current_con);
 
-  pscg_set_xscroll(tov_screen, -16, sda_current_con);
+  gr2_set_xscroll(tov_screen, -16, sda_current_con);
 
   tov_id = setOverlayScreen(tov_screen, sda_current_con);
 
@@ -113,8 +113,8 @@ uint16_t time_overlay_init() {
 
 void time_overlay_destructor() {
   tov_done = 2; // set done to cancel
-  pscg_clear_screen_ev(tov_screen, sda_current_con);
-  pscg_destroy(tov_screen, sda_current_con);
+  gr2_clear_screen_ev(tov_screen, sda_current_con);
+  gr2_destroy(tov_screen, sda_current_con);
   setRedrawFlag();
   overlayDestructorDone();
 }
@@ -130,38 +130,38 @@ void time_overlay_update(uint16_t ovId) {
     return;
   }
 
-  if (pscg_get_event(tov_ok, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(tov_ok, sda_current_con) == EV_RELEASED) {
     destroyOverlay();
     tov_done = 1;
     return;
   }
 
-  if (pscg_get_event(tov_cancel, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(tov_cancel, sda_current_con) == EV_RELEASED) {
     destroyOverlay();
     tov_done = 2;
     return;
   }
   //hours
 
-  if (pscg_get_event(tov_ph1, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(tov_ph1, sda_current_con) == EV_RELEASED) {
     if ((tov_hr1_str[0] - 48 < 1)
         || ((tov_hr2_str[0] - 48 < 4) && (tov_hr1_str[0] - 48 == 1))) {
         tov_hr1_str[0]++;
-        pscg_set_modified(tov_th1, sda_current_con);
+        gr2_set_modified(tov_th1, sda_current_con);
     }
   }
 
-  if (pscg_get_event(tov_mh1, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(tov_mh1, sda_current_con) == EV_RELEASED) {
     if (tov_hr1_str[0] - 48 != 0){
       tov_hr1_str[0]--;
-      pscg_set_modified(tov_th1, sda_current_con);
+      gr2_set_modified(tov_th1, sda_current_con);
     }
   }
 
-  if (pscg_get_event(tov_mh2, sda_current_con) == EV_RELEASED){
+  if (gr2_get_event(tov_mh2, sda_current_con) == EV_RELEASED){
     if (tov_hr2_str[0] - 48 != 0) {
       tov_hr2_str[0]--;
-      pscg_set_modified(tov_th2, sda_current_con);
+      gr2_set_modified(tov_th2, sda_current_con);
     } else {
       if (tov_hr1_str[0] - 48 != 0) {
         tov_hr1_str[0]--;
@@ -170,12 +170,12 @@ void time_overlay_update(uint16_t ovId) {
         tov_hr1_str[0] = '2';
         tov_hr2_str[0] = '3';
       }
-      pscg_set_modified(tov_th1, sda_current_con);
-      pscg_set_modified(tov_th2, sda_current_con);
+      gr2_set_modified(tov_th1, sda_current_con);
+      gr2_set_modified(tov_th2, sda_current_con);
     }
   }
 
-  if (pscg_get_event(tov_ph2, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(tov_ph2, sda_current_con) == EV_RELEASED) {
     if (tov_hr2_str[0] - 48 < 9) {
       if ((tov_hr1_str[0] - 48 < 2)) {
         tov_hr2_str[0]++;
@@ -185,39 +185,39 @@ void time_overlay_update(uint16_t ovId) {
         } else {
           tov_hr2_str[0] = '0';
           tov_hr1_str[0] = '0';
-          pscg_set_modified(tov_th1, sda_current_con);
+          gr2_set_modified(tov_th1, sda_current_con);
         }
       }
-      pscg_set_modified(tov_th2, sda_current_con);
+      gr2_set_modified(tov_th2, sda_current_con);
     } else {
       if (tov_hr1_str[0] - 48 < 2) {
         tov_hr1_str[0]++;
-        pscg_set_modified(tov_th1, sda_current_con);
+        gr2_set_modified(tov_th1, sda_current_con);
       }
       tov_hr2_str[0] = '0';
-      pscg_set_modified(tov_th2, sda_current_con);
+      gr2_set_modified(tov_th2, sda_current_con);
     }
   }
 
   //minutes
-  if (pscg_get_event(tov_pm1, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(tov_pm1, sda_current_con) == EV_RELEASED) {
     if (tov_min1_str[0] - 48 < 5) {
       tov_min1_str[0]++;
-      pscg_set_modified(tov_tm1, sda_current_con);
+      gr2_set_modified(tov_tm1, sda_current_con);
     }
   }
 
-  if (pscg_get_event(tov_mm1, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(tov_mm1, sda_current_con) == EV_RELEASED) {
     if (tov_min1_str[0]-48 != 0) {
       tov_min1_str[0]--;
-      pscg_set_modified(tov_tm1, sda_current_con);
+      gr2_set_modified(tov_tm1, sda_current_con);
     }
   }
 
-  if (pscg_get_event(tov_mm2, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(tov_mm2, sda_current_con) == EV_RELEASED) {
     if (tov_min2_str[0] - 48 != 0) {
       tov_min2_str[0]--;
-      pscg_set_modified(tov_tm2, sda_current_con);
+      gr2_set_modified(tov_tm2, sda_current_con);
     } else {
       if (tov_min1_str[0] - 48 != 0) {
         tov_min2_str[0]='9';
@@ -226,31 +226,31 @@ void time_overlay_update(uint16_t ovId) {
         tov_min1_str[0] = '5';
         tov_min2_str[0] = '9';
       }
-      pscg_set_modified(tov_tm2, sda_current_con);
-       pscg_set_modified(tov_tm1, sda_current_con);
+      gr2_set_modified(tov_tm2, sda_current_con);
+       gr2_set_modified(tov_tm1, sda_current_con);
     }
   }
 
-  if (pscg_get_event(tov_pm2, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(tov_pm2, sda_current_con) == EV_RELEASED) {
     if (tov_min2_str[0] - 48 < 9) {
       tov_min2_str[0]++;
-      pscg_set_modified(tov_tm2, sda_current_con);
+      gr2_set_modified(tov_tm2, sda_current_con);
     } else {
       if (tov_min1_str[0] - 48 < 5) {
         tov_min1_str[0]++;
         tov_min2_str[0] = '0';
-        pscg_set_modified(tov_tm2, sda_current_con);
-        pscg_set_modified(tov_tm1, sda_current_con);
+        gr2_set_modified(tov_tm2, sda_current_con);
+        gr2_set_modified(tov_tm1, sda_current_con);
       } else {
         tov_min2_str[0] = '0';
         tov_min1_str[0] = '0';
-        pscg_set_modified(tov_tm1, sda_current_con);
-        pscg_set_modified(tov_tm2, sda_current_con);
+        gr2_set_modified(tov_tm1, sda_current_con);
+        gr2_set_modified(tov_tm2, sda_current_con);
       }
     }
   }
 
-  pscg_clear_screen_ev(tov_screen, sda_current_con);
+  gr2_clear_screen_ev(tov_screen, sda_current_con);
 }
 
 

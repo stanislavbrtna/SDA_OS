@@ -82,7 +82,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_s = pscg_add_screen(&sda_app_con);
+    result->value.val_s = gr2_add_screen(&sda_app_con);
     result->type = 0;
     return 1;
   }
@@ -103,7 +103,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_add_frame(
+    result->value.val_s = gr2_add_frame(
       argS->arg[1].val_s,
       argS->arg[2].val_s,
       argS->arg[3].val_s,
@@ -131,7 +131,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_add_text(
+    result->value.val_s = gr2_add_text(
       argS->arg[1].val_s,
       argS->arg[2].val_s,
       argS->arg[3].val_s,
@@ -160,7 +160,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_add_button(
+    result->value.val_s = gr2_add_button(
       argS->arg[1].val_s,
       argS->arg[2].val_s,
       argS->arg[3].val_s,
@@ -189,7 +189,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_add_cbutton(
+    result->value.val_s = gr2_add_cbutton(
       argS->arg[1].val_s,
       argS->arg[2].val_s,
       argS->arg[3].val_s,
@@ -218,7 +218,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_add_checkbox(
+    result->value.val_s = gr2_add_checkbox(
       argS->arg[1].val_s,
       argS->arg[2].val_s,
       argS->arg[3].val_s,
@@ -249,7 +249,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_add_icon(
+    result->value.val_s = gr2_add_icon(
       argS->arg[1].val_s,
       argS->arg[2].val_s,
       argS->arg[3].val_s,
@@ -277,7 +277,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_str2(argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, &sda_app_con);
+    gr2_set_str2(argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, &sda_app_con);
 
     result->value.val_s = 0;    
     result->type = 0;
@@ -301,7 +301,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_add_image(
+    result->value.val_s = gr2_add_image(
       argS->arg[1].val_s,
       argS->arg[2].val_s,
       argS->arg[3].val_s,
@@ -331,7 +331,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_add_slider_v(
+    result->value.val_s = gr2_add_slider_v(
       argS->arg[1].val_s,
       argS->arg[2].val_s,
       argS->arg[3].val_s,
@@ -362,7 +362,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_add_slider_h(
+    result->value.val_s = gr2_add_slider_h(
       argS->arg[1].val_s,
       argS->arg[2].val_s,
       argS->arg[3].val_s,
@@ -393,7 +393,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_add_progbar_v(
+    result->value.val_s = gr2_add_progbar_v(
       argS->arg[1].val_s,
       argS->arg[2].val_s,
       argS->arg[3].val_s,
@@ -417,7 +417,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    pscg_destroy((uint16_t) argS->arg[1].val_s, &sda_app_con);
+    gr2_destroy((uint16_t) argS->arg[1].val_s, &sda_app_con);
     return 1;
   }
 
@@ -434,7 +434,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_get_value(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_get_value(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
     return 1;
   }
@@ -451,7 +451,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_value(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_value(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
     return 1;
   }
 
@@ -466,7 +466,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_modified(argS->arg[1].val_s, &sda_app_con);
+    gr2_set_modified(argS->arg[1].val_s, &sda_app_con);
     return 1;
   }
 
@@ -479,7 +479,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    result->value.val_s = pscg_get_param(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
     return 1;
   }
@@ -496,7 +496,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_param(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_param(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
 
     return 1;
   }
@@ -512,13 +512,13 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     uint16_t ret = 0;
-    if (pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED) {
+    if (gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED) {
       ret = 1;
-    } else if(pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD) {
+    } else if(gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD) {
       ret = 2;
-    } else if(pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_RELEASED) {
+    } else if(gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_RELEASED) {
       ret = 3;
-    } else if(pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_DRAGOUT) {
+    } else if(gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_DRAGOUT) {
       ret = 4;
     }
     result->value.val_s = ret;
@@ -537,19 +537,19 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     uint16_t ret = 0;
-    if (pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED) {
+    if (gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED) {
       ret = 1;
-    } else if(pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD) {
+    } else if(gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD) {
       ret = 2;
-    } else if(pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_RELEASED) {
+    } else if(gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_RELEASED) {
       ret = 3;
-    } else if(pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_DRAGOUT) {
+    } else if(gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_DRAGOUT) {
       ret = 4;
     }
     result->value.val_s = ret;
     result->type = 0;
 
-    pscg_set_event(argS->arg[1].val_s, EV_NONE, &sda_app_con);
+    gr2_set_event(argS->arg[1].val_s, EV_NONE, &sda_app_con);
 
     return 1;
   }
@@ -576,7 +576,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       ev = EV_RELEASED;
     }
 
-    pscg_set_event(argS->arg[1].val_s, ev, &sda_app_con);
+    gr2_set_event(argS->arg[1].val_s, ev, &sda_app_con);
     return 1;
   }
 
@@ -590,7 +590,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    pscg_clear_screen_ev((uint16_t)argS->arg[1].val_s, &sda_app_con);
+    gr2_clear_screen_ev((uint16_t)argS->arg[1].val_s, &sda_app_con);
     return 1;
   }
 
@@ -606,7 +606,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_screen(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_screen(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
     return 1;
   }
 
@@ -621,7 +621,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_get_grayout(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_get_grayout(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
     return 1;
   }
@@ -637,7 +637,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 2, s)) {
       return 0;
     }
-    pscg_set_grayout(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_grayout(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
     return 1;
   }
 
@@ -652,7 +652,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_get_visible(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_get_visible(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
     return 1;
   }
@@ -669,7 +669,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_visible(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_visible(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
     return 1;
   }
 
@@ -684,7 +684,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_get_ghost(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_get_ghost(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
     return 1;
   }
@@ -701,7 +701,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_ghost(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_ghost(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
     return 1;
   }
 
@@ -716,7 +716,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_get_select(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_get_select(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
     return 1;
   }
@@ -733,7 +733,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_select(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_select(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
     return 1;
   }
 
@@ -748,7 +748,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_str = strNew(pscg_get_str(argS->arg[1].val_s, &sda_app_con), s);
+    result->value.val_str = strNew(gr2_get_str(argS->arg[1].val_s, &sda_app_con), s);
     result->type = 1;
     return 1;
   }
@@ -765,7 +765,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_str(
+    gr2_set_str(
       argS->arg[1].val_s,
       s->stringField + argS->arg[2].val_str,
       &sda_app_con
@@ -787,7 +787,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 2, s)) {
       return 0;
     }
-    pscg_text_set_size(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_text_set_size(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
 
     return 1;
   }
@@ -804,7 +804,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_relative_init(argS->arg[1].val_s, &sda_app_con);
+    gr2_set_relative_init(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
     return 1;
   }
@@ -823,7 +823,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 5, s)) {
       return 0;
     }
-    pscg_set_x1y1x2y2(
+    gr2_set_x1y1x2y2(
       argS->arg[1].val_s,
       argS->arg[2].val_s,
       argS->arg[3].val_s,
@@ -848,10 +848,10 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 5, s)) {
       return 0;
     }
-    pscg_set_cell_space_left(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
-    pscg_set_cell_space_right(argS->arg[1].val_s, argS->arg[3].val_s, &sda_app_con);
-    pscg_set_cell_space_top(argS->arg[1].val_s, argS->arg[4].val_s, &sda_app_con);
-    pscg_set_cell_space_bottom(argS->arg[1].val_s, argS->arg[5].val_s, &sda_app_con);
+    gr2_set_cell_space_left(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_cell_space_right(argS->arg[1].val_s, argS->arg[3].val_s, &sda_app_con);
+    gr2_set_cell_space_top(argS->arg[1].val_s, argS->arg[4].val_s, &sda_app_con);
+    gr2_set_cell_space_bottom(argS->arg[1].val_s, argS->arg[5].val_s, &sda_app_con);
     return 1;
   }
 
@@ -866,7 +866,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_get_x_cell(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_get_x_cell(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
     return 1;
   }
@@ -883,7 +883,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_x_cell(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_x_cell(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
 
     return 1;
   }
@@ -899,7 +899,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_get_y_cell(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_get_y_cell(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
     return 1;
   }
@@ -916,7 +916,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_y_cell(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_y_cell(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
     return 1;
   }
 
@@ -931,7 +931,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_get_xscroll(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_get_xscroll(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
     return 1;
   }
@@ -948,7 +948,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_xscroll(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_xscroll(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
 
     return 1;
   }
@@ -964,7 +964,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_get_yscroll(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_get_yscroll(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
     return 1;
   }
@@ -981,7 +981,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_yscroll(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_yscroll(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
     return 1;
   }
 
@@ -997,7 +997,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_set_default_font(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_set_default_font(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
     return 1;
   }
 
@@ -1012,7 +1012,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_get_text_active(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_get_text_active(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
 
     return 1;
@@ -1029,7 +1029,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_activate_text(argS->arg[1].val_s, &sda_app_con);
+    gr2_activate_text(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
 
     return 1;
@@ -1045,7 +1045,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_text_deactivate(&sda_app_con);
+    gr2_text_deactivate(&sda_app_con);
     result->type = 0;
 
     return 1;
@@ -1063,7 +1063,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_text_set_fit(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_text_set_fit(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
     return 1;
   }
 
@@ -1079,7 +1079,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_text_set_editable(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_text_set_editable(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
 
     return 1;
   }
@@ -1096,7 +1096,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_text_set_pwd(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_text_set_pwd(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
 
     return 1;
   }
@@ -1112,7 +1112,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_text_get_pwd(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_text_get_pwd(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
 
     return 1;
@@ -1130,7 +1130,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    pscg_text_set_align(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    gr2_text_set_align(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
 
     return 1;
   }
@@ -1146,7 +1146,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = pscg_text_get_align(argS->arg[1].val_s, &sda_app_con);
+    result->value.val_s = gr2_text_get_align(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
 
     return 1;
@@ -1167,15 +1167,15 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     if (argS->arg[1].val_s == 1) {
-      pscg_set_border_color(argS->arg[2].val_s, &sda_app_con);
+      gr2_set_border_color(argS->arg[2].val_s, &sda_app_con);
     } else if (argS->arg[1].val_s == 2) {
-      pscg_set_text_color(argS->arg[2].val_s, &sda_app_con);
+      gr2_set_text_color(argS->arg[2].val_s, &sda_app_con);
     } else if (argS->arg[1].val_s == 3) {
-      pscg_set_background_color(argS->arg[2].val_s, &sda_app_con);
+      gr2_set_background_color(argS->arg[2].val_s, &sda_app_con);
     } else if (argS->arg[1].val_s == 4) {
-      pscg_set_fill_color(argS->arg[2].val_s, &sda_app_con);
+      gr2_set_fill_color(argS->arg[2].val_s, &sda_app_con);
     } else if (argS->arg[1].val_s == 5) {
-      pscg_set_active_color(argS->arg[2].val_s, &sda_app_con);
+      gr2_set_active_color(argS->arg[2].val_s, &sda_app_con);
     }
 
     return 1;
@@ -1193,15 +1193,15 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     if (argS->arg[1].val_s == 1) {
-      result->value.val_s = pscg_get_border_color(&sda_app_con);
+      result->value.val_s = gr2_get_border_color(&sda_app_con);
     } else if (argS->arg[1].val_s == 2) {
-      result->value.val_s = pscg_get_text_color(&sda_app_con);
+      result->value.val_s = gr2_get_text_color(&sda_app_con);
     } else if (argS->arg[1].val_s == 3) {
-      result->value.val_s = pscg_get_background_color(&sda_app_con);
+      result->value.val_s = gr2_get_background_color(&sda_app_con);
     } else if (argS->arg[1].val_s == 4) {
-      result->value.val_s = pscg_get_fill_color(&sda_app_con);
+      result->value.val_s = gr2_get_fill_color(&sda_app_con);
     } else if (argS->arg[1].val_s == 5) {
-      result->value.val_s = pscg_get_active_color(&sda_app_con);
+      result->value.val_s = gr2_get_active_color(&sda_app_con);
     }
     result->type = 0;
     return 1;

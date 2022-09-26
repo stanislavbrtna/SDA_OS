@@ -59,8 +59,8 @@ void sda_keyboard_show() {
 
 
 void sda_keyboard_hide() {
-  pscg_text_deactivate(&sda_sys_con);
-  pscg_text_deactivate(&sda_app_con);
+  gr2_text_deactivate(&sda_sys_con);
+  gr2_text_deactivate(&sda_app_con);
   svpSGlobal.kbdKeyStr[0] = 0;
   svpSGlobal.kbdVisible = 0;
 }
@@ -76,7 +76,7 @@ uint16_t get_sda_counter() {
 }
 
 
-void pscg_error_callback(uint8_t *str, gr2context * c) {
+void gr2_error_callback(uint8_t *str, gr2context * c) {
   if (c == &sda_sys_con) {
     // error occured in system gui, perform reset
     printf("PSCG Error (system): %s\n", str);

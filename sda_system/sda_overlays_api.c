@@ -54,7 +54,7 @@ void destroyOverlay() {
       // destructor was called from somewhere else
       return;
     } else if (destructor_set == 0) {
-      pscg_destroy(overlayScr, overlayCont);
+      gr2_destroy(overlayScr, overlayCont);
     }
     overlayScr = 0;
     sx_set_touch_ev(EV_NONE, 0, 0);

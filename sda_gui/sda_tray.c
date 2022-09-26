@@ -54,7 +54,7 @@ void svp_tray_time(int16_t x1, int16_t y1, uint16_t w) {
     LCD_FillRect(x1 - 1, y1, x1 + w, 31, trayBackgroundColor);
     curr_font = LCD_Get_Font_Size();
     LCD_Set_Sys_Font(18);
-    LCD_DrawText_ext(x1, y1 + 8, pscg_get_text_color(&sda_sys_con), time_string);
+    LCD_DrawText_ext(x1, y1 + 8, gr2_get_text_color(&sda_sys_con), time_string);
     LCD_Set_Sys_Font(curr_font);
     redraw = 1;
   }
@@ -122,7 +122,7 @@ void svp_tray_alarm(int16_t x1, int16_t y1, int16_t w) {
     LCD_FillRect(x1 - 1, y1, x1 + w, 31, trayBackgroundColor);
     curr_font = LCD_Get_Font_Size();
     LCD_Set_Sys_Font(18);
-    LCD_DrawText_ext(x1, y1 + 8, pscg_get_text_color(&sda_sys_con), alarm_string);
+    LCD_DrawText_ext(x1, y1 + 8, gr2_get_text_color(&sda_sys_con), alarm_string);
     LCD_Set_Sys_Font(curr_font);
     redraw = 1;
   }
@@ -171,9 +171,9 @@ void svp_tray_battery(int16_t x1, int16_t y1, int16_t w) {
     curr_font = LCD_Get_Font_Size();
     LCD_Set_Sys_Font(18);
     if (svpSGlobal.pwrType == POWER_USB) {
-      LCD_DrawText_ext(x1, y1 + 8, pscg_get_text_color(&sda_sys_con), IRQ_BATT_CHRG);
+      LCD_DrawText_ext(x1, y1 + 8, gr2_get_text_color(&sda_sys_con), IRQ_BATT_CHRG);
     } else {
-      LCD_DrawText_ext(x1, y1 + 8, pscg_get_text_color(&sda_sys_con), batt_string);
+      LCD_DrawText_ext(x1, y1 + 8, gr2_get_text_color(&sda_sys_con), batt_string);
     }
 
     if (svpSGlobal.battPercentage != 101) {
@@ -181,11 +181,11 @@ void svp_tray_battery(int16_t x1, int16_t y1, int16_t w) {
         y1 + 31 - 6,
         x1 + (int16_t)(((float)w - 4)*((float)svpSGlobal.battPercentage/(float)100)),
         y1 + 31 - 2,
-        pscg_get_active_color(&sda_sys_con)
+        gr2_get_active_color(&sda_sys_con)
       );
     }
 
-    LCD_DrawRectangle(x1 + 8, y1 + 31 - 6, x1 + w - 4, y1 + 31 - 2, pscg_get_border_color(&sda_sys_con));
+    LCD_DrawRectangle(x1 + 8, y1 + 31 - 6, x1 + w - 4, y1 + 31 - 2, gr2_get_border_color(&sda_sys_con));
     LCD_Set_Sys_Font(curr_font);
     redraw = 1;
   }
@@ -206,18 +206,18 @@ uint8_t svp_tray_XBtn(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t re
   uint8_t touch_event;
 
   if((init == 0) || (reset == 1) || (irq_redraw)) {
-    LCD_FillRect(x1, y1, x2, y2, pscg_get_fill_color(&sda_sys_con));
-    LCD_DrawRectangle(x1, y1, x2, y2, pscg_get_border_color(&sda_sys_con));
-    LCD_FillRect(x1 + 6, y1 + 14, x2 - 6, y2 - 14, pscg_get_text_color(&sda_sys_con));
+    LCD_FillRect(x1, y1, x2, y2, gr2_get_fill_color(&sda_sys_con));
+    LCD_DrawRectangle(x1, y1, x2, y2, gr2_get_border_color(&sda_sys_con));
+    LCD_FillRect(x1 + 6, y1 + 14, x2 - 6, y2 - 14, gr2_get_text_color(&sda_sys_con));
     init = 1;
   }
 
   touch_event = tray_clicked(x1, y1, x2, y2);
 
   if (touch_event == EV_PRESSED) {
-    LCD_FillRect(x1, y1, x2, y2, pscg_get_active_color(&sda_sys_con));
-    LCD_DrawRectangle(x1, y1, x2, y2, pscg_get_border_color(&sda_sys_con));
-    LCD_FillRect(x1 + 6, y1 + 14, x2 - 6, y2 - 14, pscg_get_text_color(&sda_sys_con));
+    LCD_FillRect(x1, y1, x2, y2, gr2_get_active_color(&sda_sys_con));
+    LCD_DrawRectangle(x1, y1, x2, y2, gr2_get_border_color(&sda_sys_con));
+    LCD_FillRect(x1 + 6, y1 + 14, x2 - 6, y2 - 14, gr2_get_text_color(&sda_sys_con));
     selected = 1;
     if (svpSGlobal.systemXBtnTime == 0) {
       svpSGlobal.systemXBtnTime = svpSGlobal.timestamp;
@@ -252,17 +252,17 @@ uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
   LCD_Set_Sys_Font(32);
 
   if((irq_redraw) || (init == 0) || ((svpSGlobal.systemOptClick == CLICKED_NONE) && clickOld == 1 && click == 0)) {
-    LCD_FillRect(x1, y1, x2, y2, pscg_get_fill_color(&sda_sys_con));
-    LCD_DrawRectangle(x1, y1, x2, y2, pscg_get_border_color(&sda_sys_con));
-    LCD_DrawText_ext(x1 + 10, y1 + 2, pscg_get_text_color(&sda_sys_con), (uint8_t *)"S!");
+    LCD_FillRect(x1, y1, x2, y2, gr2_get_fill_color(&sda_sys_con));
+    LCD_DrawRectangle(x1, y1, x2, y2, gr2_get_border_color(&sda_sys_con));
+    LCD_DrawText_ext(x1 + 10, y1 + 2, gr2_get_text_color(&sda_sys_con), (uint8_t *)"S!");
     init = 1;
   }
 
   if (tray_clicked(x1, y1, x2, y2)) {
     if (clickOld == 0) {
-      LCD_FillRect(x1, y1, x2, y2, pscg_get_active_color(&sda_sys_con));
-      LCD_DrawRectangle(x1, y1, x2, y2, pscg_get_border_color(&sda_sys_con));
-      LCD_DrawText_ext(x1 + 10, y1 + 2, pscg_get_text_color(&sda_sys_con), (uint8_t *)"S!");
+      LCD_FillRect(x1, y1, x2, y2, gr2_get_active_color(&sda_sys_con));
+      LCD_DrawRectangle(x1, y1, x2, y2, gr2_get_border_color(&sda_sys_con));
+      LCD_DrawText_ext(x1 + 10, y1 + 2, gr2_get_text_color(&sda_sys_con), (uint8_t *)"S!");
     }
 
     if (holdCounter > OPT_HOLD_CNT_BEGIN && holdCounter <= OPT_HOLD_CNT_MAX) {
@@ -271,21 +271,21 @@ uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
         y1 + 1,
         x1 - 1 + ((x2 - x1) / (OPT_HOLD_CNT_MAX - OPT_HOLD_CNT_BEGIN)) * (holdCounter - OPT_HOLD_CNT_BEGIN),
         y2 - 1,
-        pscg_get_active_color(&sda_sys_con)
+        gr2_get_active_color(&sda_sys_con)
       );
       LCD_FillRect(
         x1 + 1 + ((x2 - x1) / (OPT_HOLD_CNT_MAX - OPT_HOLD_CNT_BEGIN)) * (holdCounter - OPT_HOLD_CNT_BEGIN),
         y1 + 1,
         x2 - 1,
         y2 - 1,
-        pscg_get_fill_color(&sda_sys_con)
+        gr2_get_fill_color(&sda_sys_con)
       );
 
       if (holdCounter == OPT_HOLD_CNT_MAX) {
-        LCD_FillRect(x1, y1, x2, y2, pscg_get_active_color(&sda_sys_con));
+        LCD_FillRect(x1, y1, x2, y2, gr2_get_active_color(&sda_sys_con));
       }
 
-      LCD_DrawText_ext(x1 + 10, y1 + 2, pscg_get_text_color(&sda_sys_con), (uint8_t *)"S!");
+      LCD_DrawText_ext(x1 + 10, y1 + 2, gr2_get_text_color(&sda_sys_con), (uint8_t *)"S!");
 
 
     }
@@ -342,9 +342,9 @@ uint8_t svp_tray() {
   LCD_setDrawArea(PM_TOPBAR_X1, PM_TOPBAR_Y1, PM_TOPBAR_X2, PM_TOPBAR_Y2);
 
   if ((init == 0) || (irq_redraw)) {
-    trayBackgroundColor = LCD_color_darken(pscg_get_background_color(&sda_sys_con), 5);
+    trayBackgroundColor = LCD_color_darken(gr2_get_background_color(&sda_sys_con), 5);
     if (trayBackgroundColor == 0){
-      trayBackgroundColor = LCD_color_lighten(pscg_get_background_color(&sda_sys_con), 5);
+      trayBackgroundColor = LCD_color_lighten(gr2_get_background_color(&sda_sys_con), 5);
     }
     LCD_FillRect(PM_TOPBAR_X1, PM_TOPBAR_Y1, PM_TOPBAR_X2, PM_TOPBAR_Y2, trayBackgroundColor);
     init = 1;

@@ -326,7 +326,7 @@ uint8_t svsSVPWrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 5, s)) {
       return 0;
     }
-    pscg_text_deactivate(&sda_app_con);
+    gr2_text_deactivate(&sda_app_con);
     sdaSvmCall(
         s->stringField + argS->arg[1].val_str,
         s->stringField + argS->arg[2].val_str,
@@ -499,27 +499,27 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       x++;
     }
 
-    if (pscg_get_value(argS->arg[1].val_s, &sda_app_con)) {
+    if (gr2_get_value(argS->arg[1].val_s, &sda_app_con)) {
       // getting the cursor position
-      if (((pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED) \
-          || (pscg_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD))
-          && (pscg_text_get_pwd(argS->arg[1].val_s, &sda_app_con) == 0)) {
+      if (((gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED) \
+          || (gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD))
+          && (gr2_text_get_pwd(argS->arg[1].val_s, &sda_app_con) == 0)) {
         uint16_t temp;
         uint8_t curr_font;
         curr_font = LCD_Get_Font_Size();
-        LCD_Set_Sys_Font(pscg_get_param2(argS->arg[1].val_s, &sda_app_con));
+        LCD_Set_Sys_Font(gr2_get_param2(argS->arg[1].val_s, &sda_app_con));
   
-        temp = LCD_Text_Get_Cursor_Pos(s->stringField + argS->arg[2].val_str, pscg_get_tmx(&sda_app_con), pscg_get_tmy(&sda_app_con));
+        temp = LCD_Text_Get_Cursor_Pos(s->stringField + argS->arg[2].val_str, gr2_get_tmx(&sda_app_con), gr2_get_tmy(&sda_app_con));
         
         LCD_Set_Sys_Font(curr_font);
 
         if (temp == 0) {
-          pscg_set_param(argS->arg[1].val_s, 0, &sda_app_con);
+          gr2_set_param(argS->arg[1].val_s, 0, &sda_app_con);
         } else {
-          pscg_set_param(argS->arg[1].val_s, temp, &sda_app_con);
+          gr2_set_param(argS->arg[1].val_s, temp, &sda_app_con);
         }
       }
-      pscg_set_event(argS->arg[1].val_s, EV_NONE, &sda_app_con);
+      gr2_set_event(argS->arg[1].val_s, EV_NONE, &sda_app_con);
 
       //čtení z klávesnice a zápis do řetězce
       if (sda_get_keyboard_key_flag()) {
@@ -528,18 +528,18 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
             = strInsert(
                         (uint16_t)argS->arg[2].val_str,
                         strNew(svpSGlobal.kbdKeyStr, s),
-                        pscg_get_param(argS->arg[1].val_s, &sda_app_con),
+                        gr2_get_param(argS->arg[1].val_s, &sda_app_con),
                         s
               ); //přičtem char
           result->type = 1;
 
           //divnost... pokud je to odkomentovaný, tak to prvně nastaví text s indexem +2
-          //pscg_set_str(argS->arg[1].val_s,s->stringField+result->value.val_str); //nastavíme správněj text
+          //gr2_set_str(argS->arg[1].val_s,s->stringField+result->value.val_str); //nastavíme správněj text
 
           if (svpSGlobal.kbdKeyStr[1] != 0) {
-            pscg_set_param(argS->arg[1].val_s, pscg_get_param(argS->arg[1].val_s, &sda_app_con) + 2, &sda_app_con); //posunem kurzor
+            gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) + 2, &sda_app_con); //posunem kurzor
           } else {
-            pscg_set_param(argS->arg[1].val_s, pscg_get_param(argS->arg[1].val_s, &sda_app_con) + 1, &sda_app_con);
+            gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) + 1, &sda_app_con);
           }
           return 1;
         } else {
@@ -555,20 +555,20 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
             uint16_t charIndex;
             uint8_t czFlag = 0;
 
-            charIndex = result->value.val_str + pscg_get_param(argS->arg[1].val_s, &sda_app_con);
+            charIndex = result->value.val_str + gr2_get_param(argS->arg[1].val_s, &sda_app_con);
 
             if (len >= 2
                  && (s->stringField[charIndex - 2] >= 0xC3)
                  && (s->stringField[charIndex - 2] <= 0xC5)) {
-              pscg_set_param(argS->arg[1].val_s, pscg_get_param(argS->arg[1].val_s, &sda_app_con) - 2, &sda_app_con); //posune
+              gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) - 2, &sda_app_con); //posune
               czFlag = 1;
               //printf("removing cz char %c%c \n", s->stringField[charIndex - 2], s->stringField[charIndex - 1]);
             } else {
-              pscg_set_param(argS->arg[1].val_s, pscg_get_param(argS->arg[1].val_s, &sda_app_con) - 1, &sda_app_con); //posune
+              gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) - 1, &sda_app_con); //posune
               //printf("removing normal char %c \n", s->stringField[charIndex - 1]);
             }
 
-            prac = pscg_get_param(argS->arg[1].val_s, &sda_app_con);
+            prac = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
             x = 0;
 
             while(s->stringField[result->value.val_str + prac + x] != 0) {
@@ -578,7 +578,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
             }
 
             *((uint8_t*)(s->stringField + result->value.val_str + len - 1)) = 0; //zkrátíme pro jistotu
-            pscg_set_str(argS->arg[1].val_s,s->stringField + result->value.val_str, &sda_app_con); //nastavíme text/updatujeme
+            gr2_set_str(argS->arg[1].val_s,s->stringField + result->value.val_str, &sda_app_con); //nastavíme text/updatujeme
             result->type = SVS_TYPE_STR;
             return 1;
           }
@@ -587,8 +587,8 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
       }
     }
-    if (pscg_get_str(argS->arg[1].val_s, &sda_app_con) != s->stringField + argS->arg[2].val_str) {
-      pscg_set_str(argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, &sda_app_con); //stejnak nastavíme
+    if (gr2_get_str(argS->arg[1].val_s, &sda_app_con) != s->stringField + argS->arg[2].val_str) {
+      gr2_set_str(argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, &sda_app_con); //stejnak nastavíme
     }
     result->value = argS->arg[2];
     result->type = SVS_TYPE_STR;

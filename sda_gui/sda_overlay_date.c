@@ -120,39 +120,39 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
 
   sda_keyboard_hide();
 
-  date_screen = pscg_add_screen(sda_current_con);
-  pscg_set_cell_space_bottom(date_screen, 4, sda_current_con);
-  pscg_set_y_cell(date_screen, 34, sda_current_con);
+  date_screen = gr2_add_screen(sda_current_con);
+  gr2_set_cell_space_bottom(date_screen, 4, sda_current_con);
+  gr2_set_y_cell(date_screen, 34, sda_current_con);
 
-  pscg_set_x_cell(date_screen, 16, sda_current_con);
+  gr2_set_x_cell(date_screen, 16, sda_current_con);
 
-  pscg_text_set_align(pscg_add_text(0, 0, 15, 1, OVRL_ENTER_DATE, date_screen, sda_current_con), GR2_ALIGN_CENTER, sda_current_con);
+  gr2_text_set_align(gr2_add_text(0, 0, 15, 1, OVRL_ENTER_DATE, date_screen, sda_current_con), GR2_ALIGN_CENTER, sda_current_con);
 
   set_year_string(date_year_name, date_year_val);
 
-  date_year_text = pscg_add_text(3, 1, 12, 2, date_year_name, date_screen, sda_current_con);
-  pscg_text_set_align(date_year_text, GR2_ALIGN_CENTER, sda_current_con);
-  date_year_prev = pscg_add_button(1, 1, 3, 2, (uint8_t *)"<", date_screen, sda_current_con);
-  date_year_next = pscg_add_button(13, 1, 15, 2, (uint8_t *)">", date_screen, sda_current_con);
+  date_year_text = gr2_add_text(3, 1, 12, 2, date_year_name, date_screen, sda_current_con);
+  gr2_text_set_align(date_year_text, GR2_ALIGN_CENTER, sda_current_con);
+  date_year_prev = gr2_add_button(1, 1, 3, 2, (uint8_t *)"<", date_screen, sda_current_con);
+  date_year_next = gr2_add_button(13, 1, 15, 2, (uint8_t *)">", date_screen, sda_current_con);
 
   date_month_text
-    = pscg_add_text(3, 2, 12, 3, (uint8_t *)date_month_names[date_month_val], date_screen, sda_current_con);
-  pscg_text_set_align(date_month_text, GR2_ALIGN_CENTER, sda_current_con);
-  date_month_prev = pscg_add_button(1, 2, 3, 3, (uint8_t *)"<", date_screen, sda_current_con);
-  date_month_next = pscg_add_button(13, 2, 15, 3, (uint8_t *)">", date_screen, sda_current_con);
+    = gr2_add_text(3, 2, 12, 3, (uint8_t *)date_month_names[date_month_val], date_screen, sda_current_con);
+  gr2_text_set_align(date_month_text, GR2_ALIGN_CENTER, sda_current_con);
+  date_month_prev = gr2_add_button(1, 2, 3, 3, (uint8_t *)"<", date_screen, sda_current_con);
+  date_month_next = gr2_add_button(13, 2, 15, 3, (uint8_t *)">", date_screen, sda_current_con);
 
   date_selector_screen
     = date_select_widget_init(&date_widget, date_year_val, date_month_val, date_day_val);
 
-  pscg_set_x1y1x2y2(date_selector_screen, 1, 3, 15, 10, sda_current_con);
+  gr2_set_x1y1x2y2(date_selector_screen, 1, 3, 15, 10, sda_current_con);
 
-  pscg_set_screen(date_selector_screen, date_screen, sda_current_con);
+  gr2_set_screen(date_selector_screen, date_screen, sda_current_con);
 
-  date_ok = pscg_add_button(10, 10, 14, 11, OVRL_OK, date_screen, sda_current_con);
-  date_cancel = pscg_add_button(2, 10, 6, 11, OVRL_CANCEL, date_screen, sda_current_con);
+  date_ok = gr2_add_button(10, 10, 14, 11, OVRL_OK, date_screen, sda_current_con);
+  date_cancel = gr2_add_button(2, 10, 6, 11, OVRL_CANCEL, date_screen, sda_current_con);
 
-  pscg_text_set_align(date_ok, GR2_ALIGN_CENTER, sda_current_con);
-  pscg_text_set_align(date_cancel, GR2_ALIGN_CENTER, sda_current_con);
+  gr2_text_set_align(date_ok, GR2_ALIGN_CENTER, sda_current_con);
+  gr2_text_set_align(date_cancel, GR2_ALIGN_CENTER, sda_current_con);
 
   date_id = setOverlayScreen(date_screen, sda_current_con);
 
@@ -166,8 +166,7 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
 
 void date_overlay_destructor() {
   date_done = 2;
-  pscg_clear_screen_ev(date_screen, sda_current_con);
-  pscg_destroy_screen(date_screen, sda_current_con);
+  gr2_destroy(date_screen, sda_current_con);
   setRedrawFlag();
   overlayDestructorDone();
 }
@@ -185,25 +184,25 @@ void date_overlay_update(uint16_t ovId) {
 
   date_select_widget_update(&date_widget);
 
-  if (pscg_get_event(date_ok, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(date_ok, sda_current_con) == EV_RELEASED) {
     destroyOverlay();
     date_done = 1;
     return;
   }
-  pscg_set_event(date_ok, EV_NONE, sda_current_con);
+  gr2_set_event(date_ok, EV_NONE, sda_current_con);
 
-  if (pscg_get_event(date_cancel, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(date_cancel, sda_current_con) == EV_RELEASED) {
     destroyOverlay();
     date_done = 2;
     return;
   }
-  pscg_set_event(date_cancel, EV_NONE, sda_current_con);
+  gr2_set_event(date_cancel, EV_NONE, sda_current_con);
 
-  if (pscg_get_event(date_year_prev, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(date_year_prev, sda_current_con) == EV_RELEASED) {
     if (date_year_val > 1904) {
       date_year_val--;
       set_year_string(date_year_name, date_year_val);
-      pscg_set_modified(date_year_text, sda_current_con);
+      gr2_set_modified(date_year_text, sda_current_con);
       date_select_widget_set_date(
         &date_widget,
         date_year_val,
@@ -212,13 +211,13 @@ void date_overlay_update(uint16_t ovId) {
       );
     }
   }
-  pscg_set_event(date_year_prev, EV_NONE, sda_current_con);
+  gr2_set_event(date_year_prev, EV_NONE, sda_current_con);
 
-  if (pscg_get_event(date_year_next, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(date_year_next, sda_current_con) == EV_RELEASED) {
     if (date_year_val < 2500) {
       date_year_val++;
       set_year_string(date_year_name, date_year_val);
-      pscg_set_modified(date_year_text, sda_current_con);
+      gr2_set_modified(date_year_text, sda_current_con);
       date_select_widget_set_date(
         &date_widget,
         date_year_val,
@@ -227,12 +226,12 @@ void date_overlay_update(uint16_t ovId) {
       );
     }
   }
-  pscg_set_event(date_year_next, EV_NONE, sda_current_con);
+  gr2_set_event(date_year_next, EV_NONE, sda_current_con);
 
-  if (pscg_get_event(date_month_prev, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(date_month_prev, sda_current_con) == EV_RELEASED) {
     if (date_month_val > 1) {
       date_month_val--;
-      pscg_set_str(date_month_text, (uint8_t *)date_month_names[date_month_val], sda_current_con);
+      gr2_set_str(date_month_text, (uint8_t *)date_month_names[date_month_val], sda_current_con);
       date_select_widget_set_date(
         &date_widget,
         date_year_val,
@@ -243,10 +242,10 @@ void date_overlay_update(uint16_t ovId) {
     } else {
       if (date_year_val > 1904) {
         date_month_val = 12;
-        pscg_set_str(date_month_text, (uint8_t *)date_month_names[date_month_val], sda_current_con);
+        gr2_set_str(date_month_text, (uint8_t *)date_month_names[date_month_val], sda_current_con);
         date_year_val--;
         set_year_string(date_year_name, date_year_val);
-        pscg_set_modified(date_year_text, sda_current_con);
+        gr2_set_modified(date_year_text, sda_current_con);
         date_select_widget_set_date(
           &date_widget,
           date_year_val,
@@ -256,12 +255,12 @@ void date_overlay_update(uint16_t ovId) {
       }
     }
   }
-  pscg_set_event(date_month_prev, EV_NONE, sda_current_con);
+  gr2_set_event(date_month_prev, EV_NONE, sda_current_con);
 
-  if (pscg_get_event(date_month_next, sda_current_con) == EV_RELEASED) {
+  if (gr2_get_event(date_month_next, sda_current_con) == EV_RELEASED) {
     if (date_month_val < 12) {
       date_month_val++;
-      pscg_set_str(date_month_text, (uint8_t *)date_month_names[date_month_val], sda_current_con);
+      gr2_set_str(date_month_text, (uint8_t *)date_month_names[date_month_val], sda_current_con);
       date_select_widget_set_date(
         &date_widget,
         date_year_val,
@@ -271,10 +270,10 @@ void date_overlay_update(uint16_t ovId) {
     } else {
       if (date_year_val < 2500) {
         date_month_val = 1;
-        pscg_set_str(date_month_text, (uint8_t *)date_month_names[date_month_val], sda_current_con);
+        gr2_set_str(date_month_text, (uint8_t *)date_month_names[date_month_val], sda_current_con);
         date_year_val++;
         set_year_string(date_year_name, date_year_val);
-        pscg_set_modified(date_year_text, sda_current_con);
+        gr2_set_modified(date_year_text, sda_current_con);
         date_select_widget_set_date(
           &date_widget,
           date_year_val,
@@ -284,7 +283,7 @@ void date_overlay_update(uint16_t ovId) {
       }
     }
   }
-  pscg_set_event(date_month_next, EV_NONE, sda_current_con);
+  gr2_set_event(date_month_next, EV_NONE, sda_current_con);
 }
 
 

@@ -24,7 +24,7 @@ SOFTWARE.
 #include "sda_settings/settings.h"
 
 void svp_settings_set_spacing(uint16_t id) {
-  pscg_set_param(id, SDA_SETTINGS_SPACER, &sda_sys_con);
+  gr2_set_param(id, SDA_SETTINGS_SPACER, &sda_sys_con);
 }
 
 uint16_t svp_optScreen(uint8_t init, uint8_t top) {
@@ -58,7 +58,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 
     sd_mounted = 1; //probably
 
-    optScreen = pscg_add_screen(&sda_sys_con);
+    optScreen = gr2_add_screen(&sda_sys_con);
 
     // sub-screens
     optLcdScr = sda_settings_display_screen(1);
@@ -69,14 +69,14 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
     optTimeScr = sda_settings_time_screen(1);
 
     // options screen init
-    pscg_add_text(1, 1, 10, 2, SCR_SETTINGS, optScreen, &sda_sys_con);
+    gr2_add_text(1, 1, 10, 2, SCR_SETTINGS, optScreen, &sda_sys_con);
 
-    optTimSel = pscg_add_button(1, 2, 9, 3, SCR_SET_DATE_TIME, optScreen, &sda_sys_con);
-    optLcdSel = pscg_add_button(1, 3, 9, 4, SCR_SET_DISPLAY, optScreen, &sda_sys_con);
-    optSound = pscg_add_button(1, 4, 9, 5, SCR_SETTINGS_SND, optScreen, &sda_sys_con);
-    optSecuSel = pscg_add_button(1, 5, 9, 6, SCR_SET_SECU, optScreen, &sda_sys_con);
-    optMntSel = pscg_add_button(1, 8, 9, 9, SD_UMOUNT, optScreen, &sda_sys_con);
-    optInfoSel = pscg_add_button(1, 10, 9, 11, SCR_ABOUT_SYSTEM, optScreen, &sda_sys_con);
+    optTimSel = gr2_add_button(1, 2, 9, 3, SCR_SET_DATE_TIME, optScreen, &sda_sys_con);
+    optLcdSel = gr2_add_button(1, 3, 9, 4, SCR_SET_DISPLAY, optScreen, &sda_sys_con);
+    optSound = gr2_add_button(1, 4, 9, 5, SCR_SETTINGS_SND, optScreen, &sda_sys_con);
+    optSecuSel = gr2_add_button(1, 5, 9, 6, SCR_SET_SECU, optScreen, &sda_sys_con);
+    optMntSel = gr2_add_button(1, 8, 9, 9, SD_UMOUNT, optScreen, &sda_sys_con);
+    optInfoSel = gr2_add_button(1, 10, 9, 11, SCR_ABOUT_SYSTEM, optScreen, &sda_sys_con);
 
     svp_settings_set_spacing(optTimSel);
     svp_settings_set_spacing(optLcdSel);
@@ -85,7 +85,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
     svp_settings_set_spacing(optMntSel);
     svp_settings_set_spacing(optInfoSel);
 
-    optDbgSel = pscg_add_button(1, 6, 9, 7, (uint8_t *)"Debug", optScreen, &sda_sys_con);
+    optDbgSel = gr2_add_button(1, 6, 9, 7, (uint8_t *)"Debug", optScreen, &sda_sys_con);
 
     svp_settings_set_spacing(optDbgSel);
 
@@ -138,18 +138,18 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
         sda_slot_on_top(2);
         svp_umount();
         sd_mounted = 0;
-        pscg_set_str(optMntSel, SCR_SD_MOUNT, &sda_sys_con);
+        gr2_set_str(optMntSel, SCR_SD_MOUNT, &sda_sys_con);
         prac_screen = slotScreen[1];
-        slotScreen[1] = pscg_add_screen(&sda_sys_con);
-        pscg_add_text(1, 1, 10, 2, SCR_SD_NOT_PRESENT_WARNING, slotScreen[1], &sda_sys_con);
+        slotScreen[1] = gr2_add_screen(&sda_sys_con);
+        gr2_add_text(1, 1, 10, 2, SCR_SD_NOT_PRESENT_WARNING, slotScreen[1], &sda_sys_con);
       } else {
         if(svp_mount()) {
           sda_show_error_message(SCR_CARD_ERROR_MSG);
         } else {
-          pscg_set_str(optMntSel, SD_UMOUNT, &sda_sys_con);
+          gr2_set_str(optMntSel, SD_UMOUNT, &sda_sys_con);
           // little hack for reload of app screen
-          pscg_destroy_screen( slotScreen[1], &sda_sys_con);
-          pscg_destroy_screen( prac_screen, &sda_sys_con);
+          gr2_destroy(slotScreen[1], &sda_sys_con);
+          gr2_destroy(prac_screen, &sda_sys_con);
           slotScreen[1] = svp_appScreen(1, 0);
           sd_mounted = 1;
           sda_slot_on_top(2);

@@ -23,13 +23,13 @@ SOFTWARE.
 #include "SDA_OS.h"
 
 // GR2 system data structure
-pscgElement sda_system_gr2_elements[SDA_SYS_ELEM_MAX];
-pscgScreen sda_system_gr2_screens[SDA_SYS_SCREEN_MAX];
+gr2Element sda_system_gr2_elements[SDA_SYS_ELEM_MAX];
+gr2Screen sda_system_gr2_screens[SDA_SYS_SCREEN_MAX];
 gr2context sda_sys_con;
 
 // GR2 app data structure
-pscgElement sda_app_gr2_elements[SDA_APP_ELEM_MAX];
-pscgScreen sda_app_gr2_screens[SDA_APP_SCREEN_MAX];
+gr2Element sda_app_gr2_elements[SDA_APP_ELEM_MAX];
+gr2Screen sda_app_gr2_screens[SDA_APP_SCREEN_MAX];
 gr2context sda_app_con;
 
 gr2context * sda_current_con;
@@ -129,7 +129,7 @@ static void sda_main_init() {
   sda_files_wrapper_init();
   svsSVPWrapInit();
 
-  gr2_InitContext(
+  gr2_init_context(
       &sda_sys_con,
       sda_system_gr2_elements,
       SDA_SYS_ELEM_MAX - 1,
@@ -137,7 +137,7 @@ static void sda_main_init() {
       SDA_SYS_SCREEN_MAX - 1
   );
 
-  gr2_InitContext(
+  gr2_init_context(
       &sda_app_con,
       sda_app_gr2_elements,
       SDA_APP_ELEM_MAX - 1,
@@ -180,7 +180,7 @@ static void sda_main_init() {
   // screen redraw for the first time
   tick_lock = SDA_LOCK_LOCKED;
   LCD_setDrawArea(0, 0, SDA_LCD_W, SDA_LCD_H);
-  pscg_draw_screen(0, 32, 319, 479, mainScr, 1, &sda_sys_con);
+  gr2_draw_screen(0, 32, 319, 479, mainScr, 1, &sda_sys_con);
   tick_lock = SDA_LOCK_UNLOCKED;
   led_set_pattern(LED_OFF);
 
@@ -223,8 +223,8 @@ static void sda_main_process_touch() {
 
     if (retVal != 0) {
       if (retVal == 2) { // esc
-        pscg_text_deactivate(&sda_sys_con);
-        pscg_text_deactivate(&sda_app_con);
+        gr2_text_deactivate(&sda_sys_con);
+        gr2_text_deactivate(&sda_app_con);
         svpSGlobal.kbdKeyStr[0] = 0;
         svpSGlobal.kbdVisible = 0;
       } else {
@@ -242,7 +242,7 @@ static void sda_main_process_touch() {
   if (overlayScr == 0) { // if there is no overlay
     // touch is in main screen
     if ((svpSGlobal.touchType != EV_NONE)) {
-      scr_touch_retval = pscg_touch_input(
+      scr_touch_retval = gr2_touch_input(
         0,
         32,
         319,
@@ -261,7 +261,7 @@ static void sda_main_process_touch() {
   } else {
     // touch in overlay
     if ((svpSGlobal.touchType != EV_NONE)) {
-      scr_touch_retval = pscg_touch_input(
+      scr_touch_retval = gr2_touch_input(
           overlayX1,
           overlayY1,
           overlayX2,
@@ -326,15 +326,15 @@ static void sda_main_redraw() {
   LCD_setDrawArea(0, 0, SDA_LCD_W - 1, SDA_LCD_H - 160 * svpSGlobal.kbdVisible);
   if (overlayScr == 0) {
     if (svpSGlobal.systemRedraw == 1) {
-      pscg_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 1, sda_current_con);
+      gr2_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 1, sda_current_con);
       svpSGlobal.systemRedraw = 0;
     } else {
-      pscg_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 0, sda_current_con);
+      gr2_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 0, sda_current_con);
     }
   } else {
     if (svpSGlobal.systemRedraw == 1) {
       if (mainScr != 0) {
-        pscg_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 1, sda_current_con);
+        gr2_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 1, sda_current_con);
       }
       sda_draw_overlay_shadow(
             overlayX1,
@@ -343,7 +343,7 @@ static void sda_main_redraw() {
             overlayY2,
             overlayCont
       );
-      pscg_draw_screen(
+      gr2_draw_screen(
             overlayX1,
             overlayY1,
             overlayX2,
@@ -354,11 +354,11 @@ static void sda_main_redraw() {
       );
       svpSGlobal.systemRedraw = 0;
     }
-    pscg_draw_screen(overlayX1, overlayY1, overlayX2, overlayY2, overlayScr, 0, overlayCont);
+    gr2_draw_screen(overlayX1, overlayY1, overlayX2, overlayY2, overlayScr, 0, overlayCont);
   }
-  pscg_draw_end(sda_current_con);
+  gr2_draw_end(sda_current_con);
   if (overlayScr != 0) {
-    pscg_draw_end(overlayCont);
+    gr2_draw_end(overlayCont);
   }
 
   tick_lock = SDA_LOCK_UNLOCKED;

@@ -168,7 +168,7 @@ void date_select_widget_load_days(
 
   y = 1;
   for(x = d->startDay - 1; x < (d->dayCount + d->startDay - 1); x++) {
-      d->buttons[y] = pscg_add_button(
+      d->buttons[y] = gr2_add_button(
           0 + x % 7,
           1 + x / 7,
           1 + x % 7,
@@ -178,14 +178,14 @@ void date_select_widget_load_days(
           sda_current_con
       );
 
-      pscg_text_set_align(d->buttons[y], GR2_ALIGN_CENTER, sda_current_con);
+      gr2_text_set_align(d->buttons[y], GR2_ALIGN_CENTER, sda_current_con);
 
       if (d->useHighlight) {
-        pscg_set_ghost(d->buttons[y], 1, sda_current_con);
+        gr2_set_ghost(d->buttons[y], 1, sda_current_con);
       }
 
       if (y == day) {
-        pscg_set_select(d->buttons[y], 1, sda_current_con);
+        gr2_set_select(d->buttons[y], 1, sda_current_con);
       }
       y++; // counts day in month
   }
@@ -204,14 +204,14 @@ uint16_t date_select_widget_init(
 
   uint16_t scr;
 
-  scr = pscg_add_screen(sda_current_con);
-  pscg_add_text(0, 0, 1, 1, OVRL_DAY1, scr, sda_current_con);
-  pscg_add_text(1, 0, 2, 1, OVRL_DAY2, scr, sda_current_con);
-  pscg_add_text(2, 0, 3, 1, OVRL_DAY3, scr, sda_current_con);
-  pscg_add_text(3, 0, 4, 1, OVRL_DAY4, scr, sda_current_con);
-  pscg_add_text(4, 0, 5, 1, OVRL_DAY5, scr, sda_current_con);
-  pscg_add_text(5, 0, 6, 1, OVRL_DAY6, scr, sda_current_con);
-  pscg_add_text(6, 0, 7, 1, OVRL_DAY7, scr, sda_current_con);
+  scr = gr2_add_screen(sda_current_con);
+  gr2_add_text(0, 0, 1, 1, OVRL_DAY1, scr, sda_current_con);
+  gr2_add_text(1, 0, 2, 1, OVRL_DAY2, scr, sda_current_con);
+  gr2_add_text(2, 0, 3, 1, OVRL_DAY3, scr, sda_current_con);
+  gr2_add_text(3, 0, 4, 1, OVRL_DAY4, scr, sda_current_con);
+  gr2_add_text(4, 0, 5, 1, OVRL_DAY5, scr, sda_current_con);
+  gr2_add_text(5, 0, 6, 1, OVRL_DAY6, scr, sda_current_con);
+  gr2_add_text(6, 0, 7, 1, OVRL_DAY7, scr, sda_current_con);
   d->dateSelectorId = scr;
   d->selectedDay = day;
   d->currentMonth = month;
@@ -232,13 +232,13 @@ void date_select_widget_set_date(
   uint16_t y;
 
   if (year == d->currentYear && month == d->currentMonth) {
-    pscg_set_select(d->buttons[d->selectedDay], 0, sda_current_con);
-    pscg_set_select(d->buttons[day], 1, sda_current_con);
+    gr2_set_select(d->buttons[d->selectedDay], 0, sda_current_con);
+    gr2_set_select(d->buttons[day], 1, sda_current_con);
     d->selectedDay = day;
   } else {
     //remove days
     for (y = 1; y <= d->dayCount; y++) {
-      pscg_destroy(d->buttons[y], sda_current_con);
+      gr2_destroy(d->buttons[y], sda_current_con);
     }
     //load new ones
     date_select_widget_load_days(d, year, month, day);
@@ -251,17 +251,17 @@ uint16_t date_select_widget_update(dateSelectorWidgetType *d) {
   uint16_t retval = 0;
 
   for(y = 1; y <= d->dayCount; y++) {
-    if (pscg_get_event(d->buttons[y], sda_current_con) == EV_RELEASED) {
+    if (gr2_get_event(d->buttons[y], sda_current_con) == EV_RELEASED) {
       retval = 2;
       if (y != d->selectedDay) {
-        pscg_set_select(d->buttons[d->selectedDay], 0, sda_current_con);
-        pscg_set_select(d->buttons[y], 1, sda_current_con);
+        gr2_set_select(d->buttons[d->selectedDay], 0, sda_current_con);
+        gr2_set_select(d->buttons[y], 1, sda_current_con);
         d->selectedDay = y;
         retval = 1;
       }
 
     }
-    pscg_set_event(d->buttons[y], EV_NONE, sda_current_con);
+    gr2_set_event(d->buttons[y], EV_NONE, sda_current_con);
   }
 
   return retval;
@@ -276,9 +276,9 @@ uint16_t date_select_highlight(dateSelectorWidgetType *d, uint8_t day) {
   }
 
   if (d->useHighlight) {
-    pscg_set_ghost(d->buttons[day], 0, sda_current_con);
+    gr2_set_ghost(d->buttons[day], 0, sda_current_con);
   } else {
-    pscg_set_select(d->buttons[day], 1, sda_current_con);
+    gr2_set_select(d->buttons[day], 1, sda_current_con);
   }
   return 0;
 }

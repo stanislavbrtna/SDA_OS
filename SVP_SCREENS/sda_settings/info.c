@@ -70,42 +70,42 @@ uint16_t sda_settings_info_screen(uint8_t init) {
   uint16_t optInfoScr;
 
   if (init == 1) {
-    optInfoScr = pscg_add_screen(&sda_sys_con);
-    internalScr = pscg_add_screen(&sda_sys_con);
+    optInfoScr = gr2_add_screen(&sda_sys_con);
+    internalScr = gr2_add_screen(&sda_sys_con);
 
-    pscg_add_image(1, 1, 8, 4, (uint8_t *)"Icons/logo.p16", optInfoScr, &sda_sys_con);
-    pscg_add_text(1, 4, 10, 5, SCR_OS_VERSION" "SDA_OS_VERSION, optInfoScr, &sda_sys_con);
+    gr2_add_image(1, 1, 8, 4, (uint8_t *)"Icons/logo.p16", optInfoScr, &sda_sys_con);
+    gr2_add_text(1, 4, 10, 5, SCR_OS_VERSION" "SDA_OS_VERSION, optInfoScr, &sda_sys_con);
 
-    slider = pscg_add_slider_v(8, 5, 9, 11, 170, 0, optInfoScr, &sda_sys_con);
+    slider = gr2_add_slider_v(8, 5, 9, 11, 170, 0, optInfoScr, &sda_sys_con);
 
-    pscg_set_screen(internalScr, optInfoScr, &sda_sys_con);
-    pscg_set_x1y1x2y2(internalScr, 1, 5, 8, 11, &sda_sys_con);
+    gr2_set_screen(internalScr, optInfoScr, &sda_sys_con);
+    gr2_set_x1y1x2y2(internalScr, 1, 5, 8, 11, &sda_sys_con);
 
-    pscg_add_text(0, 0, 7, 1, SCR_BATT_VOLTAGE, internalScr, &sda_sys_con);
-    infoBattStr = pscg_add_text(0, 1, 10, 2, svpSGlobal.battString, internalScr, &sda_sys_con);
+    gr2_add_text(0, 0, 7, 1, SCR_BATT_VOLTAGE, internalScr, &sda_sys_con);
+    infoBattStr = gr2_add_text(0, 1, 10, 2, svpSGlobal.battString, internalScr, &sda_sys_con);
 
-    pscg_add_text(0, 2, 5, 3, SCR_UPTIME, internalScr, &sda_sys_con);
+    gr2_add_text(0, 2, 5, 3, SCR_UPTIME, internalScr, &sda_sys_con);
     update_uptime();
-    infoUptime = pscg_add_text(0, 3, 10, 4, uptime, internalScr, &sda_sys_con);
+    infoUptime = gr2_add_text(0, 3, 10, 4, uptime, internalScr, &sda_sys_con);
 
-    pscg_add_text(0, 4, 10, 5, SCR_SCREEN_ON_TIME, internalScr, &sda_sys_con);
+    gr2_add_text(0, 4, 10, 5, SCR_SCREEN_ON_TIME, internalScr, &sda_sys_con);
     update_uptimeL();
-    infoUptimeL = pscg_add_text(0, 5, 10, 6, uptimeL, internalScr, &sda_sys_con);
+    infoUptimeL = gr2_add_text(0, 5, 10, 6, uptimeL, internalScr, &sda_sys_con);
 
-    pscg_add_text(0, 6, 10, 7, SCR_BATT_PWR_TIME, internalScr, &sda_sys_con);
+    gr2_add_text(0, 6, 10, 7, SCR_BATT_PWR_TIME, internalScr, &sda_sys_con);
     update_uptimePWR();
-    infoUptimePWR = pscg_add_text(0, 7, 10, 8, uptimePWR, internalScr, &sda_sys_con);
+    infoUptimePWR = gr2_add_text(0, 7, 10, 8, uptimePWR, internalScr, &sda_sys_con);
 
-    pscg_add_text(0, 8, 10, 9,(uint8_t *)"SVS version: "SVS_VERSION, internalScr, &sda_sys_con);
-    pscg_add_text(0, 9, 10, 12,(uint8_t *)"Compiled:\n"__DATE__" "__TIME__"\n(c) Standa", internalScr, &sda_sys_con);
+    gr2_add_text(0, 8, 10, 9,(uint8_t *)"SVS version: "SVS_VERSION, internalScr, &sda_sys_con);
+    gr2_add_text(0, 9, 10, 12,(uint8_t *)"Compiled:\n"__DATE__" "__TIME__"\n(c) Standa", internalScr, &sda_sys_con);
 
-    optInfoBack = pscg_add_button(1, 11, 4, 12, SCR_BACK, optInfoScr, &sda_sys_con);
-    pscg_text_set_align(optInfoBack, GR2_ALIGN_CENTER, &sda_sys_con);
+    optInfoBack = gr2_add_button(1, 11, 4, 12, SCR_BACK, optInfoScr, &sda_sys_con);
+    gr2_text_set_align(optInfoBack, GR2_ALIGN_CENTER, &sda_sys_con);
     return optInfoScr;
   }
 
   if (init == 2) {
-    pscg_set_value(slider,0, &sda_sys_con);
+    gr2_set_value(slider,0, &sda_sys_con);
     return 0;
   }
 
@@ -115,23 +115,23 @@ uint16_t sda_settings_info_screen(uint8_t init) {
   }
 
   if (infoBattPercentPrev != svpSGlobal.battPercentage) {
-    pscg_set_modified(infoBattStr, &sda_sys_con);
+    gr2_set_modified(infoBattStr, &sda_sys_con);
     infoBattPercentPrev = svpSGlobal.battPercentage;
   }
 
   if(update_uptime()){
-    pscg_set_modified(infoUptime, &sda_sys_con);
+    gr2_set_modified(infoUptime, &sda_sys_con);
   }
 
   if(update_uptimeL()) {
-    pscg_set_modified(infoUptimeL, &sda_sys_con);
+    gr2_set_modified(infoUptimeL, &sda_sys_con);
   }
 
   if(update_uptimePWR()) {
-    pscg_set_modified(infoUptimePWR, &sda_sys_con);
+    gr2_set_modified(infoUptimePWR, &sda_sys_con);
   }
 
-  pscg_set_yscroll(internalScr, pscg_get_value(slider, &sda_sys_con), &sda_sys_con);
+  gr2_set_yscroll(internalScr, gr2_get_value(slider, &sda_sys_con), &sda_sys_con);
 
   return 0;
 }

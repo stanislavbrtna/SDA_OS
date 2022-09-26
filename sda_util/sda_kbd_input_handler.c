@@ -83,37 +83,37 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
     }
   }
 
-  if (pscg_get_value(input_id, &sda_sys_con) && !pscg_get_grayout(input_id, &sda_sys_con)) {
+  if (gr2_get_value(input_id, &sda_sys_con) && !gr2_get_grayout(input_id, &sda_sys_con)) {
     // set the cursor position
-    if (((pscg_get_event(input_id, &sda_sys_con) == EV_PRESSED)
-        || (pscg_get_event(input_id, &sda_sys_con) == EV_HOLD))
-        && pscg_text_get_pwd(input_id, &sda_sys_con) == 0) {
+    if (((gr2_get_event(input_id, &sda_sys_con) == EV_PRESSED)
+        || (gr2_get_event(input_id, &sda_sys_con) == EV_HOLD))
+        && gr2_text_get_pwd(input_id, &sda_sys_con) == 0) {
       uint16_t temp;
       uint8_t curr_font;
       curr_font = LCD_Get_Font_Size();
-      LCD_Set_Sys_Font(pscg_get_param2(input_id, &sda_sys_con));
+      LCD_Set_Sys_Font(gr2_get_param2(input_id, &sda_sys_con));
 
-      temp = LCD_Text_Get_Cursor_Pos(str, pscg_get_tmx(&sda_sys_con), pscg_get_tmy(&sda_sys_con));
+      temp = LCD_Text_Get_Cursor_Pos(str, gr2_get_tmx(&sda_sys_con), gr2_get_tmy(&sda_sys_con));
 
       LCD_Set_Sys_Font(curr_font);
 
       if (temp == 0) {
-        pscg_set_param(input_id, 0, &sda_sys_con);
+        gr2_set_param(input_id, 0, &sda_sys_con);
       } else {
-        pscg_set_param(input_id, temp, &sda_sys_con);
+        gr2_set_param(input_id, temp, &sda_sys_con);
       }
     }
-    pscg_set_event(input_id, EV_NONE, &sda_sys_con);
+    gr2_set_event(input_id, EV_NONE, &sda_sys_con);
 
     if (sda_get_keyboard_key_flag()) {
         if (*((uint8_t *)svpSGlobal.kbdKeyStr) != 2) {
           // TODO: Fix this
-          svp_str_insert(str, svpSGlobal.kbdKeyStr, buff,  pscg_get_param(input_id, &sda_sys_con), len);
+          svp_str_insert(str, svpSGlobal.kbdKeyStr, buff,  gr2_get_param(input_id, &sda_sys_con), len);
 
           if (*((uint8_t *)svpSGlobal.kbdKeyStr + 1) != 0) {
-            pscg_set_param(input_id, pscg_get_param(input_id, &sda_sys_con) + 2, &sda_sys_con); // move cursor
+            gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) + 2, &sda_sys_con); // move cursor
           } else {
-            pscg_set_param(input_id, pscg_get_param(input_id, &sda_sys_con) + 1, &sda_sys_con);
+            gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) + 1, &sda_sys_con);
           }
           return 1;
         } else {
@@ -128,16 +128,16 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
             uint8_t czFlag = 0;
 
             if (len >= 2
-                && (str[pscg_get_param(input_id, &sda_sys_con) - 2] >= 0xC3)
-                && (str[pscg_get_param(input_id, &sda_sys_con) - 2] <= 0xC5)
+                && (str[gr2_get_param(input_id, &sda_sys_con) - 2] >= 0xC3)
+                && (str[gr2_get_param(input_id, &sda_sys_con) - 2] <= 0xC5)
                 ) {
-              pscg_set_param(input_id, pscg_get_param(input_id, &sda_sys_con) - 2, &sda_sys_con);
+              gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) - 2, &sda_sys_con);
               czFlag = 1;
             } else {
-              pscg_set_param(input_id, pscg_get_param(input_id, &sda_sys_con) - 1, &sda_sys_con);
+              gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) - 1, &sda_sys_con);
               czFlag = 0;
             }
-            prac = pscg_get_param(input_id, &sda_sys_con);
+            prac = gr2_get_param(input_id, &sda_sys_con);
 
             x = 0;
 
@@ -147,7 +147,7 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
             }
 
             str[x] = 0; // add null terminator, just to be sure
-            pscg_set_str(input_id, str, &sda_sys_con); // set/update
+            gr2_set_str(input_id, str, &sda_sys_con); // set/update
             return 1;
           }
 
@@ -155,8 +155,8 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
 
       }
     }
-    if (pscg_get_str(input_id, &sda_sys_con) != str && !pscg_get_grayout(input_id, &sda_sys_con)) {
-      pscg_set_str(input_id, str, &sda_sys_con); // still set/update
+    if (gr2_get_str(input_id, &sda_sys_con) != str && !gr2_get_grayout(input_id, &sda_sys_con)) {
+      gr2_set_str(input_id, str, &sda_sys_con); // still set/update
     }
     return 0;
 }

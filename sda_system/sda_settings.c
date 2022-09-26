@@ -41,11 +41,11 @@ void sda_load_config() {
   }
 
   // Load color scheme
-  pscg_set_border_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"border_color", 0), &sda_sys_con);
-  pscg_set_text_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"text_color", 0), &sda_sys_con);
-  pscg_set_background_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"background_color", 0xF800), &sda_sys_con);
-  pscg_set_fill_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"fill_color", 0x07E0), &sda_sys_con);
-  pscg_set_active_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"active_color", 0xFFFF), &sda_sys_con);
+  gr2_set_border_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"border_color", 0), &sda_sys_con);
+  gr2_set_text_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"text_color", 0), &sda_sys_con);
+  gr2_set_background_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"background_color", 0xF800), &sda_sys_con);
+  gr2_set_fill_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"fill_color", 0x07E0), &sda_sys_con);
+  gr2_set_active_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"active_color", 0xFFFF), &sda_sys_con);
 
   // sleep timer
   svpSGlobal.lcdShutdownTime = sda_conf_key_read_i32(&conffile, (uint8_t *)"sleep_time", 5);
@@ -101,11 +101,11 @@ void sda_store_config_gui(uint8_t set_def) {
     return;
   }
   if (set_def == 0) {
-    sda_conf_key_write_i32(&conffile, (uint8_t *)"border_color", pscg_get_border_color(&sda_sys_con));
-    sda_conf_key_write_i32(&conffile, (uint8_t *)"text_color", pscg_get_text_color(&sda_sys_con));
-    sda_conf_key_write_i32(&conffile, (uint8_t *)"background_color", pscg_get_background_color(&sda_sys_con));
-    sda_conf_key_write_i32(&conffile, (uint8_t *)"fill_color", pscg_get_fill_color(&sda_sys_con));
-    sda_conf_key_write_i32(&conffile, (uint8_t *)"active_color", pscg_get_active_color(&sda_sys_con));
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"border_color", gr2_get_border_color(&sda_sys_con));
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"text_color", gr2_get_text_color(&sda_sys_con));
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"background_color", gr2_get_background_color(&sda_sys_con));
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"fill_color", gr2_get_fill_color(&sda_sys_con));
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"active_color", gr2_get_active_color(&sda_sys_con));
   } else {
     printf("Setting Default Values.\n");
     sda_conf_key_write_i32(&conffile, (uint8_t *)"border_color", 0);

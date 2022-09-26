@@ -49,21 +49,21 @@ void svp_errSoftPrint(svsVM *s) {
 
 
 void sda_show_error_message(uint8_t * text) {
-  error_overlay_scr = pscg_add_screen(&sda_sys_con);
-  pscg_set_x_cell(error_overlay_scr, 16, &sda_sys_con);
-  pscg_add_text(
+  error_overlay_scr = gr2_add_screen(&sda_sys_con);
+  gr2_set_x_cell(error_overlay_scr, 16, &sda_sys_con);
+  gr2_add_text(
       2, 1, 14, 2,
       MSG_ERROR_OCCURED,
       error_overlay_scr,
       &sda_sys_con
   );
-  pscg_text_set_fit(
-      pscg_add_text(1, 2, 15, 7, text, error_overlay_scr, &sda_sys_con),
+  gr2_text_set_fit(
+      gr2_add_text(1, 2, 15, 7, text, error_overlay_scr, &sda_sys_con),
       1,
       &sda_sys_con
       );
   error_overlay_ok
-    = pscg_add_button(6, 8, 10, 9, OVRL_OK, error_overlay_scr, &sda_sys_con);
+    = gr2_add_button(6, 8, 10, 9, OVRL_OK, error_overlay_scr, &sda_sys_con);
   error_overlay = setOverlayScreen(error_overlay_scr, &sda_sys_con);
   setOverlayDestructor(sda_error_overlay_destructor);
   soft_error_flag = 1;
@@ -75,9 +75,9 @@ void sda_error_overlay_handle() {
     return;
   }
 
-  if (pscg_get_event(error_overlay_ok, &sda_sys_con) == EV_RELEASED) {
+  if (gr2_get_event(error_overlay_ok, &sda_sys_con) == EV_RELEASED) {
     destroyOverlay();
     return;
   }
-  pscg_set_event(error_overlay_ok, EV_NONE, &sda_sys_con);
+  gr2_set_event(error_overlay_ok, EV_NONE, &sda_sys_con);
 }

@@ -56,8 +56,8 @@ static uint8_t redrawDetect;
 extern uint16_t svsLoadCounter;
 extern uint8_t soft_error_flag;
 
-extern pscgElement *sda_app_gr2_elements; //[SDA_APP_ELEM_MAX];
-extern pscgScreen *sda_app_gr2_screens; //[SDA_APP_SCREEN_MAX];
+extern gr2Element *sda_app_gr2_elements; //[SDA_APP_ELEM_MAX];
+extern gr2Screen *sda_app_gr2_screens; //[SDA_APP_SCREEN_MAX];
 extern gr2context sda_app_con; //
 
 static uint8_t slot_restore; // what appslot to restore after close
@@ -127,7 +127,7 @@ void sda_alarm_clear_flag() {
 void sdaSvmSetMainScreen(uint16_t val) {
   svs_wrap_setScr_id = val;
   svs_wrap_setScr_flag = 1;
-  pscg_set_modified(val, &sda_app_con);
+  gr2_set_modified(val, &sda_app_con);
 }
 
 
@@ -161,11 +161,11 @@ void sdaSvmOnTop() {
 
 void sdaSvmGetGR2Settings() {
   // load colors from system to app context
-  pscg_set_border_color(pscg_get_border_color(&sda_sys_con), &sda_app_con);
-  pscg_set_text_color(pscg_get_text_color(&sda_sys_con), &sda_app_con);
-  pscg_set_background_color(pscg_get_background_color(&sda_sys_con), &sda_app_con);
-  pscg_set_fill_color(pscg_get_fill_color(&sda_sys_con), &sda_app_con);
-  pscg_set_active_color(pscg_get_active_color(&sda_sys_con), &sda_app_con);
+  gr2_set_border_color(gr2_get_border_color(&sda_sys_con), &sda_app_con);
+  gr2_set_text_color(gr2_get_text_color(&sda_sys_con), &sda_app_con);
+  gr2_set_background_color(gr2_get_background_color(&sda_sys_con), &sda_app_con);
+  gr2_set_fill_color(gr2_get_fill_color(&sda_sys_con), &sda_app_con);
+  gr2_set_active_color(gr2_get_active_color(&sda_sys_con), &sda_app_con);
 }
 
 // app misc
@@ -320,7 +320,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
     }
   }
   svmValid = 0; // invalidate slot before loading
-  set_pscg_workaround_context(&sda_app_con);
+  set_gr2_workaround_context(&sda_app_con);
   if (parentId != 0 && svmMeta.launchFromCWD == 1) {
     svp_chdir(dirbuf);
     // if we do not launch from launcher, we update the path of the executable
@@ -362,7 +362,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"DATA");
   // reset gr2 context
-  gr2_ResetContext(&sda_app_con);
+  gr2_reset_context(&sda_app_con);
   sdaSvmGetGR2Settings();
   // validate the app slot
   sda_slot_set_valid(4);
@@ -439,11 +439,11 @@ void sdaSvmCloseApp() {
     return;
   }
 
-  pscg_text_deactivate(&sda_app_con);
+  gr2_text_deactivate(&sda_app_con);
   svpSGlobal.systemXBtnVisible = 0;
   svmValid = 0;
   if (sda_slot_get_screen(4) != 0) {
-    pscg_destroy_screen(sda_slot_get_screen(4), &sda_app_con);
+    gr2_destroy(sda_slot_get_screen(4), &sda_app_con);
   }
   sda_slot_set_invalid(4);
 
@@ -684,7 +684,7 @@ static void storeArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_
 
 
 void sdaSvmKillApp_handle() {
-  pscg_text_deactivate(&sda_app_con);
+  gr2_text_deactivate(&sda_app_con);
   svpSGlobal.systemXBtnClick = 0;
   svpSGlobal.systemXBtnVisible = 0;
   svmValid = 0;
@@ -692,7 +692,7 @@ void sdaSvmKillApp_handle() {
   svpSGlobal.touchType = EV_NONE;
   svpSGlobal.touchValid = 0;
   if (sda_slot_get_screen(4) != 0) {
-    pscg_destroy_screen(sda_slot_get_screen(4), &sda_app_con);
+    gr2_destroy(sda_slot_get_screen(4), &sda_app_con);
   }
   sda_slot_set_invalid(4);
 
@@ -703,7 +703,7 @@ void sdaSvmKillApp_handle() {
   sda_files_close();
 
   svp_crypto_lock();
-  pscg_cleanup(&sda_app_con); // performs cleanup of pscg elements
+  gr2_cleanup(&sda_app_con); // performs cleanup of pscg elements
   sda_slot_on_top(1);
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
@@ -940,8 +940,8 @@ void sdaSvmSave() {
   svmMeta.screen = slotScreen[4];
 
   sdaSvmSaver(svmMeta.id, (uint8_t *) ".svm", &svm, sizeof(svm));
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(pscgElement) * SDA_APP_ELEM_MAX);
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(pscgScreen) * SDA_APP_SCREEN_MAX);
+  sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX);
+  sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX);
   sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context));
   sdaSvmSaver(svmMeta.id, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta));
 }
@@ -952,10 +952,10 @@ uint8_t sdaSvmLoad(uint16_t id) {
   if(!sdaSvmLoader(id, (uint8_t *) ".svm", &svm, sizeof(svm)))
     return 0;
 
-  if(!sdaSvmLoader(id, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(pscgElement) * SDA_APP_ELEM_MAX))
+  if(!sdaSvmLoader(id, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX))
     return 0;
 
-  if(!sdaSvmLoader(id, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(pscgScreen) * SDA_APP_SCREEN_MAX))
+  if(!sdaSvmLoader(id, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX))
     return 0;
 
   if(!sdaSvmLoader(id, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context)))

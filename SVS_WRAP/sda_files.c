@@ -620,8 +620,8 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
     readBuff[i] = 0;
 
-    pscg_set_str(argS->arg[1].val_s,readBuff, &sda_app_con);
-    pscg_set_modified(argS->arg[1].val_s, &sda_app_con);
+    gr2_set_str(argS->arg[1].val_s,readBuff, &sda_app_con);
+    gr2_set_modified(argS->arg[1].val_s, &sda_app_con);
 
     return 1;
   }

@@ -39,16 +39,16 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
   static uint8_t date_string[42];
 
   if (init == 1) {
-    screen = pscg_add_screen(&sda_sys_con);
-    text = pscg_add_text(0 , 1, 12, 3,(uint8_t *)"S!   PDA", screen, &sda_sys_con);
-    time = pscg_add_text(3, 4, 12, 6,(uint8_t *)"??:??", screen, &sda_sys_con);
-    date = pscg_add_text(3, 6, 12, 7,(uint8_t *)"?. ?. 20??", screen, &sda_sys_con);
-    appsBtn = pscg_add_icon(2, 10, 5, 13,(uint8_t *)"", (uint8_t *)"Icons/apps.p16", screen, &sda_sys_con);
-    optBtn = pscg_add_icon(6, 10, 9, 13,(uint8_t *)"", (uint8_t *)"Icons/options.p16", screen, &sda_sys_con);
-    lockBtn = pscg_add_icon(4, 10, 7, 13,(uint8_t *)"", (uint8_t *)"Icons/lock.p16", screen, &sda_sys_con);
-    pscg_set_visible(lockBtn, 0, &sda_sys_con);
-    pscg_text_set_size(text, 70, &sda_sys_con);
-    pscg_text_set_size(time, 70, &sda_sys_con);
+    screen = gr2_add_screen(&sda_sys_con);
+    text = gr2_add_text(0 , 1, 12, 3,(uint8_t *)"S!   PDA", screen, &sda_sys_con);
+    time = gr2_add_text(3, 4, 12, 6,(uint8_t *)"??:??", screen, &sda_sys_con);
+    date = gr2_add_text(3, 6, 12, 7,(uint8_t *)"?. ?. 20??", screen, &sda_sys_con);
+    appsBtn = gr2_add_icon(2, 10, 5, 13,(uint8_t *)"", (uint8_t *)"Icons/apps.p16", screen, &sda_sys_con);
+    optBtn = gr2_add_icon(6, 10, 9, 13,(uint8_t *)"", (uint8_t *)"Icons/options.p16", screen, &sda_sys_con);
+    lockBtn = gr2_add_icon(4, 10, 7, 13,(uint8_t *)"", (uint8_t *)"Icons/lock.p16", screen, &sda_sys_con);
+    gr2_set_visible(lockBtn, 0, &sda_sys_con);
+    gr2_text_set_size(text, 70, &sda_sys_con);
+    gr2_text_set_size(time, 70, &sda_sys_con);
     oldtime = 5566; // absurd value, so current minute would not equal oldmin and time would update after init
     oldLock = DEVICE_UNLOCKED;
     return screen;
@@ -66,15 +66,15 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
       time_string[3] = svpSGlobal.min / 10 + 48;
       time_string[4] = svpSGlobal.min % 10 + 48;
       time_string[5] = 0;
-      pscg_set_str(time, time_string, &sda_sys_con);
+      gr2_set_str(time, time_string, &sda_sys_con);
       oldtime = ((uint16_t)svpSGlobal.hour * 10) + (uint16_t)svpSGlobal.min;
     }
 
     // date refresh
     if ((svpSGlobal.day != olddate) || (svpSGlobal.dateUpdated)) {
       svp_write_date_string(date_string, 0, 1);
-      pscg_set_str(date, date_string, &sda_sys_con);
-      pscg_set_modified(date, &sda_sys_con);
+      gr2_set_str(date, date_string, &sda_sys_con);
+      gr2_set_modified(date, &sda_sys_con);
       olddate = svpSGlobal.day;
       svpSGlobal.dateUpdated = 0;
     }
@@ -82,21 +82,21 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     // lock refresh
     if (svpSGlobal.sdaDeviceLock != oldLock) {
       if (svpSGlobal.sdaDeviceLock == DEVICE_LOCKED) {
-        pscg_set_visible(lockBtn, 1, &sda_sys_con);
-        pscg_set_visible(optBtn, 0, &sda_sys_con);
-        pscg_set_visible(appsBtn, 0, &sda_sys_con);
+        gr2_set_visible(lockBtn, 1, &sda_sys_con);
+        gr2_set_visible(optBtn, 0, &sda_sys_con);
+        gr2_set_visible(appsBtn, 0, &sda_sys_con);
       } else {
-        pscg_set_visible(lockBtn, 0, &sda_sys_con);
-        pscg_set_visible(optBtn, 1, &sda_sys_con);
-        pscg_set_visible(appsBtn, 1, &sda_sys_con);
+        gr2_set_visible(lockBtn, 0, &sda_sys_con);
+        gr2_set_visible(optBtn, 1, &sda_sys_con);
+        gr2_set_visible(appsBtn, 1, &sda_sys_con);
       }
       oldLock = svpSGlobal.sdaDeviceLock;
     }
 
-    if (pscg_get_event(lockBtn, &sda_sys_con) == EV_RELEASED) {
+    if (gr2_get_event(lockBtn, &sda_sys_con) == EV_RELEASED) {
       unlockOverlay = password_overlay_init();
     }
-    pscg_set_event(lockBtn, EV_NONE, &sda_sys_con);
+    gr2_set_event(lockBtn, EV_NONE, &sda_sys_con);
 
     password_overlay_update(unlockOverlay);
 
@@ -111,15 +111,15 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
       password_overlay_clear_ok(unlockOverlay);
     }
 
-    if (pscg_get_event(appsBtn, &sda_sys_con) == EV_RELEASED) {
+    if (gr2_get_event(appsBtn, &sda_sys_con) == EV_RELEASED) {
       sda_slot_on_top(1);
     }
-    pscg_set_event(appsBtn, EV_NONE, &sda_sys_con);
+    gr2_set_event(appsBtn, EV_NONE, &sda_sys_con);
 
-    if (pscg_get_event(optBtn, &sda_sys_con) == EV_RELEASED) {
+    if (gr2_get_event(optBtn, &sda_sys_con) == EV_RELEASED) {
       sda_slot_on_top(2);
     }
-    pscg_set_event(optBtn, EV_NONE, &sda_sys_con);
+    gr2_set_event(optBtn, EV_NONE, &sda_sys_con);
   }
   //else: work in the background, noting for now
   return 0;
