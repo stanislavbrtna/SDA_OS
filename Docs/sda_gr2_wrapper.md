@@ -20,6 +20,8 @@
 
 ##### New screen
     sys.gui.addScreen();
+or also
+    sys.gui.addScreen([num]x1, [num]y1, [num]x2, [num]y2, [num]scrId);
 Creates new screen.
 Return: [num]scrId
 ##### New frame
@@ -167,6 +169,22 @@ Sets aplication gr2 context to relative init mode.
 Return: None
 
     sys.gui.setXYXY([num]Id, [num] x1, [num] y1, [num] x2, [num] y2);
+Sets position of element inside screen.
+Return: None
+
+    sys.gui.setX1([num]Id, [num] x1);
+Sets position of element inside screen.
+Return: None
+
+    sys.gui.setX2([num]Id, [num] x2);
+Sets position of element inside screen.
+Return: None
+
+    sys.gui.setY1([num]Id, [num] y1);
+Sets position of element inside screen.
+Return: None
+
+    sys.gui.setY2([num]Id, [num] y2);
 Sets position of element inside screen.
 Return: None
 

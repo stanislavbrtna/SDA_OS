@@ -76,15 +76,38 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### New screen
   //#!    sys.gui.addScreen();
+  //#!or also
+  //#!    sys.gui.addScreen([num]x1, [num]y1, [num]x2, [num]y2, [num]scrId);
   //#!Creates new screen.
   //#!Return: [num]scrId
   if (sysFuncMatch(argS->callId, "addScreen", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
+    if (argS->usedup == 0) {
+      if(sysExecTypeCheck(argS, argType, 0, s)) {
+        return 0;
+      }
+      result->value.val_s = gr2_add_screen(&sda_app_con);
+      result->type = 0;
+      return 1;
+    } else {
+      argType[1] = 0; //x1
+      argType[2] = 0; //y1
+      argType[3] = 0; //x2
+      argType[4] = 0; //y2
+      argType[5] = 0; //scrId
+
+      if(sysExecTypeCheck(argS, argType, 5, s)) {
+        return 0;
+      }
+      result->value.val_s = gr2_add_screen_ext(
+      argS->arg[1].val_s,
+      argS->arg[2].val_s,
+      argS->arg[3].val_s,
+      argS->arg[4].val_s,
+      argS->arg[5].val_s,
+      &sda_app_con);
+      result->type = 0;
+      return 1;
     }
-    result->value.val_s = gr2_add_screen(&sda_app_con);
-    result->type = 0;
-    return 1;
   }
 
   //#!##### New frame
@@ -835,6 +858,130 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!
+  //#!    sys.gui.setX1([num]Id, [num] x1);
+  //#!Sets position of element inside screen.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setX1", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM; // x1
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+    gr2_set_x1(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    return 1;
+  }
+
+  //#!
+  //#!    sys.gui.setX2([num]Id, [num] x2);
+  //#!Sets position of element inside screen.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setX2", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM; // x2
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+    gr2_set_x2(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    return 1;
+  }
+
+  //#!
+  //#!    sys.gui.setY1([num]Id, [num] y1);
+  //#!Sets position of element inside screen.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setY1", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM; // y1
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+    gr2_set_y1(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    return 1;
+  }
+
+  //#!
+  //#!    sys.gui.setY2([num]Id, [num] y2);
+  //#!Sets position of element inside screen.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setY2", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM; // y2
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+    gr2_set_y2(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    return 1;
+  }
+
+  //#!
+  //#!    sys.gui.getX1([num]Id);
+  //#!Gets element position.
+  //#!Return: [num] x1
+  if (sysFuncMatch(argS->callId, "getX1", s)) {
+    argType[1] = 0; //id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = gr2_get_x1(argS->arg[1].val_s, &sda_app_con);
+    result->type = 0;
+    return 1;
+  }
+
+  //#!
+  //#!    sys.gui.getX2([num]Id);
+  //#!Gets element position.
+  //#!Return: [num] x2
+  if (sysFuncMatch(argS->callId, "getX2", s)) {
+    argType[1] = 0; //id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = gr2_get_x2(argS->arg[1].val_s, &sda_app_con);
+    result->type = 0;
+    return 1;
+  }
+
+  //#!
+  //#!    sys.gui.getY1([num]Id);
+  //#!Gets element position.
+  //#!Return: [num] y1
+  if (sysFuncMatch(argS->callId, "getY1", s)) {
+    argType[1] = 0; //id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = gr2_get_y1(argS->arg[1].val_s, &sda_app_con);
+    result->type = 0;
+    return 1;
+  }
+
+  //#!
+  //#!    sys.gui.getY2([num]Id);
+  //#!Gets element position.
+  //#!Return: [num] y2
+  if (sysFuncMatch(argS->callId, "getY2", s)) {
+    argType[1] = 0; //id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = gr2_get_y2(argS->arg[1].val_s, &sda_app_con);
+    result->type = 0;
+    return 1;
+  }
+
+  //#!
   //#!    sys.gui.setSpacing([num]Id, [num] left, [num] right, [num] top, [num] bottom);
   //#!Sets element spacing atributes of given screen.
   //#!Return: None
@@ -1157,6 +1304,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!
   //#!    sys.gui.setColor([num]Col, [num]val);
   //#!Sets given color to given value.
+  //#!Available system colors: COL_BORDER, COL_TEXT, COL_BACKGROUND, COL_FILL, COL_ACTIVE
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setColor", s)) {
     argType[1] = 0;
@@ -1184,6 +1332,7 @@ uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!
   //#!    sys.gui.getColor([num]Col);
   //#!Gets value of given color define.
+  //#!Available system colors: COL_BORDER, COL_TEXT, COL_BACKGROUND, COL_FILL, COL_ACTIVE
   //#!Return: [num]val
   if (sysFuncMatch(argS->callId, "getColor", s)) {
     argType[1] = 0;
