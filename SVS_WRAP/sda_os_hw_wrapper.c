@@ -571,5 +571,63 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!#### Serial recieve in non-blocking mode
+  //#!For more flexible serial interface operations
+
+  //#!##### Serial expansion receive
+  //#!    sys.com.uartRcvIT();
+  //#!Initializes serial port receive operation in non-blocking mode
+  //#!Returns 1 if ok, 0 if error occurred
+  //#!Return: [num] result
+
+
+  if (sysFuncMatch(argS->callId, "uartRcvIT", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    result->value.val_s = sda_serial_recieve_init();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Serial expansion get ready flag
+  //#!    sys.com.uartGetRd();
+  //#!Gets transmission ready flag. Returns 1 if data is pending,
+  //#!2 if whole line of data is pending
+  //#!Return: [num] ready
+  if (sysFuncMatch(argS->callId, "uartGetRd", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    result->value.val_s = sda_serial_get_rdy();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Serial expansion get pending data
+  //#!    sys.com.uartGetStr();
+  //#!Gets the pending string and resets the serial interface
+  //#!for another ready flag.
+  //#!Return: [str] pending
+
+  static uint8_t c[512];
+  if (sysFuncMatch(argS->callId, "uartGetStr", s)) {
+      if(sysExecTypeCheck(argS, argType, 0, s)) {
+        return 0;
+      }
+
+      if (uart3_get_str(c)){
+        c[511] = 0;
+        result->value.val_u = strNew(c, s);
+      } else {
+        result->value.val_u = strNew((uint8_t *)"", s);
+      }
+
+      result->type = SVS_TYPE_STR;
+      return 1;
+    }
+
   return 0;
 }
