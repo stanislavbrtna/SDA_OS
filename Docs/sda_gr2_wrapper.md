@@ -188,6 +188,22 @@ Return: None
 Sets position of element inside screen.
 Return: None
 
+    sys.gui.getX1([num]Id);
+Gets element position.
+Return: [num] x1
+
+    sys.gui.getX2([num]Id);
+Gets element position.
+Return: [num] x2
+
+    sys.gui.getY1([num]Id);
+Gets element position.
+Return: [num] y1
+
+    sys.gui.getY2([num]Id);
+Gets element position.
+Return: [num] y2
+
     sys.gui.setSpacing([num]Id, [num] left, [num] right, [num] top, [num] bottom);
 Sets element spacing atributes of given screen.
 Return: None
@@ -267,8 +283,10 @@ Return: [num]alignment (uses consts: ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER)
 
     sys.gui.setColor([num]Col, [num]val);
 Sets given color to given value.
+Available system colors: COL_BORDER, COL_TEXT, COL_BACKGROUND, COL_FILL, COL_ACTIVE
 Return: None
 
     sys.gui.getColor([num]Col);
 Gets value of given color define.
+Available system colors: COL_BORDER, COL_TEXT, COL_BACKGROUND, COL_FILL, COL_ACTIVE
 Return: [num]val
