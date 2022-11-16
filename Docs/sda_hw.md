@@ -136,3 +136,20 @@ Return: None
 Gets string (max 512 bytes) from currently initialized serial port.
 If nothing is sent during timeout (in ms), empty string is returned.
 Return: [str] data
+#### Serial recieve in non-blocking mode
+For more flexible serial interface operations
+##### Serial expansion receive
+    sys.com.uartRcvIT();
+Initializes serial port receive operation in non-blocking mode
+Returns 1 if ok, 0 if error occurred
+Return: [num] result
+##### Serial expansion get ready flag
+    sys.com.uartGetRd();
+Gets transmission ready flag. Returns 1 if data is pending,
+2 if whole line of data is pending
+Return: [num] ready
+##### Serial expansion get pending data
+    sys.com.uartGetStr();
+Gets the pending string and resets the serial interface
+for another ready flag.
+Return: [str] pending

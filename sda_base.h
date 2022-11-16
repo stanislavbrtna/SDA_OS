@@ -60,12 +60,19 @@ void svp_set_lcd_state(lcdStateType state);
 void svp_set_backlight(uint8_t val);
 void sda_calibrate();
 
-// [HW] Expansion
+// [HW] Expansion serial port
+void sda_serial_enable();
+void sda_serial_disable();
+
 uint8_t sda_serial_recieve(uint8_t *str, uint32_t len, uint32_t timeout);
 void sda_serial_transmit(uint8_t *str, uint32_t len);
 uint8_t sda_serial_is_enabled();
-void sda_serial_enable();
-void sda_serial_disable();
+
+uint8_t sda_serial_recieve_init();
+uint8_t sda_serial_get_rdy();
+uint8_t uart3_get_str(uint8_t *str);
+
+// [HW] Expansion
 void sda_internal_pin_def(uint8_t pinNum, uint8_t pinType, uint8_t pull);
 void sda_internal_pin_set(uint8_t pinNum, uint8_t val);
 uint8_t sda_internal_pin_get(uint8_t pinNum);
