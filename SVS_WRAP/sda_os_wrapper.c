@@ -447,44 +447,43 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 }
 
 
-uint16_t get_real_cursor_pos(uint16_t cpos_u8, uint8_t *str) {
+int32_t get_real_cursor_pos(uint16_t cpos_u8, uint8_t *str) {
   uint16_t len = 0;
   uint16_t x = 0;
 
   while (str[x] != 0) {
-    if ((str[x] >= 0xC3) \
-        && (str[x] <= 0xC5)) {
-      x++;
-    }
-    len++;
-    x++;
-
     if(len == cpos_u8) {
       return x;
     }
-  }
-  return 0;
-}
 
-uint16_t get_char_cursor_pos(uint16_t cpos, uint8_t *str) {
-  uint16_t len = 0;
-  uint16_t x = 0;
-
-  while (str[x] != 0) {
     if ((str[x] >= 0xC3) \
         && (str[x] <= 0xC5)) {
       x++;
     }
     len++;
     x++;
+  }
+  return x;
+}
 
+int32_t get_char_cursor_pos(uint16_t cpos, uint8_t *str) {
+  uint16_t len = 0;
+  uint16_t x = 0;
+
+  while (str[x] != 0) {
     if(x == cpos) {
       return len;
     }
-  }
-  return 0;
-}
 
+    if ((str[x] >= 0xC3) \
+        && (str[x] <= 0xC5)) {
+      x++;
+    }
+    len++;
+    x++;   
+  }
+  return len;
+}
 
 
 uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
@@ -663,7 +662,9 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     
-    gr2_set_param(argS->arg[1].val_s, get_real_cursor_pos(argS->arg[2].val_s, gr2_get_str(argS->arg[1].val_s, &sda_app_con)), &sda_app_con);
+    if (argS->arg[2].val_s >= 0) {
+      gr2_set_param(argS->arg[1].val_s, get_real_cursor_pos(argS->arg[2].val_s, gr2_get_str(argS->arg[1].val_s, &sda_app_con)), &sda_app_con);
+    }
 
     result->value.val_u = 0;
     result->type = SVS_TYPE_NUM;
