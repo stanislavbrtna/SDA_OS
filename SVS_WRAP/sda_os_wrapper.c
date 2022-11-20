@@ -447,6 +447,46 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 }
 
 
+uint16_t get_real_cursor_pos(uint16_t cpos_u8, uint8_t *str) {
+  uint16_t len = 0;
+  uint16_t x = 0;
+
+  while (str[x] != 0) {
+    if ((str[x] >= 0xC3) \
+        && (str[x] <= 0xC5)) {
+      x++;
+    }
+    len++;
+    x++;
+
+    if(len == cpos_u8) {
+      return x;
+    }
+  }
+  return 0;
+}
+
+uint16_t get_char_cursor_pos(uint16_t cpos, uint8_t *str) {
+  uint16_t len = 0;
+  uint16_t x = 0;
+
+  while (str[x] != 0) {
+    if ((str[x] >= 0xC3) \
+        && (str[x] <= 0xC5)) {
+      x++;
+    }
+    len++;
+    x++;
+
+    if(x == cpos) {
+      return len;
+    }
+  }
+  return 0;
+}
+
+
+
 uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   uint16_t x;
   uint8_t argType[11];
@@ -592,6 +632,41 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
     result->value = argS->arg[2];
     result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
+  //#!##### Get text cursor position
+  //#!    sys.os.gui.getCPos([num] id);
+  //#!Gets the cursor position of a text field
+  //#!Return: [num]id
+  if (sysFuncMatch(argS->callId, "getCPos", s)) {
+    argType[1] = SVS_TYPE_NUM; //id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+    
+    result->value.val_u = get_char_cursor_pos(gr2_get_param(argS->arg[1].val_s, &sda_app_con), gr2_get_str(argS->arg[1].val_s, &sda_app_con));
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Set text cursor position
+  //#!    sys.os.gui.setCPos([num] id, [num]val);
+  //#!Sets the cursor position of a text field
+  //#!Return: [num]id
+  if (sysFuncMatch(argS->callId, "setCPos", s)) {
+    argType[1] = SVS_TYPE_NUM; //id
+    argType[2] = SVS_TYPE_NUM; //val
+
+    if(sysExecTypeCheck(argS, argType, 2, s)){
+      return 0;
+    }
+    
+    gr2_set_param(argS->arg[1].val_s, get_real_cursor_pos(argS->arg[2].val_s, gr2_get_str(argS->arg[1].val_s, &sda_app_con)), &sda_app_con);
+
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 

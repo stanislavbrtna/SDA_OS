@@ -135,6 +135,14 @@ Return: [num]id
     sys.os.gui.handleText([num]id, [str]text);
 Handles text input fields. Id is field id. Text is default text value.
 Return: [str] New modified text value
+##### Get text cursor position
+    sys.os.gui.getCPos([num] id);
+Gets the cursor position of a text field
+Return: [num]id
+##### Set text cursor position
+    sys.os.gui.setCPos([num] id, [num]val);
+Sets the cursor position of a text field
+Return: [num]id
 #### Text obfuscation
 ##### Unlock overlay init
     sys.cr.unLockInit();
