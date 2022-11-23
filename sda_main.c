@@ -127,7 +127,7 @@ static void sda_main_init() {
   pcBasicWrapInit();
   svsGr2WrapInit();
   sda_files_wrapper_init();
-  svsSVPWrapInit();
+  sda_svs_wrapper_init();
 
   gr2_init_context(
       &sda_sys_con,

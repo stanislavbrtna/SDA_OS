@@ -23,13 +23,14 @@ SOFTWARE.
 #define SDA_SVS_WRAPPER
 
 #include "../SDA_OS.h"
+#include "os_wrapper/sda_os_wrapper.h"
 
 uint8_t wrap_get_lcdOffButtons();
 void wrap_set_lcdOffButtons(uint8_t val);
 
 void sx_set_touch_ev(gr2EventType ev, uint16_t x, uint16_t y);
 
-void svsSVPWrapInit();
+void sda_svs_wrapper_init();
 void svsDirectSWrapInit();
 
 #endif

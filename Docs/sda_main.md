@@ -1,21 +1,16 @@
-  Automatically generated documentation on wrap_umc_svp.c
+  Automatically generated documentation of SDA OS system functions
+
+ - [OS Gui](sda_os_gui.md)
+ - [Sound](sda_os_sound.md)
+ - [Callendar widget](sda_os_widgets.md)
+ - [Text obfuscation](sda_os_crypto.md)
+
 #### SVP API Level history
 
-Api level changes:
-101 - Fexists, svp lang, led API, BTN defines
-102 - pscg_image added to GR2 wrap
-103 - pGetEventC added to gr2 wrapper
-104 - Timestamp API
-105 - cKeyRemove
-106 - pscg: pGetTexAct
-107 - error
-108 - pGetVisible
-109 - pSetTexAct,  setSingular(), notification api, pGetMainScr
-
-- API level overhaul -
-660 - SDA version 0.6.6 with all its features
+API level given by *sys.os.getVer* etc. works like this: 
+1000 - SDA version 1.0.0 with all its features
  ...
-720 - SDA version 0.7.2 with all its features
+1120 - SDA version 1.1.2 with all its features
 #### Constants
 | Constant | Description |
 |   ---    |    ---      |
@@ -99,137 +94,3 @@ Return: None
     sys.os.subRetval([str] arg0, [str] arg1, [str] arg2);
 Sets values that will be returned to parent process
 Return: None
-#### Sound
-##### Beep the speaker
-    sys.snd.beep();
-Initiates system beep.
-Return: None
-##### Set beep param to default
-    sys.snd.beepDef();
-Sets beep to its default values.
-Return: None
-##### Set time of beep
-    sys.snd.beepTime([num]time (~ms));
-Sets lenght of beep.
-Return: None
-##### Set period of beep
-    sys.snd.beepFreq([num]frequency (Hz));
-Sets frequency of the beep in Hz in range from 27 to 20000.
-Return: None
-##### Get if system sound is disabled
-    sys.snd.getMute();
-Returns system mute
-Return: [num]1 if system is on mute.
-#### Gui
-##### Set main application screen
-    sys.os.gui.setMainScr([num]id);
-Sets main screen to screen with given id
-When you wish to display overlay only, set this to 0.
-Return: None
-##### Get main application screen
-    sys.os.gui.getMainScr();
-Gets main screen id
-Return: [num]id
-#### Text field handling
-##### Handle text input
-    sys.os.gui.handleText([num]id, [str]text);
-Handles text input fields. Id is field id. Text is default text value.
-Return: [str] New modified text value
-##### Get text cursor position
-    sys.os.gui.getCPos([num] id);
-Gets the cursor position of a text field
-Return: [num]id
-##### Set text cursor position
-    sys.os.gui.setCPos([num] id, [num]val);
-Sets the cursor position of a text field
-Return: [num]id
-#### Text obfuscation
-##### Unlock overlay init
-    sys.cr.unLockInit();
-Creates unlock overlay
-Return: [num] overlay ID, 0 when error
-##### Unlock overlay update
-    sys.cr.update([num] ovId);
-Updates unlock overlay
-Return: None
-##### Unlock overlay get ok
-    sys.cr.getOk([num] ovId);
-Gets if unlock was successfull
-Return: [num] 1 - unlock success, 2 - unlock canceled
-##### Unlock overlay clear ok
-    sys.cr.clrOk([num] ovId);
-Creates unlock overlay
-Return: None
-##### Get if is locked
-    sys.cr.getLock();
-Gets if crypto is unlocked
-Return: [num] 1 - crypto unlocked, 0 - crypto locked
-##### Loads password as a key
-    sys.cr.loadPass();
-Loads OS password as a key
-Return: 0 if success, 1 if error
-##### Load custom key string
-    sys.cr.loadStr([str]key);
-Loads custom string as a crypto key
-Return: 0 if success, 1 if error
-##### Load custom keyfile
-    sys.cr.loadKey([str]keyfile);
-Loads custom keyfile as a crypto key
-Return: 0 if success, 1 if error
-##### Load OS keyfile
-    sys.cr.loadOSKey();
-Loads OS keyfile as a crypto key
-Return: 0 if success, 1 if error
-##### Generate keyfile
-    sys.cr.genKey([str]keyfile);
-Generates custom keyfile.
-Return: 0 if success, 1 if error
-##### Lock
-    sys.cr.lock();
-Locks sda encryption
-Return: None
-##### Encrypt file
-    sys.cr.encrypt([str]fname);
-Encrypts file.
-Return: 0 if success, 1 if error
-##### Decrypt file
-    sys.cr.decrypt([str]fname);
-Encrypts file.
-Return: 0 if success, 1 if error
-
-#### Date selector widget
-
-##### Init calendar widget
-    sys.w.cal.init([num]year, [num]month, [num]day) #return: cal screen ID
-Creates callendar widget screen.
-With given year, month and day.
-Return: [num]Callendar widget screen id.
-##### Select date
-    sys.w.cal.select([num]year, [num]month, [num]day);
-Sets year, month and day to callendar widget.
-Return: None
-##### Update
-    sys.w.cal.update();
-Updates callendar widget.
-Return: [num]1 when callendar is clicked.
-##### Mark day
-    sys.w.cal.mark([num]day);
-Marks day in callendar widget.
-Return: None
-##### Set highlighting
-    sys.w.cal.highlight([num]val);
-Enable that all buttons except marked are rendered as ghost buttons.
-Return: None
-##### Get selected day
-    sys.w.cal.getDay();
-Returns selected day.
-Return: [num]day
-#### Counters
-##### Set counter
-    sys.cnt.set([num] ms);
-Sets system timer, it counts down and stops at zero.
-Return: None
-##### Gets counter
-    sys.cnt.get();
-Gets system timer value
-Return: value of system timer
