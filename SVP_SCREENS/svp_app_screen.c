@@ -118,10 +118,8 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
     return retScreen;
   } else {
     // normal event handling
-
     for(x = 0; x < appCount; x++) {
-      if (gr2_get_event(appFNameBtn[x], &sda_sys_con) == EV_RELEASED) {
-        gr2_set_event(appFNameBtn[x], EV_NONE, &sda_sys_con);
+      if (gr2_clicked(appFNameBtn[x], &sda_sys_con)) {
         selectedObject = appFName[x];
         selectedObjectStr = appHumanName[x];
         retval = 1;
@@ -132,8 +130,8 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
         break;
       }
 
-      if (gr2_get_event(appFNameBtn[x], &sda_sys_con)!=EV_NONE){
-        gr2_set_event(appFNameBtn[x],EV_NONE, &sda_sys_con);
+      if (gr2_get_event(appFNameBtn[x], &sda_sys_con) != EV_NONE) {
+        gr2_set_event(appFNameBtn[x], EV_NONE, &sda_sys_con);
       }
 
     }
@@ -175,7 +173,6 @@ static void get_from_stack(uint8_t * fname) {
       break;
     }
   }
-
 }
 
 /*
@@ -306,7 +303,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
     if (inner_handler(0, (uint8_t *)"")) {
       uint8_t type = 0;
-
+      gr2_ki_unselect(inScreen, &sda_sys_con);
       type = detect_type(selectedObject);
       if (type == 2) {
         if(sdaSvmLaunch(selectedObject, 0) == 0) {
@@ -331,6 +328,8 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
         sda_show_error_message((uint8_t *)"Menu file error: Unknown file type!");
       }
     }
+
+    sda_screen_button_handler(inScreen, btnBack, &sda_sys_con);
 
     if (gr2_get_event(btnBack, &sda_sys_con) == EV_RELEASED) {
       get_from_stack(labelbuff); // got prev
