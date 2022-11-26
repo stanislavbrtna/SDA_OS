@@ -29,6 +29,7 @@ void svp_settings_set_spacing(uint16_t id) {
 
 uint16_t svp_optScreen(uint8_t init, uint8_t top) {
   static uint16_t optScreen;
+  static uint16_t globBack;
 
   static uint16_t optTimeScr;
   static uint16_t optLcdScr;
@@ -47,7 +48,6 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 
   static uint16_t optMntSel;
   static uint16_t optSound;
-
 
 
   //mount
@@ -89,7 +89,6 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 
     svp_settings_set_spacing(optDbgSel);
 
-
     return optScreen;
   }
 
@@ -98,36 +97,37 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 
     if (gr2_clicked(optTimSel, &sda_sys_con)) {
       mainScr = optTimeScr;
+      globBack = sda_settings_time_screen(2);
       setRedrawFlag();
     }
 
     if (gr2_clicked(optLcdSel, &sda_sys_con)) {
       mainScr = optLcdScr;
-      sda_settings_display_screen(2);
+      globBack = sda_settings_display_screen(2);
       setRedrawFlag();
     }
 
     if (gr2_clicked(optInfoSel, &sda_sys_con)) {
       mainScr = optInfoScr;
-      sda_settings_info_screen(2); // reset position of the internal screen
+      globBack = sda_settings_info_screen(2); // reset position of the internal screen
       setRedrawFlag();
     }
 
     if (gr2_clicked(optDbgSel, &sda_sys_con)) {
       mainScr = optDbgScr;
-      sda_settings_debug_screen(2); // reload config of dbg serial
+      globBack = sda_settings_debug_screen(2); // reload config of dbg serial
       setRedrawFlag();
     }
 
     if (gr2_clicked(optSecuSel, &sda_sys_con)) {
       mainScr = optSecuScr;
-      sda_settings_security_screen(2);
+      globBack = sda_settings_security_screen(2);
       setRedrawFlag();
     }
 
     if (gr2_clicked(optSound, &sda_sys_con)) {
-      sda_settings_notif_screen(2); // reload current settings
       mainScr = optNotifyScr;
+      globBack = sda_settings_notif_screen(2); // reload current settings
       setRedrawFlag();
     }
 
@@ -164,6 +164,8 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
     sda_settings_info_screen(0);
     sda_settings_notif_screen(0);
     sda_settings_security_screen(0);
+
+    sda_screen_button_handler(mainScr, globBack, &sda_sys_con);
   }
   return 0;
 }

@@ -95,7 +95,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
       gr2_set_grayout(optSecuLock, 0, &sda_sys_con);
     }
 
-    return 0;
+    return optSecuBack;
   }
 
   if (gr2_clicked(optSecuBack, &sda_sys_con)) {

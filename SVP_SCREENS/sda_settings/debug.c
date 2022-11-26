@@ -66,6 +66,8 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
       gr2_set_value(dbgUartEnable, 0, &sda_sys_con);
       gr2_set_value(dbgUartDisable, 1, &sda_sys_con);
     }
+
+    return optDbgBack;
   }
 
   if (gr2_clicked(optDbgBack, &sda_sys_con)) {

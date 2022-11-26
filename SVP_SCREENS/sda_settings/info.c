@@ -106,7 +106,7 @@ uint16_t sda_settings_info_screen(uint8_t init) {
 
   if (init == 2) {
     gr2_set_value(slider,0, &sda_sys_con);
-    return 0;
+    return optInfoBack;
   }
 
   if (gr2_clicked(optInfoBack, &sda_sys_con)) {

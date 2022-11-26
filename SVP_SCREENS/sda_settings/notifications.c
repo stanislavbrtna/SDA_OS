@@ -52,6 +52,7 @@ uint16_t sda_settings_notif_screen(uint8_t init) {
     } else {
       gr2_set_value(optSoundMute, 0, &sda_sys_con);
     }
+    return optSoundBack;
   }
 
   if (gr2_clicked(optSoundMute, &sda_sys_con)) {

@@ -75,7 +75,7 @@ uint16_t sda_settings_display_screen(uint8_t init) {
 
   if (init == 2) {
     gr2_set_value(optLcdBacklight, svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE, &sda_sys_con);
-    return 0;
+    return optLcdBack;
   }
 
   if (gr2_clicked(optLcdBack, &sda_sys_con)) {

@@ -45,6 +45,10 @@ uint16_t sda_settings_time_screen(uint8_t init) {
     return optTimeScr;
   }
 
+  if (init == 2) {
+    return optTimBack;
+  }
+
   if (gr2_clicked(optTimeBtn, &sda_sys_con)) {
     timeOvrId = time_overlay_init();
     time_overlay_set_time(timeOvrId, svpSGlobal.hour, svpSGlobal.min);
