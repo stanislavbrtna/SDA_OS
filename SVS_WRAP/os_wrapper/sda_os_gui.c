@@ -95,6 +95,22 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Handle keypad input of a screen
+  //#!    sys.os.gui.btnCtrl([num]screen_id, [num]back_btn_id);
+  //#!Allows control of a given screen via buttons.
+  //#!Element given as back_btn_id will be linked with back button,
+  //#!otherwise back button will bring the user on the SDA_OS main screen.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "btnCtrl", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 2, s)){
+      return 0;
+    }
+      sda_screen_button_handler((uint16_t) argS->arg[1].val_s, (uint16_t) argS->arg[2].val_s, &sda_app_con);
+    return 1;
+  }
+
   //#!#### Text field handling
 
   //#!##### Handle text input

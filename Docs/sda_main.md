@@ -11,6 +11,7 @@ API level given by *sys.os.getVer* etc. works like this:
 1000 - SDA version 1.0.0 with all its features
  ...
 1120 - SDA version 1.1.2 with all its features
+
 #### Constants
 | Constant | Description |
 |   ---    |    ---      |
