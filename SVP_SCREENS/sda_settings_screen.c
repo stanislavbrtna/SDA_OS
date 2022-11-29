@@ -166,6 +166,10 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
     sda_settings_security_screen(0);
 
     sda_screen_button_handler(mainScr, globBack, &sda_sys_con);
+
+    if (mainScr == optScreen && globBack != 0) {
+      globBack = 0;
+    }
   }
   return 0;
 }
