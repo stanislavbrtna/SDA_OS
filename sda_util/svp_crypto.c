@@ -2,7 +2,7 @@
 
 uint8_t svp_crypto_key[KEY_LEN_MAX];
 uint8_t svp_crypto_password[PASS_LEN_MAX];
-uint8_t svp_crpyto_unlocked;
+uint8_t svp_crypto_unlocked;
 uint8_t svp_crypto_set_up;
 
 
@@ -20,7 +20,7 @@ void svp_crypto_init() {
     svp_crypto_set_up = 1;
   }
   
-  svp_crpyto_unlocked = 0;
+  svp_crypto_unlocked = 0;
   return;
 }
 
@@ -31,7 +31,7 @@ uint8_t svp_crypto_get_if_set_up() {
 
 
 uint8_t svp_crypto_get_lock() {
-  return svp_crpyto_unlocked;
+  return svp_crypto_unlocked;
 }
 
 
@@ -45,12 +45,12 @@ uint8_t svp_crypto_unlock(uint8_t * password) {
 
   while (svp_crypto_password[i] != 0) {
     if ((password[i] == 0) && (svp_crypto_password[i] != 0)) {
-      svp_crpyto_unlocked = 0;
+      svp_crypto_unlocked = 0;
       fails++;
       return 2;
     }
     if (svp_crypto_password[i] != password[i]) {
-      svp_crpyto_unlocked = 0;
+      svp_crypto_unlocked = 0;
       fails++;
       return 2;
     }
@@ -62,7 +62,7 @@ uint8_t svp_crypto_unlock(uint8_t * password) {
     return 2;
   }
 
-  svp_crpyto_unlocked = 1;
+  svp_crypto_unlocked = 1;
   fails = 0;
   svp_crypto_set_pass_as_key();
   return 0;
@@ -70,14 +70,14 @@ uint8_t svp_crypto_unlock(uint8_t * password) {
 
 
 void svp_crypto_lock() {
-  svp_crpyto_unlocked = 0;
+  svp_crypto_unlocked = 0;
 }
 
 
 uint8_t svp_crypto_change_password(uint8_t * new_pass) {
   uint16_t i;
 
-  if (!svp_crpyto_unlocked) {
+  if (!svp_crypto_unlocked) {
     return 1;
   }
 
@@ -96,7 +96,7 @@ uint8_t svp_crypto_change_password(uint8_t * new_pass) {
 uint8_t svp_crypto_set_key(uint8_t * new_key) {
   uint16_t i;
 
-  if (!svp_crpyto_unlocked) {
+  if (!svp_crypto_unlocked) {
     return 1;
   }
 
@@ -110,7 +110,7 @@ uint8_t svp_crypto_set_key(uint8_t * new_key) {
 
 
 uint8_t svp_crypto_set_pass_as_key() {
-  if (!svp_crpyto_unlocked) {
+  if (!svp_crypto_unlocked) {
     return 1;
   }
 
@@ -124,18 +124,20 @@ uint8_t svp_crypto_load_key_to_str(uint8_t * fname, uint8_t* str) {
   uint32_t keyLen;
   uint32_t i;
 
-  if (!svp_crpyto_unlocked) {
+  if (!svp_crypto_unlocked) {
     return 1;
   }
 
   svp_crypto_stream_init();
 
   if(!svp_fopen_rw(&source, fname)) {
+    printf("svp_crypto_load_key_to_str: fopen error!\n");
     return 1;
   }
 
   //read
   if (svp_feof(&source)) {
+    printf("svp_crypto_load_key_to_str: file empty!\n");
     return 1;
   }
 
@@ -166,11 +168,13 @@ uint8_t svp_crypto_write_keyfile(uint8_t *fname, uint8_t *key) {
   svp_file source;
   uint32_t i;
 
-  if (!svp_crpyto_unlocked) {
+  if (!svp_crypto_unlocked) {
+    printf("svp_crypto_write_keyfile: error: crypto locked!\n");
     return 1;
   }
 
   if(!svp_fopen_rw(&source, fname)) {
+    printf("svp_crypto_write_keyfile: error: fopen failed!\n");
     return 1;
   }
 
@@ -194,7 +198,7 @@ uint8_t svp_crypto_write_keyfile(uint8_t *fname, uint8_t *key) {
 uint8_t svp_crypto_load_keyfile(uint8_t * fname) {
   uint8_t new_key[KEY_LEN_MAX];
 
-  if (!svp_crpyto_unlocked) {
+  if (!svp_crypto_unlocked) {
     return 1;
   }
 
@@ -212,6 +216,8 @@ uint8_t svp_crypto_generate_keyfile(uint8_t * fname) {
   uint32_t i;
   uint8_t key[KEY_LEN_MAX];
   uint8_t val = 0;
+  uint8_t retval = 0;
+  uint8_t unlock_pre = 0;
 
   if(svp_fexists(fname)) {
     return 1;
@@ -225,9 +231,15 @@ uint8_t svp_crypto_generate_keyfile(uint8_t * fname) {
     key[i] = val;
   }
 
-  svp_crypto_write_keyfile(fname, key);
+  unlock_pre = svp_crypto_unlocked;
 
-  return 0;
+  svp_crypto_unlocked = 1;
+
+  retval = svp_crypto_write_keyfile(fname, key);
+
+  svp_crypto_unlocked = unlock_pre;
+
+  return retval;
 }
 
 
@@ -238,7 +250,7 @@ static uint32_t crypto_key_len;
 uint8_t svp_crypto_stream_init() {
   uint32_t i;
 
-  if (!svp_crpyto_unlocked) {
+  if (!svp_crypto_unlocked) {
     return 1;
   }
 
@@ -260,7 +272,7 @@ uint8_t svp_crypto_stream_init() {
 
 
 uint8_t svp_crypto_stream_encrypt(uint8_t c) {
-  if (!svp_crpyto_unlocked) {
+  if (!svp_crypto_unlocked) {
     return 1;
   }
 
@@ -272,7 +284,7 @@ uint8_t svp_crypto_stream_encrypt(uint8_t c) {
 
 uint8_t svp_crypto_stream_decrypt(uint8_t c) {
   uint8_t decrChar = 0;
-  if (!svp_crpyto_unlocked) {
+  if (!svp_crypto_unlocked) {
     return 1;
   }
 
@@ -288,7 +300,7 @@ uint8_t svp_encrypt(uint8_t * fname) {
   uint8_t nextchar;
   uint8_t encr_char;
 
-  if (!svp_crpyto_unlocked) {
+  if (!svp_crypto_unlocked) {
     return 1;
   }
 
@@ -322,7 +334,7 @@ uint8_t svp_decrypt(uint8_t * fname) {
   uint8_t nextchar;
   uint8_t decrChar;
 
-  if (!svp_crpyto_unlocked) {
+  if (!svp_crypto_unlocked) {
     return 1;
   }
 
@@ -378,14 +390,15 @@ uint32_t svp_crypto_get_key_crc(uint8_t *fname) {
   uint8_t new_key[KEY_LEN_MAX];
   uint8_t unlockPre = 0;
 
-  unlockPre = svp_crpyto_unlocked;
+  unlockPre = svp_crypto_unlocked;
 
-  svp_crpyto_unlocked = 1;
+  svp_crypto_unlocked = 1;
   svp_crypto_set_pass_as_key();
 
   svp_crypto_load_key_to_str(fname, new_key);
 
-  svp_crpyto_unlocked = unlockPre;
+  svp_crypto_unlocked = unlockPre;
+  
   return crc32b(new_key);
 
 }
@@ -397,7 +410,7 @@ uint8_t svp_crypto_reencrypt_key(uint8_t *fname, uint8_t *oldpass, uint8_t *newp
   uint32_t i;
   uint32_t crc;
 
-  if (!svp_crpyto_unlocked) {
+  if (!svp_crypto_unlocked) {
     return 1;
   }
 
