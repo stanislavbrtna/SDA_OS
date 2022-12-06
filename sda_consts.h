@@ -87,4 +87,10 @@ File description:
 #define TOUCH_USE_BATTERY_MEASUREMENT
 #endif
 
+// \n is 10 on linux systems, but takes two bytes on windows, so it is hardcoded
+// to 10, both for csv and cfg
+#define SDA_ENDLINE 10
+#define SDA_SEPARATOR '|'
+
+
 #endif

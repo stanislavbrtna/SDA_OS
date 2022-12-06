@@ -20,6 +20,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#ifndef SDA_KEYBOARD_H
+#define SDA_KEYBOARD_H
+
+#include "../../SDA_OS.h"
+
 typedef struct {
   uint8_t *key[47];
   uint8_t *keyStr[47];
@@ -46,3 +51,5 @@ uint8_t svp_touch_keyboard(
 
 // keyboard input handler for C
 uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id);
+
+#endif

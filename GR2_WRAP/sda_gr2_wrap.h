@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2018 Stanislav Brtna
+Copyright (c) 2022 Stanislav Brtna
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,20 +20,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SDA_UTIL_H
-#define SDA_UTIL_H
+#ifndef SVS_GR2_WRAP_H
+#define SVS_GR2_WRAP_H
+
 #include "../SDA_OS.h"
 
-void svp_ppm_set_pmc(uint8_t enable, uint16_t color);
-void draw_ppm(uint16_t x,uint16_t y, uint8_t scale, uint8_t *filename);
-uint16_t ppm_get_width(uint8_t *filename);
-
-uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename);
-uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_t height_n, uint8_t *filename);
-uint16_t sda_p16_get_width(uint8_t *filename);
-void sda_p16_set_pmc(uint8_t enable, uint16_t color);
-void sda_p16_set_alpha(uint8_t enable, uint16_t color, uint16_t bg_color);
-
-void svp_calibrator();
+uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s);
 
 #endif

@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "sda_util.h"
+#include "sda_keyboard.h"
 
 void init_kblayout_standard(psvcKbdLayout *l) {
   l->keyStr[0] = (uint8_t*)"1";

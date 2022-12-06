@@ -22,7 +22,7 @@ uint8_t seek_line_start(svp_csvf *fc) {
 #ifdef CSV_DBG
     printf("%u\n", c);
 #endif
-    if (c == SVP_ENDLINE) {
+    if (c == SDA_ENDLINE) {
       return 1;
     }
 
@@ -42,8 +42,8 @@ uint32_t seek_separator(svp_csvf *fc, uint8_t index, uint8_t *ok) {
   //then look for separator index-1
   if (index != 0) {
     c = svp_fread_u8(&(fc->fil));
-    while((c != SVP_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
-      if (c == SVP_SEPARATOR) {
+    while((c != SDA_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
+      if (c == SDA_SEPARATOR) {
         if (index > 1) {
           index--;
         } else {
@@ -52,7 +52,7 @@ uint32_t seek_separator(svp_csvf *fc, uint8_t index, uint8_t *ok) {
       }
       c = svp_fread_u8(&(fc->fil));
     }
-    if ((c == SVP_ENDLINE) || (svp_feof(&(fc->fil)))) {
+    if ((c == SDA_ENDLINE) || (svp_feof(&(fc->fil)))) {
       *ok = 0;
     }
   }
@@ -81,7 +81,7 @@ uint16_t svp_csv_get_cell_svs(svp_csvf *fc, uint8_t index, uint8_t * def, svsVM 
 
   c=svp_fread_u8(&(fc->fil));
 
-  while((c != SVP_SEPARATOR) && (c != SVP_ENDLINE)) {
+  while((c != SDA_SEPARATOR) && (c != SDA_ENDLINE)) {
     if (strNewStreamPush(c,s)) {
       break;
     }
@@ -124,7 +124,7 @@ uint16_t svp_csv_get_cell(svp_csvf *fc, uint8_t index, uint8_t * def, uint8_t * 
   c = svp_fread_u8(&(fc->fil));
 
   i = 0;
-  while((c != SVP_SEPARATOR) && (c != SVP_ENDLINE) && !svp_feof(&(fc->fil))) {
+  while((c != SDA_SEPARATOR) && (c != SDA_ENDLINE) && !svp_feof(&(fc->fil))) {
     if (i < len) {
       buff[i] = c;
     } else {
@@ -158,8 +158,8 @@ uint8_t svp_csv_set_cell(svp_csvf *fc, uint8_t index, uint8_t * value) {
   //then look for separator index-1
   if (index != 0) {
     c = svp_fread_u8(&(fc->fil));
-    while((c != SVP_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
-      if (c == SVP_SEPARATOR) {
+    while((c != SDA_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
+      if (c == SDA_SEPARATOR) {
         if (index > 1) {
           index--;
         } else {
@@ -168,7 +168,7 @@ uint8_t svp_csv_set_cell(svp_csvf *fc, uint8_t index, uint8_t * value) {
       }
       c = svp_fread_u8(&(fc->fil));
     }
-    if ((c == SVP_ENDLINE) || (svp_feof(&(fc->fil)))) {
+    if ((c == SDA_ENDLINE) || (svp_feof(&(fc->fil)))) {
       return 0;
     }
   }
@@ -182,8 +182,8 @@ uint8_t svp_csv_set_cell(svp_csvf *fc, uint8_t index, uint8_t * value) {
   key_len = 0;
 
   c = svp_fread_u8(&(fc->fil));
-  while((c != SVP_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
-    if (c == SVP_SEPARATOR) {
+  while((c != SDA_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
+    if (c == SDA_SEPARATOR) {
         break;
     }
     key_len++;
@@ -259,7 +259,7 @@ void svp_csv_remove_line(svp_csvf *fc) {
 #endif
 
   while(!svp_feof(&(fc->fil))) {
-    if (svp_fread_u8(&(fc->fil)) == SVP_ENDLINE) {
+    if (svp_fread_u8(&(fc->fil)) == SDA_ENDLINE) {
       break;
     } else {
       key_len++;
@@ -293,10 +293,10 @@ uint8_t svp_csv_next_line(svp_csvf *fc){
   uint32_t pracpos;
 
   c = svp_fread_u8(&(fc->fil));
-  while((c != SVP_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
+  while((c != SDA_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
     c = svp_fread_u8(&(fc->fil));
   }
-  if ((c == SVP_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
+  if ((c == SDA_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
     pracpos = svp_ftell(&(fc->fil));
 
     svp_fread_u8(&(fc->fil));
@@ -319,14 +319,14 @@ void svp_csv_new(svp_csvf *fc, uint8_t count) {
   //seek end
   if (svp_get_size(&(fc->fil)) != 0) {
     svp_fseek(&(fc->fil), svp_get_size(&(fc->fil)));
-    svp_fwrite_u8(&(fc->fil), SVP_ENDLINE);
+    svp_fwrite_u8(&(fc->fil), SDA_ENDLINE);
   }
 
   startpos = svp_ftell(&(fc->fil));
 
   //separátorů je o jeden méně než hodnot
   for(x = 1; x < count; x++) {
-    svp_fwrite_u8(&(fc->fil), SVP_SEPARATOR);
+    svp_fwrite_u8(&(fc->fil), SDA_SEPARATOR);
   }
 
   svp_fseek(&(fc->fil), startpos);

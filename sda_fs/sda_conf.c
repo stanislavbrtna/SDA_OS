@@ -64,7 +64,7 @@ uint8_t sda_conf_get_key(sda_conf *fc, uint8_t *buffer, uint16_t len) {
     if (buffer[x] == '=') {
       buffer[x] = 0;
       return 1;
-    } else if ((buffer[x] == SVP_ENDLINE) || svp_feof(&(fc->fil))) {
+    } else if ((buffer[x] == SDA_ENDLINE) || svp_feof(&(fc->fil))) {
       return 0;
     }
   }
@@ -77,7 +77,7 @@ uint8_t sda_conf_skip_key(sda_conf *fc) {
     c = svp_fread_u8(&(fc->fil));
     if (c == '=') {
       return 1;
-    } else if ((c == SVP_ENDLINE) || svp_feof(&(fc->fil))) {
+    } else if ((c == SDA_ENDLINE) || svp_feof(&(fc->fil))) {
       return 0;
     }
   }
@@ -88,7 +88,7 @@ uint32_t sda_conf_skip_line(sda_conf *fc) {
   uint8_t c = 0;
   uint32_t skipped = 0;
 
-  while(!(svp_feof(&(fc->fil))) && !(c == SVP_ENDLINE)) {
+  while(!(svp_feof(&(fc->fil))) && !(c == SDA_ENDLINE)) {
     c = svp_fread_u8(&(fc->fil));
     skipped++;
   };
@@ -159,7 +159,7 @@ uint8_t sda_conf_key_read(sda_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_
           }
         }
 
-        if ((ret_buff[x] == SVP_ENDLINE) || svp_feof(&(fc->fil))) {
+        if ((ret_buff[x] == SDA_ENDLINE) || svp_feof(&(fc->fil))) {
           break; // got key
         }
 
@@ -212,8 +212,8 @@ void sda_conf_key_write(sda_conf *fc, uint8_t* key, uint8_t* val_buff){
 
     if (svp_get_size(&(fc->fil))!= 0) {
       svp_fseek(&(fc->fil), svp_get_size(&(fc->fil)) - 1);
-      if (svp_fread_u8(&(fc->fil)) != SVP_ENDLINE) {
-        svp_fwrite_u8(&(fc->fil), SVP_ENDLINE);
+      if (svp_fread_u8(&(fc->fil)) != SDA_ENDLINE) {
+        svp_fwrite_u8(&(fc->fil), SDA_ENDLINE);
       }
     } else {
       svp_fseek(&(fc->fil), 0);
@@ -231,13 +231,13 @@ void sda_conf_key_write(sda_conf *fc, uint8_t* key, uint8_t* val_buff){
     svp_fwrite_u8(&(fc->fil), '=');
     sda_conf_write_str(fc, val_buff);
 
-    svp_fwrite_u8(&(fc->fil), SVP_ENDLINE);
+    svp_fwrite_u8(&(fc->fil), SDA_ENDLINE);
   } else {
     sda_conf_skip_key(fc);
     keystart = svp_ftell(&(fc->fil));
 
     while(!svp_feof(&(fc->fil))) {
-      if (svp_fread_u8(&(fc->fil)) == SVP_ENDLINE) {
+      if (svp_fread_u8(&(fc->fil)) == SDA_ENDLINE) {
         break;
       } else {
         keylen++;
@@ -296,7 +296,7 @@ void sda_conf_key_remove(sda_conf *fc, uint8_t* key) {
     keystart = svp_ftell(&(fc->fil)); // behind endline
 
     while(!svp_feof(&(fc->fil))) {
-      if (svp_fread_u8(&(fc->fil)) == SVP_ENDLINE) {
+      if (svp_fread_u8(&(fc->fil)) == SDA_ENDLINE) {
         break;
       } else {
         keylen++;
