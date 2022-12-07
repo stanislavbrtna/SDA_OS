@@ -10,6 +10,7 @@ void setOverlayX2(uint16_t val);
 void setOverlayY2(uint16_t val);
 
 uint16_t getOverlayId();
+uint16_t getOverlayScreen();
 
 void destroyOverlay(); // destroys current overlay, calls the destructor
 

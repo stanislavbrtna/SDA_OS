@@ -122,6 +122,7 @@ void password_overlay_update(uint16_t ovId) {
   }
   gr2_clear_screen_ev(screen, &sda_sys_con);
 
+  sda_screen_button_handler(screen, cancelButton, &sda_sys_con);
 }
 
 

@@ -284,6 +284,8 @@ void date_overlay_update(uint16_t ovId) {
     }
   }
   gr2_set_event(date_month_next, EV_NONE, sda_current_con);
+  
+  sda_screen_button_handler(date_screen, date_cancel, sda_current_con);
 }
 
 

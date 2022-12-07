@@ -89,3 +89,11 @@ uint16_t getOverlayId() {
     return 0;
   }
 }
+
+uint16_t getOverlayScreen() {
+  if (overlayScr != 0) {
+    return overlayScr;
+  } else {
+    return 0;
+  }
+}

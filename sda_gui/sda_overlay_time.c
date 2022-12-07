@@ -251,6 +251,8 @@ void time_overlay_update(uint16_t ovId) {
   }
 
   gr2_clear_screen_ev(tov_screen, sda_current_con);
+
+  sda_screen_button_handler(tov_screen, tov_cancel, sda_current_con);
 }
 
 

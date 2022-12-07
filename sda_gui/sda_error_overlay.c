@@ -75,9 +75,9 @@ void sda_error_overlay_handle() {
     return;
   }
 
-  if (gr2_get_event(error_overlay_ok, &sda_sys_con) == EV_RELEASED) {
+  if (gr2_clicked(error_overlay_ok, &sda_sys_con)) {
     destroyOverlay();
     return;
   }
-  gr2_set_event(error_overlay_ok, EV_NONE, &sda_sys_con);
+  sda_screen_button_handler(error_overlay_scr, error_overlay_ok, &sda_sys_con);
 }

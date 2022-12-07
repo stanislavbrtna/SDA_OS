@@ -110,6 +110,7 @@ void color_overlay_update(uint16_t ovId) {
   }
 
   gr2_clear_screen_ev(col_screen, sda_current_con);
+  sda_screen_button_handler(col_screen, col_cancel, sda_current_con);
 }
 
 
