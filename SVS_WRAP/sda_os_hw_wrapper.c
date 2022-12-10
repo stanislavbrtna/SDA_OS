@@ -657,12 +657,11 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    len = uart3_get_str(c);
     
     if (argS->arg[1].val_s < len) {
       result->value.val_s = c[argS->arg[1].val_s];
     } else {
-      result->value.val_s = -1;
+      result->value.val_s = (int32_t)-1;
     }
     result->type = SVS_TYPE_NUM;
     return 1;

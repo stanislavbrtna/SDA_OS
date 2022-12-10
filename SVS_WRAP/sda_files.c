@@ -241,7 +241,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Read byte from file
   //#!    sys.fs.readByte();
   //#!Reads byte from file.
-  //#!Return: [num] result: 0 to 255 - ok, -1 - error
+  //#!Return: [num] result: 0 to 255 - ok, -1 - error, -2 - EOF
   if (sysFuncMatch(argS->callId, "readByte", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
