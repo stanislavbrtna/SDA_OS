@@ -612,22 +612,61 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!for another ready flag.
   //#!Return: [str] pending
 
-  static uint8_t c[512];
+  static uint8_t c[513];
+  static uint16_t len;
+
   if (sysFuncMatch(argS->callId, "uartGetStr", s)) {
-      if(sysExecTypeCheck(argS, argType, 0, s)) {
-        return 0;
-      }
-
-      if (uart3_get_str(c)){
-        c[511] = 0;
-        result->value.val_u = strNew(c, s);
-      } else {
-        result->value.val_u = strNew((uint8_t *)"", s);
-      }
-
-      result->type = SVS_TYPE_STR;
-      return 1;
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
     }
+
+    if (uart3_get_str(c)){
+      c[512] = 0;
+      result->value.val_u = strNew(c, s);
+    } else {
+      result->value.val_u = strNew((uint8_t *)"", s);
+    }
+
+    result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
+  //#!##### Serial expansion get pending data
+  //#!    sys.com.uartGetBytes();
+  //#!Gets the bytes from a serial interface and stores them in local buffer (512 Bytes)
+  //#!Return: [num] bytes used
+
+  if (sysFuncMatch(argS->callId, "uartGetBytes", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    len = uart3_get_str(c);
+    
+    result->value.val_s = len;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Serial expansion get pending data
+  //#!    sys.com.uartGetByte([num] index);
+  //#!Gets the byte value from a serial interface local buffer (512 Bytes)
+  //#!Return: [num] byte value (0 - 255, -1 when error occurs)
+
+  if (sysFuncMatch(argS->callId, "uartGetByte", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    len = uart3_get_str(c);
+    
+    if (argS->arg[1].val_s < len) {
+      result->value.val_s = c[argS->arg[1].val_s];
+    } else {
+      result->value.val_s = -1;
+    }
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
 
   return 0;
 }
