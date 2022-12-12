@@ -153,3 +153,11 @@ Return: [num] ready
 Gets the pending string and resets the serial interface
 for another ready flag.
 Return: [str] pending
+##### Serial expansion get pending data
+    sys.com.uartGetBytes();
+Gets the bytes from a serial interface and stores them in local buffer (512 Bytes)
+Return: [num] bytes used
+##### Serial expansion get pending data
+    sys.com.uartGetByte([num] index);
+Gets the byte value from a serial interface local buffer (512 Bytes)
+Return: [num] byte value (0 - 255, -1 when error occurs)

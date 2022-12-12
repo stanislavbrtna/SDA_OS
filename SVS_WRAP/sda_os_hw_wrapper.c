@@ -392,7 +392,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.com.qAdd([num]data);
   //#!Queues given hex value to transmit buffer.
   //#!Max 32 bytes.
-  //#!Return: [num] 1-ok, 0-error
+  //#!Return: [num] 1-ok, 0-full buffer
   if (sysFuncMatch(argS->callId, "qAdd", s)) {
 
     argType[1] = SVS_TYPE_NUM;
@@ -400,7 +400,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    if (serialLen < 32) {
+    if (serialLen < sizeof(serialQueue)) {
       serialQueue[serialLen] = (uint8_t) argS->arg[1].val_s;
       serialLen++;
       result->value.val_s = 1;

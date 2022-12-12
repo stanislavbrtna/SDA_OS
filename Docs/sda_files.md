@@ -14,7 +14,7 @@ Return: 1 - ok, 0 - fail
 ##### Read byte from file
     sys.fs.readByte();
 Reads byte from file.
-Return: [num] result: 0 to 255 - ok, -1 - error
+Return: [num] result: 0 to 255 - ok, -1 - error, -2 - EOF
 ##### Write byte to file
     sys.fs.writeByte([num] byte (0 - 255));
 Writes byte to file.
