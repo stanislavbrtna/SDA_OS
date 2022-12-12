@@ -213,4 +213,6 @@ void taskSwitcherUpdate() {
     gr2_get_value(scrollbar, &sda_sys_con) * 32 / 10,
     &sda_sys_con
   );
+
+  sda_screen_button_handler(task_switcher, ok, &sda_sys_con);
 }

@@ -48,11 +48,23 @@ uint8_t sda_screen_button_handler(uint16_t screen_id, uint16_t back_id, gr2conte
   }
 
   if (sda_wrap_get_button(BUTTON_A) != EV_NONE) {
-    if (back_id != 0 && con->pscgElements[back_id].valid == 1 && gr2_get_visible(back_id, con)) {
+    static uint64_t holdCnt;
+    if (back_id != 0 && con->pscgElements[back_id].valid == 1 && gr2_get_visible(back_id, con) && holdCnt == 0) {
       gr2_set_event(back_id, sda_wrap_get_button(BUTTON_A), con);
-      
     } else {
-      svpSGlobal.systemOptClick = CLICKED_SHORT;
+      
+      if (sda_wrap_get_button(BUTTON_A) == EV_PRESSED) {
+        holdCnt = svpSGlobal.uptimeMs;
+      }
+      if (sda_wrap_get_button(BUTTON_A) == EV_HOLD && holdCnt != 0 && (holdCnt + 800) <= svpSGlobal.uptimeMs) {
+        svpSGlobal.systemOptClick = CLICKED_LONG;
+      }
+      if (sda_wrap_get_button(BUTTON_A) == EV_RELEASED) {
+        if ((holdCnt + 800) >= svpSGlobal.uptimeMs) {
+          svpSGlobal.systemOptClick = CLICKED_SHORT;
+        }
+        holdCnt = 0;
+      }
     }
     sda_wrap_clear_button(BUTTON_A);
   }
