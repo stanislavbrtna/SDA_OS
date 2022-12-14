@@ -42,10 +42,19 @@ Return: None
     sys.ds.clearArea([num]col)
 Clears draw area with goven color
 Return: None
+#### P16 image tools
 ##### Draws P16 image
     sys.ds.drawImage([num]x, [num]y, [num]scale_w, [num]scale_h, [str]name);
 Draws p16 image from the working directory. Supports upscaling.
 Return: None
+##### Get P16 image width
+    sys.ds.getImageW( [str]name);
+Gets width of given p16 file.
+Return: [num] width (px)
+##### Get P16 image height
+    sys.ds.getImageH( [str]name);
+Gets height of given p16 file.
+Return: [num] height (px)
 ##### Draws PPM
     sys.ds.drawPPM([num]x, [num]y, [num]scale, [str]name);
 Draws ppm image (To be removed).

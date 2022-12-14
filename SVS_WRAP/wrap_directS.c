@@ -330,6 +330,8 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
     return 1;
   }
 
+  //#!#### P16 image tools
+
   //#!##### Draws P16 image
   //#!    sys.ds.drawImage([num]x, [num]y, [num]scale_w, [num]scale_h, [str]name);
   //#!Draws p16 image from the working directory. Supports upscaling.
@@ -355,6 +357,38 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
     }
     IRQ_ENABLE
 #endif
+    return 1;
+  }
+
+  //#!##### Get P16 image width
+  //#!    sys.ds.getImageW( [str]name);
+  //#!Gets width of given p16 file.
+  //#!Return: [num] width (px)
+  if (sysFuncMatch(argS->callId, "getImageW", s)) {
+    argType[1] = SVS_TYPE_STR;
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s  = sda_p16_get_width(s->stringField + argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get P16 image height
+  //#!    sys.ds.getImageH( [str]name);
+  //#!Gets height of given p16 file.
+  //#!Return: [num] height (px)
+  if (sysFuncMatch(argS->callId, "getImageH", s)) {
+    argType[1] = SVS_TYPE_STR;
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s  = sda_p16_get_height(s->stringField + argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 

@@ -275,7 +275,7 @@ uint16_t sda_p16_get_width(uint8_t *filename) {
   p16Header header;
 
   if (!svp_fopen_read(&fp, filename)) {
-    printf("sda_draw_p16: Error while opening file %s!\n", filename);
+    printf("sda_p16_get_width: Error while opening file %s!\n", filename);
     return 1;
   }
 
@@ -284,3 +284,16 @@ uint16_t sda_p16_get_width(uint8_t *filename) {
   return header.imageWidth;
 }
 
+uint16_t sda_p16_get_height(uint8_t *filename) {
+  svp_file fp;
+  p16Header header;
+
+  if (!svp_fopen_read(&fp, filename)) {
+    printf("sda_p16_get_height: Error while opening file %s!\n", filename);
+    return 1;
+  }
+
+  p16_get_header(&fp, &header);
+  svp_fclose(&fp);
+  return header.imageHeight;
+}
