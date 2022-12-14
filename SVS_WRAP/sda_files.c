@@ -50,18 +50,17 @@ void sda_files_copyer() {
   uint16_t x = 0;
   uint8_t buff;
   if (copyStatus == 2) {
-    for(x = 0; x < copyChunkSize; x++){
+    for(x = 0; x < copyChunkSize; x++) {
       buff = svp_fread_u8(&copySource);
 
       if (svp_feof(&copySource)) {
       #ifndef PC
         // fix for different EOF detection on pc and umc
         svp_fwrite_u8(&copyDest, buff);
-
       #endif
-
         copyStatus = 0;
         svp_fclose(&copySource);
+        svp_truncate(&copyDest);
         svp_fclose(&copyDest);
         return;
       }
