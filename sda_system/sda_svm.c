@@ -475,7 +475,11 @@ void svmCloseAll() {
   }
 
   if (slot_restore != 0) {
-    sda_slot_on_top(slot_restore);
+    if (sda_slot_get_valid(slot_restore)) {
+      sda_slot_on_top(slot_restore);
+    } else {
+      sda_slot_on_top(0);
+    }
     slot_restore = 0;
   }
 }
