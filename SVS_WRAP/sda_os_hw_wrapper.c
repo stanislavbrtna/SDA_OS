@@ -425,7 +425,10 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### USB serial expansion transmit
+  //#!#### USB serial interface
+  //#!
+
+  //#!##### USB serial transmit
   //#!    sys.com.usbTrs([str]data);
   //#!Sends given string to usb serial port.
   //#!Return: None
@@ -455,7 +458,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Usb serial expansion transmit queue
+  //#!##### USB serial transmit queue
   //#!    sys.com.usbTrsQ();
   //#!Sends previously stored queue to the initialized serial port.
   //#!Queue can be filled with sys.srlTrsQAdd and cleared with sys.srlTrsQClr.
@@ -474,7 +477,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### USB serial expansion receive
+  //#!##### USB serial receive
   //#!    sys.com.usbRcv([num]timeout);
   //#!Gets string (max 512 bytes) from USB serial port.
   //#!If nothing is sent during timeout (in ms), empty string is returned.
@@ -497,6 +500,109 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     result->type = SVS_TYPE_STR;
     return 1;
   }
+
+  //#!##### USB serial receive init
+  //#!    sys.com.usbRcvIT();
+  //#!Initializes usb serial port receive operation in non-blocking mode
+  //#!Returns 1 if ok, 0 if error occurred
+  //#!Return: [num] result
+
+
+  if (sysFuncMatch(argS->callId, "usbRcvIT", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    result->value.val_s = sda_usb_serial_recieve_init();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### USB serial get ready flag
+  //#!    sys.com.usbGetRd();
+  //#!Gets transmission ready flag. Returns 1 if data is pending,
+  //#!2 if whole line of data is pending
+  //#!Return: [num] ready
+  if (sysFuncMatch(argS->callId, "usbGetRd", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    result->value.val_s = sda_usb_serial_get_rdy();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### USB serial get pending data
+  //#!    sys.com.usbGetStr();
+  //#!Gets the pending string and resets the serial interface
+  //#!for another ready flag.
+  //#!Return: [str] pending
+
+  static uint8_t usb_c[513];
+  static uint16_t usb_len;
+
+  if (sysFuncMatch(argS->callId, "usbGetStr", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    if (sda_usb_serial_get_str(usb_c)){
+      usb_c[512] = 0;
+      result->value.val_u = strNew(usb_c, s);
+    } else {
+      result->value.val_u = strNew((uint8_t *)"", s);
+    }
+
+    result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
+  //#!##### USB serial get pending data
+  //#!    sys.com.usbGetBytes();
+  //#!Gets the bytes from a serial interface and stores them in local buffer (512 Bytes max)
+  //#!Return: [num] bytes used
+
+  if (sysFuncMatch(argS->callId, "usbGetBytes", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    usb_len = sda_usb_serial_get_str(usb_c);
+
+    result->value.val_s = usb_len;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### USB serial get pending data
+  //#!    sys.com.usbGetByte([num] index);
+  //#!Reads the byte value from a serial interface local buffer (512 Bytes)
+  //#!Return: [num] byte value (0 - 255, -1 when error occurs)
+
+  if (sysFuncMatch(argS->callId, "usbGetByte", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (argS->arg[1].val_s < usb_len) {
+      result->value.val_s = usb_c[argS->arg[1].val_s];
+    } else {
+      result->value.val_s = (int32_t)-1;
+    }
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!#### Expansion port serial interface
+  //#!
+  //#!##### Serial expansion transmit
+  //#!Code to init the internal expansion port serial interface:
+  //#!    sys.hw.iPinDef(15, PIN_ALT, PIN_NOPULL);
+  //#!    sys.hw.iPinDef(16, PIN_OUT, PIN_NOPULL);
+  //#!Code to init the external expansion port serial interface:
+  //#!    sys.hw.ePinDef(5, PIN_ALT, PIN_NOPULL);
+  //#!    sys.hw.ePinDef(6, PIN_ALT, PIN_NOPULL);
 
   //#!##### Serial expansion transmit
   //#!    sys.com.uartTrs([str]data);
