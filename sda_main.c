@@ -354,6 +354,15 @@ static void sda_main_redraw() {
       );
       svpSGlobal.systemRedraw = 0;
     }
+    if(overlayCont->pscgElements[overlayScr].modified) {
+      sda_draw_overlay_shadow(
+            overlayX1,
+            overlayY1,
+            overlayX2,
+            overlayY2,
+            overlayCont
+      );
+    }
     gr2_draw_screen(overlayX1, overlayY1, overlayX2, overlayY2, overlayScr, 0, overlayCont);
   }
   gr2_draw_end(sda_current_con);

@@ -145,6 +145,10 @@ void sda_draw_overlay_shadow(
   int16_t overlayY2,
   gr2context *c
 ) {
+  LCD_drawArea area;
+
+  LCD_getDrawArea(&area);
+  LCD_setDrawArea(overlayX1, overlayY1, overlayX2 + 11, overlayY2 +11);
   LCD_FillRect(
         overlayX2 + 1,
         overlayY1 + 10,
@@ -159,6 +163,7 @@ void sda_draw_overlay_shadow(
         overlayY2 + 11,
         sda_get_shadow_color16(c->background_color)
   );
+  LCD_setDrawAreaS(&area);
 }
 
 
