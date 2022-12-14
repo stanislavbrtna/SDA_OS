@@ -726,7 +726,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    if (uart3_get_str(c)){
+    if (sda_serial_get_str(c)){
       c[512] = 0;
       result->value.val_u = strNew(c, s);
     } else {
@@ -746,7 +746,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    len = uart3_get_str(c);
+    len = sda_serial_get_str(c);
     
     result->value.val_s = len;
     result->type = SVS_TYPE_NUM;

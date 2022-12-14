@@ -101,26 +101,60 @@ Could be used for all the transmission modes.
     sys.com.qAdd([num]data);
 Queues given hex value to transmit buffer.
 Max 32 bytes.
-Return: [num] 1-ok, 0-error
+Return: [num] 1-ok, 0-full buffer
 ##### Serial expansion transmit queue clear
     sys.com.qClr();
 Clears transmit buffer.
 Return: None
-##### USB serial expansion transmit
+#### USB serial interface
+
+##### USB serial transmit
     sys.com.usbTrs([str]data);
 Sends given string to usb serial port.
 Return: None
-##### Usb serial expansion transmit queue
+##### USB serial transmit queue
     sys.com.usbTrsQ();
 Sends previously stored queue to the initialized serial port.
 Queue can be filled with sys.srlTrsQAdd and cleared with sys.srlTrsQClr.
 Max 32 bytes.
 Return: None
-##### USB serial expansion receive
+##### USB serial receive
     sys.com.usbRcv([num]timeout);
 Gets string (max 512 bytes) from USB serial port.
 If nothing is sent during timeout (in ms), empty string is returned.
 Return: [str] data
+##### USB serial receive init
+    sys.com.usbRcvIT();
+Initializes usb serial port receive operation in non-blocking mode
+Returns 1 if ok, 0 if error occurred
+Return: [num] result
+##### USB serial get ready flag
+    sys.com.usbGetRd();
+Gets transmission ready flag. Returns 1 if data is pending,
+2 if whole line of data is pending
+Return: [num] ready
+##### USB serial get pending data
+    sys.com.usbGetStr();
+Gets the pending string and resets the serial interface
+for another ready flag.
+Return: [str] pending
+##### USB serial get pending data
+    sys.com.usbGetBytes();
+Gets the bytes from a serial interface and stores them in local buffer (512 Bytes max)
+Return: [num] bytes used
+##### USB serial get pending data
+    sys.com.usbGetByte([num] index);
+Reads the byte value from a serial interface local buffer (512 Bytes)
+Return: [num] byte value (0 - 255, -1 when error occurs)
+#### Expansion port serial interface
+
+##### Serial expansion transmit
+Code to init the internal expansion port serial interface:
+    sys.hw.iPinDef(15, PIN_ALT, PIN_NOPULL);
+    sys.hw.iPinDef(16, PIN_OUT, PIN_NOPULL);
+Code to init the external expansion port serial interface:
+    sys.hw.ePinDef(5, PIN_ALT, PIN_NOPULL);
+    sys.hw.ePinDef(6, PIN_ALT, PIN_NOPULL);
 ##### Serial expansion transmit
     sys.com.uartTrs([str]data);
 Sends given string to serial port on internal or external expansion connector.
