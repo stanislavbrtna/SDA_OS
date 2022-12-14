@@ -367,7 +367,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Change working directory
   //#!    sys.fs.chDir([str] pathInData);
   //#!Changes working directory.
-  //#!call sys.fs.chDir(); to get to the DATA directory
+  //#!call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA directory
   //#!call sys.fs.chDir(1); to get to the APPS directory
   //#!Return: None
   if (sysFuncMatch(argS->callId, "chDir", s)) {
@@ -383,6 +383,12 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       if (argS->arg[1].val_s == 1) {
         svp_switch_main_dir();
         result->value.val_s = (int32_t)svp_chdir((uint8_t *)"APPS");
+        result->type = SVS_TYPE_NUM;
+        sdaUpdateCurrentWD();
+      }
+      if (argS->arg[1].val_s == 0) {
+        svp_switch_main_dir();
+        result->value.val_s = (int32_t)svp_chdir((uint8_t *)"DATA");
         result->type = SVS_TYPE_NUM;
         sdaUpdateCurrentWD();
       }

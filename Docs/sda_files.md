@@ -38,7 +38,7 @@ Return: [num] 1 - ok, 0 - fail
 ##### Change working directory
     sys.fs.chDir([str] pathInData);
 Changes working directory.
-call sys.fs.chDir(); to get to the DATA directory
+call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA directory
 call sys.fs.chDir(1); to get to the APPS directory
 Return: None
 ##### File copy select source
