@@ -270,7 +270,7 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
 }
 
 
-// size 0 - 1/2 1 - 1/4 2 - 1/8
+// size 0 - 1/2, 1 - 1/4, 2 - 1/8, 3 - 1/16
 
 uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint16_t height_n, uint8_t *filename) {
   svp_file fp;
@@ -280,23 +280,28 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
   uint16_t prevVal;
   uint16_t repeat;
   LCD_drawArea area;
+  uint32_t drawn_width;
+  uint32_t drawn_height;
 
   if (height_n == 0) {
     height_n = 2;
   } else if (height_n == 1) {
     height_n = 4;
-  } else {
+  } else if (height_n == 2) {
     height_n = 8;
+  } else {
+    height_n = 16;
   }
 
   if (width_n == 0) {
     width_n = 2;
   } else if (width_n == 1) {
     width_n = 4;
-  } else {
+  } else if (width_n == 2) {
     width_n = 8;
+  } else {
+    width_n = 16;
   }
-
 
   if (!svp_fopen_read(&fp, filename)) {
     printf("sda_draw_p16: Error while opening file %s!\n", filename);
@@ -306,20 +311,24 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
 
   p16_get_header(&fp, &header);
   LCD_getDrawArea(&area);
-  LCD_setSubDrawArea(x, y, x + header.imageWidth / width_n + header.imageWidth % width_n, y + header.imageHeight / height_n + header.imageHeight % height_n);
-  LCD_canvas_set(x, y, x + header.imageWidth / width_n + header.imageWidth % width_n - 1, y + header.imageHeight / height_n + header.imageHeight % height_n - 1);
+  
+  drawn_width = header.imageWidth / width_n + header.imageWidth % width_n;
+  drawn_height = header.imageHeight / height_n + header.imageHeight % height_n;
+  
+  LCD_setSubDrawArea(x, y, x + drawn_width, y + drawn_height);
+  LCD_canvas_set(x, y, x + drawn_width - 1, y + drawn_height - 1);
 
-  //printf("draw: n:%u %u, size: %u %u\n", width_n, height_n, header.imageWidth / width_n + header.imageWidth % width_n, header.imageHeight / height_n + header.imageHeight % height_n);
+  printf("draw: n:%u %u, size: %u %u\n", width_n, height_n, drawn_height, drawn_width);
 
   imageState.init = 0;
   imageState.repeat = 0;
   imageState.prevVal = 0;
 
   uint16_t color;
-  uint16_t pix = 0;
+  uint32_t pix = 0;
 
   for(uint32_t n = 0; n < header.imageHeight; n++) {
-    for(uint32_t b = 0; b < header.imageWidth; b++) {
+    for(uint32_t b = 0; b < drawn_width; b++) {
       for(uint32_t c = 0; c < width_n; c++) {
         color = p16_get_pixel(&fp, &header, &imageState);
 
@@ -341,39 +350,20 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
       }
 
       LCD_canvas_putcol(color);
+      pix++;
     }
+    
     if (header.imageWidth % 2) {
-      if (height_n == 2) {
-        LCD_canvas_putcol(color);
-      } else if (height_n == 4) {
-        for(uint32_t x = 0; x < 3; x++)
-          LCD_canvas_putcol(color);
-      } else if (height_n == 8) {
-        for(uint32_t x = 0; x < 5; x++)
-        LCD_canvas_putcol(color);
-      }
+      color = p16_get_pixel(&fp, &header, &imageState);
+      LCD_canvas_putcol(color);
     }
 
-    //LCD_canvas_putcol(color);
-
-    uint32_t x_height_n;
-    if (height_n == 2) {
-       x_height_n = 2;
-    } else if (height_n == 4) {
-       x_height_n = 12;
-    } else if (height_n == 8) {
-       x_height_n = 36;
-    } else {
-      x_height_n = height_n;
-    }
-
-    for(uint32_t x = 0; x < x_height_n; x++) {
+    for(uint32_t x = 0; x < height_n - 1; x++) {
       for(uint32_t b = 0; b < header.imageWidth; b++) {
         color = p16_get_pixel(&fp, &header, &imageState);
       }
     }
   }
-
 
   svp_fclose(&fp);
   LCD_setDrawAreaS(&area);
