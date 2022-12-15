@@ -318,7 +318,7 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
   LCD_setSubDrawArea(x, y, x + drawn_width, y + drawn_height);
   LCD_canvas_set(x, y, x + drawn_width - 1, y + drawn_height - 1);
 
-  printf("draw: n:%u %u, size: %u %u\n", width_n, height_n, drawn_height, drawn_width);
+  //printf("draw: n:%u %u, size: %u %u\n", width_n, height_n, drawn_height, drawn_width);
 
   imageState.init = 0;
   imageState.repeat = 0;
@@ -340,11 +340,9 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
 
         if (p16_use_pmc) {
           uint8_t r, g, b;
-
           r = (uint8_t)((color>>11)&0x1F);
           g = (uint8_t)(((color&0x07E0)>>5)&0x3F);
           b = (uint8_t)(color&0x1F);
-
           color = (((r+p16_R)/2) & 0x1F)<<11 | (((g+p16_G)/2)<<5  & 0x7E0 ) | (((b+p16_B)/2)&0x1F);
         }
       }
