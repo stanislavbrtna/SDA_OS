@@ -270,6 +270,118 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
 }
 
 
+// size 0 - 1/2 1 - 1/4 2 - 1/8
+
+uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint16_t height_n, uint8_t *filename) {
+  svp_file fp;
+  p16Header header;
+  p16State imageState;
+  uint32_t fpos, init;
+  uint16_t prevVal;
+  uint16_t repeat;
+  LCD_drawArea area;
+
+  if (height_n == 0) {
+    height_n = 2;
+  } else if (height_n == 1) {
+    height_n = 4;
+  } else {
+    height_n = 8;
+  }
+
+  if (width_n == 0) {
+    width_n = 2;
+  } else if (width_n == 1) {
+    width_n = 4;
+  } else {
+    width_n = 8;
+  }
+
+
+  if (!svp_fopen_read(&fp, filename)) {
+    printf("sda_draw_p16: Error while opening file %s!\n", filename);
+    return 1;
+  }
+  touch_lock = SDA_LOCK_LOCKED;
+
+  p16_get_header(&fp, &header);
+  LCD_getDrawArea(&area);
+  LCD_setSubDrawArea(x, y, x + header.imageWidth / width_n + header.imageWidth % width_n, y + header.imageHeight / height_n + header.imageHeight % height_n);
+  LCD_canvas_set(x, y, x + header.imageWidth / width_n + header.imageWidth % width_n - 1, y + header.imageHeight / height_n + header.imageHeight % height_n - 1);
+
+  //printf("draw: n:%u %u, size: %u %u\n", width_n, height_n, header.imageWidth / width_n + header.imageWidth % width_n, header.imageHeight / height_n + header.imageHeight % height_n);
+
+  imageState.init = 0;
+  imageState.repeat = 0;
+  imageState.prevVal = 0;
+
+  uint16_t color;
+  uint16_t pix = 0;
+
+  for(uint32_t n = 0; n < header.imageHeight; n++) {
+    for(uint32_t b = 0; b < header.imageWidth; b++) {
+      for(uint32_t c = 0; c < width_n; c++) {
+        color = p16_get_pixel(&fp, &header, &imageState);
+
+        if (p16_use_alpha) {
+          if (color == p16_alpha_color) {
+            color = p16_bg_color;
+          }
+        }
+
+        if (p16_use_pmc) {
+          uint8_t r, g, b;
+
+          r = (uint8_t)((color>>11)&0x1F);
+          g = (uint8_t)(((color&0x07E0)>>5)&0x3F);
+          b = (uint8_t)(color&0x1F);
+
+          color = (((r+p16_R)/2) & 0x1F)<<11 | (((g+p16_G)/2)<<5  & 0x7E0 ) | (((b+p16_B)/2)&0x1F);
+        }
+      }
+
+      LCD_canvas_putcol(color);
+    }
+    if (header.imageWidth % 2) {
+      if (height_n == 2) {
+        LCD_canvas_putcol(color);
+      } else if (height_n == 4) {
+        for(uint32_t x = 0; x < 3; x++)
+          LCD_canvas_putcol(color);
+      } else if (height_n == 8) {
+        for(uint32_t x = 0; x < 5; x++)
+        LCD_canvas_putcol(color);
+      }
+    }
+
+    //LCD_canvas_putcol(color);
+
+    uint32_t x_height_n;
+    if (height_n == 2) {
+       x_height_n = 2;
+    } else if (height_n == 4) {
+       x_height_n = 12;
+    } else if (height_n == 8) {
+       x_height_n = 36;
+    } else {
+      x_height_n = height_n;
+    }
+
+    for(uint32_t x = 0; x < x_height_n; x++) {
+      for(uint32_t b = 0; b < header.imageWidth; b++) {
+        color = p16_get_pixel(&fp, &header, &imageState);
+      }
+    }
+  }
+
+
+  svp_fclose(&fp);
+  LCD_setDrawAreaS(&area);
+  touch_lock = SDA_LOCK_UNLOCKED;
+  return 0;
+}
+
+
 uint16_t sda_p16_get_width(uint8_t *filename) {
   svp_file fp;
   p16Header header;
