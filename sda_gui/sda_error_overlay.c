@@ -24,8 +24,11 @@ SOFTWARE.
 
 // error overlays
 uint16_t error_overlay_scr;
+uint16_t error_overlay_inscr;
+uint16_t error_overlay_slider;
 uint16_t error_overlay_ok;
 uint16_t error_overlay = 0xFFFF;
+uint16_t error_count;
 
 extern uint8_t soft_error_flag;
 extern uint8_t mainDir[258];
@@ -49,25 +52,68 @@ void svp_errSoftPrint(svsVM *s) {
 
 
 void sda_show_error_message(uint8_t * text) {
+  printf("sda_show_error_message: %s\n", text);
+
+  gr2_set_relative_init(1, &sda_sys_con);
+
+  if (error_overlay == getOverlayId()) {
+
+    gr2_set_x2(error_overlay_inscr, 14, &sda_sys_con);
+
+    gr2_text_set_fit(
+      gr2_add_text(0, 5*error_count, 8, 5, text, error_overlay_inscr, &sda_sys_con),
+      1,
+      &sda_sys_con
+      );
+
+    error_count++;
+
+    gr2_set_visible(error_overlay_slider, 1, &sda_sys_con);
+    gr2_set_param(error_overlay_slider, error_count * 5 * 32, &sda_sys_con);
+    gr2_set_relative_init(0, &sda_sys_con);
+    puts("additional");
+    return;
+  }
+
+  error_count = 1;
+  gr2_set_relative_init(1, &sda_sys_con);
   error_overlay_scr = gr2_add_screen(&sda_sys_con);
+
   gr2_set_x_cell(error_overlay_scr, 16, &sda_sys_con);
   gr2_add_text(
-      2, 1, 14, 2,
+      2, 1, 12, 1,
       MSG_ERROR_OCCURED,
       error_overlay_scr,
       &sda_sys_con
   );
+
+  error_overlay_inscr = gr2_add_screen_ext(1, 2, 16, 7, error_overlay_scr, &sda_sys_con);
+  error_overlay_slider = gr2_add_slider_v(15, 2, 2, 7, 2, 1, error_overlay_scr, &sda_sys_con);
+
+  gr2_set_visible(error_overlay_slider, 0, &sda_sys_con);
+  
   gr2_text_set_fit(
-      gr2_add_text(1, 2, 15, 7, text, error_overlay_scr, &sda_sys_con),
+      gr2_add_text(0, 0, 8, 5, text, error_overlay_inscr, &sda_sys_con),
       1,
       &sda_sys_con
-      );
-  error_overlay_ok
-    = gr2_add_button(6, 8, 10, 9, OVRL_OK, error_overlay_scr, &sda_sys_con);
+  );
+  
+  error_overlay_ok = gr2_add_button(
+                        7, 10, 4, 1,
+                        OVRL_OK,
+                        error_overlay_scr,
+                        &sda_sys_con
+                    );
+
   error_overlay = setOverlayScreen(error_overlay_scr, &sda_sys_con);
   setOverlayDestructor(sda_error_overlay_destructor);
   soft_error_flag = 1;
-  printf("sda_show_error_message: %s\n", text);
+  
+  gr2_set_relative_init(0, &sda_sys_con);
+
+  setOverlayX1(16);
+  setOverlayX2(304);
+  setOverlayY2(432);
 }
 
 void sda_error_overlay_handle() {
@@ -79,5 +125,7 @@ void sda_error_overlay_handle() {
     destroyOverlay();
     return;
   }
+
+  gr2_set_yscroll(error_overlay_inscr, gr2_get_value(error_overlay_slider, &sda_sys_con), &sda_sys_con);
   sda_screen_button_handler(error_overlay_scr, error_overlay_ok, &sda_sys_con);
 }
