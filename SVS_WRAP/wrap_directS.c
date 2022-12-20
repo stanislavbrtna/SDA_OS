@@ -337,6 +337,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!Draws p16 image from the working directory. Supports upscaling, and downscaling
   //#!Scale table:
   //#!|Scale value| Image size|
+  //#!|-3| 1/16 |
   //#!|-2| 1/8 |
   //#!|-1| 1/4 |
   //#!|0| 1/2 |
@@ -371,7 +372,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Get P16 image width
-  //#!    sys.ds.getImageW( [str]name);
+  //#!    sys.ds.getImageW([str]name);
   //#!Gets width of given p16 file.
   //#!Return: [num] width (px)
   if (sysFuncMatch(argS->callId, "getImageW", s)) {
@@ -387,7 +388,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Get P16 image height
-  //#!    sys.ds.getImageH( [str]name);
+  //#!    sys.ds.getImageH([str]name);
   //#!Gets height of given p16 file.
   //#!Return: [num] height (px)
   if (sysFuncMatch(argS->callId, "getImageH", s)) {
@@ -462,7 +463,6 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       return 0;
     }
     touchEv = EV_NONE;
-
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -478,7 +478,6 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
     }
 
     result->value.val_s  = touchY;
-
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -494,7 +493,6 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
     }
 
     result->value.val_s  = touchX;
-
     result->type = SVS_TYPE_NUM;
     return 1;
   }

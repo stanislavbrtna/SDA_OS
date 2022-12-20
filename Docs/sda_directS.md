@@ -45,14 +45,23 @@ Return: None
 #### P16 image tools
 ##### Draws P16 image
     sys.ds.drawImage([num]x, [num]y, [num]scale_w, [num]scale_h, [str]name);
-Draws p16 image from the working directory. Supports upscaling.
+Draws p16 image from the working directory. Supports upscaling, and downscaling
+Scale table:
+|Scale value| Image size|
+|-3| 1/16 |
+|-2| 1/8 |
+|-1| 1/4 |
+|0| 1/2 |
+|1| 1 |
+|2| 2x |
+|n| n*x |
 Return: None
 ##### Get P16 image width
-    sys.ds.getImageW( [str]name);
+    sys.ds.getImageW([str]name);
 Gets width of given p16 file.
 Return: [num] width (px)
 ##### Get P16 image height
-    sys.ds.getImageH( [str]name);
+    sys.ds.getImageH([str]name);
 Gets height of given p16 file.
 Return: [num] height (px)
 ##### Draws PPM
