@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2018 Stanislav Brtna
+Copyright (c) 2018-2022 Stanislav Brtna
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -87,7 +87,7 @@ void redraw_slider(int16_t x1, int16_t y1, uint8_t mode) {
   LCD_setDrawArea(x1, y1, x1 + SLIDER_W, y1 + 32);
   float hsl[3];
   float rgb[3];
-  hsl[1] = 0.50;
+  hsl[1] = 0.99;
   hsl[2] = 0.50;
 
   if (mode == 0) {
