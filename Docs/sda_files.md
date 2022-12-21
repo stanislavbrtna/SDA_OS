@@ -80,7 +80,7 @@ Closes open file.
 Return: None
 ##### Remove file
     sys.fs.delete([str]fname);
-Deletes file with fiven fname.
+Deletes file with fiven fname. Can also delete empty directories.
 Return: None
 ##### Move/rename file
     sys.fs.rename([str]oldPath, [str]newPath);
@@ -100,6 +100,27 @@ Return: [str]filename or "" if none
 ##### Example
     for(findfil = sys.fs.find("txt", "."); findfil != ""; findfil = sys.fs.findNext();) {
       print("found: " + findfil);
+    }
+
+Find is not stateless, sys.fs.find must be re-inicialized after recursive call.
+Example of recursive function:
+    function ls {
+      local findfil;
+      local n = 0;
+      print(arg0);
+      for(findfil = sys.fs.find("", arg0); findfil != ""; findfil = sys.fs.findNext();) {
+        if (sys.fs.isDir(arg0 + "/" + findfil)) {
+          ls(arg0 + "/" + findfil);
+          findfil = sys.fs.find("", arg0);
+          local x;
+          for (x = 0; x<n; x++;) {
+            findfil = sys.fs.findNext();
+          }
+        } else {
+          print(arg0 + "/" + findfil);
+        }
+        n++;
+      }  
     }
 
 #### Files as strings

@@ -648,14 +648,18 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Remove file
   //#!    sys.fs.delete([str]fname);
-  //#!Deletes file with fiven fname.
+  //#!Deletes file with fiven fname. Can also delete empty directories.
   //#!Return: None
   if (sysFuncMatch(argS->callId, "delete", s)) {
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    svp_unlink(s->stringField + argS->arg[1].val_str);
+    if (svp_is_dir(s->stringField + argS->arg[1].val_str)) {
+      svp_rmdir(s->stringField + argS->arg[1].val_str);
+    } else {
+      svp_unlink(s->stringField + argS->arg[1].val_str);
+    }
     return 1;
   }
 
@@ -722,6 +726,28 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Example
   //#!    for(findfil = sys.fs.find("txt", "."); findfil != ""; findfil = sys.fs.findNext();) {
   //#!      print("found: " + findfil);
+  //#!    }
+
+  //#!
+  //#!Find is not stateless, sys.fs.find must be re-inicialized after recursive call.
+  //#!Example of recursive function:
+  //#!    function ls {
+  //#!      local findfil;
+  //#!      local n = 0;
+  //#!      print(arg0);
+  //#!      for(findfil = sys.fs.find("", arg0); findfil != ""; findfil = sys.fs.findNext();) {
+  //#!        if (sys.fs.isDir(arg0 + "/" + findfil)) {
+  //#!          ls(arg0 + "/" + findfil);
+  //#!          findfil = sys.fs.find("", arg0);
+  //#!          local x;
+  //#!          for (x = 0; x<n; x++;) {
+  //#!            findfil = sys.fs.findNext();
+  //#!          }
+  //#!        } else {
+  //#!          print(arg0 + "/" + findfil);
+  //#!        }
+  //#!        n++;
+  //#!      }  
   //#!    }
 
 
