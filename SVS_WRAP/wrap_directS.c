@@ -38,6 +38,18 @@ void sx_set_touch_ev(gr2EventType ev, uint16_t x, uint16_t y) {
   touchEv = ev;
 }
 
+gr2EventType sx_get_touch_ev() {
+  return touchEv;
+}
+
+uint16_t sx_get_touch_x() {
+  return touchX;
+}
+
+uint16_t sx_get_touch_y() {
+  return touchY;
+}
+
 void svsDirectSWrapInit() {
   addSysWrapper(svsDirectSWrap, (uint8_t *)"ds");
 }

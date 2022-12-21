@@ -28,6 +28,9 @@ uint8_t wrap_get_lcdOffButtons();
 void wrap_set_lcdOffButtons(uint8_t val);
 
 void sx_set_touch_ev(gr2EventType ev, uint16_t x, uint16_t y);
+gr2EventType sx_get_touch_ev();
+uint16_t sx_get_touch_x();
+uint16_t sx_get_touch_y();
 
 void sda_svs_wrapper_init();
 void svsDirectSWrapInit();
