@@ -80,19 +80,20 @@ uint8_t in_range(float a, float b, float diff) {
   return 0;
 }
 
+#define SLIDER_W 192
+#define SLIDER_WF 192.0
+
 void redraw_slider(int16_t x1, int16_t y1, uint8_t mode) {
-  LCD_setDrawArea(x1, y1, x1 + 200, y1 + 32);
+  LCD_setDrawArea(x1, y1, x1 + SLIDER_W, y1 + 32);
   float hsl[3];
   float rgb[3];
   hsl[1] = 0.50;
   hsl[2] = 0.50;
 
   if (mode == 0) {
-    for(int i=0; i < 200; i++) {
-      hsl[0] = (((float) i) / 200.0) * 6.0;
-      //printf("%f wtf\n", hsl[0]);
+    for(int i=0; i < SLIDER_W; i++) {
+      hsl[0] = (((float) i) / SLIDER_WF) * 6.0;
       fromHSLtoRGB(hsl, rgb);
-      //printf("%f %f wtf\n", col_hsl[0],hsl[0]);
       if (in_range(col_hsl[0], hsl[0], 0.05))
         LCD_DrawLine(x1 + i, y1, x1 + i, y1 + 32, ~LCD_MixColor((uint16_t) (256.0 * rgb[0]), (uint16_t) (256.0 * rgb[1]), (uint16_t) (256.0 * rgb[2])));
       else
@@ -101,12 +102,10 @@ void redraw_slider(int16_t x1, int16_t y1, uint8_t mode) {
   }
 
   if (mode == 1) {
-    for(int i=0; i < 200; i++) {
+    for(int i=0; i < SLIDER_W; i++) {
       hsl[0] = col_hsl[0];
-      hsl[1] = (((float) i) / 200.0);
-      //printf("%f wtf\n", hsl[0]);
+      hsl[1] = (((float) i) / SLIDER_WF);
       fromHSLtoRGB(hsl, rgb);
-      //printf("%f %f %f wtf\n", rgb[0], rgb[1], rgb[2]);
       if (in_range(col_hsl[1], hsl[1], 0.01))
         LCD_DrawLine(x1 + i, y1, x1 + i, y1 + 32, ~LCD_MixColor((uint16_t) (256.0 * rgb[0]), (uint16_t) (256.0 * rgb[1]), (uint16_t) (256.0 * rgb[2])));
       else
@@ -115,13 +114,11 @@ void redraw_slider(int16_t x1, int16_t y1, uint8_t mode) {
   }
 
   if (mode == 2) {
-    for(int i=0; i < 200; i++) {
+    for(int i=0; i < SLIDER_W; i++) {
       hsl[0] = col_hsl[0];
       hsl[1] = col_hsl[1];
-      hsl[2] = (((float) i) / 200.0);
-      //printf("%f wtf\n", hsl[0]);
+      hsl[2] = (((float) i) / SLIDER_WF);
       fromHSLtoRGB(hsl, rgb);
-      //printf("%f %f %f wtf\n", rgb[0], rgb[1], rgb[2]);
       if (in_range(col_hsl[2], hsl[2], 0.01))
         LCD_DrawLine(x1 + i, y1, x1 + i, y1 + 32, ~LCD_MixColor((uint16_t) (256.0 * rgb[0]), (uint16_t) (256.0 * rgb[1]), (uint16_t) (256.0 * rgb[2])));
       else
@@ -129,24 +126,24 @@ void redraw_slider(int16_t x1, int16_t y1, uint8_t mode) {
     }
   }
 
-  LCD_DrawRectangle(x1, y1, x1 + 200, y1 + 32, sda_current_con->border_color);
+  LCD_DrawRectangle(x1, y1, x1 + SLIDER_W, y1 + 32, sda_current_con->border_color);
   
 }
 
 
 uint8_t touch_slider(uint16_t x1, uint16_t y1, uint8_t mode) {
   float rgb[3];
-  if (sx_get_touch_x() > x1 && sx_get_touch_x() < x1 + 200 && sx_get_touch_y() > y1 && sx_get_touch_y() < y1 + 32 && sx_get_touch_ev() == EV_HOLD) {
+  if (sx_get_touch_x() > x1 && sx_get_touch_x() < x1 + SLIDER_W && sx_get_touch_y() > y1 && sx_get_touch_y() < y1 + 32 && sx_get_touch_ev() == EV_HOLD) {
     if (mode == 0) {
-      col_hsl[0] = (((float) (sx_get_touch_x() - x1)) / 200.0) * 6.0;
+      col_hsl[0] = (((float) (sx_get_touch_x() - x1)) / SLIDER_WF) * 6.0;
     }
 
     if (mode == 1) {
-      col_hsl[1] = (((float) (sx_get_touch_x() - x1)) / 200.0) * 1.0;
+      col_hsl[1] = (((float) (sx_get_touch_x() - x1)) / SLIDER_WF) * 1.0;
     }
 
     if (mode == 2) {
-      col_hsl[2] = (((float) (sx_get_touch_x() - x1)) / 200.0) * 1.0;
+      col_hsl[2] = (((float) (sx_get_touch_x() - x1)) / SLIDER_WF) * 1.0;
     }
     
     fromHSLtoRGB(col_hsl, rgb);
@@ -245,11 +242,17 @@ void color_overlay_set_color(uint16_t ovId, uint16_t col) {
   gr2_set_value(col_show, col, sda_current_con);
   float rgb[3];
 
-  rgb[0] = 255.0 / (float)r;
-  rgb[1] = 255.0 / (float)g;
-  rgb[2] = 255.0 / (float)b;
+  rgb[0] = (float)r / 255.0;
+  rgb[1] = (float)g / 255.0;
+  rgb[2] = (float)b / 255.0;
 
   fromRGBtoHSL(rgb, col_hsl);
+
+  for(int i = 1; i < 3; i++) {
+    if (col_hsl[i] == 1) {
+      col_hsl[i] = 0.99;
+    }
+  }
   redraw_sliders = 0;
 }
 
