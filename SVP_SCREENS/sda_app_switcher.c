@@ -95,20 +95,21 @@ void taskSwitcherOpen() {
   sda_keyboard_hide();
 
   uint16_t n = 0;
+  gr2_set_relative_init(1, &sda_sys_con);
   task_switcher = gr2_add_screen(&sda_sys_con);
   task_switcher_inner = gr2_add_screen(&sda_sys_con);
   gr2_set_screen(task_switcher_inner, task_switcher, &sda_sys_con);
   gr2_set_x_cell(task_switcher, 16, &sda_sys_con);
-  gr2_set_x1y1x2y2(task_switcher_inner, 1, 1, 15, 8, &sda_sys_con);
+  gr2_set_x1y1x2y2(task_switcher_inner, 1, 1, 14, 7 - svpSGlobal.lcdLandscape*3, &sda_sys_con);
 
   gr2_add_text(
-    1, 0, 15, 1,
+    1, 0, 14, 1,
     SWICH_RUNNING_APPS,
     task_switcher,
     &sda_sys_con
   );
   scrollbar = gr2_add_slider_v(
-    15, 1, 17, 8,
+    15, 1, 2, 7 - svpSGlobal.lcdLandscape*3,
     MAX_OF_SAVED_PROC * 10 + 32,
     0,
     task_switcher,
@@ -125,14 +126,14 @@ void taskSwitcherOpen() {
     reloadNiceNames();
 
     appButtons[n] = gr2_add_button(
-      0, 1 + n, 6, 2 + n,
+      0, 1 + n, 6, 1,
       niceSuspendName[x],
       task_switcher_inner,
       &sda_sys_con
     );
 
     appButtonsClose[n] = gr2_add_button(
-      6, 1 + n, 7, 2 + n,
+      6, 1 + n, 1, 1,
       (uint8_t *)"-",
       task_switcher_inner,
       &sda_sys_con
@@ -142,20 +143,20 @@ void taskSwitcherOpen() {
   }
   numberOfApps = n;
 
-  ok = gr2_add_button(12, 9, 15, 10, OVRL_OK, task_switcher, &sda_sys_con);
+  ok = gr2_add_button(12, 9 - svpSGlobal.lcdLandscape*3, 3, 1, OVRL_OK, task_switcher, &sda_sys_con);
 
   close_all = gr2_add_button(
-    1, 9, 9, 10,
+    1, 9 - svpSGlobal.lcdLandscape*3, 8, 1,
     SWITCH_CLOSE_ALL,
     task_switcher,
     &sda_sys_con
   );
 
   task_overlay = setOverlayScreen(task_switcher, &sda_sys_con);
-  setOverlayX1(16);
+  setOverlayX1(16 + svpSGlobal.lcdLandscape*80);
   setOverlayY1(32 + 16);
-  setOverlayX2(320 - 16);
-  setOverlayY2(480 - 96);
+  setOverlayX2(320 - 16 + svpSGlobal.lcdLandscape*80);
+  setOverlayY2(480 - 96 - 96*svpSGlobal.lcdLandscape);
 
   setOverlayDestructor(taskSwitcherDestructor);
   valid = 1;
@@ -164,6 +165,7 @@ void taskSwitcherOpen() {
     gr2_set_grayout(close_all, 1, &sda_sys_con);
     gr2_set_grayout(scrollbar, 1, &sda_sys_con);
   }
+  gr2_set_relative_init(0, &sda_sys_con);
 }
 
 

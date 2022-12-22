@@ -212,8 +212,8 @@ static void sda_main_process_touch() {
 
     retVal
       = svp_touch_keyboard(
-            0,
-            319,
+            80*svpSGlobal.lcdLandscape,
+            319 - 160*svpSGlobal.lcdLandscape,
             &kbdLayout,
             svpSGlobal.touchX,
             svpSGlobal.touchY,
@@ -305,7 +305,11 @@ static void sda_main_redraw() {
       || (svpSGlobal.systemRedraw && svpSGlobal.kbdVisible == 1)
       || kbdRedraw
     ) {
-    svp_draw_keyboard(0, 319, &kbdLayout);
+    if (svpSGlobal.lcdLandscape) {
+      LCD_FillRect(0, 319 - 160, 80, 320, sda_current_con->background_color);
+      LCD_FillRect(400, 319 - 160, 480, 320, sda_current_con->background_color);
+    }
+    svp_draw_keyboard(80*svpSGlobal.lcdLandscape, 319 - 160*svpSGlobal.lcdLandscape, &kbdLayout);
     if (kbdRedraw == 0) {
       svpSGlobal.systemRedraw = 1;
     }
@@ -353,6 +357,7 @@ static void sda_main_redraw() {
             1,
             overlayCont
       );
+      LCD_DrawRectangle(overlayX1 - 1 , overlayY1 - 1, overlayX2 + 1, overlayY2 + 1, sda_current_con->border_color);
       svpSGlobal.systemRedraw = 0;
     }
     if(overlayCont->pscgElements[overlayScr].modified) {
@@ -364,6 +369,7 @@ static void sda_main_redraw() {
             overlayCont
       );
     }
+    LCD_DrawRectangle(overlayX1 - 1 , overlayY1 - 1, overlayX2 + 1, overlayY2 + 1, sda_current_con->border_color);
     gr2_draw_screen(overlayX1, overlayY1, overlayX2, overlayY2, overlayScr, 0, overlayCont);
   }
   gr2_draw_end(sda_current_con);
@@ -400,7 +406,7 @@ static void sda_main_handle_soft_buttons() {
       if (getOverlayId() != 0) {
         destroyOverlay();
       }
-
+      sda_set_landscape(0);
       sda_keyboard_hide();
       sda_slot_on_top(0);
       svp_chdir(mainDir);
