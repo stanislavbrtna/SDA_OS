@@ -67,6 +67,8 @@ typedef struct {
   ledPatternType ledPattern;
 
   //LCDetect
+  lcdOrientationType lcdOrientation;
+  uint8_t lcdLandscape;
   lcdStateType lcdState;
   uint8_t lcdBacklight;
   uint32_t lcdShutdownTime;

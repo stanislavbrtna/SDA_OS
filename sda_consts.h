@@ -49,7 +49,7 @@ File description:
 // size and position of top bar
 #define PM_TOPBAR_X1 0
 #define PM_TOPBAR_Y1 0
-#define PM_TOPBAR_X2 319
+#define PM_TOPBAR_X2 (319 + svpSGlobal.lcdLandscape*160)
 #define PM_TOPBAR_Y2 31
 
 // maximum number of system application slots

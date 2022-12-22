@@ -185,3 +185,13 @@ void sda_check_fs() {
 #endif
   }
 }
+
+void sda_set_landscape(uint8_t val) {
+  if (val) {
+    LCD_set_orientation(OR_ROT_RIGHT);
+    svpSGlobal.lcdLandscape = 1;
+  } else {
+    LCD_set_orientation(OR_NORMAL);
+    svpSGlobal.lcdLandscape = 0;
+  }
+}

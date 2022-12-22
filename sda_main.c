@@ -85,6 +85,7 @@ static void set_init_struct_defaults() {
   svpSGlobal.lcdOnTime = 0;
   svpSGlobal.dateUpdated = 0;
   svpSGlobal.systemRedraw = 0;
+  svpSGlobal.lcdLandscape = 0;
   svpSGlobal.systemXBtnClick = 0;
   svpSGlobal.systemXBtnVisible = 1;
   svpSGlobal.kbdVisible = 0;
@@ -245,8 +246,8 @@ static void sda_main_process_touch() {
       scr_touch_retval = gr2_touch_input(
         0,
         32,
-        319,
-        479 - 160 * svpSGlobal.kbdVisible,
+        319 + 160*svpSGlobal.lcdLandscape,
+        479 - 160 * svpSGlobal.kbdVisible - 160*svpSGlobal.lcdLandscape,
         svpSGlobal.touchX,
         svpSGlobal.touchY,
         svpSGlobal.touchType,
@@ -323,18 +324,18 @@ static void sda_main_redraw() {
 
   kbdVisibleOld = svpSGlobal.kbdVisible;
 
-  LCD_setDrawArea(0, 0, SDA_LCD_W - 1, SDA_LCD_H - 160 * svpSGlobal.kbdVisible);
+  LCD_setDrawArea(0, 0, SDA_LCD_W - 1 + 160*svpSGlobal.lcdLandscape, SDA_LCD_H - 160 * svpSGlobal.kbdVisible - 160*svpSGlobal.lcdLandscape);
   if (overlayScr == 0) {
     if (svpSGlobal.systemRedraw == 1) {
-      gr2_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 1, sda_current_con);
+      gr2_draw_screen(0, 32, 319 + 160*svpSGlobal.lcdLandscape, 479 - 160 * svpSGlobal.kbdVisible - 160*svpSGlobal.lcdLandscape, mainScr, 1, sda_current_con);
       svpSGlobal.systemRedraw = 0;
     } else {
-      gr2_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 0, sda_current_con);
+      gr2_draw_screen(0, 32, 319 + 160*svpSGlobal.lcdLandscape, 479 - 160 * svpSGlobal.kbdVisible - 160*svpSGlobal.lcdLandscape, mainScr, 0, sda_current_con);
     }
   } else {
     if (svpSGlobal.systemRedraw == 1) {
       if (mainScr != 0) {
-        gr2_draw_screen(0, 32, 319, 479 - 160 * svpSGlobal.kbdVisible, mainScr, 1, sda_current_con);
+        gr2_draw_screen(0, 32, 319 + 160*svpSGlobal.lcdLandscape, 479 - 160 * svpSGlobal.kbdVisible - 160*svpSGlobal.lcdLandscape, mainScr, 1, sda_current_con);
       }
       sda_draw_overlay_shadow(
             overlayX1,

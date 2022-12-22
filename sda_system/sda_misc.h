@@ -54,4 +54,6 @@ void sda_draw_overlay_shadow(
 
 void sda_check_fs();
 
+void sda_set_landscape(uint8_t val);
+
 #endif

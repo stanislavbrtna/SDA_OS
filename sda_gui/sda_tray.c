@@ -350,11 +350,11 @@ uint8_t svp_tray() {
     init = 1;
   }
 
-  svp_tray_alarm(145, 0, 32);
+  svp_tray_alarm(PM_TOPBAR_X2 - 175, 0, 32);
 
-  svp_tray_time(180, 0, 46);
+  svp_tray_time(PM_TOPBAR_X2 - 140, 0, 46);
 
-  svp_tray_battery(235, 0, 49);
+  svp_tray_battery(PM_TOPBAR_X2 - 85, 0, 49);
 
   svp_tray_Opt(PM_TOPBAR_X1, PM_TOPBAR_Y1, 48, 31);
 
