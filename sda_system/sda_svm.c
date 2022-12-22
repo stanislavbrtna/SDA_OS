@@ -47,29 +47,21 @@ static uint16_t svmSavedProcId[MAX_OF_SAVED_PROC];
 static uint8_t svmSavedProcValid[MAX_OF_SAVED_PROC];
 static uint8_t svmSavedProcSingular[MAX_OF_SAVED_PROC];
 
-static int32_t alarmId;
-static int32_t alarmParam;
-static uint8_t alarmFlag;
-
-static uint8_t redrawDetect;
-
 extern uint16_t svsLoadCounter;
 extern uint8_t soft_error_flag;
 
-extern gr2Element *sda_app_gr2_elements; //[SDA_APP_ELEM_MAX];
-extern gr2Screen *sda_app_gr2_screens; //[SDA_APP_SCREEN_MAX];
+extern gr2Element *sda_app_gr2_elements;
+extern gr2Screen *sda_app_gr2_screens;
 extern gr2context sda_app_con; //
+
+extern uint8_t svs_wrap_setScr_flag;
+extern uint16_t svs_wrap_setScr_id;
 
 static uint8_t slot_restore; // what appslot to restore after close
 
 // Globals:
-
 // main screen
 uint16_t mainScr; //obrazovka top slotu / top-slot screen
-
-// svs
-uint8_t svs_wrap_setScr_flag;
-uint16_t svs_wrap_setScr_id;
 
 // pscg
 uint8_t * pscgErrorString;
@@ -95,58 +87,17 @@ uint16_t svmGetSavedProcId(uint16_t proc_array_index) {
 }
 
 
-// notification
-
-void sda_alarm_set_flag(int32_t id, int32_t param) {
-  alarmId = id;
-  alarmParam = param;
-  alarmFlag = 1;
-}
-
-
-int32_t sda_alarm_get_id() {
-  return alarmId;
-}
-
-
-int32_t sda_alarm_get_param() {
-  return alarmParam;
-}
-
-
-int8_t sda_alarm_get_flag() {
-  return alarmFlag;
-}
-
-
-void sda_alarm_clear_flag() {
-  alarmFlag = 0;
-}
-
-// screens and stuff
-void sdaSvmSetMainScreen(uint16_t val) {
-  svs_wrap_setScr_id = val;
-  svs_wrap_setScr_flag = 1;
-  gr2_set_modified(val, &sda_app_con);
-}
-
-
 uint16_t sdaSvmGetMainScreen() {
   return mainScr;
 }
 
 
-void sdaSetRedrawDetect(uint8_t val) {
-  redrawDetect = val;
-}
-
-
-uint8_t sdaGetRedrawDetect() {
-  return redrawDetect;
-}
-
 uint8_t * sdaSvmGetName() {
   return svmMeta.name;
+}
+
+void sdaSvmSetLandscape(uint8_t val) {
+  svmMeta.landscape = val;
 }
 
 
@@ -154,22 +105,17 @@ void sdaSvmOnTop() {
   sda_slot_on_top(4);
   svp_switch_main_dir();
   svp_chdir(svmMeta.currentWorkDir);
+
+  if (svmMeta.landscape != svpSGlobal.lcdLandscape) {
+    sda_set_landscape(svmMeta.landscape);
+  }
+
   svpSGlobal.systemXBtnVisible = 1;
   svpSGlobal.systemXBtnClick = 0;
 }
 
 
-void sdaSvmGetGR2Settings() {
-  // load colors from system to app context
-  gr2_set_border_color(gr2_get_border_color(&sda_sys_con), &sda_app_con);
-  gr2_set_text_color(gr2_get_text_color(&sda_sys_con), &sda_app_con);
-  gr2_set_background_color(gr2_get_background_color(&sda_sys_con), &sda_app_con);
-  gr2_set_fill_color(gr2_get_fill_color(&sda_sys_con), &sda_app_con);
-  gr2_set_active_color(gr2_get_active_color(&sda_sys_con), &sda_app_con);
-}
-
 // app misc
-
 uint8_t sdaSvmGetRunning() {
   if (svmValid){
     return 1;
@@ -304,6 +250,16 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
     return 1;
   }
 
+  uint16_t x = 0;
+  while (svmSavedProcValid[x] == 1) {
+    x++;
+    printf("checking launcher\n");
+    if (x == MAX_OF_SAVED_PROC) {
+      sda_show_error_message((uint8_t *)"Maximum number of active apps reached.\n");
+      return 0;
+    }
+  }
+
   sda_int_to_str(numbuff, (int32_t)nextId, sizeof(numbuff));
   sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
   sda_str_add(cacheBuffer, numbuff);
@@ -344,6 +300,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   svmMeta.id = nextId;
   nextId++;
   svmMeta.parentId = parentId;
+  svmMeta.landscape = 0;
   sda_strcp(fname, svmMeta.name, sizeof(svmMeta.name));
   sda_strcp((uint8_t *)"", svmMeta.openFileName, sizeof(svmMeta.openFileName));
   svmMeta.openFileUsed = 0;
@@ -402,6 +359,7 @@ void sdaSvmCloseApp() {
   svmInValidate(svmMeta.id);
   sda_set_sleep_lock(0);
   svpSGlobal.kbdVisible = 0;
+  sda_set_landscape(0);
   sda_alarm_clear_flag();
   sda_files_close();
 
@@ -785,7 +743,7 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
       sda_show_error_message((uint8_t *)"No update function found.\n");
       return 0;
     }
-    redrawDetect = 0;
+    sdaSetRedrawDetect(0);
 
     if (svm.handbrake == 1) {
       sdaSvmKillApp_handle();
@@ -937,7 +895,7 @@ void sdaSvmSave() {
   }
 
   //printf("storing workdir: %s\n", svmMeta.currentWorkDir);
-
+  svmMeta.landscape = svpSGlobal.lcdLandscape;
   svmMeta.lcdOffButtons = wrap_get_lcdOffButtons();
 
   sda_files_close();
@@ -990,6 +948,10 @@ uint8_t sdaSvmLoad(uint16_t id) {
     wrap_set_lcdOffButtons(1);
   } else {
     wrap_set_lcdOffButtons(0);
+  }
+
+  if (svmMeta.landscape != svpSGlobal.lcdLandscape) {
+    sda_set_landscape(svmMeta.landscape);
   }
 
   svp_chdir(svmMeta.currentWorkDir);

@@ -27,3 +27,15 @@ Return: [num]id
     sys.os.gui.setCPos([num] id, [num]val);
 Sets the cursor position of a text field
 Return: [num]id
+##### Switch between landscape and portrait mode
+    sys.os.gui.setLandscape([num]val);
+Sets the orientation of the display.
+1 - Landscape
+0 - Portrait
+Return: none
+##### Get display orientation
+    sys.os.gui.getLandscape();
+Gets the orientation of the display.
+1 - Landscape
+0 - Portrait
+Return: [num]val 

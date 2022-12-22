@@ -263,5 +263,43 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Switch between landscape and portrait mode
+  //#!    sys.os.gui.setLandscape([num]val);
+  //#!Sets the orientation of the display.
+  //#!1 - Landscape
+  //#!0 - Portrait
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "setLandscape", s)) {
+    argType[1] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+    
+    sda_set_landscape(argS->arg[1].val_s);
+    sdaSvmSetLandscape(argS->arg[1].val_s);
+
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get display orientation
+  //#!    sys.os.gui.getLandscape();
+  //#!Gets the orientation of the display.
+  //#!1 - Landscape
+  //#!0 - Portrait
+  //#!Return: [num]val 
+  if (sysFuncMatch(argS->callId, "getLandscape", s)) {
+
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    result->value.val_u = svpSGlobal.lcdLandscape;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   return 0;
 }

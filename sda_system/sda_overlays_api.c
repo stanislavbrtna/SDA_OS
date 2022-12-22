@@ -14,9 +14,9 @@ uint8_t destructor_set;
 
 
 void setOverlayDefault() {
-  overlayX1 = 32;
+  overlayX1 = 32 + 80*svpSGlobal.lcdLandscape;
   overlayY1 = 64;
-  overlayX2 = 288;
+  overlayX2 = 288 + 80*svpSGlobal.lcdLandscape;
   overlayY2 = 416;
 }
 
