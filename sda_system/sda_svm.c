@@ -497,6 +497,7 @@ uint8_t svmWake(uint16_t id) {
     if (svmSavedProcId[x] == id && svmSavedProcValid[x] == 1) {
       if (sdaSvmLoad(id) == 0) {
         printf("svmWake: error while loading app (1)\n");
+        svmSavedProcValid[x] = 0;
         return 1;
       }
       sda_slot_set_valid(4);

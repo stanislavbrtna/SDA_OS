@@ -102,12 +102,32 @@ void sda_clr_button_ev() {
 
 
 gr2EventType sda_wrap_get_button(uint8_t num) {
-  return keyEvLocal[num];
+  if (svpSGlobal.lcdLandscape == 0) {
+    return keyEvLocal[num];
+  } else {
+    if (num == BUTTON_A || num == BUTTON_B) {
+      return keyEvLocal[num];
+    }
+    if (num == BUTTON_LEFT) return keyEvLocal[BUTTON_UP];
+    if (num == BUTTON_UP) return keyEvLocal[BUTTON_RIGHT];
+    if (num == BUTTON_DOWN) return keyEvLocal[BUTTON_LEFT];
+    if (num == BUTTON_RIGHT) return keyEvLocal[BUTTON_DOWN];
+  }
 }
 
 
 void sda_wrap_clear_button(uint8_t num) {
-  keyEvLocal[num] = EV_NONE;
+  if (svpSGlobal.lcdLandscape == 0) {
+    keyEvLocal[num] = EV_NONE;
+  } else {
+    if (num == 0 || num == 5) {
+      keyEvLocal[num] = EV_NONE;
+    }
+    if (num == BUTTON_LEFT) keyEvLocal[BUTTON_UP] = EV_NONE;
+    if (num == BUTTON_UP) keyEvLocal[BUTTON_RIGHT] = EV_NONE;
+    if (num == BUTTON_DOWN) keyEvLocal[BUTTON_LEFT] = EV_NONE;
+    if (num == BUTTON_RIGHT) keyEvLocal[BUTTON_DOWN] = EV_NONE;
+  }
 }
 
 
