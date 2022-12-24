@@ -61,6 +61,7 @@ uint8_t * sdaSvmGetName();
 void sdaSvmSetCryptoUnlock(uint8_t unlock);
 uint8_t sdaSvmGetCryptoUnlock();
 uint64_t svmGetAppUptime();
+void sdaSvmSetLandscape(uint8_t val);
 
 // multiprocess
 void sdaSvmSave();
@@ -114,5 +115,6 @@ uint16_t svmGetSavedProcId(uint16_t proc_array_index);
 void svmSetNextId(uint16_t id);
 void svmRemoveCachedProc(uint16_t id);
 void svmRemoveCachedFile(uint16_t id, uint8_t * tail);
+void sdaSvmInit();
 
 #endif

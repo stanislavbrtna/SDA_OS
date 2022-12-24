@@ -41,6 +41,9 @@ static float col_hsl[3];
 
 static uint8_t redraw_sliders;
 
+void fromRGBtoHSL(float rgb[], float hsl[]);
+void fromHSLtoRGB(const float hsl[], float rgb[]);
+
 uint16_t color_overlay_init() {
   col_done = 0;
 

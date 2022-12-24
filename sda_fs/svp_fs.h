@@ -54,6 +54,7 @@ uint32_t svp_get_size(svp_file *fp);
 uint32_t svp_ftell(svp_file *fp);
 
 uint8_t svp_unlink(uint8_t* path);
+uint8_t svp_rmdir(uint8_t* path);
 void svp_fsync(svp_file *fp);
 
 uint8_t svp_extFindNext(uint8_t *outStr, uint16_t len);
