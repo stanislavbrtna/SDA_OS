@@ -500,7 +500,7 @@ void svmSetSingular(uint16_t id) {
 }
 
 
-uint16_t svmGetSuspendedId(uint16_t id) {
+uint16_t svmGetSuspendedId(uint16_t id) { 
   if (svmSavedProcValid[id] == 1) {
     return svmSavedProcId[id];
   }
@@ -544,7 +544,7 @@ static void restoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, 
   for(uint8_t z = 0; z < 3; z++) {
     s->commArgs.argType[z + 1] = argType[z];
 
-    if (argType[z] == 1) {
+    if (argType[z] == SVS_TYPE_STR) {
       s->commArgs.arg[z + 1] = (varType)strNew(svmArgs[z], s);
     } else {
       s->commArgs.arg[z + 1] = arg[z];
@@ -607,15 +607,6 @@ void sdaSvmKillApp_handle() {
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
   sda_set_sleep_lock(0);
-}
-
-
-uint8_t svmCheckAndExit() {
-  if((svpSGlobal.systemXBtnClick) || (errCheck(&svm) != 0)) {
-    sdaSvmCloseApp();
-    return 1;
-  }
-  return 0;
 }
 
 
@@ -716,23 +707,6 @@ void sdaSvmRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varT
   svmCallRetvalType[1] = type1;
   svmCallRetval[2] = arg2;
   svmCallRetvalType[2] = type2;
-}
-
-
-void sdaUpdateCurrentWD() { // get current wd relative to main dir
-  uint8_t dirbuf[258];
-  uint8_t path[258];
-  svp_getcwd(dirbuf, 256);
-  svp_switch_main_dir();
-  svp_getcwd(path, 256);
-
-  if (dirbuf[sda_strlen(path)] == '/') {
-    sda_strcp(dirbuf + sda_strlen(path) + 1, svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
-  } else {
-    sda_strcp(dirbuf + sda_strlen(path), svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
-  }
-
-  svp_chdir(svmMeta.currentWorkDir);
 }
 
 

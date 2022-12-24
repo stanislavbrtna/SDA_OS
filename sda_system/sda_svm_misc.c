@@ -189,3 +189,29 @@ void sdaSvmSetCryptoUnlock(uint8_t unlock) {
 uint8_t sdaSvmGetCryptoUnlock() {
   return svmMeta.cryptoUnlocked;
 }
+
+
+uint8_t svmCheckAndExit() {
+  if((svpSGlobal.systemXBtnClick) || (errCheck(&svm) != 0)) {
+    sdaSvmCloseApp();
+    return 1;
+  }
+  return 0;
+}
+
+
+void sdaUpdateCurrentWD() { // get current wd relative to main dir
+  uint8_t dirbuf[258];
+  uint8_t path[258];
+  svp_getcwd(dirbuf, 256);
+  svp_switch_main_dir();
+  svp_getcwd(path, 256);
+
+  if (dirbuf[sda_strlen(path)] == '/') {
+    sda_strcp(dirbuf + sda_strlen(path) + 1, svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
+  } else {
+    sda_strcp(dirbuf + sda_strlen(path), svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
+  }
+
+  svp_chdir(svmMeta.currentWorkDir);
+}
