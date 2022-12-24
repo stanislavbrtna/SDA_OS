@@ -21,6 +21,7 @@ SOFTWARE.
 */
 
 #include "sda_svm.h"
+#include "sda_svm_load_save.h"
 
 //svs VM
 svsVM          svm;
@@ -69,18 +70,20 @@ uint8_t * pscgErrorString;
 // static headers
 static void storeArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **svmArgs, svsVM *s);
 static void restoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsVM *s);
-static void sdaSvmSaver(uint16_t id, uint8_t * tail, void *target, uint32_t size);
-static uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t size);
 static void svmInValidate(uint16_t id);
 static void svmSuspendAddId(uint16_t id, uint8_t * name);
-static void svmRemoveCachedProc(uint16_t id);
-static void svmRemoveCachedFile(uint16_t id, uint8_t * tail);
 static uint16_t GetIfSingular(uint8_t * name);
 
 
 uint8_t svmGetSavedProcValid(uint16_t proc_array_index) {
   return svmSavedProcValid[proc_array_index];
 }
+
+
+void svmSetNextId(uint16_t id) {
+  nextId = id;
+}
+
 
 uint16_t svmGetSavedProcId(uint16_t proc_array_index) {
   return svmSavedProcId[proc_array_index];
@@ -99,21 +102,6 @@ uint8_t * sdaSvmGetName() {
 void sdaSvmSetLandscape(uint8_t val) {
   svmMeta.landscape = val;
 }
-
-
-void sdaSvmOnTop() {
-  sda_slot_on_top(4);
-  svp_switch_main_dir();
-  svp_chdir(svmMeta.currentWorkDir);
-
-  if (svmMeta.landscape != svpSGlobal.lcdLandscape) {
-    sda_set_landscape(svmMeta.landscape);
-  }
-
-  svpSGlobal.systemXBtnVisible = 1;
-  svpSGlobal.systemXBtnClick = 0;
-}
-
 
 // app misc
 uint8_t sdaSvmGetRunning() {
@@ -149,26 +137,6 @@ uint16_t sdaSvmGetId() {
     return 0;
   }
 }
-
-
-void sdaSvmKillApp() {
-  svm.handbrake = 1;
-}
-
-
-void sdaSvmSetError(uint8_t * str) {
-  pscgErrorString = str;
-}
-
-
-void svmSetLaunchCWDflag(uint8_t val) {
-  svmMeta.launchFromCWD = val;
-}
-
-uint64_t svmGetAppUptime() {
-  return svmMeta.loadUptime;
-}
-
 
 static uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
   uint8_t dirbuf[258];
@@ -224,15 +192,6 @@ uint8_t sdaSvmLoadApp(uint8_t *fname, uint8_t *name, uint8_t mode) {
     svmInit = 0;
   }
   return 0;
-}
-
-
-void sdaSvmSetCryptoUnlock(uint8_t unlock) {
-  svmMeta.cryptoUnlocked = unlock;
-}
-
-uint8_t sdaSvmGetCryptoUnlock() {
-  return svmMeta.cryptoUnlocked;
 }
 
 
@@ -571,29 +530,6 @@ void svmClose(uint16_t id) {
 }
 
 
-static void svmRemoveCachedFile(uint16_t id, uint8_t * tail) {
-  uint8_t cacheBuffer[256];
-  uint8_t numbuff[25];
-
-  sda_int_to_str(numbuff, (int32_t)id, sizeof(numbuff));
-  sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
-  sda_str_add(cacheBuffer, numbuff);
-  sda_str_add(cacheBuffer, tail);
-
-  svp_unlink(cacheBuffer);
-}
-
-
-static void svmRemoveCachedProc(uint16_t id) {
-  svmRemoveCachedFile(id, (uint8_t *) ".gr0");
-  svmRemoveCachedFile(id, (uint8_t *) ".gr1");
-  svmRemoveCachedFile(id, (uint8_t *) ".gr2");
-  svmRemoveCachedFile(id, (uint8_t *) ".met");
-  svmRemoveCachedFile(id, (uint8_t *) ".stc");
-  svmRemoveCachedFile(id, (uint8_t *) ".svm");
-}
-
-
 static void svmInValidate(uint16_t id) {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProcId[x] == id && svmSavedProcValid[x] == 1) {
@@ -627,7 +563,7 @@ static void storeArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_
   n = 0;
   prac = buff;
   for(uint8_t z = 0; z < 3; z++) {
-    if (argType[z] == 1) {
+    if (argType[z] == SVS_TYPE_STR) {
       prac3 = s->stringField + arg[z].val_str;
       prac2 = prac;
       x = 0;
@@ -671,37 +607,6 @@ void sdaSvmKillApp_handle() {
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
   sda_set_sleep_lock(0);
-}
-
-
-// svm init
-static void svmInitRemoveCache(uint8_t *ext){
-  uint8_t buffer[255];
-  uint8_t retval;
-
-  retval = svp_extFind(buffer, 30, ext, (uint8_t *) ".");
-
-  while (retval){
-    svp_unlink(buffer);
-    retval = svp_extFindNext(buffer, 30);
-  }
-}
-
-
-void sdaSvmInit() {
-  svp_switch_main_dir();
-  svp_chdir((uint8_t *)"APPS/cache");
-  printf("Cleaning up cached apps.\n");
-  svmInitRemoveCache((uint8_t *) "gr0");
-  svmInitRemoveCache((uint8_t *) "gr1");
-  svmInitRemoveCache((uint8_t *) "gr2");
-  svmInitRemoveCache((uint8_t *) "met");
-  svmInitRemoveCache((uint8_t *) "stc");
-  svmInitRemoveCache((uint8_t *) "svm");
-
-  svp_switch_main_dir();
-  svp_chdir((uint8_t *)"APPS");
-  nextId = 1;
 }
 
 
@@ -811,55 +716,6 @@ void sdaSvmRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varT
   svmCallRetvalType[1] = type1;
   svmCallRetval[2] = arg2;
   svmCallRetvalType[2] = type2;
-}
-
-
-// save and load
-static void sdaSvmSaver(uint16_t id, uint8_t * tail, void *target, uint32_t size) {
-  uint8_t cacheBuffer[256];
-  uint8_t numbuff[25];
-  svp_file svmFile;
-
-  svp_switch_main_dir();
-  svp_chdir((uint8_t *)"APPS");
-
-  sda_int_to_str(numbuff, (int32_t)id, sizeof(numbuff));
-  sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
-  sda_str_add(cacheBuffer, numbuff);
-  sda_str_add(cacheBuffer, tail);
-
-  if(svp_fopen_rw(&svmFile, cacheBuffer) == 0) {
-    printf("sdaSvmSaver: file open error\n");
-    return;
-  }
-  svp_fwrite(&svmFile, target, size);
-
-  svp_fclose(&svmFile);
-}
-
-
-static uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t size) {
-  uint8_t cacheBuffer[256];
-  uint8_t numbuff[25];
-  svp_file svmFile;
-
-  svp_switch_main_dir();
-  svp_chdir((uint8_t *)"APPS");
-
-  sda_int_to_str(numbuff, (int32_t)id, sizeof(numbuff));
-  sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
-  sda_str_add(cacheBuffer, numbuff);
-  sda_str_add(cacheBuffer, tail);
-
-  if(svp_fopen_read(&svmFile, cacheBuffer) == 0) {
-    printf("sdaSvmLoader: file open error (%s)\n", cacheBuffer);
-    return 0;
-  }
-
-  svp_fread(&svmFile, target, size);
-  svp_fclose(&svmFile);
-
-  return 1;
 }
 
 

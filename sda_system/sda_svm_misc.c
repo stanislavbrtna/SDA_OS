@@ -31,6 +31,10 @@ static uint8_t redrawDetect;
 uint8_t svs_wrap_setScr_flag;
 uint16_t svs_wrap_setScr_id;
 
+extern svsVM          svm;
+extern sdaSvmMetadata svmMeta;
+extern uint8_t * pscgErrorString;
+
 
 void sdaSvmGetGR2Settings() {
   // load colors from system to app context
@@ -85,4 +89,103 @@ void sdaSetRedrawDetect(uint8_t val) {
 
 uint8_t sdaGetRedrawDetect() {
   return redrawDetect;
+}
+
+
+// svm init
+void svmInitRemoveCache(uint8_t *ext){
+  uint8_t buffer[255];
+  uint8_t retval;
+
+  retval = svp_extFind(buffer, 30, ext, (uint8_t *) ".");
+
+  while (retval){
+    svp_unlink(buffer);
+    retval = svp_extFindNext(buffer, 30);
+  }
+}
+
+
+void sdaSvmInit() {
+  svp_switch_main_dir();
+  svp_chdir((uint8_t *)"APPS/cache");
+  printf("Cleaning up cached apps.\n");
+  svmInitRemoveCache((uint8_t *) "gr0");
+  svmInitRemoveCache((uint8_t *) "gr1");
+  svmInitRemoveCache((uint8_t *) "gr2");
+  svmInitRemoveCache((uint8_t *) "met");
+  svmInitRemoveCache((uint8_t *) "stc");
+  svmInitRemoveCache((uint8_t *) "svm");
+
+  svp_switch_main_dir();
+  svp_chdir((uint8_t *)"APPS");
+  svmSetNextId(1);
+}
+
+
+void svmRemoveCachedProc(uint16_t id) {
+  svmRemoveCachedFile(id, (uint8_t *) ".gr0");
+  svmRemoveCachedFile(id, (uint8_t *) ".gr1");
+  svmRemoveCachedFile(id, (uint8_t *) ".gr2");
+  svmRemoveCachedFile(id, (uint8_t *) ".met");
+  svmRemoveCachedFile(id, (uint8_t *) ".stc");
+  svmRemoveCachedFile(id, (uint8_t *) ".svm");
+}
+
+
+void svmRemoveCachedFile(uint16_t id, uint8_t * tail) {
+  uint8_t cacheBuffer[256];
+  uint8_t numbuff[25];
+
+  sda_int_to_str(numbuff, (int32_t)id, sizeof(numbuff));
+  sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
+  sda_str_add(cacheBuffer, numbuff);
+  sda_str_add(cacheBuffer, tail);
+
+  svp_unlink(cacheBuffer);
+}
+
+
+void sdaSvmOnTop() {
+  sda_slot_on_top(4);
+  svp_switch_main_dir();
+  svp_chdir(svmMeta.currentWorkDir);
+
+  if (svmMeta.landscape != svpSGlobal.lcdLandscape) {
+    sda_set_landscape(svmMeta.landscape);
+  }
+
+  svpSGlobal.systemXBtnVisible = 1;
+  svpSGlobal.systemXBtnClick = 0;
+}
+
+
+void sdaSvmKillApp() {
+  svm.handbrake = 1;
+}
+
+
+void sdaSvmSetError(uint8_t * str) {
+  pscgErrorString = str;
+}
+
+
+void svmSetLaunchCWDflag(uint8_t val) {
+  svmMeta.launchFromCWD = val;
+}
+
+
+uint64_t svmGetAppUptime() {
+  return svmMeta.loadUptime;
+}
+
+
+// Crypto
+void sdaSvmSetCryptoUnlock(uint8_t unlock) {
+  svmMeta.cryptoUnlocked = unlock;
+}
+
+
+uint8_t sdaSvmGetCryptoUnlock() {
+  return svmMeta.cryptoUnlocked;
 }

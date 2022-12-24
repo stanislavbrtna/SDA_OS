@@ -111,5 +111,8 @@ uint8_t svmCheckAndExit();
 
 uint8_t svmGetSavedProcValid(uint16_t proc_array_index);
 uint16_t svmGetSavedProcId(uint16_t proc_array_index);
+void svmSetNextId(uint16_t id);
+void svmRemoveCachedProc(uint16_t id);
+void svmRemoveCachedFile(uint16_t id, uint8_t * tail);
 
 #endif
