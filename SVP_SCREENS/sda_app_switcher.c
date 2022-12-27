@@ -138,6 +138,7 @@ void taskSwitcherOpen() {
       task_switcher_inner,
       &sda_sys_con
     );
+    gr2_text_set_align(appButtonsClose[n], GR2_ALIGN_CENTER, &sda_sys_con);
 
     n++;
   }

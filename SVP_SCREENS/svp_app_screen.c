@@ -329,7 +329,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
       }
     }
 
-    sda_screen_button_handler(inScreen, btnBack, &sda_sys_con);
+    sda_screen_button_handler(appScreen, btnBack, &sda_sys_con);
 
     if (gr2_get_event(btnBack, &sda_sys_con) == EV_RELEASED) {
       get_from_stack(labelbuff); // got prev
