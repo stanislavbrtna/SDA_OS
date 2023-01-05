@@ -43,10 +43,7 @@ static varType svmCallRetval[3];
 static uint8_t *svmCallRetvalStr[3];
 static uint8_t svmCallRetvalType[3];
 
-static uint8_t svmSavedProcName[MAX_OF_SAVED_PROC][APP_NAME_LEN];
-static uint16_t svmSavedProcId[MAX_OF_SAVED_PROC];
-static uint8_t svmSavedProcValid[MAX_OF_SAVED_PROC];
-static uint8_t svmSavedProcSingular[MAX_OF_SAVED_PROC];
+svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
 
 extern uint16_t svsLoadCounter;
 extern uint8_t soft_error_flag;
@@ -76,7 +73,7 @@ static uint16_t GetIfSingular(uint8_t * name);
 
 
 uint8_t svmGetSavedProcValid(uint16_t proc_array_index) {
-  return svmSavedProcValid[proc_array_index];
+  return svmSavedProc[proc_array_index].valid;
 }
 
 
@@ -86,7 +83,7 @@ void svmSetNextId(uint16_t id) {
 
 
 uint16_t svmGetSavedProcId(uint16_t proc_array_index) {
-  return svmSavedProcId[proc_array_index];
+  return svmSavedProc[proc_array_index].id;
 }
 
 
@@ -109,7 +106,7 @@ uint8_t sdaSvmGetRunning() {
     return 1;
   }
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProcValid[x] == 1) {
+    if (svmSavedProc[x].valid == 1) {
       return 1;
     }
   }
@@ -122,8 +119,8 @@ uint8_t sdaSvmGetValid(uint16_t id) {
     return 1;
   }
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProcId[x] == id) {
-      return svmSavedProcValid[x];
+    if (svmSavedProc[x].id == id) {
+      return svmSavedProc[x].valid;
     }
   }
   return 0;
@@ -210,9 +207,8 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   }
 
   uint16_t x = 0;
-  while (svmSavedProcValid[x] == 1) {
+  while (svmSavedProc[x].valid == 1) {
     x++;
-    printf("checking launcher\n");
     if (x == MAX_OF_SAVED_PROC) {
       sda_show_error_message((uint8_t *)"Maximum number of active apps reached.\n");
       return 0;
@@ -382,8 +378,8 @@ void svmCloseAll() {
   svmSetRestoreSlot(sda_get_top_slot());
 
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProcValid[x] == 1) {
-      svmClose(svmSavedProcId[x]);
+    if (svmSavedProc[x].valid == 1) {
+      svmClose(svmSavedProc[x].id);
     }
   }
 
@@ -404,17 +400,17 @@ void svmCloseAll() {
 
 static void svmSuspendAddId(uint16_t id, uint8_t * name) {
   uint16_t index = 0;
-  while (svmSavedProcValid[index] != 0) {
+  while (svmSavedProc[index].valid != 0) {
     if (index == MAX_OF_SAVED_PROC - 1) {
       return;
     }
     index++;
   }
 
-  sda_strcp(name, svmSavedProcName[index], APP_NAME_LEN);
-  svmSavedProcId[index] = id;
-  svmSavedProcValid[index] = 1;
-  svmSavedProcSingular[index] = 0;
+  sda_strcp(name, svmSavedProc[index].name, APP_NAME_LEN);
+  svmSavedProc[index].id = id;
+  svmSavedProc[index].valid = 1;
+  svmSavedProc[index].singular = 0;
 }
 
 
@@ -453,10 +449,10 @@ uint8_t svmWake(uint16_t id) {
   svmSuspend();
 
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProcId[x] == id && svmSavedProcValid[x] == 1) {
+    if (svmSavedProc[x].id == id && svmSavedProc[x].valid == 1) {
       if (sdaSvmLoad(id) == 0) {
         printf("svmWake: error while loading app (1)\n");
-        svmSavedProcValid[x] = 0;
+        svmSavedProc[x].valid = 0;
         return 1;
       }
       sda_slot_set_valid(4);
@@ -481,9 +477,9 @@ uint8_t svmWake(uint16_t id) {
 
 static uint16_t GetIfSingular(uint8_t * name) {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProcValid[x] == 1) {
-      if (strCmp(svmSavedProcName[x], name) && svmSavedProcSingular[x]) {
-        return svmSavedProcId[x];
+    if (svmSavedProc[x].valid == 1) {
+      if (strCmp(svmSavedProc[x].name, name) && svmSavedProc[x].singular) {
+        return svmSavedProc[x].id;
       }
     }
   }
@@ -493,24 +489,24 @@ static uint16_t GetIfSingular(uint8_t * name) {
 
 void svmSetSingular(uint16_t id) {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProcValid[x] == 1 && svmSavedProcId[x] == id) {
-      svmSavedProcSingular[x] = 1;
+    if (svmSavedProc[x].valid == 1 && svmSavedProc[x].id == id) {
+      svmSavedProc[x].singular = 1;
     }
   }
 }
 
 
 uint16_t svmGetSuspendedId(uint16_t id) { 
-  if (svmSavedProcValid[id] == 1) {
-    return svmSavedProcId[id];
+  if (svmSavedProc[id].valid == 1) {
+    return svmSavedProc[id].id;
   }
   return 0;
 }
 
 
 uint8_t *svmGetSuspendedName(uint16_t id) {
-  if (svmSavedProcValid[id] == 1) {
-    return svmSavedProcName[id];
+  if (svmSavedProc[id].valid == 1) {
+    return svmSavedProc[id].name;
   }
   return (uint8_t *)"";
 }
@@ -532,8 +528,8 @@ void svmClose(uint16_t id) {
 
 static void svmInValidate(uint16_t id) {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProcId[x] == id && svmSavedProcValid[x] == 1) {
-      svmSavedProcValid[x] = 0;
+    if (svmSavedProc[x].id == id && svmSavedProc[x].valid == 1) {
+      svmSavedProc[x].valid = 0;
       svmRemoveCachedProc(x);
     }
   }

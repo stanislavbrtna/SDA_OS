@@ -144,4 +144,11 @@ typedef struct {
   uint64_t loadUptime;
 } sdaSvmMetadata;
 
+typedef struct {
+  uint8_t  name[APP_NAME_LEN];
+  uint16_t id;
+  uint8_t  valid;
+  uint8_t  singular;
+} svmSavedProcType;
+
 #endif
