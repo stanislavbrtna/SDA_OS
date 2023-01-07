@@ -722,7 +722,6 @@ void sdaSvmSave() {
   }
 
   //printf("storing workdir: %s\n", svmMeta.currentWorkDir);
-  svmMeta.landscape = svpSGlobal.lcdLandscape;
   svmMeta.lcdOffButtons = wrap_get_lcdOffButtons();
 
   sda_files_close();
