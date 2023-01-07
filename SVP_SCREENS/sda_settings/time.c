@@ -103,4 +103,5 @@ uint16_t sda_settings_time_screen(uint8_t init) {
     mainScr = slotScreen[2];
     setRedrawFlag();
   }
+  return 0;
 }

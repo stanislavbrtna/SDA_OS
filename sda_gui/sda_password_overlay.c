@@ -134,6 +134,8 @@ uint16_t password_overlay_get_ok(uint16_t ovId) {
   if (povDone != 0) {
     return povDone;
   }
+
+  return 0;
 }
 
 

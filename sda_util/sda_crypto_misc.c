@@ -171,6 +171,8 @@ uint8_t svp_crypto_reset_os_keyfile() {
 
   if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
     printf("Failed to open cfg file\n");
+    svp_chdir(dirbuf);
+    return 1;
   }
 
   puts("Reseting OS keyfile!");
@@ -181,4 +183,5 @@ uint8_t svp_crypto_reset_os_keyfile() {
   sda_conf_key_write_i32(&conffile, (uint8_t *)"key_crc", fileCRC);
 
   svp_chdir(dirbuf);
+  return 0;
 }

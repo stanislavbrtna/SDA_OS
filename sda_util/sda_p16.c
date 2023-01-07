@@ -276,9 +276,6 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
   svp_file fp;
   p16Header header;
   p16State imageState;
-  uint32_t fpos, init;
-  uint16_t prevVal;
-  uint16_t repeat;
   LCD_drawArea area;
   uint32_t drawn_width;
   uint32_t drawn_height;
@@ -356,8 +353,8 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
       LCD_canvas_putcol(color);
     }
 
-    for(uint32_t x = 0; x < height_n - 1; x++) {
-      for(uint32_t b = 0; b < header.imageWidth; b++) {
+    for(uint16_t x = 0; x < height_n - 1; x++) {
+      for(uint16_t b = 0; b < header.imageWidth; b++) {
         color = p16_get_pixel(&fp, &header, &imageState);
       }
     }

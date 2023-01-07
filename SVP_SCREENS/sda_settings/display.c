@@ -137,6 +137,7 @@ uint16_t sda_settings_display_screen(uint8_t init) {
   if (gr2_clicked(optLcdStore, &sda_sys_con)) {
     sda_store_config();
   }
+  return 0;
 }
 
 uint16_t sda_settings_color_screen(uint8_t init) {
@@ -316,5 +317,5 @@ uint16_t sda_settings_color_screen(uint8_t init) {
     mainScr = optLcdScr;
     setRedrawFlag();
   }
-
+  return 0;
 }

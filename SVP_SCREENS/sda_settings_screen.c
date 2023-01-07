@@ -33,7 +33,6 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 
   static uint16_t optTimeScr;
   static uint16_t optLcdScr;
-  static uint16_t optColScr;
   static uint16_t optInfoScr;
   static uint16_t optNotifyScr;
   static uint16_t optSecuScr;

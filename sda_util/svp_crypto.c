@@ -114,14 +114,13 @@ uint8_t svp_crypto_set_pass_as_key() {
     return 1;
   }
 
-  svp_crypto_set_key(svp_crypto_password);
+  return svp_crypto_set_key(svp_crypto_password);
 }
 
 
 uint8_t svp_crypto_load_key_to_str(uint8_t * fname, uint8_t* str) {
   svp_file source;
   uint8_t nextchar;
-  uint32_t keyLen;
   uint32_t i;
 
   if (!svp_crypto_unlocked) {
@@ -268,6 +267,8 @@ uint8_t svp_crypto_stream_init() {
 
   crypto_prev_char = 0;
   crypto_counter = 0;
+
+  return 0;
 }
 
 
@@ -406,8 +407,6 @@ uint32_t svp_crypto_get_key_crc(uint8_t *fname) {
 
 uint8_t svp_crypto_reencrypt_key(uint8_t *fname, uint8_t *oldpass, uint8_t *newpass) {
   uint8_t new_key[KEY_LEN_MAX];
-  svp_file source;
-  uint32_t i;
   uint32_t crc;
 
   if (!svp_crypto_unlocked) {
@@ -443,32 +442,32 @@ void svp_printkey(uint8_t *key) {
 void svp_crypto_test() {
   puts("crypto test begin");
   // non-valid unlock
-  if (!svp_crypto_unlock("notpass")) {
+  if (!svp_crypto_unlock((uint8_t *)"notpass")) {
     puts("unlocked with wrong password");
     return;
   }
 
   // valid unlock
-  if (svp_crypto_unlock("def")) {
+  if (svp_crypto_unlock((uint8_t *)"def")) {
     puts("failed to unlock");
     return;
   }
 
   // change password
   printf("change password: old:%s new:", svp_crypto_password);
-  svp_crypto_change_password("new password");
+  svp_crypto_change_password((uint8_t *)"new password");
   printf("%s\n", svp_crypto_password);
 
   // set key
   printf("change key: old:%s new:", svp_crypto_key);
-  svp_crypto_set_key("new keyx");
+  svp_crypto_set_key((uint8_t *)"new keyx");
   printf("%s\n", svp_crypto_key);
 
   // generate
-  svp_crypto_generate_keyfile("keyfile.svk");
+  svp_crypto_generate_keyfile((uint8_t *)"keyfile.svk");
 
   // load
-  svp_crypto_load_keyfile("keyfile.svk");
+  svp_crypto_load_keyfile((uint8_t *)"keyfile.svk");
 
   // encrypt
   svp_encrypt("testfile.txt");
@@ -476,7 +475,7 @@ void svp_crypto_test() {
   puts("encrypted");
   getchar();
   // decrypt
-  svp_decrypt("testfile.txt");
+  svp_decrypt((uint8_t *)"testfile.txt");
 
   puts("crypto test end");
 }

@@ -26,7 +26,6 @@ uint16_t sda_settings_notif_screen(uint8_t init) {
 
   // sound & notification settings
   static uint16_t optSoundMute;
-  static uint16_t optSoundLoud;
   static uint16_t optSoundBack;
   uint16_t optNotifyScr;
 

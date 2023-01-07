@@ -103,6 +103,7 @@ uint8_t sdaSvmHandleTimers() {
       }
     }
   }
+  return 1;
 }
 
 

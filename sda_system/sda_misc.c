@@ -25,7 +25,6 @@ SOFTWARE.
 // globals
 extern uint8_t timeUpdateFlag;
 extern volatile uint16_t sdaAppCounter;
-extern uint8_t sleepLock;
 
 static gr2EventType keyEvLocal[6];
 
@@ -113,6 +112,8 @@ gr2EventType sda_wrap_get_button(uint8_t num) {
     if (num == BUTTON_DOWN) return keyEvLocal[BUTTON_LEFT];
     if (num == BUTTON_RIGHT) return keyEvLocal[BUTTON_DOWN];
   }
+
+  return EV_NONE;
 }
 
 

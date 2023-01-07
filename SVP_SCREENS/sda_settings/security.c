@@ -169,4 +169,5 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     gr2_set_modified(optSecuOld, &sda_sys_con);
     sda_keyboard_hide();
   }
+  return 0;
 }
