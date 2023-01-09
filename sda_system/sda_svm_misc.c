@@ -92,6 +92,21 @@ uint8_t sdaGetRedrawDetect() {
 }
 
 
+// beep callback init & handler
+void svmSetBeepCallback(uint8_t * cb, uint32_t time) {
+ sda_strcp(cb, svmMeta.beepTimerCallback, sizeof(svmMeta.beepTimerCallback));
+ svmMeta.beepTime = (svpSGlobal.uptimeMs - svmGetAppUptime()) + time;
+}
+
+uint8_t svmBeepHandler() {
+  if ((svpSGlobal.uptimeMs - svmGetAppUptime()) > svmMeta.beepTime && svmMeta.beepTime != 0) {
+    svmMeta.beepTime = 0;
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 // svm init
 void svmInitRemoveCache(uint8_t *ext){
   uint8_t buffer[255];
@@ -214,4 +229,26 @@ void sdaUpdateCurrentWD() { // get current wd relative to main dir
   }
 
   svp_chdir(svmMeta.currentWorkDir);
+}
+
+
+uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
+  uint8_t dirbuf[258];
+
+  svp_getcwd(dirbuf, 256);
+  newFname[0] = 0;
+
+  for (uint16_t i = 0; i < sizeof(dirbuf); i++) {
+    if ((i < (sizeof(dirbuf) - 4)) && dirbuf[i] == 'A' && dirbuf[i+1] == 'P' && dirbuf[i+2] == 'P' && dirbuf[i+3] == 'S') {
+      i += 3;
+      if (dirbuf[i+1] != 0) { // if we are in apps root folder, we don't need the slash
+        sda_strcp(dirbuf + i + 2, newFname, APP_NAME_LEN);
+        sda_strcp((uint8_t *)"/", newFname + sda_strlen(newFname), APP_NAME_LEN);
+      }
+      sda_strcp(oldFname, newFname + sda_strlen(newFname), APP_NAME_LEN);
+      return 0;
+    }
+  }
+
+  return 1;
 }

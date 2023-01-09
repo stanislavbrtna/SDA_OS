@@ -116,5 +116,8 @@ void svmSetNextId(uint16_t id);
 void svmRemoveCachedProc(uint16_t id);
 void svmRemoveCachedFile(uint16_t id, uint8_t * tail);
 void sdaSvmInit();
+uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname);
+void svmSetBeepCallback(uint8_t * cb, uint32_t time);
+uint8_t svmBeepHandler();
 
 #endif

@@ -135,26 +135,7 @@ uint16_t sdaSvmGetId() {
   }
 }
 
-static uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
-  uint8_t dirbuf[258];
 
-  svp_getcwd(dirbuf, 256);
-  newFname[0] = 0;
-
-  for (uint16_t i = 0; i < sizeof(dirbuf); i++) {
-    if ((i < (sizeof(dirbuf) - 4)) && dirbuf[i] == 'A' && dirbuf[i+1] == 'P' && dirbuf[i+2] == 'P' && dirbuf[i+3] == 'S') {
-      i += 3;
-      if (dirbuf[i+1] != 0) { // if we are in apps root folder, we don't need the slash
-        sda_strcp(dirbuf + i + 2, newFname, APP_NAME_LEN);
-        sda_strcp((uint8_t *)"/", newFname + sda_strlen(newFname), APP_NAME_LEN);
-      }
-      sda_strcp(oldFname, newFname + sda_strlen(newFname), APP_NAME_LEN);
-      return 0;
-    }
-  }
-
-  return 1;
-}
 
 // app loading/closing
 
@@ -268,6 +249,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   svmMeta.launchFromCWD = 0;
   svmMeta.cryptoUnlocked = 0;
   svmMeta.loadUptime = svpSGlobal.uptimeMs;
+  svmMeta.beepTime = 0;
   wrap_set_lcdOffButtons(0);
 
   // move to DATA
@@ -626,6 +608,16 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
     
     if (svmCheckAndExit()) {
       return 0;
+    }
+
+    if (svmBeepHandler()) {
+      if (functionExists(svmMeta.beepTimerCallback, &svm)) {
+        commExec(svmMeta.beepTimerCallback, &svm);
+      } else {
+        sdaSvmCloseApp();
+        sda_show_error_message((uint8_t *)"Beep callback function not found.\n");
+        return 0;
+      }
     }
 
     if(functionExists((uint8_t *)"update", &svm)) {

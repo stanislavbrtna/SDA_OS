@@ -41,6 +41,27 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Beep the speaker with callback
+  //#!    sys.snd.beepC([num] frequency_hz, [num] duration_ms, [str] callback);
+  //#!Makes sound of given frequency and duration, calls given callback afterwards.
+  //#!Internally calls sys.snd.beepTime and sys.snd.beepFreq, so calling sys.snd.beep();
+  //#!will produce tone with frequency nad duration of last sys.snd.beepC call.
+  //#!Return: None
+   if (sysFuncMatch(argS->callId, "beepC", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_STR;
+
+    if(sysExecTypeCheck(argS, argType, 3, s)) {
+      return 0;
+    }
+    svp_beep_set_pf(argS->arg[1].val_u);
+    svp_beep_set_t(argS->arg[2].val_u);
+    svp_beep();
+    svmSetBeepCallback(s->stringField + argS->arg[3].val_str, argS->arg[2].val_u);
+    return 1;
+  }
+
   //#!##### Set beep param to default
   //#!    sys.snd.beepDef();
   //#!Sets beep to its default values.
@@ -53,7 +74,7 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Set time of beep
+  //#!##### Set the duration
   //#!    sys.snd.beepTime([num]time (~ms));
   //#!Sets lenght of beep.
   //#!Return: None
@@ -66,7 +87,7 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Set period of beep
+  //#!##### Set the frequency
   //#!    sys.snd.beepFreq([num]frequency (Hz));
   //#!Sets frequency of the beep in Hz in range from 27 to 20000.
   //#!Return: None

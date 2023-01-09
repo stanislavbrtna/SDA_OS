@@ -132,16 +132,18 @@ typedef struct {
   uint8_t  currentWorkDir[APP_NAME_LEN];
   uint8_t  landscape;
   uint16_t screen;
-  uint8_t  openFileName[64];
+  uint8_t  openFileName[128];
   uint8_t  openFileUsed;
-  uint8_t  openConfName[64];
+  uint8_t  openConfName[128];
   uint8_t  openConfUsed;
-  uint8_t  openCsvName[64];
+  uint8_t  openCsvName[128];
   uint8_t  openCsvUsed;
   uint8_t  lcdOffButtons;
   uint8_t  launchFromCWD;
   uint8_t  cryptoUnlocked;
   uint64_t loadUptime;
+  uint8_t  beepTimerCallback[15];
+  uint32_t beepTime;
 } sdaSvmMetadata;
 
 typedef struct {
