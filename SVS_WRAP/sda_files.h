@@ -36,4 +36,7 @@ void sda_files_copyer();
 
 void sda_files_wrapper_init();
 
+// internal wrapper functions
+void sda_files_close_conf_csv();
+
 #endif
