@@ -107,8 +107,6 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   uint8_t argType[11];
 
-  static uint8_t readBuff[2048];
-
   //#!##### Open file
   //#!    sys.fs.open([str]fname);
   //#!Opens text file for read or write.
@@ -535,50 +533,6 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
     result->value.val_u =svp_fexists(s->stringField + argS->arg[1].val_str);
     result->type = SVS_TYPE_NUM;
-
-    return 1;
-  }
-
-  //#!##### Seek in file and fill text field
-  //#!    sys.fs.seekFill([num]text_id, [num]filePos);
-  //#!Fills pscg element with text from filePos position.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "seekFill", s)) {
-    uint8_t c;
-    uint32_t i = 0;
-    argType[1] = SVS_TYPE_NUM;
-    argType[2] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 2, s)) {
-      return 0;
-    }
-
-    svp_fseek(&readFil, 0);
-
-    if (svp_get_size(&readFil) > (uint32_t) argS->arg[2].val_s) {
-      svp_fseek(&readFil, argS->arg[2].val_s);
-    } else {
-      svp_fseek(&readFil, svp_get_size(&readFil) - 80);
-    }
-
-    //zarážení o enter nefunguje dobře, zarážíme se o mezeru
-    if (argS->arg[2].val_s != 0) {
-      while (!svp_feof(&readFil)) {
-        c = svp_fread_u8(&readFil);
-        if (c == ' ') {
-          break;
-        }
-      }
-    }
-
-    readBuff[0] = 0;
-
-    for(i = 0; (i < 2001) && !svp_feof(&readFil); i++) {
-      readBuff[i] = svp_fread_u8(&readFil);
-    }
-    readBuff[i] = 0;
-
-    gr2_set_str(argS->arg[1].val_s,readBuff, &sda_app_con);
-    gr2_set_modified(argS->arg[1].val_s, &sda_app_con);
 
     return 1;
   }
