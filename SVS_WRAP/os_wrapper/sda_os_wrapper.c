@@ -406,7 +406,7 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_u = sdaSvmGetAuthorized();
+    result->value.val_s = sdaSvmGetAuthorized();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -430,7 +430,7 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    sda_set_time((uint16_t) argS->arg[1].val_s, (uint16_t) argS->arg[3].val_s, 0,(uint16_t) argS->arg[2].val_s, (uint16_t) argS->arg[4].val_s, (uint16_t) argS->arg[5].val_s, 0);
+    sda_set_time((uint16_t) argS->arg[1].val_s, (uint8_t) argS->arg[3].val_s, svpSGlobal.weekday,(uint8_t) argS->arg[2].val_s, (uint8_t) argS->arg[4].val_s, (uint8_t) argS->arg[5].val_s, 0);
     
     result->value.val_u = 0;
     result->type = SVS_TYPE_NUM;
