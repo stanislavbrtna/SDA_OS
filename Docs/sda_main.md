@@ -95,3 +95,17 @@ Return: None
     sys.os.subRetval([str] arg0, [str] arg1, [str] arg2);
 Sets values that will be returned to parent process
 Return: None
+#### OS settings functions
+##### Requests high privileges
+    sys.os.settings.rqAuth();
+Requests authorization form user to change system settings.
+Result can be retrieved with 'sys.os.settings.getAuth();'
+Return: None
+##### Gets if privileges are granted
+    sys.os.settings.getAuth();
+Gets if high privileges are granted.
+Return: [num] 1 if authorization is given
+##### Sets time and date
+    sys.os.settings.setTime([num] year, [num] month, [num] day, [num] hour, [num] min);
+Sets values that will be returned to parent process
+Return: None

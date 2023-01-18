@@ -91,6 +91,14 @@ uint8_t sdaGetRedrawDetect() {
   return redrawDetect;
 }
 
+void sdaSvmAuthorize() {
+  svmMeta.authorized = 1;
+}
+
+uint8_t sdaSvmGetAuthorized() {
+  return svmMeta.authorized;
+}
+
 
 // beep callback init & handler
 void svmSetBeepCallback(uint8_t * cb, uint32_t time) {

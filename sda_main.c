@@ -487,6 +487,7 @@ uint8_t sda_main_loop() {
   }
 
   taskSwitcherUpdate();
+  sda_auth_overlay_handle();
 
   // updating screens
   if (sda_slot_get_valid(0)) {

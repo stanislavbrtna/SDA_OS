@@ -71,30 +71,13 @@ uint16_t sda_settings_time_screen(uint8_t init) {
   time_overlay_update(timeOvrId);
 
   if(time_overlay_get_ok(timeOvrId)) {
-    #ifdef PLATFORM_PC
-    printf("setting time: %u:%u (Does not work in simulation)\n", time_overlay_get_hours(timeOvrId), time_overlay_get_minutes(timeOvrId));
-    #else
-    printf("Old time: y:%u d:%u wkd:%u mon:%u %u:%u \n",svpSGlobal.year, svpSGlobal.day, svpSGlobal.weekday, svpSGlobal.month, svpSGlobal.hour, svpSGlobal.min);
-    rtc_set_time(svpSGlobal.year, svpSGlobal.day, svpSGlobal.weekday, svpSGlobal.month, (uint8_t) time_overlay_get_hours(timeOvrId), (uint8_t) time_overlay_get_minutes(timeOvrId), 0);
-    printf("New time: y:%u d:%u wkd:%u mon:%u %u:%u \n",svpSGlobal.year, svpSGlobal.day, svpSGlobal.weekday, svpSGlobal.month, svpSGlobal.hour, svpSGlobal.min);
-    #endif
+    sda_set_time(svpSGlobal.year, svpSGlobal.day, svpSGlobal.weekday, svpSGlobal.month, (uint8_t) time_overlay_get_hours(timeOvrId), (uint8_t) time_overlay_get_minutes(timeOvrId), 0);
     time_overlay_clear_ok(timeOvrId);
     timeOvrId = 0;
   }
 
   if(date_overlay_get_ok(dateOvrId)) {
-#ifndef PC
-    rtc_set_time(date_overlay_get_year(dateOvrId), date_overlay_get_day(dateOvrId), svpSGlobal.weekday, date_overlay_get_month(dateOvrId),svpSGlobal.hour, svpSGlobal.min, svpSGlobal.sec);
-    printf("New date: y:%u d:%u wkd:%u mon:%u %u:%u \n",svpSGlobal.year, svpSGlobal.day, svpSGlobal.weekday, svpSGlobal.month, svpSGlobal.hour, svpSGlobal.min);
-#else
-    printf("setting date locally: %u. %u. %u \n", date_overlay_get_day(dateOvrId), date_overlay_get_month(dateOvrId), date_overlay_get_year(dateOvrId));
-    svpSGlobal.day=date_overlay_get_day(dateOvrId);
-    svpSGlobal.month=date_overlay_get_month(dateOvrId);
-    if (date_overlay_get_year(dateOvrId) > 2005) {
-      svpSGlobal.year=date_overlay_get_year(dateOvrId);
-    }
-#endif
-    svpSGlobal.dateUpdated = 1;
+    sda_set_time(date_overlay_get_year(dateOvrId), date_overlay_get_day(dateOvrId), svpSGlobal.weekday, date_overlay_get_month(dateOvrId),svpSGlobal.hour, svpSGlobal.min, svpSGlobal.sec);
     date_overlay_clear_ok(dateOvrId);
     dateOvrId = 0;
   }

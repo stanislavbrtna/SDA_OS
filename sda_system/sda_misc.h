@@ -52,6 +52,16 @@ void sda_draw_overlay_shadow(
   gr2context *c
 );
 
+void sda_set_time(
+  uint16_t year,
+  uint8_t  day,
+  uint8_t  wkday,
+  uint8_t  month,
+  uint8_t  hour,
+  uint8_t  min,
+  uint8_t  sec
+);
+
 void sda_check_fs();
 
 void sda_set_landscape(uint8_t val);

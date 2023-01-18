@@ -74,6 +74,7 @@
 #define OVRL_SILENT                                   (uint8_t*)"Silent mode"
 #define OVRL_ERROR                                    (uint8_t*)"Error occurred:"
 #define OVRL_ENTER_PASSWORD                           (uint8_t*)"Enter password:"
+#define OVRL_GRANT_PERMISSIONS                        (uint8_t*)"Allow this application to change system settins?"
 #define SCR_KEY_ERROR_MSG                             (uint8_t*)"Given password doesn\'t match the device encryption key."
 #define OVRL_SEC_NOT_SET_UP                           (uint8_t*)"Not configured!"
 

@@ -118,7 +118,6 @@ void sda_store_config_gui(uint8_t set_def) {
   sda_conf_close(&conffile);
   svp_chdir(dirbuf);
   printf("Done.\n");
-
 }
 
 

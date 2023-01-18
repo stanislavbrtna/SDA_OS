@@ -75,7 +75,7 @@
 #define OVRL_SILENT                   (uint8_t *)"Tichý režim"
 #define OVRL_ERROR                    (uint8_t *)"Nastala chyba:"
 #define OVRL_SEC_NOT_SET_UP           (uint8_t *)"Nenastaveno!"
-
+#define OVRL_GRANT_PERMISSIONS        (uint8_t *)"Povolit této aplikaci měnit nastavení systému?"
 #define OVRL_ENTER_PASSWORD           (uint8_t *)"Zadejte heslo:"
 
 #define ASCR_CARD_ERROR               (uint8_t *)"Chyba Karty"

@@ -74,4 +74,8 @@ void password_overlay_update(uint16_t ovId);
 uint16_t password_overlay_get_ok(uint16_t ovId);
 void password_overlay_clear_ok(uint16_t ovId);
 
+// auth overlay
+void sda_show_auth_overlay_init();
+void sda_auth_overlay_handle();
+
 #endif

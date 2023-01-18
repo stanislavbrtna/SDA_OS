@@ -27,8 +27,6 @@ svp_file readFil;
 uint8_t fr_filename[64];
 uint8_t fr_open;
 
-
-
 //copy API
 svp_file copySource;
 svp_file copyDest;

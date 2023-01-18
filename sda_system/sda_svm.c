@@ -250,6 +250,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   svmMeta.cryptoUnlocked = 0;
   svmMeta.loadUptime = svpSGlobal.uptimeMs;
   svmMeta.beepTime = 0;
+  svmMeta.authorized = 0;
   wrap_set_lcdOffButtons(0);
 
   // move to DATA

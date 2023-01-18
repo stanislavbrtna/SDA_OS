@@ -60,6 +60,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 
 
 svsConstType svsWrapConsts[] = {
@@ -107,6 +108,7 @@ void sda_svs_wrapper_init() {
   addSysWrapper(sda_time_alarm_wrapper, (uint8_t *)"alarm");
   addSysWrapper(sda_os_gui_wrapper, (uint8_t *)"os.gui");
   addSysWrapper(sda_os_cal_widget_wrapper, (uint8_t *)"w.cal");
+  addSysWrapper(sda_settings_wrapper, (uint8_t *)"os.settings");
 }
 
 
@@ -365,6 +367,71 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         argS->arg[2], argS->argType[2],
         argS->arg[3], argS->argType[3]
     );
+    return 1;
+  }
+
+  return 0;
+}
+
+
+uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+  uint8_t argType[11];
+  result->value.val_u = 0;
+  result->type = SVS_TYPE_NUM;
+
+  //#!#### OS settings functions
+
+  //#!##### Requests high privileges
+  //#!    sys.os.settings.rqAuth();
+  //#!Requests authorization form user to change system settings.
+  //#!Result can be retrieved with 'sys.os.settings.getAuth();'
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "rqAuth", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    sda_show_auth_overlay_init();
+
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Gets if privileges are granted
+  //#!    sys.os.settings.getAuth();
+  //#!Gets if high privileges are granted.
+  //#!Return: [num] 1 if authorization is given
+  if (sysFuncMatch(argS->callId, "getAuth", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_u = sdaSvmGetAuthorized();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Sets time and date
+  //#!    sys.os.settings.setTime([num] year, [num] month, [num] day, [num] hour, [num] min);
+  //#!Sets values that will be returned to parent process
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setTime", s)) {
+    argType[1] = 3;
+    argType[2] = 3;
+    argType[3] = 3;
+    if(sysExecTypeCheck(argS, argType, 5, s)) {
+      return 0;
+    }
+
+    if (!sdaSvmGetAuthorized()) {
+      errSoft("setTime: Not authorized!", s);
+      return 0;
+    }
+
+    sda_set_time((uint16_t) argS->arg[1].val_s, (uint16_t) argS->arg[3].val_s, 0,(uint16_t) argS->arg[2].val_s, (uint16_t) argS->arg[4].val_s, (uint16_t) argS->arg[5].val_s, 0);
+    
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 

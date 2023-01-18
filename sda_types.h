@@ -144,6 +144,7 @@ typedef struct {
   uint64_t loadUptime;
   uint8_t  beepTimerCallback[15];
   uint32_t beepTime;
+  uint8_t  authorized;
 } sdaSvmMetadata;
 
 typedef struct {

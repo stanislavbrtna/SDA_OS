@@ -217,3 +217,28 @@ void sda_set_landscape(uint8_t val) {
   }
   setRedrawFlag();
 }
+
+void sda_set_time(
+  uint16_t year,
+  uint8_t  day,
+  uint8_t  wkday,
+  uint8_t  month,
+  uint8_t  hour,
+  uint8_t  min,
+  uint8_t  sec
+) {
+  #ifdef PLATFORM_PC
+  printf("setting time: %u:%u %u. %u. %u (Only date setting works in simulation)\n", hour, min, day, month, year);
+  svpSGlobal.day = day;
+  svpSGlobal.month = month;
+  if (year > 2005) {
+    svpSGlobal.year = year;
+  }
+  #else
+  printf("Old time: y:%u d:%u wkd:%u mon:%u %u:%u \n",svpSGlobal.year, svpSGlobal.day, svpSGlobal.weekday, svpSGlobal.month, svpSGlobal.hour, svpSGlobal.min);
+  rtc_set_time(year, day, wkday, month, hour, min, sec);
+  printf("New time: y:%u d:%u wkd:%u mon:%u %u:%u \n",svpSGlobal.year, svpSGlobal.day, svpSGlobal.weekday, svpSGlobal.month, svpSGlobal.hour, svpSGlobal.min);
+  #endif
+
+  svpSGlobal.dateUpdated = 1;
+}
