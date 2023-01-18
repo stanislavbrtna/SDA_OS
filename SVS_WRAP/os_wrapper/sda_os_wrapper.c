@@ -416,9 +416,11 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Sets values that will be returned to parent process
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setTime", s)) {
-    argType[1] = 3;
-    argType[2] = 3;
-    argType[3] = 3;
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
+    argType[5] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 5, s)) {
       return 0;
     }
