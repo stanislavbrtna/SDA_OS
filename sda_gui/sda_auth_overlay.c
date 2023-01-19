@@ -80,7 +80,7 @@ void sda_show_auth_overlay_init() {
 }
 
 void sda_auth_overlay_handle() {
-  if (auth_overlay != getOverlayId()) {
+  if (auth_overlay != getOverlayId() || getOverlayId() == 0) {
     return;
   }
 
