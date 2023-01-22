@@ -207,6 +207,7 @@ void sda_check_fs() {
   }
 }
 
+
 void sda_set_landscape(uint8_t val) {
   if (val == 1) {
     LCD_set_orientation(OR_ROT_RIGHT);
@@ -217,6 +218,7 @@ void sda_set_landscape(uint8_t val) {
   }
   setRedrawFlag();
 }
+
 
 void sda_set_time(
   uint16_t year,
@@ -241,4 +243,31 @@ void sda_set_time(
   #endif
 
   svpSGlobal.dateUpdated = 1;
+}
+
+
+void sda_set_init_struct_defaults() {
+  svpSGlobal.uptime = 0;
+  svpSGlobal.lcdOnTime = 0;
+  svpSGlobal.dateUpdated = 0;
+  svpSGlobal.systemRedraw = 0;
+  svpSGlobal.lcdLandscape = 0;
+  svpSGlobal.systemXBtnClick = 0;
+  svpSGlobal.systemXBtnVisible = 1;
+  svpSGlobal.kbdVisible = 0;
+  svpSGlobal.mute = 0;
+
+  // 101 is non-valid init value, displays questionmark
+  svpSGlobal.battPercentage = 101;
+  svpSGlobal.battString[0] = ' ';
+  svpSGlobal.battString[1] = ' ';
+  svpSGlobal.battString[2] = ' ';
+  svpSGlobal.battString[3] = '?';
+  svpSGlobal.battString[4] = 'V';
+  svpSGlobal.battString[5] = 0;
+
+  svpSGlobal.pwrType = POWER_BATT;
+  svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
+  svpSGlobal.lcdBacklight = 255;
+  svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
 }

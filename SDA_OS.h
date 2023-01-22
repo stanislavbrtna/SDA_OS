@@ -123,4 +123,6 @@ uint8_t rtc_read_password(uint8_t *pwd);
 uint32_t rtc_read_locked();
 void rtc_write_locked(uint32_t val);
 
+void sda_main_redraw();
+void sda_main_process_touch();
 #endif

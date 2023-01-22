@@ -105,7 +105,6 @@ void sda_power_wait_for_input() {
     #ifdef PC
     break;
     #endif
-
   }
 }
 
