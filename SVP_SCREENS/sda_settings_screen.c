@@ -24,6 +24,10 @@ SOFTWARE.
 #include "sda_settings/settings.h"
 
 uint16_t prac_screen;
+uint16_t optMntSel;
+
+void settings_sd_umount();
+void settings_sd_mount();
 
 void svp_settings_set_spacing(uint16_t id) {
   gr2_set_param(id, SDA_SETTINGS_SPACER, &sda_sys_con);
@@ -47,20 +51,12 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 
   static uint16_t optSecuSel;
 
-  static uint16_t optMntSel;
   static uint16_t optSound;
-
-
-  //mount
-  static uint8_t sd_mounted;
-
 
   static uint8_t sd_inserted_pre;
 
 
   if (init == 1) {
-
-    sd_mounted = svp_getMounted();
 
     sd_inserted_pre = 1;
 
@@ -139,7 +135,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 
     /*Card unmounting and apps reloader*/
     if (gr2_clicked(optMntSel, &sda_sys_con)) {
-      if (sd_mounted == 1) {
+      if (svp_getMounted() == 1) {
         svmCloseAll();
         settings_sd_umount();
       } else {
@@ -182,7 +178,6 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 void settings_sd_umount() {
   sda_slot_on_top(2);
   svp_umount();
-  sd_mounted = 0;
   gr2_set_str(optMntSel, SCR_SD_MOUNT, &sda_sys_con);
   prac_screen = slotScreen[1];
   slotScreen[1] = gr2_add_screen(&sda_sys_con);
@@ -198,7 +193,6 @@ void settings_sd_mount() {
     gr2_destroy(slotScreen[1], &sda_sys_con);
     gr2_destroy(prac_screen, &sda_sys_con);
     slotScreen[1] = svp_appScreen(1, 0);
-    sd_mounted = 1;
     sda_slot_on_top(2);
   }
 }
