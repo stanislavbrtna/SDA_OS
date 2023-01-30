@@ -99,6 +99,7 @@ uint16_t sda_usb_serial_get_str(uint8_t *str);
 // [HW] System
 void svp_set_calibration_data(touchCalibDataStruct input);
 uint8_t svp_getLcdCalibrationFlag();
+uint8_t sda_card_inserted();
 
 // [HW] RTC Backup registers
 void rtc_write_password(uint8_t *pwd);

@@ -23,6 +23,8 @@ SOFTWARE.
 #include "svp_screens.h"
 #include "sda_settings/settings.h"
 
+uint16_t prac_screen;
+
 void svp_settings_set_spacing(uint16_t id) {
   gr2_set_param(id, SDA_SETTINGS_SPACER, &sda_sys_con);
 }
@@ -51,11 +53,16 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 
   //mount
   static uint8_t sd_mounted;
-  static uint16_t prac_screen;
+
+
+  static uint8_t sd_inserted_pre;
+
 
   if (init == 1) {
 
-    sd_mounted = 1; //probably
+    sd_mounted = svp_getMounted();
+
+    sd_inserted_pre = 1;
 
     optScreen = gr2_add_screen(&sda_sys_con);
 
@@ -134,25 +141,9 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
     if (gr2_clicked(optMntSel, &sda_sys_con)) {
       if (sd_mounted == 1) {
         svmCloseAll();
-        sda_slot_on_top(2);
-        svp_umount();
-        sd_mounted = 0;
-        gr2_set_str(optMntSel, SCR_SD_MOUNT, &sda_sys_con);
-        prac_screen = slotScreen[1];
-        slotScreen[1] = gr2_add_screen(&sda_sys_con);
-        gr2_add_text(1, 1, 10, 2, SCR_SD_NOT_PRESENT_WARNING, slotScreen[1], &sda_sys_con);
+        settings_sd_umount();
       } else {
-        if(svp_mount()) {
-          sda_show_error_message(SCR_CARD_ERROR_MSG);
-        } else {
-          gr2_set_str(optMntSel, SD_UMOUNT, &sda_sys_con);
-          // little hack for reload of app screen
-          gr2_destroy(slotScreen[1], &sda_sys_con);
-          gr2_destroy(prac_screen, &sda_sys_con);
-          slotScreen[1] = svp_appScreen(1, 0);
-          sd_mounted = 1;
-          sda_slot_on_top(2);
-        }
+        settings_sd_mount();
       }
     }
 
@@ -170,6 +161,45 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
       globBack = 0;
     }
   }
+
+  if (sda_card_inserted() != sd_inserted_pre) {
+    gr2_set_grayout(optMntSel, 1 - sda_card_inserted(), &sda_sys_con);
+
+    if (sda_card_inserted() == 0) {
+      settings_sd_umount();
+    }
+
+    if (sda_card_inserted() == 1) {
+      settings_sd_mount();
+    }
+
+    sd_inserted_pre = sda_card_inserted();
+  }
+
   return 0;
+}
+
+void settings_sd_umount() {
+  sda_slot_on_top(2);
+  svp_umount();
+  sd_mounted = 0;
+  gr2_set_str(optMntSel, SCR_SD_MOUNT, &sda_sys_con);
+  prac_screen = slotScreen[1];
+  slotScreen[1] = gr2_add_screen(&sda_sys_con);
+  gr2_add_text(1, 1, 10, 2, SCR_SD_NOT_PRESENT_WARNING, slotScreen[1], &sda_sys_con);
+}
+
+void settings_sd_mount() {
+  if(svp_mount()) {
+    sda_show_error_message(SCR_CARD_ERROR_MSG);
+  } else {
+    gr2_set_str(optMntSel, SD_UMOUNT, &sda_sys_con);
+    // little hack for reload of app screen
+    gr2_destroy(slotScreen[1], &sda_sys_con);
+    gr2_destroy(prac_screen, &sda_sys_con);
+    slotScreen[1] = svp_appScreen(1, 0);
+    sd_mounted = 1;
+    sda_slot_on_top(2);
+  }
 }
 
