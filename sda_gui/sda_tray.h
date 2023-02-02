@@ -26,11 +26,6 @@ SOFTWARE.
 
 void svp_set_irq_redraw();
 
-void svp_tray_time(int16_t x1, int16_t y1, uint16_t w);
-void svp_tray_alarm(int16_t x1, int16_t y1, int16_t w);
-void svp_tray_battery(int16_t x1, int16_t y1, int16_t w);
-uint8_t svp_tray_XBtn(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t reset);
-uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 uint8_t svp_tray();
 uint8_t svp_irq();
 
