@@ -108,6 +108,8 @@ typedef struct {
   volatile clickType systemOptClick;
   volatile uint8_t systemPwrLongPress;
 
+  volatile uint8_t breakP16Draw;
+
   volatile sdaDeviceLockType sdaDeviceLock;
 
   volatile pwrModeType  powerMode; // normal or sleep

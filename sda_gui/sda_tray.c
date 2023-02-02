@@ -227,6 +227,7 @@ static uint8_t tray_close(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_
         svpSGlobal.systemXBtnTime = svpSGlobal.timestamp;
       }
     }
+    return 0;
   }
 
   if((init == 0) || (reset == 1) || (irq_redraw)) {
@@ -349,6 +350,7 @@ uint8_t svp_tray() {
   if ((svpSGlobal.systemXBtnTime != 0) && ((svpSGlobal.systemXBtnTime + 5) < svpSGlobal.timestamp)) {
     svpSGlobal.systemXBtnTime = 0;
     sdaSvmSetError((uint8_t *) "App not responding.");
+    svpSGlobal.breakP16Draw = 1;
     sdaSvmKillApp();
     irq_redraw_block_disable(); 
   }

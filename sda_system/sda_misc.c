@@ -270,4 +270,6 @@ void sda_set_init_struct_defaults() {
   svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
   svpSGlobal.lcdBacklight = 255;
   svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
+
+  svpSGlobal.breakP16Draw = 0;
 }

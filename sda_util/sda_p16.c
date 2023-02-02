@@ -34,6 +34,7 @@ static uint16_t p16_bg_color;
 
 uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t *filename);
 
+static void break_draw_cleanup(svp_file *fp);
 
 void sda_p16_set_pmc(uint8_t enable, uint16_t color) {
   p16_use_pmc = enable;
@@ -189,6 +190,7 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
     }
 
     LCD_canvas_putcol(color);
+    if (svpSGlobal.breakP16Draw == 1) {break_draw_cleanup(&fp); return 0;}
   }
 
   LCD_setDrawAreaS(&area);
@@ -258,6 +260,7 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
         for (int c = 0; c < width_n; c++) {
           LCD_canvas_putcol(color);
           pix++;
+          if (svpSGlobal.breakP16Draw == 1) {break_draw_cleanup(&fp); return 0;}
         }
       }
     }
@@ -346,6 +349,7 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
 
       LCD_canvas_putcol(color);
       pix++;
+      if (svpSGlobal.breakP16Draw == 1) {break_draw_cleanup(&fp); return 0;}
     }
     
     if (header.imageWidth % 2) {
@@ -393,4 +397,10 @@ uint16_t sda_p16_get_height(uint8_t *filename) {
   p16_get_header(&fp, &header);
   svp_fclose(&fp);
   return header.imageHeight;
+}
+
+static void break_draw_cleanup(svp_file *fp) {
+  svp_fclose(fp);
+  svpSGlobal.breakP16Draw = 0;
+  irq_redraw_block_disable();
 }
