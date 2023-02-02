@@ -362,6 +362,10 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
         color = p16_get_pixel(&fp, &header, &imageState);
       }
     }
+
+    if (pix >= drawn_width*drawn_height) {
+      break;
+    }
   }
 
   svp_fclose(&fp);
