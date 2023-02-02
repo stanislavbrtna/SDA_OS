@@ -282,12 +282,10 @@ uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
       );
 
       if (holdCounter == OPT_HOLD_CNT_MAX) {
-        LCD_FillRect(x1, y1, x2, y2, gr2_get_active_color(&sda_sys_con));
+        LCD_FillRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1, gr2_get_active_color(&sda_sys_con));
       }
 
       LCD_DrawText_ext(x1 + 10, y1 + 2, gr2_get_text_color(&sda_sys_con), (uint8_t *)"S!");
-
-
     }
 
     click = 1;
@@ -307,12 +305,8 @@ uint8_t svp_tray_Opt(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
     svpSGlobal.systemOptClick = CLICKED_LONG;
   }
 
-  if (holdCounter > OPT_HOLD_CNT_MAX && click == 0 && clickOld == 1 ) {
+  if (holdCounter > 0 && click == 0 && clickOld == 1 ) {
     init = 0;
-  }
-
-
-  if (click == 0){
     holdCounter = 0;
   }
 
