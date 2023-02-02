@@ -157,7 +157,7 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
     printf("sda_draw_p16: Error while opening file %s!\n", filename);
     return 1;
   }
-  touch_lock = SDA_LOCK_LOCKED;
+  irq_redraw_block_enable();
 
   p16_get_header(&fp, &header);
 
@@ -193,7 +193,7 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
 
   LCD_setDrawAreaS(&area);
   svp_fclose(&fp);
-  touch_lock = SDA_LOCK_UNLOCKED;
+  irq_redraw_block_disable();
   return 0;
 }
 
@@ -211,7 +211,7 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
     printf("sda_draw_p16: Error while opening file %s!\n", filename);
     return 1;
   }
-  touch_lock = SDA_LOCK_LOCKED;
+  irq_redraw_block_enable();
 
   p16_get_header(&fp, &header);
   LCD_getDrawArea(&area);
@@ -265,7 +265,7 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
 
   svp_fclose(&fp);
   LCD_setDrawAreaS(&area);
-  touch_lock = SDA_LOCK_UNLOCKED;
+  irq_redraw_block_disable(); 
   return 0;
 }
 
@@ -304,7 +304,7 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
     printf("sda_draw_p16: Error while opening file %s!\n", filename);
     return 1;
   }
-  touch_lock = SDA_LOCK_LOCKED;
+  irq_redraw_block_enable();
 
   p16_get_header(&fp, &header);
   LCD_getDrawArea(&area);
@@ -362,7 +362,7 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
 
   svp_fclose(&fp);
   LCD_setDrawAreaS(&area);
-  touch_lock = SDA_LOCK_UNLOCKED;
+  irq_redraw_block_disable();
   return 0;
 }
 
