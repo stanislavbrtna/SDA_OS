@@ -1,5 +1,6 @@
-#### SDA OS HW functions
+### SDA OS HW functions
 #### Constants
+##### Indicator LED
 | Constant | Description |
 |   ---    |    ---      |
 | LED_ON | Nonification led on |
@@ -7,12 +8,19 @@
 | LED_BLINK | Nonification led pattern |
 | LED_SHORTBLINK | Nonification led pattern |
 | LED_ALARM | Nonification led pattern |
+##### Buttons
+| Constant | Description |
+|   ---    |    ---      |
 | BTN_A | Button define |
 | BTN_LEFT | Button define |
 | BTN_UP | Button define |
 | BTN_DOWN | Button define |
 | BTN_RIGHT | Button define |
 | BTN_B | Button define |
+ ![Buttons layout](sda_buttons.png)
+##### Expansion pin states
+| Constant | Description |
+|   ---    |    ---      |
 | PIN_IN | Expansion pin setup define |
 | PIN_OUT | Expansion pin setup define |
 | PIN_ALT | Expansion pin setup define |
@@ -20,13 +28,14 @@
 | PIN_PULLUP | Expansion pin setup define |
 | PIN_PULLDOWN | Expansion pin setup define |
 
+#### LCD Functions
 ##### Lock LCD sleep
     sys.hw.lockSleep([num]val);
 Sets sleep lock value. On 1 system wont go to sleep.
 Return: None
 ##### Turn on the LCD
     sys.hw.wakeLcd();
-Wakes LCD screen.
+Turns on the LCD screen.
 Return: None
 ##### Get LCD state
     sys.hw.getLcdState();
