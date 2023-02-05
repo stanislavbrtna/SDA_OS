@@ -92,5 +92,6 @@ File description:
 #define SDA_ENDLINE 10
 #define SDA_SEPARATOR '|'
 
+#define SDA_FILES_OPEN_MAX 10
 
 #endif

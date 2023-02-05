@@ -22,10 +22,10 @@ SOFTWARE.
 
 #include "sda_files.h"
 
-//file
-svp_file readFil;
-uint8_t fr_filename[64];
-uint8_t fr_open;
+//files
+svp_file readFil[SDA_FILES_OPEN_MAX];
+uint8_t  fr_filename[SDA_FILES_OPEN_MAX][128];
+uint8_t  fr_open[SDA_FILES_OPEN_MAX];
 
 //copy API
 svp_file copySource;
@@ -63,29 +63,40 @@ void sda_files_copyer() {
 
 
 void sda_files_close() {
-  if (fr_open) {
-    svp_fclose(&readFil);
-    fr_open = 0;
-  }
+  for(uint16_t i = 0; i < SDA_FILES_OPEN_MAX; i++) {
+    if (fr_open[i]) {
+      svp_fclose(&readFil[i]);
+      fr_open[i] = 0;
+    }
 
+  }
   sda_files_close_conf_csv();
 }
 
 
-uint8_t * sda_get_fr_fname() {
-  if (fr_open) {
-    return fr_filename;
+uint8_t * sda_get_fr_fname(uint16_t index) {
+  if (fr_open[index]) {
+    return fr_filename[index];
   } else {
     return 0;
   }
 }
 
-uint8_t sda_fr_fname_open(uint8_t * fname) {
-  sda_strcp(fname, fr_filename, sizeof(fr_filename));
-  fr_open = svp_fopen_rw(&readFil, fname);
-  return fr_open;
-}
+extern svsVM svm;
 
+uint8_t sda_fr_fname_open(uint16_t index, uint8_t * fname) {
+  if (index >= SDA_FILES_OPEN_MAX) {
+     errSoft("error: file index not valid!", &svm);
+  }
+
+  if (!svp_fexists(fname)) {
+    return 0;
+  }
+
+  sda_strcp(fname, fr_filename[index], sizeof(fr_filename[index]));
+  fr_open[index] = svp_fopen_rw(&readFil[index], fname);
+  return fr_open[index];
+}
 
 
 uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
@@ -101,21 +112,40 @@ void sda_files_wrapper_init() {
 
 //#!### SDA Files
 
+//#!
+//#!Since SDA_OS 1.0.2, more than one general purpose file is supported.
+//#!Functions for basic file i/o operations now accept optional index parameter
+//#!that specifies what file is used.
+//#!Number of files currently openned is defined in SDA_FILES_OPEN_MAX define.
+//#!Default value is 10.
+//#!
+
 uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   uint8_t argType[11];
 
   //#!##### Open file
   //#!    sys.fs.open([str]fname);
-  //#!Opens text file for read or write.
+  //#!    sys.fs.open([num]index, [str]fname);
+  //#!Opens text file for read or write. If no file index is given, index 0 is used.
   //#!Return: 1 on success, 0 on failure
   if (sysFuncMatch(argS->callId, "open", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
+    if(argS->usedup == 1) {
+      argType[1] = SVS_TYPE_STR;
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+      result->value.val_u = sda_fr_fname_open(0, s->stringField + argS->arg[1].val_str);
+    } else {
+      argType[1] = SVS_TYPE_NUM;
+      argType[2] = SVS_TYPE_STR;
+      if(sysExecTypeCheck(argS, argType, 2, s)) {
+        return 0;
+      }
+      result->value.val_u = sda_fr_fname_open(argS->arg[1].val_s, s->stringField + argS->arg[2].val_str);
     }
 
-    result->value.val_u = sda_fr_fname_open(s->stringField + argS->arg[1].val_str);
+    
     result->type = SVS_TYPE_NUM;
 
     return 1;
@@ -123,27 +153,43 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Read given number of chars
   //#!    sys.fs.readChars([num] bytes);
+  //#!    sys.fs.readChars([num]index, [num] bytes);
   //#!Reads given number of chars from file.
+  //#!If no file index is given, index 0 is used.
   //#!Return: [str] result
   if (sysFuncMatch(argS->callId, "readChars", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
+    uint16_t file_index = 0;
+    uint32_t goal_len;
+
+    if(argS->usedup == 1) {
+      argType[1] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+      goal_len = argS->arg[1].val_s;
+    } else {
+      argType[1] = SVS_TYPE_NUM;
+      argType[2] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 2, s)) {
+        return 0;
+      }
+      file_index = argS->arg[1].val_s;
+      goal_len = argS->arg[2].val_s;
     }
 
     strNewStreamInit(s);
     uint8_t c;
-    uint16_t len = 1;
+    uint32_t len = 1;
 
-    if (!fr_open) {
+    if (!fr_open[file_index]) {
       result->value.val_u = strNewStreamEnd(s);
       result->type = SVS_TYPE_STR;
       return 1;
     }
 
-    while (!svp_feof(&readFil)) {
-      c = svp_fread_u8(&readFil);
-      if (strNewStreamPush(c, s) || (argS->arg[1].val_s == len)) {
+    while (!svp_feof(&readFil[file_index])) {
+      c = svp_fread_u8(&readFil[file_index]);
+      if (strNewStreamPush(c, s) || (goal_len == len)) {
         break;
       }
       len++;
@@ -156,27 +202,39 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Writes given string to file
-  //#!    sys.fs.writeChars([str] string);
+  //#!    sys.fs.writeChars([str]string);
+  //#!    sys.fs.writeChars([num]index, [str]string);
   //#!Writes given string to file.
   //#!Return: 1 - ok, 0 - fail
   if (sysFuncMatch(argS->callId, "writeChars", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
+    uint16_t file_index = 0;
     uint8_t * str;
     uint32_t i = 0;
 
-    str = s->stringField + argS->arg[1].val_str;
+    if(argS->usedup == 1) {
+      argType[1] = SVS_TYPE_STR;
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+      str = s->stringField + argS->arg[1].val_str;
+    } else {
+      argType[1] = SVS_TYPE_NUM;
+      argType[2] = SVS_TYPE_STR;
+      if(sysExecTypeCheck(argS, argType, 2, s)) {
+        return 0;
+      }
+      file_index = argS->arg[1].val_s;
+      str = s->stringField + argS->arg[2].val_str;
+    }  
 
-    if (!fr_open) {
+    if (!fr_open[file_index]) {
       result->value.val_u = 0;
       result->type = SVS_TYPE_NUM;
       return 1;
     }
 
     while (str[i] != 0) {
-      svp_fwrite_u8(&readFil, str[i]);
+      svp_fwrite_u8(&readFil[file_index], str[i]);
       i++;
     }
     result->value.val_u = 1;
@@ -187,48 +245,74 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Read byte from file
   //#!    sys.fs.readByte();
+  //#!    sys.fs.readByte([num]index);
   //#!Reads byte from file.
   //#!Return: [num] result: 0 to 255 - ok, -1 - error, -2 - EOF
   if (sysFuncMatch(argS->callId, "readByte", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
+    uint16_t file_index = 0;
+
+    if(argS->usedup == 0) {
+      if(sysExecTypeCheck(argS, argType, 0, s)) {
+        return 0;
+      }
+    } else {
+      argType[1] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+      file_index = argS->arg[1].val_s;
     }
 
     result->value.val_s = -1;
     result->type = SVS_TYPE_NUM;
 
-    if (!fr_open) {
+    if (!fr_open[file_index]) {
       return 1;
     }
 
-    if (svp_feof(&readFil)) {
+    if (svp_feof(&readFil[file_index])) {
       result->value.val_s = -2;
       return 1;
     }
 
-    result->value.val_s = (int32_t) svp_fread_u8(&readFil);
+    result->value.val_s = (int32_t) svp_fread_u8(&readFil[file_index]);
 
     return 1;
   }
 
   //#!##### Write byte to file
   //#!    sys.fs.writeByte([num] byte (0 - 255));
+  //#!    sys.fs.writeByte([num]index, [num] byte (0 - 255));
   //#!Writes byte to file.
   //#!Return: [num] 0 - fail, 1 - ok
   if (sysFuncMatch(argS->callId, "writeByte", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
+    uint16_t file_index = 0;
+    uint8_t byte;
+
+    if(argS->usedup == 1) {
+      argType[1] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+      byte = (uint8_t) argS->arg[1].val_s;
+    } else {
+      argType[1] = SVS_TYPE_NUM;
+      argType[2] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 2, s)) {
+        return 0;
+      }
+      file_index = argS->arg[1].val_s;
+      byte = (uint8_t) argS->arg[2].val_s;
     }
 
     result->value.val_s = 0;
     result->type = SVS_TYPE_NUM;
 
-    if (!fr_open) {
+    if (!fr_open[file_index]) {
       return 1;
     }
 
-    svp_fwrite_u8(&readFil, (uint8_t) argS->arg[1].val_s);
+    svp_fwrite_u8(&readFil[file_index], byte);
     result->value.val_s = 1;
 
     return 1;
@@ -236,21 +320,36 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Seek position in file
   //#!    sys.fs.seek([num] pos_from_start);
+  //#!    sys.fs.seek([num]index, [num] pos_from_start);
   //#!Writes byte to file.
   //#!Return: [num] 0 - fail, 1 - ok
   if (sysFuncMatch(argS->callId, "seek", s)) {
-    argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
+    uint16_t file_index = 0;
+    uint32_t seek_val;
+
+    if(argS->usedup == 1) {
+      argType[1] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+      seek_val = (uint32_t) argS->arg[1].val_s;
+    } else {
+      argType[1] = SVS_TYPE_NUM;
+      argType[2] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 2, s)) {
+        return 0;
+      }
+      file_index = argS->arg[1].val_s;
+      seek_val = (uint32_t) argS->arg[2].val_s;
     }
 
-    if (!fr_open) {
+    if (!fr_open[file_index]) {
       result->value.val_s = 0;
       result->type = SVS_TYPE_NUM;
       return 1;
     }
 
-    svp_fseek(&readFil, (uint32_t) argS->arg[1].val_s);
+    svp_fseek(&readFil[file_index], seek_val);
 
     result->value.val_s = 1;
     result->type = SVS_TYPE_NUM;
@@ -263,8 +362,18 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Truncate currently opened file at the position of write pointer.
   //#!Return: [num] 0 - fail, 1 - ok
   if (sysFuncMatch(argS->callId, "truncate", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
+    uint16_t file_index = 0;
+
+    if(argS->usedup == 0) {
+      if(sysExecTypeCheck(argS, argType, 0, s)) {
+        return 0;
+      }
+    } else {
+      argType[1] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+      file_index = argS->arg[1].val_s;
     }
 
     if (!fr_open) {
@@ -273,12 +382,110 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 1;
     }
 
-    svp_truncate(&readFil);
+    svp_truncate(&readFil[file_index]);
 
     result->value.val_s = 1;
     result->type = SVS_TYPE_NUM;
     return 1;
   }
+
+  //#!##### Tels position in file
+  //#!    sys.fs.tell();
+  //#!    sys.fs.tell([num]index);
+  //#!Returns current write pointer position in the file.
+  //#!Return: [num] pos
+  if (sysFuncMatch(argS->callId, "tell", s)) {
+    uint16_t file_index = 0;
+
+    if(argS->usedup == 0) {
+      if(sysExecTypeCheck(argS, argType, 0, s)) {
+        return 0;
+      }
+    } else {
+      argType[1] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+      file_index = argS->arg[1].val_s;
+    }
+
+    result->value.val_s = 0;
+    result->type = SVS_TYPE_NUM;
+
+    if (!fr_open[file_index]) {
+      return 1;
+    }
+
+    result->value.val_s = svp_ftell(&readFil[file_index]);
+
+    return 1;
+  }
+
+  //#!##### Get size of file
+  //#!    sys.fs.size();
+  //#!    sys.fs.size([num] index);
+  //#!Returns size of openned file.
+  //#!Return: [num] size in bytes
+  if (sysFuncMatch(argS->callId, "size", s)) {
+    uint16_t file_index = 0;
+
+    if(argS->usedup == 0) {
+      if(sysExecTypeCheck(argS, argType, 0, s)) {
+        return 0;
+      }
+    } else {
+      argType[1] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+      file_index = argS->arg[1].val_s;
+    }
+
+    if (fr_open[file_index]) {
+      result->value.val_u = svp_get_size(&readFil[file_index]);
+    }else{
+      result->value.val_u = 0;
+    }
+    result->type = SVS_TYPE_NUM;
+
+    return 1;
+  }
+
+  //#!##### Close file
+  //#!    sys.fs.close();
+  //#!    sys.fs.close([num] index);
+  //#!Closes open file.
+  //#!Return: [num] 1 - ok, 0 - error
+  if (sysFuncMatch(argS->callId, "close", s)) {
+    uint16_t file_index = 0;
+
+    if(argS->usedup == 0) {
+      if(sysExecTypeCheck(argS, argType, 0, s)) {
+        return 0;
+      }
+    } else {
+      argType[1] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+      file_index = argS->arg[1].val_s;
+    }
+    
+    result->value.val_u = 0;
+
+    if (fr_open[file_index]) {
+      svp_fclose(&readFil[file_index]);
+      fr_open[file_index] = 0;
+      result->value.val_u = 1;
+    }
+
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!
+  //#!#### Directory functions
+  //#!
 
   //#!##### Get if path is dir
   //#!    sys.fs.isDir([str] path);
@@ -354,6 +561,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     errSoft((uint8_t *)"sysExecTypeCheck: Wrong type or count of arguments for sys function fChDir()!", s);
     return 0;
   }
+
+  //#!
+  //#!#### File copy
+  //#!
 
   //#!##### File copy select source
   //#!    sys.fs.copySource([str]source);
@@ -478,47 +689,10 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Tels position in file
-  //#!    sys.fs.tell();
-  //#!Returns current write pointer position in the file.
-  //#!Return: [num] pos
-  if (sysFuncMatch(argS->callId, "tell", s)) {
-
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-
-    result->value.val_s = 0;
-    result->type = SVS_TYPE_NUM;
-
-    if (!fr_open) {
-      return 1;
-    }
-
-    result->value.val_s = svp_ftell(&readFil);
-
-    return 1;
-  }
-
-  //#!##### Get size of file
-  //#!    sys.fs.size();
-  //#!Returns size of openned file.
-  //#!Return: Size of openned file
-  if (sysFuncMatch(argS->callId, "size", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-
-    if (fr_open) {
-      result->value.val_u = svp_get_size(&readFil);
-    }else{
-      result->value.val_u = 0;
-    }
-    result->type = SVS_TYPE_NUM;
-
-    return 1;
-  }
-
+  //#!
+  //#!#### Check, remove, rename
+  //#!
+  
   //#!##### Check if file exist
   //#!    sys.fs.exists([str]fname);
   //#!Checks if file exists.
@@ -532,21 +706,6 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     result->value.val_u =svp_fexists(s->stringField + argS->arg[1].val_str);
     result->type = SVS_TYPE_NUM;
 
-    return 1;
-  }
-
-  //#!##### Close file
-  //#!    sys.fs.close();
-  //#!Closes open file.
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "close", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    if (fr_open) {
-      svp_fclose(&readFil);
-      fr_open = 0;
-    }
     return 1;
   }
 
@@ -628,13 +787,16 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Example
+  //#!    
   //#!    for(findfil = sys.fs.find("txt", "."); findfil != ""; findfil = sys.fs.findNext();) {
   //#!      print("found: " + findfil);
   //#!    }
+  //#!    
 
   //#!
   //#!Find is not stateless, sys.fs.find must be re-inicialized after recursive call.
   //#!Example of recursive function:
+  //#!    
   //#!    function ls {
   //#!      local findfil;
   //#!      local n = 0;
@@ -653,6 +815,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!        n++;
   //#!      }  
   //#!    }
+  //#!    
 
 
   //#!

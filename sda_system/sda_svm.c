@@ -238,8 +238,12 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   svmMeta.parentId = parentId;
   svmMeta.landscape = 0;
   sda_strcp(fname, svmMeta.name, sizeof(svmMeta.name));
-  sda_strcp((uint8_t *)"", svmMeta.openFileName, sizeof(svmMeta.openFileName));
-  svmMeta.openFileUsed = 0;
+  
+  for(uint16_t i = 0; i < SDA_FILES_OPEN_MAX; i++) {
+    svmMeta.openFileUsed[i] = 0;
+    sda_strcp((uint8_t *)"", svmMeta.openFileName[i], sizeof(svmMeta.openFileName[i]));
+  }
+  
   sda_strcp((uint8_t *)"", svmMeta.openConfName, sizeof(svmMeta.openConfName));
   svmMeta.openConfUsed = 0;
   sda_strcp((uint8_t *)"", svmMeta.openCsvName, sizeof(svmMeta.openCsvName));
@@ -701,10 +705,14 @@ void sdaSvmRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varT
 
 void sdaSvmSave() {
   SVScloseCache(&svm);
-  if (sda_get_fr_fname() != 0)  {
-    sda_strcp(sda_get_fr_fname(), svmMeta.openFileName, sizeof(svmMeta.openFileName));
-    svmMeta.openFileUsed = 1;
+
+  for(uint16_t i = 0; i < SDA_FILES_OPEN_MAX; i++) {
+    if (sda_get_fr_fname(i) != 0)  {
+      sda_strcp(sda_get_fr_fname(i), svmMeta.openFileName[i], sizeof(svmMeta.openFileName[i]));
+      svmMeta.openFileUsed[i] = 1;
+    }
   }
+
   if (sda_get_conf_fname() != 0)  {
     sda_strcp(sda_get_conf_fname(), svmMeta.openConfName, sizeof(svmMeta.openConfName));
     svmMeta.openConfUsed = 1;
@@ -751,8 +759,10 @@ uint8_t sdaSvmLoad(uint16_t id) {
   svp_chdir(svmMeta.currentWorkDir);
   //printf("restoring workdir: %s\n", svmMeta.currentWorkDir);
 
-  if (svmMeta.openFileUsed) {
-    sda_fr_fname_open(svmMeta.openFileName);
+  for(uint16_t i = 0; i < SDA_FILES_OPEN_MAX; i++) {
+    if (svmMeta.openFileUsed[i]) {
+      sda_fr_fname_open(i, svmMeta.openFileName[i]);
+    }
   }
 
   if (svmMeta.openConfUsed) {

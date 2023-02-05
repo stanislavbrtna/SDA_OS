@@ -1,32 +1,64 @@
 ### SDA Files
+
+Since SDA_OS 1.0.2, more than one general purpose file is supported.
+Functions for basic file i/o operations now accept optional index parameter
+that specifies what file is used.
+Number of files currently openned is defined in SDA_FILES_OPEN_MAX define.
+Default value is 10.
+
 ##### Open file
     sys.fs.open([str]fname);
-Opens text file for read or write.
+    sys.fs.open([num]index, [str]fname);
+Opens text file for read or write. If no file index is given, index 0 is used.
 Return: 1 on success, 0 on failure
 ##### Read given number of chars
     sys.fs.readChars([num] bytes);
+    sys.fs.readChars([num]index, [num] bytes);
 Reads given number of chars from file.
+If no file index is given, index 0 is used.
 Return: [str] result
 ##### Writes given string to file
-    sys.fs.writeChars([str] string);
+    sys.fs.writeChars([str]string);
+    sys.fs.writeChars([num]index, [str]string);
 Writes given string to file.
 Return: 1 - ok, 0 - fail
 ##### Read byte from file
     sys.fs.readByte();
+    sys.fs.readByte([num]index);
 Reads byte from file.
 Return: [num] result: 0 to 255 - ok, -1 - error, -2 - EOF
 ##### Write byte to file
     sys.fs.writeByte([num] byte (0 - 255));
+    sys.fs.writeByte([num]index, [num] byte (0 - 255));
 Writes byte to file.
 Return: [num] 0 - fail, 1 - ok
 ##### Seek position in file
     sys.fs.seek([num] pos_from_start);
+    sys.fs.seek([num]index, [num] pos_from_start);
 Writes byte to file.
 Return: [num] 0 - fail, 1 - ok
 ##### Truncate file
     sys.fs.truncate();
 Truncate currently opened file at the position of write pointer.
 Return: [num] 0 - fail, 1 - ok
+##### Tels position in file
+    sys.fs.tell();
+    sys.fs.tell([num]index);
+Returns current write pointer position in the file.
+Return: [num] pos
+##### Get size of file
+    sys.fs.size();
+    sys.fs.size([num] index);
+Returns size of openned file.
+Return: [num] size in bytes
+##### Close file
+    sys.fs.close();
+    sys.fs.close([num] index);
+Closes open file.
+Return: [num] 1 - ok, 0 - error
+
+#### Directory functions
+
 ##### Get if path is dir
     sys.fs.isDir([str] path);
 Gets if path is a directory or not.
@@ -41,6 +73,9 @@ Changes working directory.
 call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA directory
 call sys.fs.chDir(1); to get to the APPS directory
 Return: None
+
+#### File copy
+
 ##### File copy select source
     sys.fs.copySource([str]source);
 Selects source file for copy operation.
@@ -58,22 +93,13 @@ Return: [num] 1 - ok, 0 - failed
     sys.fs.copyStop();
 Stops current copy operation.
 Return: None
-##### Tels position in file
-    sys.fs.tell();
-Returns current write pointer position in the file.
-Return: [num] pos
-##### Get size of file
-    sys.fs.size();
-Returns size of openned file.
-Return: Size of openned file
+
+#### Check, remove, rename
+
 ##### Check if file exist
     sys.fs.exists([str]fname);
 Checks if file exists.
 Return: 1 if file exists, otherwise 0
-##### Close file
-    sys.fs.close();
-Closes open file.
-Return: None
 ##### Remove file
     sys.fs.delete([str]fname);
 Deletes file with fiven fname. Can also delete empty directories.
@@ -94,12 +120,15 @@ Return: [str]filename or "" if none
 Next iteration of file find operation.
 Return: [str]filename or "" if none
 ##### Example
+    
     for(findfil = sys.fs.find("txt", "."); findfil != ""; findfil = sys.fs.findNext();) {
       print("found: " + findfil);
     }
+    
 
 Find is not stateless, sys.fs.find must be re-inicialized after recursive call.
 Example of recursive function:
+    
     function ls {
       local findfil;
       local n = 0;
@@ -118,6 +147,7 @@ Example of recursive function:
         n++;
       }  
     }
+    
 
 #### Files as strings
 

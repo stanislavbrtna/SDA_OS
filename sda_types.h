@@ -134,8 +134,8 @@ typedef struct {
   uint8_t  currentWorkDir[APP_NAME_LEN];
   uint8_t  landscape;
   uint16_t screen;
-  uint8_t  openFileName[128];
-  uint8_t  openFileUsed;
+  uint8_t  openFileName[SDA_FILES_OPEN_MAX][128];
+  uint8_t  openFileUsed[SDA_FILES_OPEN_MAX];
   uint8_t  openConfName[128];
   uint8_t  openConfUsed;
   uint8_t  openCsvName[128];
