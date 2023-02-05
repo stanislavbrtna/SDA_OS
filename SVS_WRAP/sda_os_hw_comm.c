@@ -242,13 +242,18 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!#### Expansion port serial interface
   //#!
   //#!##### Serial expansion transmit
+  
   //#!Code to init the internal expansion port serial interface:
+  //#!
   //#!    sys.hw.iPinDef(15, PIN_ALT, PIN_NOPULL);
   //#!    sys.hw.iPinDef(16, PIN_OUT, PIN_NOPULL);
+  //#!
   //#!Code to init the external expansion port serial interface:
+  //#!
   //#!    sys.hw.ePinDef(5, PIN_ALT, PIN_NOPULL);
   //#!    sys.hw.ePinDef(6, PIN_ALT, PIN_NOPULL);
-
+  //#!
+  
   //#!##### Serial expansion transmit
   //#!    sys.com.uartTrs([str]data);
   //#!Sends given string to serial port on internal or external expansion connector.
