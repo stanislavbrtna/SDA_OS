@@ -46,7 +46,6 @@ void sdaSvmGetGR2Settings() {
 }
 
 
-// notification
 void sda_alarm_set_flag(int32_t id, int32_t param) {
   alarmId = id;
   alarmParam = param;
@@ -74,7 +73,6 @@ void sda_alarm_clear_flag() {
 }
 
 
-// screens and stuff
 void sdaSvmSetMainScreen(uint16_t val) {
   svs_wrap_setScr_id = val;
   svs_wrap_setScr_flag = 1;
@@ -106,6 +104,7 @@ void svmSetBeepCallback(uint8_t * cb, uint32_t time) {
  svmMeta.beepTime = (svpSGlobal.uptimeMs - svmGetAppUptime()) + time;
 }
 
+
 uint8_t svmBeepHandler() {
   if ((svpSGlobal.uptimeMs - svmGetAppUptime()) > svmMeta.beepTime && svmMeta.beepTime != 0) {
     svmMeta.beepTime = 0;
@@ -115,7 +114,7 @@ uint8_t svmBeepHandler() {
   }
 }
 
-// svm init
+
 void svmInitRemoveCache(uint8_t *ext){
   uint8_t buffer[255];
   uint8_t retval;
