@@ -147,7 +147,12 @@ static void sda_main_init() {
 
   // screen redraw for the first time
   tick_lock = SDA_LOCK_LOCKED;
-  LCD_setDrawArea(0, 0, SDA_LCD_W, SDA_LCD_H);
+  LCD_setDrawArea(
+    0,
+    0,
+    SDA_LCD_W + 160 * svpSGlobal.lcdLandscape,
+    SDA_LCD_H - 160 * svpSGlobal.lcdLandscape
+  );
   gr2_draw_screen(0, 32, 319, 479, mainScr, 1, &sda_sys_con);
   tick_lock = SDA_LOCK_UNLOCKED;
   led_set_pattern(LED_OFF);

@@ -39,7 +39,7 @@ uint8_t kbdVisibleOld;
 void sda_main_redraw() {
   // lock tick for redraw
   tick_lock = SDA_LOCK_LOCKED;
-  LCD_setDrawArea(0, 0, SDA_LCD_W, SDA_LCD_H);
+  LCD_setDrawArea(0, 0, SDA_LCD_W + 160 * svpSGlobal.lcdLandscape, SDA_LCD_H - 160 * svpSGlobal.lcdLandscape);
   if (svpSGlobal.systemRedraw == 1 || kbdRedraw) {
     sdaSetRedrawDetect(1);
   }
@@ -49,8 +49,8 @@ void sda_main_redraw() {
       || kbdRedraw
     ) {
     if (svpSGlobal.lcdLandscape) {
-      LCD_FillRect(0, 319 - 160, 80, 320, sda_current_con->background_color);
-      LCD_FillRect(400, 319 - 160, 480, 320, sda_current_con->background_color);
+      LCD_FillRect(1, 320 - 160, 80, 319, sda_current_con->background_color);
+      LCD_FillRect(401, 320 - 160, 479, 319, sda_current_con->background_color);
     }
     svp_draw_keyboard(80*svpSGlobal.lcdLandscape, 319 - 160*svpSGlobal.lcdLandscape, &kbdLayout);
     if (kbdRedraw == 0) {
