@@ -29,6 +29,9 @@ uint16_t optMntSel;
 void settings_sd_umount();
 void settings_sd_mount();
 
+extern svsVM svm;
+extern sdaSvmMetadata svmMeta;
+
 void svp_settings_set_spacing(uint16_t id) {
   gr2_set_param(id, SDA_SETTINGS_SPACER, &sda_sys_con);
 }
@@ -119,6 +122,15 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
       mainScr = optDbgScr;
       globBack = sda_settings_debug_screen(2); // reload config of dbg serial
       setRedrawFlag();
+
+      printf("SDA_OS memsize:\nsvm: %ub\nsvmMeta: %ub\ngr2 system: %ub\ngr2 app: %ub\nTotal: %ub\n",
+        sizeof(svm), sizeof(svmMeta),
+        sizeof(gr2Element)*SDA_SYS_ELEM_MAX + sizeof(gr2Screen)*SDA_SYS_SCREEN_MAX,
+        sizeof(gr2Element)*SDA_APP_ELEM_MAX  + sizeof(gr2Screen)*SDA_APP_SCREEN_MAX,
+        sizeof(svm) + sizeof(svmMeta) +
+        sizeof(gr2Element)*SDA_SYS_ELEM_MAX  + sizeof(gr2Screen)*SDA_SYS_SCREEN_MAX +
+        sizeof(gr2Element)*SDA_APP_ELEM_MAX  + sizeof(gr2Screen)*SDA_APP_SCREEN_MAX
+      );
     }
 
     if (gr2_clicked(optSecuSel, &sda_sys_con)) {
