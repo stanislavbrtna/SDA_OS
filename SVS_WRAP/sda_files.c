@@ -24,7 +24,6 @@ SOFTWARE.
 
 //files
 svp_file readFil[SDA_FILES_OPEN_MAX];
-uint8_t  fr_filename[SDA_FILES_OPEN_MAX][128];
 uint8_t  fr_open[SDA_FILES_OPEN_MAX];
 
 //copy API
@@ -73,16 +72,8 @@ void sda_files_close() {
   sda_files_close_conf_csv();
 }
 
-
-uint8_t * sda_get_fr_fname(uint16_t index) {
-  if (fr_open[index]) {
-    return fr_filename[index];
-  } else {
-    return 0;
-  }
-}
-
 extern svsVM svm;
+extern sdaSvmMetadata svmMeta;
 
 uint8_t sda_fr_fname_open(uint16_t index, uint8_t * fname) {
   if (index >= SDA_FILES_OPEN_MAX) {
@@ -93,8 +84,23 @@ uint8_t sda_fr_fname_open(uint16_t index, uint8_t * fname) {
     return 0;
   }
 
-  sda_strcp(fname, fr_filename[index], sizeof(fr_filename[index]));
-  fr_open[index] = svp_fopen_rw(&readFil[index], fname);
+  sda_strcp(fname, svmMeta.openFileName[index], sizeof(svmMeta.openFileName[index]));
+  svmMeta.openFileUsed[index] = svp_fopen_rw(&readFil[index], fname);
+  fr_open[index] = svmMeta.openFileUsed[index];
+  return fr_open[index];
+}
+
+uint8_t sda_fr_fname_reopen(uint16_t index) {
+  if (index >= SDA_FILES_OPEN_MAX) {
+     errSoft("error: file index not valid!", &svm);
+  }
+
+  if (!svp_fexists(svmMeta.openFileName[index])) {
+    return 0;
+  }
+
+  svmMeta.openFileUsed[index] = svp_fopen_rw(&readFil[index], svmMeta.openFileName[index]);
+  fr_open[index] = svmMeta.openFileUsed[index];
   return fr_open[index];
 }
 
@@ -476,6 +482,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (fr_open[file_index]) {
       svp_fclose(&readFil[file_index]);
       fr_open[file_index] = 0;
+      svmMeta.openFileUsed[file_index] = 0;
       result->value.val_u = 1;
     }
 

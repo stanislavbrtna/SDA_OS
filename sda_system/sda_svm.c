@@ -706,12 +706,7 @@ void sdaSvmRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varT
 void sdaSvmSave() {
   SVScloseCache(&svm);
 
-  for(uint16_t i = 0; i < SDA_FILES_OPEN_MAX; i++) {
-    if (sda_get_fr_fname(i) != 0)  {
-      sda_strcp(sda_get_fr_fname(i), svmMeta.openFileName[i], sizeof(svmMeta.openFileName[i]));
-      svmMeta.openFileUsed[i] = 1;
-    }
-  }
+  // general purpose files are already stored in the metadata structure
 
   if (sda_get_conf_fname() != 0)  {
     sda_strcp(sda_get_conf_fname(), svmMeta.openConfName, sizeof(svmMeta.openConfName));
@@ -761,7 +756,7 @@ uint8_t sdaSvmLoad(uint16_t id) {
 
   for(uint16_t i = 0; i < SDA_FILES_OPEN_MAX; i++) {
     if (svmMeta.openFileUsed[i]) {
-      sda_fr_fname_open(i, svmMeta.openFileName[i]);
+      sda_fr_fname_reopen(i);
     }
   }
 
