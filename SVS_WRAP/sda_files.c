@@ -80,10 +80,6 @@ uint8_t sda_fr_fname_open(uint16_t index, uint8_t * fname) {
      errSoft("error: file index not valid!", &svm);
   }
 
-  if (!svp_fexists(fname)) {
-    return 0;
-  }
-
   sda_strcp(fname, svmMeta.openFileName[index], sizeof(svmMeta.openFileName[index]));
   svmMeta.openFileUsed[index] = svp_fopen_rw(&readFil[index], fname);
   fr_open[index] = svmMeta.openFileUsed[index];
