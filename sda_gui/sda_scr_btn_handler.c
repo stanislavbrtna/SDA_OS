@@ -49,7 +49,7 @@ uint8_t sda_screen_button_handler(uint16_t screen_id, uint16_t back_id, gr2conte
 
   if (sda_wrap_get_button(BUTTON_A) != EV_NONE) {
     static uint64_t holdCnt;
-    if (back_id != 0 && con->pscgElements[back_id].valid == 1 && gr2_get_visible(back_id, con) && holdCnt == 0) {
+    if (back_id != 0 && con->pscgElements[back_id].valid == 1 && gr2_get_visible(back_id, con) && gr2_get_grayout(back_id, con) == 0 && holdCnt == 0) {
       gr2_set_event(back_id, sda_wrap_get_button(BUTTON_A), con);
     } else {
       
