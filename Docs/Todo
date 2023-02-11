@@ -19,3 +19,8 @@ Docs:
 Misc TODO:
   - Optimize char draw function
   - Add an iconfont or something like that
+
+
+Bugfixes:
+  - weird bug happens when subprocess is called and in subprocess tokenize error occurs. It crashes on "no update function found" and it takes the parent process with it.
+  - weird bug with garbage collecting strings stored inside function arguments
