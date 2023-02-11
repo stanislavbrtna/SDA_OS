@@ -159,3 +159,65 @@ Return: [str]FileContents
     sys.fs.writeStr([str]str, [str]fname);
 Writes svs string to file.
 Return: None
+#### SDA CSV files API
+##### Open csv file
+    sys.fs.csv.open([str]fname);
+Opens csv file.
+Return: [num]1 on succes.
+##### Close csv file
+    sys.fs.csv.close();
+Closes csv file.
+Return: None.
+##### New csv line
+    sys.fs.csv.newLine([num]numberOfCells);
+Adds new line to csv with given number of cells.
+Return: None.
+##### Get csv cell
+    sys.fs.csv.getCell([num]cellNumber, [str]default);
+Gets data from specified cell on current line.
+Return: [str]cellContents
+##### Set csv cell
+    sys.fs.csv.setCell([num]cellNumber, [str]value);
+Sets data of specified cell on current line.
+Return: [str]cellContents
+##### Feed line
+    sys.fs.csv.lineFeed();
+Moves to the next lone of csv file
+Return: [num] 1 - ok, 0 - end of file
+##### Remove line
+    sys.fs.csv.removeLine();
+Removes current line from csv
+Return: None
+##### Rewind file
+    sys.fs.csv.rewind();
+Rewinds file back on the start.
+Return: None
+#### Config files API
+##### Open config file
+    sys.fs.conf.open([str]fname);
+Opens config file.
+Return: [num]1 on succes.
+##### Close config file
+    sys.fs.conf.close();
+Close conf file.
+Return: [num]1 on succes.
+##### Check if key exists
+    sys.fs.conf.exists([str]key);
+Checks if key exists in conf file
+Return: [num] 1 if key exists.
+##### Read key
+    sys.fs.conf.read([str]key);
+Reads key from config file as a string, 128 chars max.
+Return: [str]Value
+##### Read Key as int
+    sys.fs.conf.readInt([str]key, [num]default);
+Reads key from config file as num (integrer). To be removed.
+Return: [num]Value
+##### Write key
+    sys.fs.conf.write([str]key, [str]val);
+Writes value in specified key.
+Return: None
+##### Remove key
+    sys.fs.conf.remove([str]key);
+Removes given key.
+Return: None
