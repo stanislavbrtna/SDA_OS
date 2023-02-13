@@ -95,7 +95,7 @@ typedef struct {
 
   //keyboard
   volatile uint8_t   kbdFlag;
-  uint8_t kbdKeyStr[10];
+  uint8_t  kbdKeyStr[64];
   volatile uint8_t   kbdVisible;
 
   //system

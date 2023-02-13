@@ -52,7 +52,7 @@ uint32_t sda_strcp(uint8_t *in, uint8_t *out, uint32_t len) {
   return 0;
 }
 
-
+// returns the string lenght, including zero terminator
 uint32_t sda_strlen(uint8_t * str) {
   uint32_t len = 0;
 

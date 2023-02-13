@@ -167,11 +167,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
           //divnost... pokud je to odkomentovaný, tak to prvně nastaví text s indexem +2
           //gr2_set_str(argS->arg[1].val_s,s->stringField+result->value.val_str); //nastavíme správněj text
 
-          if (svpSGlobal.kbdKeyStr[1] != 0) {
-            gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) + 2, &sda_app_con); //posunem kurzor
-          } else {
-            gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) + 1, &sda_app_con);
-          }
+          gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) + sda_strlen(svpSGlobal.kbdKeyStr), &sda_app_con); //posunem kurzor
           return 1;
         } else {
           uint16_t len = 0;
@@ -223,6 +219,29 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
     result->value = argS->arg[2];
     result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
+  //#!##### Set keyboard string
+  //#!    sys.os.gui.setKbdStr([str] string);
+  //#!Sets the current keyboard string (max 63 chars)
+  //#!Return: [num] 1 - ok, 0 - string too long
+  if (sysFuncMatch(argS->callId, "setKbdStr", s)) {
+    argType[1] = SVS_TYPE_STR; // new keyboard string
+
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    if (sda_strlen(s->stringField + argS->arg[1].val_str) < sizeof(svpSGlobal.kbdKeyStr)) {
+      sda_strcp(s->stringField + argS->arg[1].val_str, svpSGlobal.kbdKeyStr, sizeof(svpSGlobal.kbdKeyStr));
+      svpSGlobal.kbdFlag = 1;
+      result->value.val_u = 1;
+    } else {
+      result->value.val_u = 0;
+    }
+    
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
