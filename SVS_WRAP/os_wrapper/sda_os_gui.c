@@ -154,7 +154,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
       //čtení z klávesnice a zápis do řetězce
       if (sda_get_keyboard_key_flag()) {
-        if ((svpSGlobal.kbdKeyStr[0]) != 2) {
+        if ((svpSGlobal.kbdKeyStr[0]) != 8) {
           result->value.val_str
             = strInsert(
                         (uint16_t)argS->arg[2].val_str,
@@ -176,42 +176,71 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
             len++;
           }
 
-          if (len > 0) {
-            uint16_t prac;
-            result->value.val_str = strNew(s->stringField + argS->arg[2].val_str, s); //vyrobíme novej
-            uint16_t charIndex;
-            uint8_t czFlag = 0;
+          if ((svpSGlobal.kbdKeyStr[1]) != 'd') {
+            if (len > 0) {
+              uint16_t prac;
+              result->value.val_str = strNew(s->stringField + argS->arg[2].val_str, s); //vyrobíme novej
+              uint16_t charIndex;
+              uint8_t czFlag = 0;
 
-            charIndex = result->value.val_str + gr2_get_param(argS->arg[1].val_s, &sda_app_con);
+              charIndex = result->value.val_str + gr2_get_param(argS->arg[1].val_s, &sda_app_con);
 
-            if (len >= 2
-                 && (s->stringField[charIndex - 2] >= 0xC3)
-                 && (s->stringField[charIndex - 2] <= 0xC5)) {
-              gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) - 2, &sda_app_con); //posune
-              czFlag = 1;
-              //printf("removing cz char %c%c \n", s->stringField[charIndex - 2], s->stringField[charIndex - 1]);
-            } else {
-              gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) - 1, &sda_app_con); //posune
-              //printf("removing normal char %c \n", s->stringField[charIndex - 1]);
+              if (len >= 2
+                  && (s->stringField[charIndex - 2] >= 0xC3)
+                  && (s->stringField[charIndex - 2] <= 0xC5)) {
+                gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) - 2, &sda_app_con); //posune
+                czFlag = 1;
+                //printf("removing cz char %c%c \n", s->stringField[charIndex - 2], s->stringField[charIndex - 1]);
+              } else {
+                gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) - 1, &sda_app_con); //posune
+                //printf("removing normal char %c \n", s->stringField[charIndex - 1]);
+              }
+
+              prac = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
+              x = 0;
+
+              while(s->stringField[result->value.val_str + prac + x] != 0) {
+                s->stringField[result->value.val_str + prac + x]
+                  = s->stringField[result->value.val_str + prac + x + 1 + czFlag];
+                x++;
+              }
+
+              *((uint8_t*)(s->stringField + result->value.val_str + len - 1)) = 0; //zkrátíme pro jistotu
+              gr2_set_str(argS->arg[1].val_s,s->stringField + result->value.val_str, &sda_app_con); //nastavíme text/updatujeme
+              result->type = SVS_TYPE_STR;
+              return 1;
             }
+          } else {
+            if (len > 0 && len != gr2_get_param(argS->arg[1].val_s, &sda_app_con)) {
+              uint16_t prac;
+              result->value.val_str = strNew(s->stringField + argS->arg[2].val_str, s); //vyrobíme novej
+              uint16_t charIndex;
+              uint8_t czFlag = 0;
 
-            prac = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
-            x = 0;
+              charIndex = result->value.val_str + gr2_get_param(argS->arg[1].val_s, &sda_app_con);
 
-            while(s->stringField[result->value.val_str + prac + x] != 0) {
-              s->stringField[result->value.val_str + prac + x]
-                = s->stringField[result->value.val_str + prac + x + 1 + czFlag];
-              x++;
+              if (len >= 2
+                  && (s->stringField[charIndex] >= 0xC3)
+                  && (s->stringField[charIndex] <= 0xC5)) {
+                czFlag = 1;
+              }
+
+              prac = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
+              x = 0;
+
+              while(s->stringField[result->value.val_str + prac + x] != 0) {
+                s->stringField[result->value.val_str + prac + x]
+                  = s->stringField[result->value.val_str + prac + x + 1 + czFlag];
+                x++;
+              }
+
+              *((uint8_t*)(s->stringField + result->value.val_str + len - 1)) = 0; //zkrátíme pro jistotu
+              gr2_set_str(argS->arg[1].val_s,s->stringField + result->value.val_str, &sda_app_con); //nastavíme text/updatujeme
+              result->type = SVS_TYPE_STR;
+              return 1;
             }
-
-            *((uint8_t*)(s->stringField + result->value.val_str + len - 1)) = 0; //zkrátíme pro jistotu
-            gr2_set_str(argS->arg[1].val_s,s->stringField + result->value.val_str, &sda_app_con); //nastavíme text/updatujeme
-            result->type = SVS_TYPE_STR;
-            return 1;
           }
-
         }
-
       }
     }
     if (gr2_get_str(argS->arg[1].val_s, &sda_app_con) != s->stringField + argS->arg[2].val_str) {
@@ -225,6 +254,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set keyboard string
   //#!    sys.os.gui.setKbdStr([str] string);
   //#!Sets the current keyboard string (max 63 chars)
+  //#!Backspace code is "\b", delete is "\bd"
   //#!Return: [num] 1 - ok, 0 - string too long
   if (sysFuncMatch(argS->callId, "setKbdStr", s)) {
     argType[1] = SVS_TYPE_STR; // new keyboard string

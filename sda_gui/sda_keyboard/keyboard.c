@@ -331,7 +331,7 @@ uint8_t svp_touch_keyboard(
   }
   i++;
   if(pm_keyboard_touch_key(event,&prevState[40],x+16+32*(i),y+line*32,x+32*(i+2),y+(line+1)*32,(uint8_t *)"<=",2, touch_x, touch_y)){
-    retStrCpy(retStr, (uint8_t *)"\x02\x00");
+    retStrCpy(retStr, (uint8_t *)"\x08\x00");
     return 1;
   }
   line++;

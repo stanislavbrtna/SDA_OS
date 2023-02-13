@@ -106,7 +106,7 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
     gr2_set_event(input_id, EV_NONE, &sda_sys_con);
 
     if (sda_get_keyboard_key_flag()) {
-        if (*((uint8_t *)svpSGlobal.kbdKeyStr) != 2) {
+        if (*((uint8_t *)svpSGlobal.kbdKeyStr) != 8) {
           // TODO: Fix this
           svp_str_insert(str, svpSGlobal.kbdKeyStr, buff,  gr2_get_param(input_id, &sda_sys_con), len);
 
