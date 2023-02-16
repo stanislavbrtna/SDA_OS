@@ -19,6 +19,11 @@ Return: None
     sys.os.gui.handleText([num]id, [str]text);
 Handles text input fields. Id is field id. Text is default text value.
 Return: [str] New modified text value
+##### Set keyboard string
+    sys.os.gui.setKbdStr([str] string);
+Sets the current keyboard string (max 63 chars)
+Backspace code is "\b", delete is "\bd"
+Return: [num] 1 - ok, 0 - string too long
 ##### Get text cursor position
     sys.os.gui.getCPos([num] id);
 Gets the cursor position of a text field

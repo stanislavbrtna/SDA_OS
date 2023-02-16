@@ -321,6 +321,26 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
     return 1;
   }
 
+  //#!##### Get text width
+  //#!    sys.ds.getTextWidth([str] txt)
+  //#!Gets width of a string, when drawn with current font.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "getTextWidth", s)) {
+    argType[1] = SVS_TYPE_STR;
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (getOverlayId() != 0) {
+      return 1;
+    }
+
+    result->value.val_s  = (int32_t) LCD_Text_Get_Width(s->stringField + argS->arg[1].val_str, 0);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Fill area with color
   //#!    sys.ds.clearArea([num]col)
   //#!Clears draw area with goven color

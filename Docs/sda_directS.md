@@ -38,6 +38,10 @@ Return: None
     sys.ds.setTextFit([num] enable, [num] width)
 Sets max width for next drawn text
 Return: None
+##### Get text width
+    sys.ds.getTextWidth([str] txt)
+Gets width of a string, when drawn with current font.
+Return: None
 ##### Fill area with color
     sys.ds.clearArea([num]col)
 Clears draw area with goven color
