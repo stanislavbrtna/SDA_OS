@@ -162,6 +162,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
             svpSGlobal.kbdOverlayTimer = svpSGlobal.uptimeMs;
             sda_app_con.textBlockStart = 0;
             sda_app_con.textBlockEnd = 0;
+            //gr2_set_modified(argS->arg[1].val_s, &sda_app_con);
           }
         }
       }
@@ -181,13 +182,21 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         if (gr2_get_block_enable(argS->arg[1].val_s, &sda_app_con)) {
           if (!(temp == sda_app_con.textBlockStart || temp == sda_app_con.textBlockEnd) && svpSGlobal.kbdOverlayTimer != 0) {
             svpSGlobal.kbdOverlayTimer = svpSGlobal.uptimeMs;
-            if (temp > gr2_get_param(argS->arg[1].val_s, &sda_app_con)) {
-              sda_app_con.textBlockStart = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
-              sda_app_con.textBlockEnd = temp;
-            } else {
-              sda_app_con.textBlockStart = temp;
-              sda_app_con.textBlockEnd = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
+            static uint16_t tempPrev;
+            
+            //printf("t: %u tp: %u\n", temp, tempPrev);
+            if (temp != tempPrev) {
+              if (temp > gr2_get_param(argS->arg[1].val_s, &sda_app_con)) {
+                sda_app_con.textBlockStart = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
+                sda_app_con.textBlockEnd = temp;
+              } else {
+                sda_app_con.textBlockStart = temp;
+                sda_app_con.textBlockEnd = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
+              }
+              gr2_set_modified(argS->arg[1].val_s, &sda_app_con);
+              tempPrev = temp;
             }
+            
           }
         } else {
           gr2_set_param(argS->arg[1].val_s, temp, &sda_app_con);
@@ -198,13 +207,11 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         ) {
           sda_clipboard_overlay_init(argS->arg[1].val_s);
           svpSGlobal.kbdOverlayTimer = 0;
-          result->value = argS->arg[2];
-          result->type = SVS_TYPE_STR;
-          return 1;
         }
       }
 
-      gr2_set_event(argS->arg[1].val_s, EV_NONE, &sda_app_con);
+      sda_app_con.pscgElements[argS->arg[1].val_s].event = EV_NONE;
+      //gr2_set_event(argS->arg[1].val_s, EV_NONE, &sda_app_con); - this sets modified flag, that caused unnesesary redraws
 
       if (svpSGlobal.newStringIdFlag == argS->arg[1].val_s) {
         result->value.val_str = svpSGlobal.newString;
@@ -306,9 +313,11 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         }
       }
     }
-    if (gr2_get_str(argS->arg[1].val_s, &sda_app_con) != s->stringField + argS->arg[2].val_str) {
+
+    if (gr2_get_str(argS->arg[1].val_s, &sda_app_con) != (uint8_t *) ((uint32_t)s->stringField + (uint32_t)argS->arg[2].val_str)) {
       gr2_set_str(argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, &sda_app_con); //stejnak nastavíme
     }
+    
     result->value = argS->arg[2];
     result->type = SVS_TYPE_STR;
     return 1;
