@@ -25,5 +25,7 @@ SOFTWARE.
 
 #include "../../SDA_OS.h"
 
+int32_t get_char_cursor_pos(uint16_t cpos, uint8_t *str);
+
 #endif
 
