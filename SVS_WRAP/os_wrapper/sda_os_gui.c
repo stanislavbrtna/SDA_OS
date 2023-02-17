@@ -132,7 +132,6 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
     // if active
     if (gr2_get_value(argS->arg[1].val_s, &sda_app_con)) {
-      
       // touch event handling
       if ((gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED 
           || gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_RELEASED)
@@ -147,15 +146,24 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         
         LCD_Set_Sys_Font(curr_font);
 
-        gr2_set_param(argS->arg[1].val_s, temp, &sda_app_con);
-        
-      }
-
-      if (gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED
-           && (gr2_text_get_pwd(argS->arg[1].val_s, &sda_app_con) == 0)) {
-        svpSGlobal.kbdOverlayTimer = svpSGlobal.uptimeMs;
-        sda_app_con.textBlockStart = 0;
-        sda_app_con.textBlockEnd = 0;
+        if (sda_app_con.textBlockStart != sda_app_con.textBlockEnd
+            && temp > sda_app_con.textBlockStart
+            && temp < sda_app_con.textBlockEnd
+        ) {
+          sda_clipboard_overlay_init(argS->arg[1].val_s);
+          svpSGlobal.kbdOverlayTimer = 0;
+          gr2_set_event(argS->arg[1].val_s, EV_NONE, &sda_app_con);
+          result->value = argS->arg[2];
+          result->type = SVS_TYPE_STR;
+          return 1;
+        } else {
+           gr2_set_param(argS->arg[1].val_s, temp, &sda_app_con);
+           if (gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED) {
+            svpSGlobal.kbdOverlayTimer = svpSGlobal.uptimeMs;
+            sda_app_con.textBlockStart = 0;
+            sda_app_con.textBlockEnd = 0;
+          }
+        }
       }
       
       if ((gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD)
@@ -171,28 +179,28 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         LCD_Set_Sys_Font(curr_font);
 
         if (gr2_get_block_enable(argS->arg[1].val_s, &sda_app_con)) {
-          if (!(temp == sda_app_con.textBlockStart || temp == sda_app_con.textBlockEnd)) {
+          if (!(temp == sda_app_con.textBlockStart || temp == sda_app_con.textBlockEnd) && svpSGlobal.kbdOverlayTimer != 0) {
             svpSGlobal.kbdOverlayTimer = svpSGlobal.uptimeMs;
+            if (temp > gr2_get_param(argS->arg[1].val_s, &sda_app_con)) {
+              sda_app_con.textBlockStart = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
+              sda_app_con.textBlockEnd = temp;
+            } else {
+              sda_app_con.textBlockStart = temp;
+              sda_app_con.textBlockEnd = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
+            }
           }
-
-          if (temp > gr2_get_param(argS->arg[1].val_s, &sda_app_con)) {
-            sda_app_con.textBlockStart = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
-            sda_app_con.textBlockEnd = temp;
-          } else {
-            sda_app_con.textBlockStart = temp;
-            sda_app_con.textBlockEnd = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
-          }
-          
         } else {
           gr2_set_param(argS->arg[1].val_s, temp, &sda_app_con);
         }
 
-        //printf("%u\n", svpSGlobal.uptimeMs - svpSGlobal.kbdOverlayTimer);
         if (svpSGlobal.kbdOverlayTimer + 1200 <= svpSGlobal.uptimeMs
             && svpSGlobal.kbdOverlayTimer != 0
         ) {
           sda_clipboard_overlay_init(argS->arg[1].val_s);
           svpSGlobal.kbdOverlayTimer = 0;
+          result->value = argS->arg[2];
+          result->type = SVS_TYPE_STR;
+          return 1;
         }
       }
 

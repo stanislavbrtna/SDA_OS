@@ -809,6 +809,9 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
     gr2_text_set_editable(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
 
+    // block mode enabled for all editable text fields
+    gr2_set_block_enable(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+
     return 1;
   }
 
