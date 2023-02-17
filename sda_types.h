@@ -160,4 +160,17 @@ typedef struct {
   uint8_t  singular;
 } svmSavedProcType;
 
+
+typedef struct {
+  uint16_t overlayScr;
+  gr2context * overlayCont;
+  uint16_t overlayX1;
+  uint16_t overlayX2;
+  uint16_t overlayY1;
+  uint16_t overlayY2;
+  uint16_t ov_id;
+  void (*overlay_destructor) ();
+  uint8_t destructor_set;
+} sdaOverlayType;
+
 #endif

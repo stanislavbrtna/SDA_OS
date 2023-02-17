@@ -13,6 +13,9 @@ void setOverlayPos(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 uint16_t getOverlayId();
 uint16_t getOverlayScreen();
 
+void overlayStore(sdaOverlayType *o);
+void overlayRestore(sdaOverlayType *o);
+
 void destroyOverlay(); // destroys current overlay, calls the destructor
 
 void overlayDestructorDone();

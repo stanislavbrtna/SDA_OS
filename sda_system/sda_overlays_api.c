@@ -21,8 +21,36 @@ void setOverlayDefault() {
 }
 
 
-uint16_t setOverlayScreen(uint16_t val, gr2context * c) {
+// stores current overlay, resets overlay screen,
+// so it is not destroyed by the next setOverlayScreen
+void overlayStore(sdaOverlayType *o) {
+  o->overlayScr  = overlayScr;
+  o->overlayCont = overlayCont;
+  o->overlayX1   = overlayX1;
+  o->overlayY1   = overlayY1;
+  o->overlayX2   = overlayX2;
+  o->overlayY2   = overlayY2;
+  o->ov_id       = ov_id;
+  o->overlay_destructor = overlay_destructor;
+  o->destructor_set = destructor_set;
+  overlayScr = 0;
+}
 
+
+void overlayRestore(sdaOverlayType *o) {
+  overlayScr  = o->overlayScr;
+  overlayCont = o->overlayCont;
+  overlayX1   = o->overlayX1;
+  overlayY1   = o->overlayY1;
+  overlayX2   = o->overlayX2;
+  overlayY2   = o->overlayY2;
+  ov_id       = o->ov_id;
+  overlay_destructor = o->overlay_destructor;
+  destructor_set = o->destructor_set;
+}
+
+
+uint16_t setOverlayScreen(uint16_t val, gr2context * c) {
   if (overlayScr != 0) {
     destroyOverlay();
   }
