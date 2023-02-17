@@ -813,6 +813,73 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!
+  //#!    sys.gui.setBlk([num] id, [num] start, [num] stop);
+  //#!Sets start and stop of a block in active text field
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setBlk", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 3, s)) {
+      return 0;
+    }
+
+    result->value.val_s = 0;
+    result->type = SVS_TYPE_NUM;
+
+    if (gr2_text_get_editable(argS->arg[1].val_s, &sda_app_con) && gr2_get_text_active(argS->arg[1].val_s, &sda_app_con)) {
+      sda_app_con.textBlockStart = argS->arg[2].val_s;
+      sda_app_con.textBlockEnd = argS->arg[3].val_s;
+      result->value.val_s = 1;
+    }
+
+    return 1;
+  }
+
+  //#!
+  //#!    sys.gui.getBlkStart([num] id);
+  //#!Sets text field as editable.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "getBlkStart", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = 0;
+    result->type = SVS_TYPE_NUM;
+
+    if (gr2_text_get_editable(argS->arg[1].val_s, &sda_app_con) && gr2_get_text_active(argS->arg[1].val_s, &sda_app_con)) {
+      result->value.val_s = 1 + get_char_cursor_pos(sda_app_con.textBlockStart, gr2_get_str(argS->arg[1].val_s, &sda_app_con));
+    }
+
+    return 1;
+  }
+
+  //#!
+  //#!    sys.gui.getBlkEnd([num] id);
+  //#!Sets text field as editable.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "getBlkEnd", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = 0;
+    result->type = SVS_TYPE_NUM;
+
+    if (gr2_text_get_editable(argS->arg[1].val_s, &sda_app_con) && gr2_get_text_active(argS->arg[1].val_s, &sda_app_con)) {
+      result->value.val_s = get_char_cursor_pos(sda_app_con.textBlockEnd, gr2_get_str(argS->arg[1].val_s, &sda_app_con));
+    }
+
+    return 1;
+  }
+
+  //#!
   //#!    sys.gui.setTexBlk([num]Id, [num]val);
   //#!Enables block selection in a text field.
   //#!Return: None
