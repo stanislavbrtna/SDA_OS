@@ -188,7 +188,9 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         }
 
         //printf("%u\n", svpSGlobal.uptimeMs - svpSGlobal.kbdOverlayTimer);
-        if (svpSGlobal.kbdOverlayTimer + 1200 <= svpSGlobal.uptimeMs && svpSGlobal.kbdOverlayTimer != 0) {
+        if (svpSGlobal.kbdOverlayTimer + 1200 <= svpSGlobal.uptimeMs
+            && svpSGlobal.kbdOverlayTimer != 0
+        ) {
           sda_clipboard_overlay_init(argS->arg[1].val_s);
           svpSGlobal.kbdOverlayTimer = 0;
         }

@@ -32,8 +32,16 @@ static uint16_t target_id;
 
 extern svsVM    svm;
 
+sdaOverlayType prevOv;
+uint8_t restore;
 
 uint16_t sda_clipboard_overlay_init(uint16_t id) {
+  target_id = id;
+  return 0;
+}
+
+
+void init_screen() {
   scr = gr2_add_screen(sda_current_con);
 
   uint8_t rel = gr2_get_relative_init(sda_current_con);
@@ -47,15 +55,24 @@ uint16_t sda_clipboard_overlay_init(uint16_t id) {
   bPaste = gr2_add_button(5, 0, 3, 1, "Paste", scr, sda_current_con);
   bClose = gr2_add_button(8, 0, 1, 1, "X", scr, sda_current_con);
 
-  ov_id = setOverlayScreen(scr, sda_current_con);
+  if (getOverlayId() != 0) {
+    overlayStore(&prevOv);
+    restore = 1;
+  } else {
+    restore = 0;
+  }
 
-  target_id = id;
+  ov_id = setOverlayScreen(scr, sda_current_con);
 
   gr2_set_relative_init(rel, sda_current_con);
 
   setOverlayPos(16, 262, 320 - 32, 32);
+}
 
-  return 0;
+void restore_overlay() {
+  if (restore) {
+    overlayRestore(&prevOv);
+  }
 }
 
 void copy_to_clipboard(uint16_t id, gr2context *c) {
@@ -78,13 +95,20 @@ void copy_to_clipboard(uint16_t id, gr2context *c) {
 
 uint16_t sda_clipboard_overlay_update() {
   
-  if (ov_id != getOverlayId() || getOverlayId() == 0)  {
+  if ((ov_id != getOverlayId() || getOverlayId() == 0) && target_id == 0)  {
     return;
+  }
+
+  // this is here to init the overlay outside of the application
+  if (target_id != 0 && ov_id == 0) {
+    init_screen();
   }
 
   if (gr2_clicked(bCopy, sda_current_con)) {
     copy_to_clipboard(target_id, sda_current_con);
     destroyOverlay();
+    restore_overlay();
+    target_id = 0;
     setRedrawFlag();
     return 0;
   }
@@ -111,6 +135,9 @@ uint16_t sda_clipboard_overlay_update() {
     svpSGlobal.newString = strNewStreamEnd(&svm);
      
     destroyOverlay();
+    restore_overlay();
+    target_id = 0;
+    ov_id = 0;
     setRedrawFlag();
     return 0;
   }
@@ -125,12 +152,18 @@ uint16_t sda_clipboard_overlay_update() {
     );
 
     destroyOverlay();
+    restore_overlay();
+    target_id = 0;
+    ov_id = 0;
     setRedrawFlag();
     return 0;
   }
 
   if (gr2_clicked(bClose, sda_current_con)) {
     destroyOverlay();
+    restore_overlay();
+    target_id = 0;
+    ov_id = 0;
     setRedrawFlag();
     return 0;
   }
