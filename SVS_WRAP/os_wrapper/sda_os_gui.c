@@ -180,12 +180,11 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         LCD_Set_Sys_Font(curr_font);
 
         if (gr2_get_block_enable(argS->arg[1].val_s, &sda_app_con)) {
-          if (!(temp == sda_app_con.textBlockStart || temp == sda_app_con.textBlockEnd) && svpSGlobal.kbdOverlayTimer != 0) {
-            svpSGlobal.kbdOverlayTimer = svpSGlobal.uptimeMs;
+          if (svpSGlobal.kbdOverlayTimer != 0) {
             static uint16_t tempPrev;
-            
             //printf("t: %u tp: %u\n", temp, tempPrev);
             if (temp != tempPrev) {
+              svpSGlobal.kbdOverlayTimer = svpSGlobal.uptimeMs;
               if (temp > gr2_get_param(argS->arg[1].val_s, &sda_app_con)) {
                 sda_app_con.textBlockStart = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
                 sda_app_con.textBlockEnd = temp;
