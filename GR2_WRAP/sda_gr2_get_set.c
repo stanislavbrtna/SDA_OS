@@ -813,6 +813,23 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!
+  //#!    sys.gui.setTexBlk([num]Id, [num]val);
+  //#!Enables block selection in a text field.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setTexBlk", s)) {
+    argType[1] = 0; // id
+    argType[2] = 0; // val
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    gr2_set_block_enable(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+
+    return 1;
+  }
+
+  //#!
   //#!    sys.gui.setTexPwd([num]Id, [num]val);
   //#!Sets text field as password field.
   //#!Return: None

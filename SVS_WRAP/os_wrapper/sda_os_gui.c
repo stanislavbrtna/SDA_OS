@@ -130,11 +130,14 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       x++;
     }
 
+    // if active
     if (gr2_get_value(argS->arg[1].val_s, &sda_app_con)) {
-      // getting the cursor position
-      if (((gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED) \
-          || (gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD))
-          && (gr2_text_get_pwd(argS->arg[1].val_s, &sda_app_con) == 0)) {
+      
+      // touch event handling
+      if ((gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED 
+          || gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_RELEASED)
+           && (gr2_text_get_pwd(argS->arg[1].val_s, &sda_app_con) == 0))
+      {
         uint16_t temp;
         uint8_t curr_font;
         curr_font = LCD_Get_Font_Size();
@@ -144,16 +147,41 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         
         LCD_Set_Sys_Font(curr_font);
 
-        if (temp == 0) {
-          gr2_set_param(argS->arg[1].val_s, 0, &sda_app_con);
+        gr2_set_param(argS->arg[1].val_s, temp, &sda_app_con);
+      }
+
+      if ((gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD)
+           && (gr2_text_get_pwd(argS->arg[1].val_s, &sda_app_con) == 0))
+      {
+        uint16_t temp;
+        uint8_t curr_font;
+        curr_font = LCD_Get_Font_Size();
+        LCD_Set_Sys_Font(gr2_get_param2(argS->arg[1].val_s, &sda_app_con));
+  
+        temp = LCD_Text_Get_Cursor_Pos(s->stringField + argS->arg[2].val_str, gr2_get_tmx(&sda_app_con), gr2_get_tmy(&sda_app_con));
+        
+        LCD_Set_Sys_Font(curr_font);
+
+        if (gr2_get_block_enable(argS->arg[1].val_s, &sda_app_con)) {
+          if (temp > gr2_get_param(argS->arg[1].val_s, &sda_app_con)) {
+            sda_app_con.textBlockStart = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
+            sda_app_con.textBlockEnd = temp;
+          } else {
+            sda_app_con.textBlockStart = temp;
+            sda_app_con.textBlockEnd = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
+          }
         } else {
           gr2_set_param(argS->arg[1].val_s, temp, &sda_app_con);
         }
+        
       }
+
       gr2_set_event(argS->arg[1].val_s, EV_NONE, &sda_app_con);
 
       //čtení z klávesnice a zápis do řetězce
       if (sda_get_keyboard_key_flag()) {
+        sda_app_con.textBlockStart = 0;
+        sda_app_con.textBlockEnd = 0;
         if ((svpSGlobal.kbdKeyStr[0]) != 8) {
           result->value.val_str
             = strInsert(
