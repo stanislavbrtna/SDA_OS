@@ -130,87 +130,14 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       x++;
     }
 
-    // if active
     if (gr2_get_value(argS->arg[1].val_s, &sda_app_con)) {
-      // touch event handling
-      if ((gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED 
-          || gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_RELEASED)
-           && (gr2_text_get_pwd(argS->arg[1].val_s, &sda_app_con) == 0))
-      {
-        uint16_t temp;
-        uint8_t curr_font;
-        curr_font = LCD_Get_Font_Size();
-        LCD_Set_Sys_Font(gr2_get_param2(argS->arg[1].val_s, &sda_app_con));
-  
-        temp = LCD_Text_Get_Cursor_Pos(s->stringField + argS->arg[2].val_str, gr2_get_tmx(&sda_app_con), gr2_get_tmy(&sda_app_con));
-        
-        LCD_Set_Sys_Font(curr_font);
 
-        if (sda_app_con.textBlockStart != sda_app_con.textBlockEnd
-            && temp > sda_app_con.textBlockStart
-            && temp < sda_app_con.textBlockEnd
-        ) {
-          sda_clipboard_overlay_init(argS->arg[1].val_s);
-          svpSGlobal.kbdOverlayTimer = 0;
-          gr2_set_event(argS->arg[1].val_s, EV_NONE, &sda_app_con);
-          result->value = argS->arg[2];
-          result->type = SVS_TYPE_STR;
-          return 1;
-        } else {
-           gr2_set_param(argS->arg[1].val_s, temp, &sda_app_con);
-           if (gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_PRESSED) {
-            svpSGlobal.kbdOverlayTimer = svpSGlobal.uptimeMs;
-            sda_app_con.textBlockStart = 0;
-            sda_app_con.textBlockEnd = 0;
-            //gr2_set_modified(argS->arg[1].val_s, &sda_app_con);
-          }
-        }
+      if(gr2_cursor_handler(argS->arg[1].val_s, svpSGlobal.uptimeMs, &sda_app_con)) {
+        sda_clipboard_overlay_init(argS->arg[1].val_s);
+        result->value = argS->arg[2];
+        result->type = SVS_TYPE_STR;
+        return 1;
       }
-      
-      if ((gr2_get_event(argS->arg[1].val_s, &sda_app_con) == EV_HOLD)
-           && (gr2_text_get_pwd(argS->arg[1].val_s, &sda_app_con) == 0))
-      {
-        uint16_t temp;
-        uint8_t curr_font;
-        curr_font = LCD_Get_Font_Size();
-        LCD_Set_Sys_Font(gr2_get_param2(argS->arg[1].val_s, &sda_app_con));
-  
-        temp = LCD_Text_Get_Cursor_Pos(s->stringField + argS->arg[2].val_str, gr2_get_tmx(&sda_app_con), gr2_get_tmy(&sda_app_con));
-        
-        LCD_Set_Sys_Font(curr_font);
-
-        if (gr2_get_block_enable(argS->arg[1].val_s, &sda_app_con)) {
-          if (svpSGlobal.kbdOverlayTimer != 0) {
-            static uint16_t tempPrev;
-            //printf("t: %u tp: %u\n", temp, tempPrev);
-            if (temp != tempPrev) {
-              svpSGlobal.kbdOverlayTimer = svpSGlobal.uptimeMs;
-              if (temp > gr2_get_param(argS->arg[1].val_s, &sda_app_con)) {
-                sda_app_con.textBlockStart = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
-                sda_app_con.textBlockEnd = temp;
-              } else {
-                sda_app_con.textBlockStart = temp;
-                sda_app_con.textBlockEnd = gr2_get_param(argS->arg[1].val_s, &sda_app_con);
-              }
-              gr2_set_modified(argS->arg[1].val_s, &sda_app_con);
-              tempPrev = temp;
-            }
-            
-          }
-        } else {
-          gr2_set_param(argS->arg[1].val_s, temp, &sda_app_con);
-        }
-
-        if (svpSGlobal.kbdOverlayTimer + 1200 <= svpSGlobal.uptimeMs
-            && svpSGlobal.kbdOverlayTimer != 0
-        ) {
-          sda_clipboard_overlay_init(argS->arg[1].val_s);
-          svpSGlobal.kbdOverlayTimer = 0;
-        }
-      }
-
-      sda_app_con.pscgElements[argS->arg[1].val_s].event = EV_NONE;
-      //gr2_set_event(argS->arg[1].val_s, EV_NONE, &sda_app_con); - this sets modified flag, that caused unnesesary redraws
 
       if (svpSGlobal.newStringIdFlag == argS->arg[1].val_s) {
         result->value.val_str = svpSGlobal.newString;
