@@ -97,6 +97,10 @@ typedef struct {
   volatile uint8_t   kbdFlag;
   uint8_t  kbdKeyStr[64];
   volatile uint8_t   kbdVisible;
+  uint32_t kbdOverlayTimer;
+  uint8_t  clipboard[SDA_CLIPBOARD_SIZE];
+  uint16_t newStringIdFlag;
+  uint16_t newString;
 
   //system
   volatile uint8_t systemRedraw;

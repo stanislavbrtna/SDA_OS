@@ -94,4 +94,7 @@ File description:
 
 #define SDA_FILES_OPEN_MAX 10
 
+// Size of OS clipboard (in bytes)
+#define SDA_CLIPBOARD_SIZE 256
+
 #endif

@@ -65,8 +65,7 @@ uint16_t password_overlay_init() {
   gr2_set_xscroll(screen, 16, &sda_sys_con);
 
   setOverlayY2(288);
-  setOverlayDestructor(time_overlay_destructor);
-
+ 
   gr2_activate_text(passInput, &sda_sys_con);
 
   if (svp_crypto_get_if_set_up() == 0) {

@@ -8,6 +8,7 @@ void setOverlayX1(uint16_t val);
 void setOverlayY1(uint16_t val);
 void setOverlayX2(uint16_t val);
 void setOverlayY2(uint16_t val);
+void setOverlayPos(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 
 uint16_t getOverlayId();
 uint16_t getOverlayScreen();

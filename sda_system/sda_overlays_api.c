@@ -82,6 +82,14 @@ void setOverlayY2(uint16_t val) {
 }
 
 
+void setOverlayPos(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
+  overlayX1 = x;
+  overlayY1 = y;
+  overlayX2 = x + w;
+  overlayY2 = y + h;
+}
+
+
 uint16_t getOverlayId() {
   if (overlayScr != 0) {
     return ov_id;
