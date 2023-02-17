@@ -35,12 +35,14 @@ extern svsVM    svm;
 sdaOverlayType prevOv;
 uint8_t restore;
 
+void reset_clipboard_overlay();
+
+
 uint16_t sda_clipboard_overlay_init(uint16_t id) {
   //printf("init called: target_id: %u, ov_id: %u\n", target_id, ov_id);
   target_id = id;
   return 0;
 }
-
 
 void init_screen() {
   scr = gr2_add_screen(sda_current_con);
@@ -61,6 +63,8 @@ void init_screen() {
   }
 
   ov_id = setOverlayScreen(scr, sda_current_con);
+
+  setOverlayDestructor(reset_clipboard_overlay);
 
   gr2_set_relative_init(rel, sda_current_con);
 
@@ -91,13 +95,24 @@ void copy_to_clipboard(uint16_t id, gr2context *c) {
   svpSGlobal.clipboard[b] = 0;   
 }
 
-static void handle_exit() {
+
+void handle_clipboard_exit() {
   destroyOverlay();
   restore_overlay();
   target_id = 0;
   ov_id = 0;
   setRedrawFlag();
 }
+
+
+// exit without restoring overlay (X was pressed, S! was pressed...)
+void reset_clipboard_overlay() {
+  target_id = 0;
+  ov_id = 0;
+  gr2_destroy(scr, sda_current_con);
+  overlayDestructorDone();
+}
+
 
 uint16_t sda_clipboard_overlay_update() {
   
@@ -112,7 +127,7 @@ uint16_t sda_clipboard_overlay_update() {
 
   if (gr2_clicked(bCopy, sda_current_con)) {
     copy_to_clipboard(target_id, sda_current_con);
-    handle_exit();
+    handle_clipboard_exit();
     return 0;
   }
 
@@ -137,7 +152,7 @@ uint16_t sda_clipboard_overlay_update() {
 
     svpSGlobal.newString = strNewStreamEnd(&svm);
      
-    handle_exit();
+    handle_clipboard_exit();
     return 0;
   }
 
@@ -150,12 +165,12 @@ uint16_t sda_clipboard_overlay_update() {
       &svm
     );
 
-    handle_exit();
+    handle_clipboard_exit();
     return 0;
   }
 
   if (gr2_clicked(bClose, sda_current_con)) {
-    handle_exit();
+    handle_clipboard_exit();
     return 0;
   }
 }
