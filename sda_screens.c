@@ -244,7 +244,7 @@ void sda_main_process_touch() {
         || (svpSGlobal.touchY < overlayY1 - 10 && svpSGlobal.touchY > 32)
         || (svpSGlobal.touchY > overlayY2 + 10))
         && svpSGlobal.kbdVisible == 0 && kbdVisibleOld == 0
-        && svpSGlobal.touchType == EV_RELEASED) {
+        && svpSGlobal.touchType == EV_PRESSED) {
       destroyOverlay();
       setRedrawFlag();
     }
