@@ -95,6 +95,14 @@ Return: None
     sys.os.subRetval([str] arg0, [str] arg1, [str] arg2);
 Sets values that will be returned to parent process
 Return: None
+##### Sets the clipboard string
+    sys.os.setClipboard([str] string);
+Sets the OS clipboard 256 chars by default
+Return: [num] 1 - ok, 0 - string too long
+##### Gets the clipboard string
+    sys.os.getClipboard();
+Gets the OS clipboard 256 chars max by default
+Return: [str] clipboard_string
 #### OS settings functions
 ##### Requests high privileges
     sys.os.settings.rqAuth();

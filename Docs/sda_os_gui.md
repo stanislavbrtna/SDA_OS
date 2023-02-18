@@ -24,6 +24,10 @@ Return: [str] New modified text value
 Sets the current keyboard string (max 63 chars)
 Backspace code is "\b", delete is "\bd"
 Return: [num] 1 - ok, 0 - string too long
+##### Paste clipboard
+    sys.os.gui.pasteClipboard();
+Pastes clipboard into active text field
+Return: none
 ##### Get text cursor position
     sys.os.gui.getCPos([num] id);
 Gets the cursor position of a text field

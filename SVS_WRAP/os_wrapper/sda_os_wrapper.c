@@ -370,6 +370,42 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Sets the clipboard string
+  //#!    sys.os.setClipboard([str] string);
+  //#!Sets the OS clipboard 256 chars by default
+  //#!Return: [num] 1 - ok, 0 - string too long
+  if (sysFuncMatch(argS->callId, "setClipboard", s)) {
+    argType[1] = SVS_TYPE_STR; // new keyboard string
+
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    if (sda_strlen(s->stringField + argS->arg[1].val_str) < sizeof(svpSGlobal.clipboard)) {
+      sda_strcp(s->stringField + argS->arg[1].val_str, svpSGlobal.clipboard, sizeof(svpSGlobal.clipboard));
+      result->value.val_u = 1;
+    } else {
+      result->value.val_u = 0;
+    }
+    
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Gets the clipboard string
+  //#!    sys.os.getClipboard();
+  //#!Gets the OS clipboard 256 chars max by default
+  //#!Return: [str] clipboard_string
+  if (sysFuncMatch(argS->callId, "getClipboard", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)){
+      return 0;
+    }
+
+    result->value.val_s = strNew(svpSGlobal.clipboard, s);
+    result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
   return 0;
 }
 

@@ -273,6 +273,35 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Paste clipboard
+  //#!    sys.os.gui.pasteClipboard();
+  //#!Pastes clipboard into active text field
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "pasteClipboard", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)){
+      return 0;
+    }
+
+    svpSGlobal.newStringIdFlag = sda_app_con.textActiveId;
+    svpSGlobal.newString = strInsert(
+      (uint16_t)((uint32_t) gr2_get_str(
+        sda_app_con.textActiveId,
+        &sda_app_con) - (uint32_t) s->stringField
+      ),
+      strNew(svpSGlobal.clipboard, s),
+      gr2_get_param(sda_app_con.textActiveId, &sda_app_con),
+      s
+    );
+    gr2_set_param(
+      sda_app_con.textActiveId,
+      gr2_get_param(sda_app_con.textActiveId, &sda_app_con) + sda_strlen(svpSGlobal.clipboard),
+      &sda_app_con),
+    
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Get text cursor position
   //#!    sys.os.gui.getCPos([num] id);
   //#!Gets the cursor position of a text field

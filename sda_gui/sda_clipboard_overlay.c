@@ -55,6 +55,12 @@ void init_screen() {
   bPaste = gr2_add_button(5, 0, 3, 1, "Paste", scr, sda_current_con);
   bClose = gr2_add_button(8, 0, 1, 1, "X", scr, sda_current_con);
 
+  if(svpSGlobal.clipboard[0] == 0) {
+    gr2_set_grayout(bPaste, 1, sda_current_con);
+  } else {
+    gr2_set_grayout(bPaste, 0, sda_current_con);
+  }
+
   if (getOverlayId() != 0) {
     overlayStore(&prevOv);
     restore = 1;
@@ -164,6 +170,7 @@ uint16_t sda_clipboard_overlay_update() {
       gr2_get_param(target_id, sda_current_con),
       &svm
     );
+    gr2_set_param(target_id, gr2_get_param(target_id, sda_current_con) + sda_strlen(svpSGlobal.clipboard), sda_current_con),
 
     handle_clipboard_exit();
     return 0;

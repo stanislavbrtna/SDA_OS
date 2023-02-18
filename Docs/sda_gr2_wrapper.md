@@ -264,6 +264,22 @@ Return: None
 Sets text field as editable.
 Return: None
 
+    sys.gui.setBlk([num] id, [num] start, [num] stop);
+Sets start and stop of a block in active text field
+Return: None
+
+    sys.gui.getBlkStart([num] id);
+Sets text field as editable.
+Return: None
+
+    sys.gui.getBlkEnd([num] id);
+Sets text field as editable.
+Return: None
+
+    sys.gui.setTexBlk([num]Id, [num]val);
+Enables block selection in a text field.
+Return: None
+
     sys.gui.setTexPwd([num]Id, [num]val);
 Sets text field as password field.
 Return: None
