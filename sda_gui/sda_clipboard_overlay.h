@@ -20,3 +20,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#ifndef SDA_CLIPBOARD_OVERLAY_H
+#define SDA_CLIPBOARD_OVERLAY_H
+#include "sda_system_overlays.h"
+
+uint16_t sda_clipboard_overlay_update();
+uint16_t sda_clipboard_overlay_init(uint16_t id);
+
+#endif

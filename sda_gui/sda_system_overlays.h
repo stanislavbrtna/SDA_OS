@@ -78,4 +78,6 @@ void password_overlay_clear_ok(uint16_t ovId);
 void sda_show_auth_overlay_init();
 void sda_auth_overlay_handle();
 
+#include "sda_clipboard_overlay.h"
+
 #endif

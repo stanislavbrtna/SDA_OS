@@ -62,6 +62,7 @@ void sdaSvmSetCryptoUnlock(uint8_t unlock);
 uint8_t sdaSvmGetCryptoUnlock();
 uint64_t svmGetAppUptime();
 void sdaSvmSetLandscape(uint8_t val);
+void sdaSvmAuthorize();
 
 // multiprocess
 void sdaSvmSave();

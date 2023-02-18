@@ -21,7 +21,7 @@ SOFTWARE.
 */
 
 
-#include "sda_system_overlays.h"
+#include "sda_clipboard_overlay.h"
 
 static uint16_t bCopy;
 static uint16_t bCut;
@@ -117,7 +117,7 @@ void reset_clipboard_overlay() {
 uint16_t sda_clipboard_overlay_update() {
   
   if ((ov_id != getOverlayId() || getOverlayId() == 0) && target_id == 0)  {
-    return;
+    return 0;
   }
 
   // this is here to init the overlay outside of the application

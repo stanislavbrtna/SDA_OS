@@ -95,22 +95,21 @@ typedef struct {
 
   //keyboard
   volatile uint8_t   kbdFlag;
-  uint8_t  kbdKeyStr[64];
   volatile uint8_t   kbdVisible;
-  uint32_t kbdOverlayTimer;
+  uint8_t  kbdKeyStr[64];
   uint8_t  clipboard[SDA_CLIPBOARD_SIZE];
   uint16_t newStringIdFlag;
   uint16_t newString;
 
   //system
-  volatile uint8_t systemRedraw;
-  volatile uint16_t systemOverlay;
-  volatile uint16_t systemMessage;
-  volatile uint8_t systemXBtnVisible;
-  volatile uint8_t systemXBtnClick;
-  volatile int32_t systemXBtnTime;
+  volatile uint8_t   systemRedraw;
+  volatile uint16_t  systemOverlay;
+  volatile uint16_t  systemMessage;
+  volatile uint8_t   systemXBtnVisible;
+  volatile uint8_t   systemXBtnClick;
+  volatile int32_t   systemXBtnTime;
   volatile clickType systemOptClick;
-  volatile uint8_t systemPwrLongPress;
+  volatile uint8_t   systemPwrLongPress;
 
   volatile uint8_t breakP16Draw;
 
