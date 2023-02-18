@@ -30,5 +30,6 @@ void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len);
 uint32_t  sda_strcp(uint8_t *in, uint8_t *out, uint32_t len);
 uint32_t sda_strlen(uint8_t * str);
 void sda_time_to_str(uint8_t * buff, uint32_t val);
+uint16_t sda_str_insert(uint8_t *index1, uint8_t *index2, uint8_t *buff, uint16_t pos, uint16_t len);
 
 #endif

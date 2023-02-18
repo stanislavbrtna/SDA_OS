@@ -22,54 +22,6 @@ SOFTWARE.
 
 #include "../../SDA_OS.h"
 
-uint16_t svp_str_insert(uint8_t *index1, uint8_t *index2, uint8_t *buff, uint16_t pos, uint16_t len) {
-  uint16_t x = 0;
-  uint16_t y = 0;
-  uint16_t cont;
-
-  // source
-  while((index1[x] != 0) && (x != pos)) {
-    if (x > len) {
-      return 1;
-    }
-    buff[y] = index1[x];
-
-    y++;
-    x++;
-  }
-
-  cont = x;
-  x = 0;
-
-  // insert string no. 2
-  while(index2[x] != 0) {
-    buff[y] = index2[x];
-    x++;
-    y++;
-  }
-
-  // finish string no. 1
-  x = cont;
-
-  while(index1[x] != 0) {
-
-    buff[y] = index1[x];
-    x++;
-    y++;
-  }
-
-  buff[y] = 0;
-
-  x = 0;
-  while(buff[x] != 0){
-    index1[x] = buff[x];
-    x++;
-  }
-
-  index1[x] = buff[x];
-  return 1;
-}
-
 // max 255 chars limit
 uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
   uint16_t x = 0;
@@ -108,7 +60,7 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
     if (sda_get_keyboard_key_flag()) {
         if (*((uint8_t *)svpSGlobal.kbdKeyStr) != 8) {
           // TODO: Fix this
-          svp_str_insert(str, svpSGlobal.kbdKeyStr, buff,  gr2_get_param(input_id, &sda_sys_con), len);
+          sda_str_insert(str, svpSGlobal.kbdKeyStr, buff,  gr2_get_param(input_id, &sda_sys_con), len);
 
           if (*((uint8_t *)svpSGlobal.kbdKeyStr + 1) != 0) {
             gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) + 2, &sda_sys_con); // move cursor
@@ -150,9 +102,7 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
             gr2_set_str(input_id, str, &sda_sys_con); // set/update
             return 1;
           }
-
         }
-
       }
     }
     if (gr2_get_str(input_id, &sda_sys_con) != str && !gr2_get_grayout(input_id, &sda_sys_con)) {

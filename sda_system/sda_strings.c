@@ -106,7 +106,8 @@ void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
   }
 }
 
-void sda_time_to_str(uint8_t * buff, uint32_t val) {
+// needs at least 17 chars long buffer
+void sda_time_to_str(uint8_t * buff, uint32_t time_secs) {
   uint8_t a = 0;
 
   for (a = 0; a < 16; a++) {
@@ -115,35 +116,35 @@ void sda_time_to_str(uint8_t * buff, uint32_t val) {
 
   buff[16] = 0;
 
-  if (val < 60) {
+  if (time_secs < 60) {
     buff[15] = 's';
-    buff[14] = val % 10 + 48;
-    buff[13] = (val) / 10 % 6 + 48;
+    buff[14] = time_secs % 10 + 48;
+    buff[13] = (time_secs) / 10 % 6 + 48;
     buff[12] = ' ';
   }
 
-  if (val > 60) {
+  if (time_secs > 60) {
     buff[11] = 'm';
-    buff[10] = (val / 60) % 10 + 48;
-    buff[9] = (val / 60) / 10 % 6 + 48;
+    buff[10] = (time_secs / 60) % 10 + 48;
+    buff[9] = (time_secs / 60) / 10 % 6 + 48;
   }
 
-  if (val > 3600) {
+  if (time_secs > 3600) {
     buff[8] = ' ';
     buff[7] = 'h';
 
-    buff[6] = ((val / 3600) % 24) % 10 + 48;
-    buff[5] = ((val / 3600) % 24) / 10 % 6 + 48;
+    buff[6] = ((time_secs / 3600) % 24) % 10 + 48;
+    buff[5] = ((time_secs / 3600) % 24) / 10 % 6 + 48;
 
   }
 
-  if (val > 3600 * 24) {
+  if (time_secs > 3600 * 24) {
     buff[4] = ' ';
     buff[3] = 'd';
 
-    buff[2] = ((val / 3600) / 24) % 10 + 48;
-    buff[1] = ((val / 3600) / 24) / 10 % 10 + 48;
-    buff[0] = ((val / 3600) / 24) / 100 % 10 + 48;
+    buff[2] = ((time_secs / 3600) / 24) % 10 + 48;
+    buff[1] = ((time_secs / 3600) / 24) / 10 % 10 + 48;
+    buff[0] = ((time_secs / 3600) / 24) / 100 % 10 + 48;
   }
 
   while (buff[0] == ' ') {
@@ -151,4 +152,53 @@ void sda_time_to_str(uint8_t * buff, uint32_t val) {
       buff[a] = buff[a + 1];
     }
   }
+}
+
+
+uint16_t sda_str_insert(uint8_t *index1, uint8_t *index2, uint8_t *buff, uint16_t pos, uint16_t len) {
+  uint16_t x = 0;
+  uint16_t y = 0;
+  uint16_t cont;
+
+  // source
+  while((index1[x] != 0) && (x != pos)) {
+    if (x > len) {
+      return 1;
+    }
+    buff[y] = index1[x];
+
+    y++;
+    x++;
+  }
+
+  cont = x;
+  x = 0;
+
+  // insert string no. 2
+  while(index2[x] != 0) {
+    buff[y] = index2[x];
+    x++;
+    y++;
+  }
+
+  // finish string no. 1
+  x = cont;
+
+  while(index1[x] != 0) {
+
+    buff[y] = index1[x];
+    x++;
+    y++;
+  }
+
+  buff[y] = 0;
+
+  x = 0;
+  while(buff[x] != 0){
+    index1[x] = buff[x];
+    x++;
+  }
+
+  index1[x] = buff[x];
+  return 1;
 }
