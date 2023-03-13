@@ -56,7 +56,7 @@ Return: [num]Month
 ##### Create time overlay
     sys.o.time.add();
     sys.o.time.add([num]hr, [num]min);
-Adds a time overlay, returns it's id
+Adds a time overlay, returns its id
 Return: [num]overlay id
 ##### Set time overlay time
     sys.o.time.set([num]overlay_id, [num]hr, [num]min);
@@ -79,6 +79,33 @@ Return: [num]Minutes
 Returns hours from overlay.
 Return: [num]Hours
 ##### Clear ok
-    sys.oTimClrOk([num]overlay_id);
+    sys.o.time.clrOk([num]overlay_id);
 Clears ok from time overlay
+Return: None
+
+#### Color overlay
+
+##### Create color overlay
+    sys.o.color.add([num]color);
+Adds a color overlay, returns its id
+Return: [num]overlay id
+##### Set color overlay color
+    sys.o.color.set([num]overlay_id, [num]color);
+Sets color in overlay with given id.
+Return: None
+##### Update color overlay
+    sys.o.color.update([num]overlay_id);
+Updates color overlay.
+Return: None
+##### Get color overlay ok
+    sys.o.color.getOk([num]overlay_id);
+Gets ok from color overlay.
+Return: 1 if ok was pressed
+##### Get color overlay value
+    sys.o.color.getCol([num]overlay_id);
+Returns color from overlay.
+Return: [num]Color
+##### Clear ok
+    sys.o.color.clrOk([num]overlay_id);
+Clears ok from the overlay
 Return: None

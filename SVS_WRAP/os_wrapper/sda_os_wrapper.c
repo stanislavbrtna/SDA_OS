@@ -61,6 +61,7 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_overlay_color_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 
 
 svsConstType svsWrapConsts[] = {
@@ -105,6 +106,7 @@ void sda_svs_wrapper_init() {
   addSysWrapper(sda_overlay_sub_wrapper, (uint8_t *)"o");
   addSysWrapper(sda_overlay_time_wrapper, (uint8_t *)"o.time");
   addSysWrapper(sda_overlay_date_wrapper, (uint8_t *)"o.date");
+  addSysWrapper(sda_overlay_color_wrapper, (uint8_t *)"o.color");
   addSysWrapper(sda_time_alarm_wrapper, (uint8_t *)"alarm");
   addSysWrapper(sda_os_gui_wrapper, (uint8_t *)"os.gui");
   addSysWrapper(sda_os_cal_widget_wrapper, (uint8_t *)"w.cal");

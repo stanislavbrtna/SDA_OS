@@ -233,7 +233,7 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Create time overlay
   //#!    sys.o.time.add();
   //#!    sys.o.time.add([num]hr, [num]min);
-  //#!Adds a time overlay, returns it's id
+  //#!Adds a time overlay, returns its id
   //#!Return: [num]overlay id
   if (sysFuncMatch(argS->callId, "add", s)) {
 
@@ -340,7 +340,7 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Clear ok
-  //#!    sys.oTimClrOk([num]overlay_id);
+  //#!    sys.o.time.clrOk([num]overlay_id);
   //#!Clears ok from time overlay
   //#!Return: None
   if (sysFuncMatch(argS->callId, "clrOk", s)) {
@@ -350,6 +350,111 @@ uint8_t sda_overlay_time_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     time_overlay_clear_ok((uint16_t)argS->arg[1].val_s);
+    return 1;
+  }
+
+  return 0;
+}
+
+
+uint8_t sda_overlay_color_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+  uint8_t argType[11];
+
+  //#!
+  //#!#### Color overlay
+  //#!
+
+  //#!##### Create color overlay
+  //#!    sys.o.color.add([num]color);
+  //#!Adds a color overlay, returns its id
+  //#!Return: [num]overlay id
+  if (sysFuncMatch(argS->callId, "add", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = color_overlay_init();
+    result->type = SVS_TYPE_NUM;
+    color_overlay_set_color(
+      (uint16_t)result->value.val_s,
+      (uint16_t)argS->arg[1].val_s
+    );
+    return 1;
+  }
+
+  //#!##### Set color overlay color
+  //#!    sys.o.color.set([num]overlay_id, [num]color);
+  //#!Sets color in overlay with given id.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "set", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+    color_overlay_set_color(
+      (uint16_t)argS->arg[1].val_s,
+      (uint16_t)argS->arg[2].val_s
+    );
+    return 1;
+  }
+
+  //#!##### Update color overlay
+  //#!    sys.o.color.update([num]overlay_id);
+  //#!Updates color overlay.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId,"update", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    color_overlay_update((uint16_t) argS->arg[1].val_s);
+    return 1;
+  }
+
+  //#!##### Get color overlay ok
+  //#!    sys.o.color.getOk([num]overlay_id);
+  //#!Gets ok from color overlay.
+  //#!Return: 1 if ok was pressed
+  if (sysFuncMatch(argS->callId, "getOk", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = color_overlay_get_ok((uint16_t)argS->arg[1].val_s);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get color overlay value
+  //#!    sys.o.color.getCol([num]overlay_id);
+  //#!Returns color from overlay.
+  //#!Return: [num]Color
+  if (sysFuncMatch(argS->callId, "getCol", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = color_overlay_get_color((uint16_t)argS->arg[1].val_s);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Clear ok
+  //#!    sys.o.color.clrOk([num]overlay_id);
+  //#!Clears ok from the overlay
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "clrOk", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    color_overlay_clear_ok((uint16_t)argS->arg[1].val_s);
     return 1;
   }
 
