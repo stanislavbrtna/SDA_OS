@@ -153,10 +153,10 @@ uint8_t svp_crypto_load_key_to_str(uint8_t * fname, uint8_t* str) {
     i++;
     
     if (i == KEY_LEN_MAX - 1) {
-      str[i] = 0;
       break;
     }
   }
+  str[i] = 0;
 
   svp_fclose(&source);
   return 0;
