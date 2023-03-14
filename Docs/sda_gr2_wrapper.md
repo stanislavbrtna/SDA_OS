@@ -148,6 +148,11 @@ Return: [num] isSelected
     sys.gui.setSelect([num]Id, [num]select);
 Sets element select parameter.
 Return: None
+##### Slider size
+
+    sys.gui.setSliderSize([num]Id, [num]val);
+Sets size of slider in pixels.
+Return: None
 ##### String parameter
     sys.gui.getStr([num]Id);
 Gets element value_str parameter.

@@ -341,6 +341,23 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Slider size
+  //#!
+  //#!    sys.gui.setSliderSize([num]Id, [num]val);
+  //#!Sets size of slider in pixels.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setSliderSize", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM; // val
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+    gr2_set_slider_size(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+
+    return 1;
+  }
+
   //#!##### String parameter
   //#!    sys.gui.getStr([num]Id);
   //#!Gets element value_str parameter.
