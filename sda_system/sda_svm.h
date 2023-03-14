@@ -52,17 +52,33 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top);
 void sdaSvmSetMainScreen(uint16_t val);
 uint16_t sdaSvmGetMainScreen();
 
-// misc
+// svm redraw detect
 void sdaSetRedrawDetect(uint8_t val);
 uint8_t sdaGetRedrawDetect();
+
+// set error
 void sdaSvmSetError(uint8_t * str);
+
+// cwd for launching child app
 void svmSetLaunchCWDflag(uint8_t val);
+
+// get name
 uint8_t * sdaSvmGetName();
+
+// lock/unlock crypto
 void sdaSvmSetCryptoUnlock(uint8_t unlock);
 uint8_t sdaSvmGetCryptoUnlock();
+
+// get app uptime
 uint64_t svmGetAppUptime();
+
+// landscape/portrait
 void sdaSvmSetLandscape(uint8_t val);
+
+// Authorized app
 void sdaSvmAuthorize();
+uint8_t sdaSvmGetAuthorized();
+
 
 // multiprocess
 void sdaSvmSave();
