@@ -277,7 +277,9 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
     btnBack = gr2_add_button(0, 0, 2, 1, (uint8_t *)"<-", appScreen, &sda_sys_con);
 
-    btnSwitch = gr2_add_button(2, 13, 7, 14, ASCR_RUNNING_APP, appScreen, &sda_sys_con);
+    btnSwitch = gr2_add_button(2, 13, 8, 14, ASCR_RUNNING_APP, appScreen, &sda_sys_con);
+
+    gr2_text_set_align(btnSwitch, GR2_ALIGN_CENTER, &sda_sys_con);
 
     gr2_set_visible(btnBack, 0, &sda_sys_con);
 
