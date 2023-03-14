@@ -19,10 +19,15 @@ Then duplicate the platform specific header example for SDA_OS in SVS (platform_
 ## Application development for SDA
 SDA applications are written in SVS language using APIs of SDA_OS, documentation on the language can be found in its repo [SVS script syntax](https://github.com/stanislavbrtna/svs-script/blob/master/SYNTAX.md) and documentation for the SDA_OS API is here.
 
+Some example applications can be found [here](Docs/sda_os_code_snipplets.md).
+
 ### SDA_OS SVS wrappers
 SDA_OS uses wrappers to provide its functions to applications running in the SVS environment. These wrappers extends the **sys** keyword and they have automatically generated documentation. This API is quite stable and its intended to have long backward compatibility.
 
 - [Main OS functions](Docs/sda_main.md)
+    - [OS Gui](sda_os_gui.md)
+    - [Sound](sda_os_sound.md)
+    - [Callendar widget](sda_os_widgets.md)
 
 - [OS Overlays](Docs/sda_overlays.md)
 
@@ -35,6 +40,7 @@ SDA_OS uses wrappers to provide its functions to applications running in the SVS
 - [Native graphics](Docs/sda_directS.md)
 
 - [Hardware](Docs/sda_hw.md)
+
 
 ### SDA_OS native API
 Native (C) API of SDA_OS is not strictly defined yet and it is work-in-progress. Expect breaking changes.
