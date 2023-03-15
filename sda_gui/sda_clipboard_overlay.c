@@ -87,8 +87,14 @@ void copy_to_clipboard(uint16_t id, gr2context *c) {
   uint32_t i = 0;
   uint32_t b = 0;
   uint8_t * str = gr2_get_str(id, c);
+
+  if (c->textBlockStart == 0 || c->textBlockEnd == 0) {
+    svpSGlobal.clipboard[0] = 0;
+    return;
+  }
+
   while(str[i] != 0) {
-    if (i >= c->textBlockStart && i < c->textBlockEnd) {
+    if (i >= c->textBlockStart - 1 && i < c->textBlockEnd) {
       svpSGlobal.clipboard[b] = str[i];
       b++;
       if (b > 254) {
@@ -146,13 +152,13 @@ uint16_t sda_clipboard_overlay_update() {
     uint8_t * str = gr2_get_str(target_id, sda_current_con);
     
     while(str[i] != 0) {
-      if (!(i >= sda_current_con->textBlockStart && i < sda_current_con->textBlockEnd)) {
+      if (!(i >= (sda_current_con->textBlockStart - 1) && i < sda_current_con->textBlockEnd)) {
         strNewStreamPush(str[i], &svm);
       }
       i++;
     }
 
-    gr2_set_param(target_id, sda_current_con->textBlockStart, sda_current_con);
+    gr2_set_param(target_id, sda_current_con->textBlockStart - 1, sda_current_con);
     sda_current_con->textBlockStart = 0;
     sda_current_con->textBlockEnd = 0;
 

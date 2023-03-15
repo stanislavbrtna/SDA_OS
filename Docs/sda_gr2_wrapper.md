@@ -274,12 +274,12 @@ Sets start and stop of a block in active text field
 Return: None
 
     sys.gui.getBlkStart([num] id);
-Sets text field as editable.
-Return: None
+Gets text field block start.
+Return: [num] block_start
 
     sys.gui.getBlkEnd([num] id);
-Sets text field as editable.
-Return: None
+Gets text field block end.
+Return: [num] block_end
 
     sys.gui.setTexBlk([num]Id, [num]val);
 Enables block selection in a text field.

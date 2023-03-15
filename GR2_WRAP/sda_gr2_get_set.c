@@ -849,9 +849,11 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     result->type = SVS_TYPE_NUM;
 
     if (gr2_text_get_editable(argS->arg[1].val_s, &sda_app_con) && gr2_get_text_active(argS->arg[1].val_s, &sda_app_con)) {
-      sda_app_con.textBlockStart = argS->arg[2].val_s;
-      sda_app_con.textBlockEnd = argS->arg[3].val_s;
+      sda_app_con.textBlockStart = get_char_cursor_pos(argS->arg[2].val_s, gr2_get_str(argS->arg[1].val_s, &sda_app_con));
+      sda_app_con.textBlockEnd = get_char_cursor_pos(argS->arg[3].val_s, gr2_get_str(argS->arg[1].val_s, &sda_app_con));
       result->value.val_s = 1;
+
+      gr2_set_modified(argS->arg[1].val_s, &sda_app_con);
     }
 
     return 1;
@@ -859,8 +861,8 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!
   //#!    sys.gui.getBlkStart([num] id);
-  //#!Sets text field as editable.
-  //#!Return: None
+  //#!Gets text field block start.
+  //#!Return: [num] block_start
   if (sysFuncMatch(argS->callId, "getBlkStart", s)) {
     argType[1] = SVS_TYPE_NUM; // id
 
@@ -872,7 +874,7 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     result->type = SVS_TYPE_NUM;
 
     if (gr2_text_get_editable(argS->arg[1].val_s, &sda_app_con) && gr2_get_text_active(argS->arg[1].val_s, &sda_app_con)) {
-      result->value.val_s = 1 + get_char_cursor_pos(sda_app_con.textBlockStart, gr2_get_str(argS->arg[1].val_s, &sda_app_con));
+      result->value.val_s = get_char_cursor_pos(sda_app_con.textBlockStart, gr2_get_str(argS->arg[1].val_s, &sda_app_con));
     }
 
     return 1;
@@ -880,8 +882,8 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!
   //#!    sys.gui.getBlkEnd([num] id);
-  //#!Sets text field as editable.
-  //#!Return: None
+  //#!Gets text field block end.
+  //#!Return: [num] block_end
   if (sysFuncMatch(argS->callId, "getBlkEnd", s)) {
     argType[1] = SVS_TYPE_NUM; // id
 
