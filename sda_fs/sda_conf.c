@@ -207,6 +207,7 @@ void sda_conf_key_write(sda_conf *fc, uint8_t* key, uint8_t* val_buff){
   uint32_t fsize = 0;
   uint8_t cbuff = 0;
 
+  //printf("storing: %s in %s\n", val_buff, key);
   //easy part:
   if (!sda_conf_key_exists(fc, key)) {
 
@@ -254,7 +255,7 @@ void sda_conf_key_write(sda_conf *fc, uint8_t* key, uint8_t* val_buff){
 
       fsize = svp_get_size(&(fc->fil));
 
-      for (x = keystart + keylen; x + 1 < fsize; x++) {
+      for (x = keystart + keylen; x < fsize; x++) {
         svp_fseek(&(fc->fil), x);
         cbuff = svp_fread_u8(&(fc->fil));
         svp_fseek(&(fc->fil), x - keylen + strlen);
