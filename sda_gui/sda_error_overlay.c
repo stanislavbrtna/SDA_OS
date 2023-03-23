@@ -105,6 +105,8 @@ void sda_show_error_message(uint8_t * text) {
                         &sda_sys_con
                     );
 
+  gr2_text_set_align(error_overlay_ok, GR2_ALIGN_CENTER, &sda_sys_con);
+
   error_overlay = setOverlayScreen(error_overlay_scr, &sda_sys_con);
   setOverlayDestructor(sda_error_overlay_destructor);
   soft_error_flag = 1;
