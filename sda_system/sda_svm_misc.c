@@ -146,6 +146,8 @@ void sdaSvmInit() {
 
 
 void svmRemoveCachedProc(uint16_t id) {
+  svp_switch_main_dir();
+  svp_chdir((uint8_t *)"APPS");
   svmRemoveCachedFile(id, (uint8_t *) ".gr0");
   svmRemoveCachedFile(id, (uint8_t *) ".gr1");
   svmRemoveCachedFile(id, (uint8_t *) ".gr2");
@@ -165,6 +167,9 @@ void svmRemoveCachedFile(uint16_t id, uint8_t * tail) {
   sda_str_add(cacheBuffer, tail);
 
   svp_unlink(cacheBuffer);
+#ifdef SVM_DBG_ENABLED
+  printf("unlinking: %s\n", cacheBuffer);
+#endif
 }
 
 

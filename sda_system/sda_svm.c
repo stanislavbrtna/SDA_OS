@@ -298,13 +298,13 @@ void sdaSvmCloseApp() {
   if (svmMeta.cryptoUnlocked) {
     svp_crypto_lock();
   }
+  SVScloseCache(&svm);
   svmInValidate(svmMeta.id);
   sda_set_sleep_lock(0);
   svpSGlobal.kbdVisible = 0;
   sda_set_landscape(0);
   sda_alarm_clear_flag();
   sda_files_close();
-  SVScloseCache(&svm);
 
   if (svmMeta.parentId != 0) {
     uint8_t argBuff[2048];
