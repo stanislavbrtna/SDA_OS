@@ -82,6 +82,9 @@ File description:
 // App screen (launcher) debug switch
 // #define APP_SCREEN_DEBUG
 
+// SVM debug switch
+// #define SVM_DBG_ENABLED
+
 // Driver options
 #ifndef TOUCH_USE_BATTERY_MEASUREMENT
 #define TOUCH_USE_BATTERY_MEASUREMENT

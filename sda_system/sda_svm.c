@@ -304,6 +304,7 @@ void sdaSvmCloseApp() {
   sda_set_landscape(0);
   sda_alarm_clear_flag();
   sda_files_close();
+  SVScloseCache(&svm);
 
   if (svmMeta.parentId != 0) {
     uint8_t argBuff[2048];
@@ -418,7 +419,7 @@ uint8_t svmSuspend() {
 
 
 uint8_t svmWake(uint16_t id) {
-  if(id == svmMeta.id) {
+  if(id == svmMeta.id && svmValid) {
     sdaSvmOnTop();
     if(functionExists(WAKEUP_FUNCTION, &svm)) { // execute the wakeup
       commExec(WAKEUP_FUNCTION, &svm);
@@ -433,7 +434,9 @@ uint8_t svmWake(uint16_t id) {
     return 0;
   }
 
-  svmSuspend();
+  if (svmValid) {
+    svmSuspend();
+  }
 
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProc[x].id == id && svmSavedProc[x].valid == 1) {
@@ -517,7 +520,10 @@ static void svmInValidate(uint16_t id) {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProc[x].id == id && svmSavedProc[x].valid == 1) {
       svmSavedProc[x].valid = 0;
-      svmRemoveCachedProc(x);
+      svmRemoveCachedProc(id);
+#ifdef SVM_DBG_ENABLED
+      printf("svmInValidate: removing cached proc x:%u id:%u\n", x, id);
+#endif
     }
   }
 }
@@ -704,6 +710,9 @@ void sdaSvmRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varT
 
 
 void sdaSvmSave() {
+#ifdef SVM_DBG_ENABLED
+  printf("sdaSvmSave: saving: id: %u\n", svmMeta.id);
+#endif
   SVScloseCache(&svm);
 
   // general purpose files are already stored in the metadata structure
@@ -732,6 +741,10 @@ void sdaSvmSave() {
 
 
 uint8_t sdaSvmLoad(uint16_t id) {
+
+#ifdef SVM_DBG_ENABLED
+  printf("sdaSvmLoad: loading: id: %u\n", id);
+#endif
 
   if(!sdaSvmLoader(id, (uint8_t *) ".svm", &svm, sizeof(svm)))
     return 0;
