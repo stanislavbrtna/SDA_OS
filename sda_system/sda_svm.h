@@ -40,7 +40,7 @@ void sdaSvmOnTop();
 uint8_t sdaSvmGetRunning();
 
 // gently closes the currently running app, performs exit() call
-void sdaSvmCloseApp();
+void sdaSvmCloseRunning();
 
 // kills app
 void sdaSvmKillApp();
@@ -121,7 +121,7 @@ void sda_alarm_clear_flag();
 //                                 internal functions
 // *****************************************************************************
 
-uint8_t sdaSvmLoadApp(uint8_t *fname, uint8_t *name, uint8_t mode);
+uint8_t sdaSvmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode);
 void sdaSvmGetGR2Settings();
 void svmSetRestoreSlot(uint8_t slot);
 

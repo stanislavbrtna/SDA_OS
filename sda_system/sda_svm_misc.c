@@ -98,6 +98,20 @@ uint8_t sdaSvmGetAuthorized() {
 }
 
 
+uint16_t sdaSvmGetId() {
+  if (sdaSvmGetValid()) {
+    return svmMeta.id;
+  } else {
+    return 0;
+  }
+}
+
+
+void sdaSvmSetLandscape(uint8_t val) {
+  svmMeta.landscape = val;
+}
+
+
 // beep callback init & handler
 void svmSetBeepCallback(uint8_t * cb, uint32_t time) {
  sda_strcp(cb, svmMeta.beepTimerCallback, sizeof(svmMeta.beepTimerCallback));
@@ -220,7 +234,7 @@ uint8_t sdaSvmGetCryptoUnlock() {
 
 uint8_t svmCheckAndExit() {
   if((svpSGlobal.systemXBtnClick) || (errCheck(&svm) != 0)) {
-    sdaSvmCloseApp();
+    sdaSvmCloseRunning();
     return 1;
   }
   return 0;
@@ -258,9 +272,15 @@ uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
         sda_strcp((uint8_t *)"/", newFname + sda_strlen(newFname), APP_NAME_LEN);
       }
       sda_strcp(oldFname, newFname + sda_strlen(newFname), APP_NAME_LEN);
+#ifdef SVM_DBG_ENABLED
+      printf("%s: 0: updating path: %s -> %s \n",__FUNCTION__ , oldFname, newFname);
+#endif
       return 0;
     }
   }
-
+#ifdef SVM_DBG_ENABLED
+      printf("%s: 1: APPS not in path: %s\n",__FUNCTION__ , oldFname, newFname);
+#endif
+  // APPS string not in path...
   return 1;
 }

@@ -283,7 +283,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
     gr2_set_visible(btnBack, 0, &sda_sys_con);
 
-    sdaSvmCloseApp();
+    //sdaSvmCloseRunning(); - ?? perhaps was here for mount/umount before sda went multi-process
 
     return appScreen;
   }

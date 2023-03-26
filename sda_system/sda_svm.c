@@ -77,13 +77,13 @@ uint8_t svmGetSavedProcValid(uint16_t proc_array_index) {
 }
 
 
-void svmSetNextId(uint16_t id) {
-  nextId = id;
+uint16_t svmGetSavedProcId(uint16_t proc_array_index) {
+  return svmSavedProc[proc_array_index].id;
 }
 
 
-uint16_t svmGetSavedProcId(uint16_t proc_array_index) {
-  return svmSavedProc[proc_array_index].id;
+void svmSetNextId(uint16_t id) {
+  nextId = id;
 }
 
 
@@ -94,10 +94,6 @@ uint16_t sdaSvmGetMainScreen() {
 
 uint8_t * sdaSvmGetName() {
   return svmMeta.name;
-}
-
-void sdaSvmSetLandscape(uint8_t val) {
-  svmMeta.landscape = val;
 }
 
 // app misc
@@ -114,7 +110,7 @@ uint8_t sdaSvmGetRunning() {
 }
 
 
-uint8_t sdaSvmGetValid(uint16_t id) {
+uint8_t sdaSvmGetValidId(uint16_t id) {
   if (svmMeta.id == id && svmValid){
     return 1;
   }
@@ -126,27 +122,31 @@ uint8_t sdaSvmGetValid(uint16_t id) {
   return 0;
 }
 
-
-uint16_t sdaSvmGetId() {
-  if (svmValid) {
-    return svmMeta.id;
-  } else {
-    return 0;
-  }
+uint8_t sdaSvmGetValid() {
+  return svmValid;
 }
-
 
 
 // app loading/closing
 
-uint8_t sdaSvmLoadApp(uint8_t *fname, uint8_t *name, uint8_t mode) {
+// wrapper for svs loadApp, loads fname in svm
+uint8_t sdaSvmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
   uint8_t dirbuf[258];
   svp_getcwd(dirbuf, 256);
+
+#ifdef SVM_DBG_ENABLED
+      printf("%s: tokenizing: %s in %s \n",__FUNCTION__ , fname, name);
+      uint8_t dbg_dir[258];
+      svp_getcwd(dbg_dir, 256);
+      printf("cwd: %s\n", dbg_dir);
+      setTokenizerDebug(1);
+#endif
 
 #ifdef PC
   uint32_t sdl_time;
   sdl_time = SDL_GetTicks();
 #endif
+
   if (svmValid == 0) {
     svsLoadCounter = 0;
 
@@ -169,20 +169,32 @@ uint8_t sdaSvmLoadApp(uint8_t *fname, uint8_t *name, uint8_t mode) {
 #endif
     svmInit = 0;
   }
+
+#ifdef SVM_DBG_ENABLED
+  printf("%s: success\n",__FUNCTION__);
+#endif
+
   return 0;
 }
 
-
+// launch app
 uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   uint8_t cacheBuffer[256];
   uint8_t numbuff[25];
   uint8_t dirbuf[258];
-  uint8_t fname_updated[APP_NAME_LEN];
+  uint8_t fname_updated[APP_NAME_LEN + 1];
   svp_getcwd(dirbuf, 256);
+
+#ifdef SVM_DBG_ENABLED
+      printf("%s: launching: %s \n",__FUNCTION__ , fname);
+#endif
 
   uint16_t singularId = 0;
   singularId = GetIfSingular(fname);
   if (singularId) {
+#ifdef SVM_DBG_ENABLED
+      printf("%s: waking singular...\n",__FUNCTION__);
+#endif
     svmWake(singularId);
     return 1;
   }
@@ -207,17 +219,25 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   }
 
   if (svmValid)  {
+#ifdef SVM_DBG_ENABLED
+      printf("%s: suspending running app: %s \n",__FUNCTION__ , svmMeta.name);
+#endif
     if(svmSuspend()) {
       return 0;
     }
   }
   svmValid = 0; // invalidate slot before loading
+
   set_gr2_workaround_context(&sda_app_con);
+
   if (parentId != 0 && svmMeta.launchFromCWD == 1) {
     svp_chdir(dirbuf);
+
     // if we do not launch from launcher, we update the path of the executable
     if (updatePath(fname_updated, fname)) {
       sda_show_error_message((uint8_t *)"Executables are only allowed in APPS folder.\n");
+      svp_switch_main_dir();
+      svp_chdir((uint8_t *)"APPS");
       return 0;
     }
     fname = fname_updated;
@@ -228,7 +248,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   svp_chdir((uint8_t *)"APPS");
 
   // loads app
-  if (sdaSvmLoadApp(fname, cacheBuffer, 0) != 0) {
+  if (sdaSvmTokenizeFile(fname, cacheBuffer, 0) != 0) {
     return 0;
   }
 
@@ -271,15 +291,17 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   // show the close button
   svpSGlobal.systemXBtnVisible = 1;
   svpSGlobal.systemXBtnClick = 0;
+  svmValid = 1;
   return 1;
 }
 
+// gracefully closes running svm (app)
+void sdaSvmCloseRunning() {
 
-void sdaSvmCloseApp() {
-
-  if (sda_slot_get_valid(4) == 0) {
+  if (sda_slot_get_valid(4) == 0 || svmValid == 0) {
     return;
   }
+
   if((errCheck(&svm) == 1) && (soft_error_flag == 0)) {
     svp_errSoftPrint(&svm);
   } else {
@@ -287,6 +309,7 @@ void sdaSvmCloseApp() {
       destroyOverlay();
     }
   }
+
   if (sda_slot_get_valid(4) == 1) {
     if(functionExists((uint8_t *)"exit", &svm)) {
       commExec((uint8_t *)"exit", &svm);
@@ -295,9 +318,11 @@ void sdaSvmCloseApp() {
       }
     }
   }
+
   if (svmMeta.cryptoUnlocked) {
     svp_crypto_lock();
   }
+
   SVScloseCache(&svm);
   svmInValidate(svmMeta.id);
   sda_set_sleep_lock(0);
@@ -310,9 +335,9 @@ void sdaSvmCloseApp() {
     uint8_t argBuff[2048];
     storeArguments(argBuff, svmCallRetval, svmCallRetvalType, svmCallRetvalStr, &svm);
 
-    if (sdaSvmGetValid(svmMeta.parentId)) {
+    if (sdaSvmGetValidId(svmMeta.parentId)) {
       if (sdaSvmLoad(svmMeta.parentId) == 0) {
-        printf("sdaSvmCloseApp: Loading parent app failed!\n");
+        printf("sdaSvmCloseRunning: Loading parent app failed!\n");
         svmValid = 0;
         sda_slot_set_invalid(4);
         sda_slot_on_top(1);
@@ -324,7 +349,7 @@ void sdaSvmCloseApp() {
       svmValid = 0;
       sda_slot_set_invalid(4);
       sda_slot_on_top(1);
-      printf("sdaSvmCloseApp: Parent is not valid.\n");
+      printf("sdaSvmCloseRunning: Parent is not valid.\n");
       svp_switch_main_dir();
       svp_chdir((uint8_t *)"APPS");
       return;
@@ -348,6 +373,7 @@ void sdaSvmCloseApp() {
   }
   sda_slot_set_invalid(4);
 
+  // TODO: restore right slot.. previous app perhaps...
   if (slot_restore == 0) {
     sda_slot_on_top(1);
   }
@@ -446,6 +472,7 @@ uint8_t svmWake(uint16_t id) {
         return 1;
       }
       sda_slot_set_valid(4);
+      svmValid = 1;
       sdaSvmOnTop();
       if(functionExists(WAKEUP_FUNCTION, &svm)) {
         commExec(WAKEUP_FUNCTION, &svm);
@@ -502,14 +529,15 @@ uint8_t *svmGetSuspendedName(uint16_t id) {
 }
 
 
+// closes app with given id
 void svmClose(uint16_t id) {
   if (slot_restore != 0) {
     svmWake(id);
-    sdaSvmCloseApp();
+    sdaSvmCloseRunning();
   } else {
     slot_restore = sda_get_top_slot();
     svmWake(id);
-    sdaSvmCloseApp();
+    sdaSvmCloseRunning();
     sda_slot_on_top(slot_restore);
     slot_restore = 0;
   }
@@ -564,6 +592,11 @@ static void storeArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_
       }
       buff[n] = 0;
       n++;
+      if(n > APP_ARG_STR_LEN - 1) {
+        buff[APP_ARG_STR_LEN - 1] = 0;
+        printf("Error: storeArguments owerflow!\n");
+        return;
+      }
       prac++;
       svmArgs[z] = prac2;
     }
@@ -600,14 +633,18 @@ void sdaSvmKillApp_handle() {
 
 
 uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
+
   if (init) {
     sdaSvmInit();
     return 0;
   }
 
+  if(!svmValid) {
+    return 0;
+  }
+
   if (svmInit == 0) {
     //svs init call
-    svmValid = 1;
     commExec((uint8_t *)"init", &svm);
     svmInit = 1;
     return 0;
@@ -625,7 +662,7 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
       if (functionExists(svmMeta.beepTimerCallback, &svm)) {
         commExec(svmMeta.beepTimerCallback, &svm);
       } else {
-        sdaSvmCloseApp();
+        sdaSvmCloseRunning();
         sda_show_error_message((uint8_t *)"Beep callback function not found.\n");
         return 0;
       }
@@ -634,7 +671,7 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
     if(functionExists((uint8_t *)"update", &svm)) {
       commExec((uint8_t *)"update", &svm);
     } else {
-      sdaSvmCloseApp();
+      sdaSvmCloseRunning();
       printf("No update function found.\n");
       sda_show_error_message((uint8_t *)"No update function found.\n");
       return 0;
@@ -648,12 +685,17 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
     }
 
     if (flag_svmCall == 1) {
-      uint8_t argBuff[2048]; //1024 magically works with emscripten
+      uint8_t argBuff[APP_ARG_STR_LEN];
+      uint16_t parentId = svmMeta.id;
       //TODO: Storing and restoring arguments crashes on emcc     
+      
       storeArguments(argBuff, svmCallArg, svmCallArgType, svmCallArgStr, &svm);
 
       if(sdaSvmLaunch(svmCallName, svmMeta.id) == 0) {
         flag_svmCall = 0;
+        svmValid = 0;
+        svmWake(parentId);
+        sda_show_error_message("sdaSvmRun: subprocess launch failed!");
         return 0;
       }
       
