@@ -36,7 +36,7 @@ extern sdaSvmMetadata svmMeta;
 extern uint8_t * pscgErrorString;
 
 
-void sdaSvmGetGR2Settings() {
+void svmGetGR2Settings() {
   // load colors from system to app context
   gr2_set_border_color(gr2_get_border_color(&sda_sys_con), &sda_app_con);
   gr2_set_text_color(gr2_get_text_color(&sda_sys_con), &sda_app_con);
@@ -73,7 +73,7 @@ void sda_alarm_clear_flag() {
 }
 
 
-void sdaSvmSetMainScreen(uint16_t val) {
+void svmSetMainScreen(uint16_t val) {
   svs_wrap_setScr_id = val;
   svs_wrap_setScr_flag = 1;
   gr2_set_modified(val, &sda_app_con);
@@ -89,17 +89,17 @@ uint8_t sdaGetRedrawDetect() {
   return redrawDetect;
 }
 
-void sdaSvmAuthorize() {
+void svmAuthorize() {
   svmMeta.authorized = 1;
 }
 
-uint8_t sdaSvmGetAuthorized() {
+uint8_t svmGetAuthorized() {
   return svmMeta.authorized;
 }
 
 
-uint16_t sdaSvmGetId() {
-  if (sdaSvmGetValid()) {
+uint16_t svmGetId() {
+  if (svmGetValid()) {
     return svmMeta.id;
   } else {
     return 0;
@@ -107,7 +107,7 @@ uint16_t sdaSvmGetId() {
 }
 
 
-void sdaSvmSetLandscape(uint8_t val) {
+void svmSetLandscape(uint8_t val) {
   svmMeta.landscape = val;
 }
 
@@ -142,7 +142,7 @@ void svmInitRemoveCache(uint8_t *ext){
 }
 
 
-void sdaSvmInit() {
+void svmInit() {
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS/cache");
   printf("Cleaning up cached apps.\n");
@@ -187,7 +187,7 @@ void svmRemoveCachedFile(uint16_t id, uint8_t * tail) {
 }
 
 
-void sdaSvmOnTop() {
+void svmOnTop() {
   sda_slot_on_top(4);
   svp_switch_main_dir();
   svp_chdir(svmMeta.currentWorkDir);
@@ -201,12 +201,12 @@ void sdaSvmOnTop() {
 }
 
 
-void sdaSvmKillApp() {
+void svmKillRunning() {
   svm.handbrake = 1;
 }
 
 
-void sdaSvmSetError(uint8_t * str) {
+void svmSetError(uint8_t * str) {
   pscgErrorString = str;
 }
 
@@ -222,26 +222,26 @@ uint64_t svmGetAppUptime() {
 
 
 // Crypto
-void sdaSvmSetCryptoUnlock(uint8_t unlock) {
+void svmSetCryptoUnlock(uint8_t unlock) {
   svmMeta.cryptoUnlocked = unlock;
 }
 
 
-uint8_t sdaSvmGetCryptoUnlock() {
+uint8_t svmGetCryptoUnlock() {
   return svmMeta.cryptoUnlocked;
 }
 
 
 uint8_t svmCheckAndExit() {
   if((svpSGlobal.systemXBtnClick) || (errCheck(&svm) != 0)) {
-    sdaSvmCloseRunning();
+    svmCloseRunning();
     return 1;
   }
   return 0;
 }
 
 
-void sdaUpdateCurrentWD() { // get current wd relative to main dir
+void svmUpdateCurrentWD() { // get current wd relative to main dir
   uint8_t dirbuf[258];
   uint8_t path[258];
   svp_getcwd(dirbuf, 256);
@@ -258,7 +258,7 @@ void sdaUpdateCurrentWD() { // get current wd relative to main dir
 }
 
 
-uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname) {
+uint8_t svmUpdatePath(uint8_t *newFname, uint8_t *oldFname) {
   uint8_t dirbuf[258];
 
   svp_getcwd(dirbuf, 256);

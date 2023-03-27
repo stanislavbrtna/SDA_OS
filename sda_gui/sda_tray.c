@@ -349,9 +349,9 @@ uint8_t svp_tray() {
   // Unresponsive app killer (works only on real hw)
   if ((svpSGlobal.systemXBtnTime != 0) && ((svpSGlobal.systemXBtnTime + 5) < svpSGlobal.timestamp)) {
     svpSGlobal.systemXBtnTime = 0;
-    sdaSvmSetError((uint8_t *) "App not responding.");
+    svmSetError((uint8_t *) "App not responding.");
     svpSGlobal.breakP16Draw = 1;
-    sdaSvmKillApp();
+    svmKillRunning();
     irq_redraw_block_disable(); 
   }
 

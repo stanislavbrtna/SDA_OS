@@ -84,8 +84,8 @@ void gr2_error_callback(uint8_t *str, gr2context * c) {
     // error occured inside application
     // kill app, show error
     printf("PSCG Error (app): %s\n", str);
-    sdaSvmSetError(str);
-    sdaSvmKillApp();
+    svmSetError(str);
+    svmKillRunning();
   }
 }
 

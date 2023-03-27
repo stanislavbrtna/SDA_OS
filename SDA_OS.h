@@ -57,7 +57,7 @@ SOFTWARE.
 #include "sda_util/sda_p16.h"
 #include "sda_system/sda_overlays_api.h"
 #include "sda_system/sda_misc.h"
-#include "sda_system/sda_svm.h"
+#include "sda_svm/sda_svm.h"
 #include "sda_system/sda_alarms.h"
 #include "sda_system/sda_settings.h"
 #include "sda_system/sda_irq.h"

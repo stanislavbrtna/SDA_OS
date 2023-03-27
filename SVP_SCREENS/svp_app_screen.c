@@ -216,7 +216,7 @@ void inScreenResizer(uint16_t id) {
     return;
   }
   gr2_set_x1y1x2y2(id, 0, 1, 10, 13, &sda_sys_con);
-  if (sdaSvmGetRunning()) {
+  if (svmGetRunning()) {
     gr2_set_y2(id, 12, &sda_sys_con);
     if (appNum > 9) {
       gr2_set_visible(scrollbar, 1, &sda_sys_con);
@@ -283,7 +283,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
     gr2_set_visible(btnBack, 0, &sda_sys_con);
 
-    //sdaSvmCloseRunning(); - ?? perhaps was here for mount/umount before sda went multi-process
+    //svmCloseRunning(); - ?? perhaps was here for mount/umount before sda went multi-process
 
     return appScreen;
   }
@@ -299,7 +299,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
     gr2_set_yscroll(inScreen, gr2_get_value(scrollbar, &sda_sys_con) * 96, &sda_sys_con);
 
-    appActive = sdaSvmGetRunning();
+    appActive = svmGetRunning();
 
     gr2_set_visible(btnSwitch, appActive, &sda_sys_con);
 
@@ -308,7 +308,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
       gr2_ki_unselect(inScreen, &sda_sys_con);
       type = detect_type(selectedObject);
       if (type == 2) {
-        if(sdaSvmLaunch(selectedObject, 0) == 0) {
+        if(svmLaunch(selectedObject, 0) == 0) {
           sda_show_error_message((uint8_t *)"Error occured while launching file!");
         }
       }else if (type == 1) {

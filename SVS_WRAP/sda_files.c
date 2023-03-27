@@ -533,7 +533,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (argS->usedup == 1 && argS->argType[1] == SVS_TYPE_STR) {
       result->value.val_s = (int32_t)svp_chdir(s->stringField + argS->arg[1].val_str);
       result->type = SVS_TYPE_NUM;
-      sdaUpdateCurrentWD();
+      svmUpdateCurrentWD();
       return 1;
     }
 
@@ -542,13 +542,13 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         svp_switch_main_dir();
         result->value.val_s = (int32_t)svp_chdir((uint8_t *)"APPS");
         result->type = SVS_TYPE_NUM;
-        sdaUpdateCurrentWD();
+        svmUpdateCurrentWD();
       }
       if (argS->arg[1].val_s == 0) {
         svp_switch_main_dir();
         result->value.val_s = (int32_t)svp_chdir((uint8_t *)"DATA");
         result->type = SVS_TYPE_NUM;
-        sdaUpdateCurrentWD();
+        svmUpdateCurrentWD();
       }
       return 1;
     }
@@ -557,7 +557,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       svp_switch_main_dir();
       result->value.val_s = (int32_t)svp_chdir((uint8_t *)"DATA");
       result->type = SVS_TYPE_NUM;
-      sdaUpdateCurrentWD();
+      svmUpdateCurrentWD();
       return 1;
     }
 

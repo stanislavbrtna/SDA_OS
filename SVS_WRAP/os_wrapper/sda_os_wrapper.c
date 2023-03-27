@@ -192,7 +192,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_s = strNew(sdaSvmGetName(), s);
+    result->value.val_s = strNew(svmGetName(), s);
     result->type = SVS_TYPE_STR;
     return 1;
   }
@@ -311,7 +311,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    svmSetSingular(sdaSvmGetId());
+    svmSetSingular(svmGetId());
     return 1;
   }
 
@@ -329,7 +329,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     gr2_text_deactivate(&sda_app_con);
-    sdaSvmCall(
+    svmCallSubProc(
         s->stringField + argS->arg[1].val_str,
         s->stringField + argS->arg[2].val_str,
         argS->arg[3], argS->argType[3],
@@ -364,7 +364,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 3, s)) {
       return 0;
     }
-    sdaSvmRetval(
+    svmSetSubProcRetval(
         argS->arg[1], argS->argType[1],
         argS->arg[2], argS->argType[2],
         argS->arg[3], argS->argType[3]
@@ -444,7 +444,7 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_s = sdaSvmGetAuthorized();
+    result->value.val_s = svmGetAuthorized();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -463,7 +463,7 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    if (!sdaSvmGetAuthorized()) {
+    if (!svmGetAuthorized()) {
       errSoft("setTime: Not authorized!", s);
       return 0;
     }

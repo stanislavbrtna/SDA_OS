@@ -47,7 +47,7 @@ void sda_show_auth_overlay_init() {
   gr2_text_set_fit(
     gr2_add_text(
         1, 3, 15, 2,
-        sdaSvmGetName(),
+        svmGetName(),
         auth_overlay_scr,
         &sda_sys_con
     ),
@@ -85,7 +85,7 @@ void sda_auth_overlay_handle() {
   }
 
   if (gr2_clicked(auth_overlay_ok, &sda_sys_con)) {
-    sdaSvmAuthorize();
+    svmAuthorize();
     destroyOverlay();
     setRedrawFlag();
     return;

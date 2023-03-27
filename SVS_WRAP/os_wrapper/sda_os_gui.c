@@ -78,7 +78,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)){
       return 0;
     }
-     sdaSvmSetMainScreen((uint16_t) argS->arg[1].val_s );
+     svmSetMainScreen((uint16_t) argS->arg[1].val_s );
     return 1;
   }
 
@@ -90,7 +90,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)){
       return 0;
     }
-     result->value.val_u = sdaSvmGetMainScreen();
+     result->value.val_u = svmGetMainScreen();
      result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -348,7 +348,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
     
     sda_set_landscape(argS->arg[1].val_s);
-    sdaSvmSetLandscape(argS->arg[1].val_s);
+    svmSetLandscape(argS->arg[1].val_s);
 
     result->value.val_u = 0;
     result->type = SVS_TYPE_NUM;

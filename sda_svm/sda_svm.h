@@ -31,82 +31,89 @@ SOFTWARE.
 // *****************************************************************************
 
 // launches .svs file from APPS directory
-uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId);
+uint8_t svmLaunch(uint8_t * fname, uint16_t parentId);
 
 // if instance of some app is running, this switches to it
-void sdaSvmOnTop();
+void svmOnTop();
 
 // returns non-zero if some app is currently loaded
-uint8_t sdaSvmGetRunning();
+uint8_t svmGetRunning();
 
 // gently closes the currently running app, performs exit() call
-void sdaSvmCloseRunning();
+void svmCloseRunning();
 
-// kills app
-void sdaSvmKillApp();
+// kills currently running app
+void svmKillRunning();
 
 // performs update of currently running app
-uint16_t sdaSvmRun(uint8_t init, uint8_t top);
+uint16_t svmRun(uint8_t init, uint8_t top);
 
 // sets main screen from svs
-void sdaSvmSetMainScreen(uint16_t val);
-uint16_t sdaSvmGetMainScreen();
+void svmSetMainScreen(uint16_t val);
+uint16_t svmGetMainScreen();
 
 // svm redraw detect
 void sdaSetRedrawDetect(uint8_t val);
 uint8_t sdaGetRedrawDetect();
 
 // set error
-void sdaSvmSetError(uint8_t * str);
+void svmSetError(uint8_t * str);
 
 // cwd for launching child app
 void svmSetLaunchCWDflag(uint8_t val);
 
 // get name
-uint8_t * sdaSvmGetName();
+uint8_t * svmGetName();
 
 // lock/unlock crypto
-void sdaSvmSetCryptoUnlock(uint8_t unlock);
-uint8_t sdaSvmGetCryptoUnlock();
+void svmSetCryptoUnlock(uint8_t unlock);
+uint8_t svmGetCryptoUnlock();
 
 // get app uptime
 uint64_t svmGetAppUptime();
 
 // landscape/portrait
-void sdaSvmSetLandscape(uint8_t val);
+void svmSetLandscape(uint8_t val);
 
 // Authorized app
-void sdaSvmAuthorize();
-uint8_t sdaSvmGetAuthorized();
+void svmAuthorize();
+uint8_t svmGetAuthorized();
 
 
 // multiprocess
-void sdaSvmSave();
-uint8_t sdaSvmLoad(uint16_t id);
-void sdaSvmCall(
+void svmCallSubProc(
   uint8_t *name,
   uint8_t *callback,
   varType arg0, uint8_t type0,
   varType arg1, uint8_t type1,
   varType arg2, uint8_t type2
 );
-void sdaSvmRetval(
+
+void svmSetSubProcRetval(
   varType arg0, uint8_t type0,
   varType arg1, uint8_t type1,
   varType arg2, uint8_t type2
 );
 
 // wake-suspend
+// suspend currently running app
 uint8_t svmSuspend();
+
+// wake app with given id
 uint8_t svmWake(uint16_t id);
+
+// close app with given id
 void svmClose(uint16_t id);
 void svmCloseAll();
-void svmSetSingular(uint16_t id);
-uint8_t sdaSvmGetRunning();
-uint16_t sdaSvmGetId();
+
+uint8_t svmGetRunning();
+uint16_t svmGetId();
+
 uint16_t svmGetSuspendedId(uint16_t id);
 uint8_t *svmGetSuspendedName(uint16_t id);
-void sdaUpdateCurrentWD();
+
+void svmSetSingular(uint16_t id);
+void svmUpdateCurrentWD();
 
 // notification flags
 void sda_alarm_set_flag(int32_t id, int32_t param);
@@ -115,15 +122,17 @@ int32_t sda_alarm_get_param();
 int8_t sda_alarm_get_flag();
 void sda_alarm_clear_flag();
 
-
-
 // *****************************************************************************
 //                                 internal functions
 // *****************************************************************************
 
-uint8_t sdaSvmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode);
-void sdaSvmGetGR2Settings();
+uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode);
+void svmGetGR2Settings();
 void svmSetRestoreSlot(uint8_t slot);
+
+// multiprocess internal functions
+void svmSaveProcData();
+uint8_t svmLoadProcData(uint16_t id);
 
 uint8_t svmCheckAndExit();
 
@@ -132,8 +141,8 @@ uint16_t svmGetSavedProcId(uint16_t proc_array_index);
 void svmSetNextId(uint16_t id);
 void svmRemoveCachedProc(uint16_t id);
 void svmRemoveCachedFile(uint16_t id, uint8_t * tail);
-void sdaSvmInit();
-uint8_t updatePath(uint8_t *newFname, uint8_t *oldFname);
+void svmInit();
+uint8_t svmUpdatePath(uint8_t *newFname, uint8_t *oldFname);
 void svmSetBeepCallback(uint8_t * cb, uint32_t time);
 uint8_t svmBeepHandler();
 

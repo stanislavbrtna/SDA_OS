@@ -72,7 +72,7 @@ uint8_t sdaSvmHandleTimers() {
           }
 
           if (timer_wkup_flag == 1) {
-            sdaSvmOnTop();
+            svmOnTop();
             timer_wkup_flag = 0;
           }
         } else {
@@ -97,7 +97,7 @@ uint8_t sdaSvmHandleTimers() {
             return 0;
           }
           timer_wkup_flag = 0;
-          sdaSvmOnTop();
+          svmOnTop();
           setRedrawFlag();
         }
       }

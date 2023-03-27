@@ -30,7 +30,7 @@ sdaSvmMetadata svmMeta;
 static uint16_t nextId;
 
 static uint8_t svmValid;
-static uint8_t svmInit;
+static uint8_t svm_init;
 
 static uint8_t flag_svmCall;
 static uint8_t svmCallName[APP_NAME_LEN];
@@ -87,17 +87,17 @@ void svmSetNextId(uint16_t id) {
 }
 
 
-uint16_t sdaSvmGetMainScreen() {
+uint16_t svmGetMainScreen() {
   return mainScr;
 }
 
 
-uint8_t * sdaSvmGetName() {
+uint8_t * svmGetName() {
   return svmMeta.name;
 }
 
 // app misc
-uint8_t sdaSvmGetRunning() {
+uint8_t svmGetRunning() {
   if (svmValid){
     return 1;
   }
@@ -110,7 +110,7 @@ uint8_t sdaSvmGetRunning() {
 }
 
 
-uint8_t sdaSvmGetValidId(uint16_t id) {
+uint8_t svmGetValidId(uint16_t id) {
   if (svmMeta.id == id && svmValid){
     return 1;
   }
@@ -122,7 +122,7 @@ uint8_t sdaSvmGetValidId(uint16_t id) {
   return 0;
 }
 
-uint8_t sdaSvmGetValid() {
+uint8_t svmGetValid() {
   return svmValid;
 }
 
@@ -130,7 +130,7 @@ uint8_t sdaSvmGetValid() {
 // app loading/closing
 
 // wrapper for svs loadApp, loads fname in svm
-uint8_t sdaSvmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
+uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
   uint8_t dirbuf[258];
   svp_getcwd(dirbuf, 256);
 
@@ -167,7 +167,7 @@ uint8_t sdaSvmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
 #else
     printf("Loading time: %ums\n", svsLoadCounter);
 #endif
-    svmInit = 0;
+    svm_init = 0;
   }
 
 #ifdef SVM_DBG_ENABLED
@@ -178,7 +178,7 @@ uint8_t sdaSvmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
 }
 
 // launch app
-uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
+uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
   uint8_t cacheBuffer[256];
   uint8_t numbuff[25];
   uint8_t dirbuf[258];
@@ -234,7 +234,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
     svp_chdir(dirbuf);
 
     // if we do not launch from launcher, we update the path of the executable
-    if (updatePath(fname_updated, fname)) {
+    if (svmUpdatePath(fname_updated, fname)) {
       sda_show_error_message((uint8_t *)"Executables are only allowed in APPS folder.\n");
       svp_switch_main_dir();
       svp_chdir((uint8_t *)"APPS");
@@ -248,7 +248,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   svp_chdir((uint8_t *)"APPS");
 
   // loads app
-  if (sdaSvmTokenizeFile(fname, cacheBuffer, 0) != 0) {
+  if (svmTokenizeFile(fname, cacheBuffer, 0) != 0) {
     return 0;
   }
 
@@ -282,7 +282,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
   svp_chdir((uint8_t *)"DATA");
   // reset gr2 context
   gr2_reset_context(&sda_app_con);
-  sdaSvmGetGR2Settings();
+  svmGetGR2Settings();
   // validate the app slot
   sda_slot_set_valid(4);
   sda_slot_on_top(4);
@@ -296,7 +296,7 @@ uint8_t sdaSvmLaunch(uint8_t * fname, uint16_t parentId) {
 }
 
 // gracefully closes running svm (app)
-void sdaSvmCloseRunning() {
+void svmCloseRunning() {
 
   if (sda_slot_get_valid(4) == 0 || svmValid == 0) {
     return;
@@ -335,9 +335,9 @@ void sdaSvmCloseRunning() {
     uint8_t argBuff[2048];
     storeArguments(argBuff, svmCallRetval, svmCallRetvalType, svmCallRetvalStr, &svm);
 
-    if (sdaSvmGetValidId(svmMeta.parentId)) {
-      if (sdaSvmLoad(svmMeta.parentId) == 0) {
-        printf("sdaSvmCloseRunning: Loading parent app failed!\n");
+    if (svmGetValidId(svmMeta.parentId)) {
+      if (svmLoadProcData(svmMeta.parentId) == 0) {
+        printf("svmCloseRunning: Loading parent app failed!\n");
         svmValid = 0;
         sda_slot_set_invalid(4);
         sda_slot_on_top(1);
@@ -349,7 +349,7 @@ void sdaSvmCloseRunning() {
       svmValid = 0;
       sda_slot_set_invalid(4);
       sda_slot_on_top(1);
-      printf("sdaSvmCloseRunning: Parent is not valid.\n");
+      printf("svmCloseRunning: Parent is not valid.\n");
       svp_switch_main_dir();
       svp_chdir((uint8_t *)"APPS");
       return;
@@ -360,7 +360,7 @@ void sdaSvmCloseRunning() {
       commExec(svmCallback, &svm);
     }
 
-    sdaSvmOnTop();
+    svmOnTop();
     setRedrawFlag();
     return;
   }
@@ -439,14 +439,14 @@ uint8_t svmSuspend() {
       return 0;
     }
   }
-  sdaSvmSave();
+  svmSaveProcData();
   return 0;
 }
 
 
 uint8_t svmWake(uint16_t id) {
   if(id == svmMeta.id && svmValid) {
-    sdaSvmOnTop();
+    svmOnTop();
     if(functionExists(WAKEUP_FUNCTION, &svm)) { // execute the wakeup
       commExec(WAKEUP_FUNCTION, &svm);
       if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
@@ -466,14 +466,14 @@ uint8_t svmWake(uint16_t id) {
 
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProc[x].id == id && svmSavedProc[x].valid == 1) {
-      if (sdaSvmLoad(id) == 0) {
+      if (svmLoadProcData(id) == 0) {
         printf("svmWake: error while loading app (1)\n");
         svmSavedProc[x].valid = 0;
         return 1;
       }
       sda_slot_set_valid(4);
       svmValid = 1;
-      sdaSvmOnTop();
+      svmOnTop();
       if(functionExists(WAKEUP_FUNCTION, &svm)) {
         commExec(WAKEUP_FUNCTION, &svm);
         if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
@@ -541,7 +541,7 @@ void svmClose(uint16_t id) {
     svmWake(id);
   }
 
-  sdaSvmCloseRunning();
+  svmCloseRunning();
   
   if (prevApp) {
     svmWake(prevApp);
@@ -637,10 +637,10 @@ void sdaSvmKillApp_handle() {
 }
 
 
-uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
+uint16_t svmRun(uint8_t init, uint8_t top) {
 
   if (init) {
-    sdaSvmInit();
+    svmInit();
     return 0;
   }
 
@@ -648,10 +648,10 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
     return 0;
   }
 
-  if (svmInit == 0) {
+  if (svm_init == 0) {
     //svs init call
     commExec((uint8_t *)"init", &svm);
-    svmInit = 1;
+    svm_init = 1;
     return 0;
   }
 
@@ -667,7 +667,7 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
       if (functionExists(svmMeta.beepTimerCallback, &svm)) {
         commExec(svmMeta.beepTimerCallback, &svm);
       } else {
-        sdaSvmCloseRunning();
+        svmCloseRunning();
         sda_show_error_message((uint8_t *)"Beep callback function not found.\n");
         return 0;
       }
@@ -676,7 +676,7 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
     if(functionExists((uint8_t *)"update", &svm)) {
       commExec((uint8_t *)"update", &svm);
     } else {
-      sdaSvmCloseRunning();
+      svmCloseRunning();
       printf("No update function found.\n");
       sda_show_error_message((uint8_t *)"No update function found.\n");
       return 0;
@@ -696,11 +696,11 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
       
       storeArguments(argBuff, svmCallArg, svmCallArgType, svmCallArgStr, &svm);
 
-      if(sdaSvmLaunch(svmCallName, svmMeta.id) == 0) {
+      if(svmLaunch(svmCallName, svmMeta.id) == 0) {
         flag_svmCall = 0;
         svmValid = 0;
         svmWake(parentId);
-        sda_show_error_message("sdaSvmRun: subprocess launch failed!");
+        sda_show_error_message("svmRun: subprocess launch failed!");
         return 0;
       }
       
@@ -709,7 +709,7 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
       // init call here with args
       commExec((uint8_t *)"init", &svm);
       svmValid = 1;
-      svmInit = 1;
+      svm_init = 1;
       flag_svmCall = 0;
     }
 
@@ -726,7 +726,7 @@ uint16_t sdaSvmRun(uint8_t init, uint8_t top) {
 
 
 // call and retval
-void sdaSvmCall(
+void svmCallSubProc(
     uint8_t *name,
     uint8_t *callback,
     varType arg0, uint8_t type0,
@@ -746,7 +746,7 @@ void sdaSvmCall(
 }
 
 
-void sdaSvmRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varType arg2, uint8_t type2) {
+void svmSetSubProcRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varType arg2, uint8_t type2) {
   svmCallRetval[0] = arg0;
   svmCallRetvalType[0] = type0;
   svmCallRetval[1] = arg1;
@@ -756,9 +756,9 @@ void sdaSvmRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varT
 }
 
 
-void sdaSvmSave() {
+void svmSaveProcData() {
 #ifdef SVM_DBG_ENABLED
-  printf("sdaSvmSave: saving: id: %u\n", svmMeta.id);
+  printf("svmSaveProcData: saving: id: %u\n", svmMeta.id);
 #endif
   SVScloseCache(&svm);
 
@@ -787,10 +787,10 @@ void sdaSvmSave() {
 }
 
 
-uint8_t sdaSvmLoad(uint16_t id) {
+uint8_t svmLoadProcData(uint16_t id) {
 
 #ifdef SVM_DBG_ENABLED
-  printf("sdaSvmLoad: loading: id: %u\n", id);
+  printf("svmLoadProcData: loading: id: %u\n", id);
 #endif
 
   if(!sdaSvmLoader(id, (uint8_t *) ".svm", &svm, sizeof(svm)))

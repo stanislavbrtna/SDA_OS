@@ -134,7 +134,7 @@ static void sda_main_init() {
   sda_slot_init(0, svp_homeScreen(1, 0), &sda_sys_con, 1, 1);
   sda_slot_init(1, svp_appScreen(1, 0), &sda_sys_con, 1, 0);
   sda_slot_init(2, svp_optScreen(1, 0), &sda_sys_con, 1, 0);
-  sdaSvmRun(1, 0);
+  svmRun(1, 0);
   sda_slot_init(4, 0, &sda_app_con, 0, 0);
 
   mainScr = slotScreen[0];
@@ -221,7 +221,7 @@ uint8_t sda_main_loop() {
   }
 
   if (sda_slot_get_valid(4)) {
-    sdaSvmRun(0, sda_if_slot_on_top(4));
+    svmRun(0, sda_if_slot_on_top(4));
   }
 
   if (sda_slot_get_valid(sda_get_top_slot()) == 0) {
@@ -253,12 +253,12 @@ uint8_t sda_main_loop() {
 static void sda_main_run_autoexec() {
   // autoexec sits in the APPS directory, it's executed upon boot, if found
   if (svp_fexists((uint8_t *)"autoexec.svs")) {
-    if (sdaSvmLaunch((uint8_t *)"autoexec.svs", 0) == 1) {
+    if (svmLaunch((uint8_t *)"autoexec.svs", 0) == 1) {
       // if it loaded ok, we run it a few times for it to execute the exit call
-      sdaSvmRun(0, 1);
-      sdaSvmRun(0, 1);
-      sdaSvmRun(0, 1);
-      sdaSvmRun(0, 1);
+      svmRun(0, 1);
+      svmRun(0, 1);
+      svmRun(0, 1);
+      svmRun(0, 1);
     }
   }
   sda_slot_on_top(0);
@@ -316,7 +316,7 @@ static void sda_main_check_for_alarm() {
   if (sdaGetCurentAlarm(&id, &param, notifAppName, sizeof(notifAppName))) {
     svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
     sda_alarm_set_flag(id, param);
-    sdaSvmLaunch(notifAppName, 0);
+    svmLaunch(notifAppName, 0);
   }
 }
 
