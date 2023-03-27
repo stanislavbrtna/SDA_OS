@@ -72,7 +72,7 @@ uint8_t sda_if_slot_on_top(uint8_t slot) {
 void sda_slot_on_top(uint8_t slot) {
   uint8_t x;
   if (!(slotValid[slot]) && (slot <= APP_SLOT_MAX)) {
-    printf("sda_slot_on_top: invalid slot!\n");
+    printf("sda_slot_on_top: invalid slot! (%u)\n", slot);
     return;
   }
 

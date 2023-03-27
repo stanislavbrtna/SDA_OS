@@ -224,6 +224,10 @@ uint8_t sda_main_loop() {
     sdaSvmRun(0, sda_if_slot_on_top(4));
   }
 
+  if (sda_slot_get_valid(sda_get_top_slot()) == 0) {
+    sda_slot_on_top(0);
+  }
+
   // handling misc stuff
   sda_main_handle_soft_buttons();
   sda_main_check_for_alarm();

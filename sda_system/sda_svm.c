@@ -531,15 +531,20 @@ uint8_t *svmGetSuspendedName(uint16_t id) {
 
 // closes app with given id
 void svmClose(uint16_t id) {
-  if (slot_restore != 0) {
+  uint16_t prevApp = 0;
+
+  if (svmMeta.id != id && sda_get_top_slot() == 4) {
+    prevApp = svmMeta.id;
+  }
+
+  if (svmMeta.id != id) {
     svmWake(id);
-    sdaSvmCloseRunning();
-  } else {
-    slot_restore = sda_get_top_slot();
-    svmWake(id);
-    sdaSvmCloseRunning();
-    sda_slot_on_top(slot_restore);
-    slot_restore = 0;
+  }
+
+  sdaSvmCloseRunning();
+  
+  if (prevApp) {
+    svmWake(prevApp);
   }
 }
 
