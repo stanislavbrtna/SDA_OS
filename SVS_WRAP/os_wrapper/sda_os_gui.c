@@ -148,8 +148,34 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
       //čtení z klávesnice a zápis do řetězce
       if (sda_get_keyboard_key_flag()) {
-        sda_app_con.textBlockStart = 0;
-        sda_app_con.textBlockEnd = 0;
+        
+        // block rewrite handling
+        if (sda_app_con.textBlockStart != 0 || sda_app_con.textBlockEnd != 0) {
+          strNewStreamInit(s);
+          uint32_t i = 0;
+          uint32_t b = 0;
+          uint8_t * str = gr2_get_str((uint16_t)argS->arg[1].val_str, sda_current_con);
+          
+          while(str[i] != 0) {
+            if (!(i >= (sda_current_con->textBlockStart - 1) && i < sda_current_con->textBlockEnd)) {
+              strNewStreamPush(str[i], s);
+            }
+            i++;
+          }
+          gr2_set_param((uint16_t)argS->arg[1].val_str, sda_current_con->textBlockStart - 1, sda_current_con);
+
+          argS->arg[2].val_str = strNewStreamEnd(s);
+          sda_app_con.textBlockStart = 0;
+          sda_app_con.textBlockEnd = 0;
+
+          // backspace/delete
+          if (svpSGlobal.kbdKeyStr[0] == 8) {
+              result->value = argS->arg[2];
+              result->type = SVS_TYPE_STR;
+              return 1; 
+          }
+        }
+
         if ((svpSGlobal.kbdKeyStr[0]) != 8) { // normal chars
           result->value.val_str
             = strInsert(
