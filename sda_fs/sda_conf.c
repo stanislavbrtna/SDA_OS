@@ -22,17 +22,23 @@ SOFTWARE.
 
 #include "sda_conf.h"
 
+#define CHECK_VALID_PRINT_ERROR_RETURN_ZERO do{if(fc->valid == 0){printf("ERROR: %s: Operation on invalid file!\n", __FUNCTION__);return 0;}}while(0)
 
+// opens conf file, 1 is returned when ok
 uint8_t sda_conf_open(sda_conf *fc, uint8_t * fname) {
   fc->escaping = 1;
+  fc->valid = 0;
   if (svp_fopen_rw(&(fc->fil), fname) == 0) {
+    printf("ERROR: %s: file: %s not valid.\n", __FUNCTION__, fname);
     return 0;
   }
+  fc->valid = 1;
   return 1;
 }
 
 
 uint8_t sda_conf_close(sda_conf *fc) {
+  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
   svp_fclose(&(fc->fil));
   return 0;
 }
@@ -59,6 +65,7 @@ uint16_t sda_strlen_ext(uint8_t *str, uint8_t escaping) {
 }
 
 uint8_t sda_conf_get_key(sda_conf *fc, uint8_t *buffer, uint16_t len) {
+  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
   for(uint16_t x = 0; x < len; x++) {
     buffer[x] = svp_fread_u8(&(fc->fil));
     if (buffer[x] == '=') {
@@ -73,6 +80,8 @@ uint8_t sda_conf_get_key(sda_conf *fc, uint8_t *buffer, uint16_t len) {
 
 uint8_t sda_conf_skip_key(sda_conf *fc) {
   uint8_t c;
+
+  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
   for(uint16_t x = 0; x < MAX_KEY_LEN; x++) {
     c = svp_fread_u8(&(fc->fil));
     if (c == '=') {
@@ -88,6 +97,7 @@ uint32_t sda_conf_skip_line(sda_conf *fc) {
   uint8_t c = 0;
   uint32_t skipped = 0;
 
+  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
   while(!(svp_feof(&(fc->fil))) && !(c == SDA_ENDLINE)) {
     c = svp_fread_u8(&(fc->fil));
     skipped++;
@@ -102,6 +112,7 @@ uint8_t sda_conf_key_exists(sda_conf *fc, uint8_t* key) {
   uint32_t keystart;
   uint32_t startPosition;
 
+  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
   startPosition = svp_ftell(&(fc->fil));
 
   while (!svp_feof(&(fc->fil))) {
@@ -136,6 +147,8 @@ uint8_t sda_conf_key_exists(sda_conf *fc, uint8_t* key) {
 uint8_t sda_conf_key_read(sda_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_t len) {
   uint32_t x = 0;
   uint32_t startPosition = 0;
+
+  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
 
   if (sda_conf_key_exists(fc, key)) {
     startPosition = svp_ftell(&(fc->fil));
@@ -181,6 +194,8 @@ uint8_t sda_conf_key_read(sda_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_
 void sda_conf_write_str(sda_conf *fc, uint8_t * val_buff) {
   uint32_t x = 0;
 
+  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
+
   while(val_buff[x] != 0) {
     if (fc->escaping == 1) {
       if (val_buff[x] == '\n') {
@@ -207,6 +222,7 @@ void sda_conf_key_write(sda_conf *fc, uint8_t* key, uint8_t* val_buff){
   uint32_t fsize = 0;
   uint8_t cbuff = 0;
 
+  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
   //printf("storing: %s in %s\n", val_buff, key);
   //easy part:
   if (!sda_conf_key_exists(fc, key)) {
@@ -293,6 +309,7 @@ void sda_conf_key_remove(sda_conf *fc, uint8_t* key) {
   uint32_t fsize = 0;
   uint8_t cbuff = 0;
 
+  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
   if (sda_conf_key_exists(fc, key)) {
     keystart = svp_ftell(&(fc->fil)); // behind endline
 
@@ -330,6 +347,8 @@ int32_t sda_conf_key_read_i32(sda_conf *fc, uint8_t* key, int32_t def) {
   uint8_t sign = 0;
   int32_t result = 0;
 
+  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
+
   if (sda_conf_key_read(fc, key, strBuff, 22) == 0) {
     return def;
   }
@@ -362,6 +381,7 @@ int32_t sda_conf_key_read_i32(sda_conf *fc, uint8_t* key, int32_t def) {
 void sda_conf_key_write_i32(sda_conf *fc, uint8_t* key, int32_t val) {
   uint8_t i[22];
 
+  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
   if (val == 0){
     sda_conf_key_write(fc, key, (uint8_t *)"0");
     return;

@@ -28,6 +28,7 @@ SOFTWARE.
 
 typedef struct {
   svp_file fil;
+  uint8_t valid;
   uint8_t escaping;
 }sda_conf;
 
