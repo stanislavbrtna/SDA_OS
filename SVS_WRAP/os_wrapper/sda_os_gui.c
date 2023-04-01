@@ -146,7 +146,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         return 1;
       }
 
-      //čtení z klávesnice a zápis do řetězce
+      // keyboard read and svs string modification
       if (sda_get_keyboard_key_flag()) {
         
         // block rewrite handling
