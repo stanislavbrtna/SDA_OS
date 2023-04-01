@@ -280,7 +280,14 @@ static void sda_main_handle_soft_buttons() {
       }
       sda_set_landscape(0);
       sda_keyboard_hide();
-      sda_slot_on_top(0);
+      if(sda_get_prev_top_screen_slot() == 1
+         || sda_get_prev_top_screen_slot() == 2)
+      {
+        sda_slot_on_top(0);
+      } else {
+        sda_slot_on_top(1);
+      }
+      
       svp_chdir(mainDir);
       svp_chdir((uint8_t *)"APPS");
       sda_set_sleep_lock(0);
