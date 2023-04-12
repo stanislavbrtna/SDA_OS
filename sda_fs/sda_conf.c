@@ -23,6 +23,7 @@ SOFTWARE.
 #include "sda_conf.h"
 
 #define CHECK_VALID_PRINT_ERROR_RETURN_ZERO do{if(fc->valid == 0){printf("ERROR: %s: Operation on invalid file!\n", __FUNCTION__);return 0;}}while(0)
+#define CHECK_VALID_PRINT_ERROR_RETURN do{if(fc->valid == 0){printf("ERROR: %s: Operation on invalid file!\n", __FUNCTION__);return;}}while(0)
 
 // opens conf file, 1 is returned when ok
 uint8_t sda_conf_open(sda_conf *fc, uint8_t * fname) {
@@ -194,7 +195,7 @@ uint8_t sda_conf_key_read(sda_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_
 void sda_conf_write_str(sda_conf *fc, uint8_t * val_buff) {
   uint32_t x = 0;
 
-  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
+  CHECK_VALID_PRINT_ERROR_RETURN;
 
   while(val_buff[x] != 0) {
     if (fc->escaping == 1) {
@@ -222,7 +223,7 @@ void sda_conf_key_write(sda_conf *fc, uint8_t* key, uint8_t* val_buff){
   uint32_t fsize = 0;
   uint8_t cbuff = 0;
 
-  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
+  CHECK_VALID_PRINT_ERROR_RETURN;
   //printf("storing: %s in %s\n", val_buff, key);
   //easy part:
   if (!sda_conf_key_exists(fc, key)) {
@@ -309,7 +310,7 @@ void sda_conf_key_remove(sda_conf *fc, uint8_t* key) {
   uint32_t fsize = 0;
   uint8_t cbuff = 0;
 
-  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
+  CHECK_VALID_PRINT_ERROR_RETURN;
   if (sda_conf_key_exists(fc, key)) {
     keystart = svp_ftell(&(fc->fil)); // behind endline
 
@@ -381,7 +382,7 @@ int32_t sda_conf_key_read_i32(sda_conf *fc, uint8_t* key, int32_t def) {
 void sda_conf_key_write_i32(sda_conf *fc, uint8_t* key, int32_t val) {
   uint8_t i[22];
 
-  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
+  CHECK_VALID_PRINT_ERROR_RETURN;
   if (val == 0){
     sda_conf_key_write(fc, key, (uint8_t *)"0");
     return;
