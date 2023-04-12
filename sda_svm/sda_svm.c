@@ -122,6 +122,7 @@ uint8_t svmGetValidId(uint16_t id) {
   return 0;
 }
 
+// gets if current SVM is valid
 uint8_t svmGetValid() {
   return svmValid;
 }
