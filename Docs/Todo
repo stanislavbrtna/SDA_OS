@@ -1,4 +1,5 @@
   - system log
+  - clean up that app-slot/screen-slot business
 
 Docs:
   - specify the native API
