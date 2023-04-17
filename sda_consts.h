@@ -28,19 +28,16 @@ File description:
 #define SDA_CONSTS_H
 
 // version number string and version number,
-#define SDA_OS_VERSION "1.1.1"
-#define SDA_OS_VERSION_NUM 1110
-
-// shows where the screen is redrawn, works only in simulator, usefull for debug
-// #define SIM_SHOW_REDRAW
+#define SDA_OS_VERSION     "1.2.0RC1"
+#define SDA_OS_VERSION_NUM  1200
 
 // GR2 elements for system
-#define SDA_SYS_ELEM_MAX 190
-#define SDA_SYS_SCREEN_MAX 40
+#define SDA_SYS_ELEM_MAX   190
+#define SDA_SYS_SCREEN_MAX  40
 
 // GR2 elements for the apps
-#define SDA_APP_ELEM_MAX 250
-#define SDA_APP_SCREEN_MAX 20
+#define SDA_APP_ELEM_MAX   250
+#define SDA_APP_SCREEN_MAX  20
 
 // LCD resolution
 #define SDA_LCD_W 320
@@ -60,12 +57,34 @@ File description:
 //  4   | currently running SVS application
 #define APP_SLOT_MAX 8
 
+// SVM Config
+
 // max name lenght of running SVS application, including its path
-#define APP_NAME_LEN 128
+#define APP_NAME_LEN     128
 #define APP_ARG_STR_LEN 2048 // 1024 magically works for the web sim
 
 // maximum cached applications
 #define MAX_OF_SAVED_PROC 16
+
+// Max number of openned general-purpose files
+#define SDA_FILES_OPEN_MAX 10
+
+// Size of OS clipboard (in bytes)
+#define SDA_CLIPBOARD_SIZE 256
+
+// Debug options
+// #define APP_SCREEN_DEBUG // App screen (launcher) debug switch
+// #define SVM_DBG_ENABLED // SVM debug switch
+
+// shows where the screen is redrawn, works only in simulator, usefull for debug
+// #define SIM_SHOW_REDRAW
+
+
+// SDA files config
+// \n is 10 on linux systems, but takes two bytes on windows, so it is hardcoded
+// to 10, both for csv and cfg
+#define SDA_ENDLINE    10
+#define SDA_SEPARATOR '|'
 
 // default minimum backlight value, override this in your SDA_OS base if needed
 #ifndef MIN_BACKLIGHT_VALUE
@@ -73,32 +92,16 @@ File description:
 #endif
 
 // button id defines
-#define BUTTON_A 0
-#define BUTTON_LEFT 1
-#define BUTTON_UP 2
-#define BUTTON_DOWN 3
+#define BUTTON_A     0
+#define BUTTON_LEFT  1
+#define BUTTON_UP    2
+#define BUTTON_DOWN  3
 #define BUTTON_RIGHT 4
-#define BUTTON_B 5
-
-// App screen (launcher) debug switch
-// #define APP_SCREEN_DEBUG
-
-// SVM debug switch
-// #define SVM_DBG_ENABLED
+#define BUTTON_B     5
 
 // Driver options
 #ifndef TOUCH_USE_BATTERY_MEASUREMENT
 #define TOUCH_USE_BATTERY_MEASUREMENT
 #endif
-
-// \n is 10 on linux systems, but takes two bytes on windows, so it is hardcoded
-// to 10, both for csv and cfg
-#define SDA_ENDLINE 10
-#define SDA_SEPARATOR '|'
-
-#define SDA_FILES_OPEN_MAX 10
-
-// Size of OS clipboard (in bytes)
-#define SDA_CLIPBOARD_SIZE 256
 
 #endif

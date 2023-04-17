@@ -734,12 +734,12 @@ void svmCallSubProc(
     varType arg1, uint8_t type1,
     varType arg2, uint8_t type2
   ) {
-  flag_svmCall = 1;
-  svmCallArg[0] = arg0;
+  flag_svmCall      = 1;
+  svmCallArg[0]     = arg0;
   svmCallArgType[0] = type0;
-  svmCallArg[1] = arg1;
+  svmCallArg[1]     = arg1;
   svmCallArgType[1] = type1;
-  svmCallArg[2] = arg2;
+  svmCallArg[2]     = arg2;
   svmCallArgType[2] = type2;
 
   sda_strcp(callback, svmCallback, sizeof(svmCallback));
@@ -748,11 +748,11 @@ void svmCallSubProc(
 
 
 void svmSetSubProcRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varType arg2, uint8_t type2) {
-  svmCallRetval[0] = arg0;
+  svmCallRetval[0]     = arg0;
   svmCallRetvalType[0] = type0;
-  svmCallRetval[1] = arg1;
+  svmCallRetval[1]     = arg1;
   svmCallRetvalType[1] = type1;
-  svmCallRetval[2] = arg2;
+  svmCallRetval[2]     = arg2;
   svmCallRetvalType[2] = type2;
 }
 
