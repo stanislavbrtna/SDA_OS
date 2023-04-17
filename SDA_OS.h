@@ -55,7 +55,7 @@ SOFTWARE.
 #include "sda_util/sda_crypto_misc.h"
 #include "sda_util/sda_time.h"
 #include "sda_util/sda_p16.h"
-#include "sda_system/sda_overlays_api.h"
+#include "sda_gui/sda_overlays_api.h"
 #include "sda_system/sda_misc.h"
 #include "sda_svm/sda_svm.h"
 #include "sda_system/sda_alarms.h"
@@ -73,7 +73,7 @@ SOFTWARE.
 #include "SVP_SCREENS/svp_screens.h"
 
 #include "sda_gui/sda_widgets.h"
-#include "sda_gui/sda_system_overlays.h"
+#include "sda_gui/sda_system_overlays/sda_system_overlays.h"
 #include "sda_gui/sda_tray.h"
 #include "sda_gui/sda_scr_btn_handler.h"
 
