@@ -266,11 +266,11 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
           pix++;
           if (svpSGlobal.breakP16Draw == 1) {break_draw_cleanup(&fp); return 0;}
         }
+        
+        if (LCD_canvas_get_y_overflow()) {
+          break_draw_cleanup(&fp); return 0;
+        }
       }
-    }
-
-    if (LCD_canvas_get_y_overflow()) {
-      break;
     }
   }
 
