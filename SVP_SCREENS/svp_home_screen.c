@@ -96,6 +96,11 @@ void sda_homescreen_configure() {
   sda_conf_key_read(&conffile, (uint8_t *) "background", background_img, sizeof(background_img));
   if (svp_fexists(background_img)) {
     gr2_set_str(screen, background_img, &sda_sys_con);
+    if (sda_p16_get_width(background_img) == 160) {
+      gr2_set_param(screen, 2, &sda_sys_con);
+    } else {
+      gr2_set_param(screen, 1, &sda_sys_con);
+    }
   } else {
     gr2_set_str(screen, 0, &sda_sys_con);
   }
