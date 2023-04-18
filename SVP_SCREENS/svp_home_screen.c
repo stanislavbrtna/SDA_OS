@@ -39,7 +39,6 @@ static void set_element(uint16_t id, sda_conf *conffile, uint8_t * name, uint8_t
   buff[0] = 0;
   sda_str_add(buff, name);
   sda_str_add(buff, "_x1");
-  printf("got: %s \n", buff);
   gr2_set_x1(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 0), &sda_sys_con);
   buff[0] = 0;
   sda_str_add(buff, name);
