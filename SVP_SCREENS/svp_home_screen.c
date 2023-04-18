@@ -50,6 +50,11 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     gr2_text_set_size(text, 70, &sda_sys_con);
     gr2_text_set_size(time, 70, &sda_sys_con);
     oldtime = 5566; // absurd value, so current minute would not equal oldmin and time would update after init
+
+    if (svp_fexists((uint8_t *)"APPS/background.p16")) {
+      gr2_set_str(screen,(uint8_t *)"background.p16", &sda_sys_con);
+    }
+
     oldLock = DEVICE_UNLOCKED;
     return screen;
   }
