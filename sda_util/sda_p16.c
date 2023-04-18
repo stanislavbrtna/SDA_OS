@@ -180,7 +180,7 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
 
     if (p16_use_pmc) {
       uint8_t r, g, b;
-
+    //printf("drawing1 %s, x1: %d, y1: %d\n", c->pscgElements[id].str_value, x1, y1);
       r = (uint8_t)((color>>11)&0x1F);
       g = (uint8_t)(((color&0x07E0)>>5)&0x3F);
       b = (uint8_t)(color&0x1F);
@@ -191,6 +191,10 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
 
     LCD_canvas_putcol(color);
     if (svpSGlobal.breakP16Draw == 1) {break_draw_cleanup(&fp); return 0;}
+
+    if (LCD_canvas_get_y_overflow()) {
+      break;
+    }
   }
 
   LCD_setDrawAreaS(&area);
@@ -263,6 +267,10 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
           if (svpSGlobal.breakP16Draw == 1) {break_draw_cleanup(&fp); return 0;}
         }
       }
+    }
+
+    if (LCD_canvas_get_y_overflow()) {
+      break;
     }
   }
 
@@ -364,6 +372,10 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
     }
 
     if (pix >= drawn_width*drawn_height) {
+      break;
+    }
+
+    if (LCD_canvas_get_y_overflow()) {
       break;
     }
   }
