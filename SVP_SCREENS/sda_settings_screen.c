@@ -194,6 +194,9 @@ void settings_sd_mount() {
     gr2_destroy(prac_screen, &sda_sys_con);
     slotScreen[1] = svp_appScreen(1, 0);
     sda_slot_on_top(2);
+
+    //next little hack, relod the main screen, this will be replaced someday
+    sda_homescreen_configure();
   }
 }
 
