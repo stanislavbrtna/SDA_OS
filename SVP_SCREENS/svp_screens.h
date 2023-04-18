@@ -34,6 +34,8 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top);
 uint16_t svp_appScreen(uint8_t init, uint8_t top);
 uint16_t svp_optScreen(uint8_t init, uint8_t top);
 
+void sda_homescreen_configure();
+
 void taskSwitcherOpen();
 void taskSwitcherUpdate();
 

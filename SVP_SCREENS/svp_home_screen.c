@@ -22,15 +22,98 @@ SOFTWARE.
 
 #include "svp_screens.h"
 
+static uint8_t background_img[64];
+
+static uint8_t headingStr[32];
+static uint8_t subHeadingStr[32];
+
+static uint16_t tHeading;
+static uint16_t tSubheading;
+static uint16_t time;
+static uint16_t date;
+static uint16_t screen;
+
+
+static void set_element(uint16_t id, sda_conf *conffile, uint8_t * name, uint8_t * strbuff) {
+  uint8_t buff[32];
+  buff[0] = 0;
+  sda_str_add(buff, name);
+  sda_str_add(buff, "_x1");
+  printf("got: %s \n", buff);
+  gr2_set_x1(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 0), &sda_sys_con);
+  buff[0] = 0;
+  sda_str_add(buff, name);
+  sda_str_add(buff, "_y1");
+  gr2_set_y1(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 0), &sda_sys_con);
+  buff[0] = 0;
+  sda_str_add(buff, name);
+  sda_str_add(buff, "_w");
+  gr2_set_x2(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 0) + gr2_get_x1(id, &sda_sys_con), &sda_sys_con);
+  buff[0] = 0;
+  sda_str_add(buff, name);
+  sda_str_add(buff, "_h");
+  gr2_set_y2(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 0) + gr2_get_y1(id, &sda_sys_con), &sda_sys_con);
+
+  buff[0] = 0;
+  sda_str_add(buff, name);
+  sda_str_add(buff, "_fsize");
+  gr2_text_set_size(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 32), &sda_sys_con);
+
+  buff[0] = 0;
+  sda_str_add(buff, name);
+  sda_str_add(buff, "_align");
+  gr2_text_set_align(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 0), &sda_sys_con);
+
+  buff[0] = 0;
+  sda_str_add(buff, name);
+  sda_str_add(buff, "_str");
+
+  if (strbuff != 0) {
+    sda_conf_key_read(conffile, buff, strbuff, 31);
+    gr2_set_str(id, strbuff, &sda_sys_con);
+  }
+} 
+
+void sda_homescreen_configure() {
+  uint8_t dirbuf[258];
+  sda_conf conffile;
+  svp_getcwd(dirbuf, 256);
+  svp_switch_main_dir();
+  svp_chdir("APPS");
+
+  if (!svp_fexists((uint8_t *)"homescreen.cfg")) {
+    svp_chdir(dirbuf);
+    return;
+  }
+
+  if (sda_conf_open(&conffile, (uint8_t *)"homescreen.cfg") == 0) {
+    printf("Failed to open mainscreen file!\n");
+    svp_chdir(dirbuf);
+    return;
+  }
+
+  // backgroun image
+  sda_conf_key_read(&conffile, (uint8_t *) "background", background_img, sizeof(background_img));
+  if (svp_fexists(background_img)) {
+    gr2_set_str(screen, background_img, &sda_sys_con);
+  }
+
+  set_element(tHeading, &conffile, "heading", headingStr);
+  set_element(tSubheading, &conffile, "sub_heading", subHeadingStr);
+
+  set_element(time, &conffile, "time", 0);
+  set_element(date, &conffile, "date", 0);
+
+  svp_chdir(dirbuf);
+}
+
+
 // homescreen handler
 uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
-  static uint16_t screen;
+
   static uint16_t appsBtn;
   static uint16_t optBtn;
   static uint16_t lockBtn;
-  static uint16_t text;
-  static uint16_t time;
-  static uint16_t date;
   static uint16_t oldtime;
   static uint8_t olddate;
   static sdaDeviceLockType oldLock;
@@ -40,14 +123,15 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 
   if (init == 1) {
     screen = gr2_add_screen(&sda_sys_con);
-    text = gr2_add_text(0 , 1, 12, 3,(uint8_t *)"S!   PDA", screen, &sda_sys_con);
+    tHeading = gr2_add_text(0, 1, 12, 3,(uint8_t *)"S!   PDA", screen, &sda_sys_con);
+    tSubheading = gr2_add_text(1, 3, 9, 4,(uint8_t *)"", screen, &sda_sys_con);
     time = gr2_add_text(3, 4, 12, 6,(uint8_t *)"??:??", screen, &sda_sys_con);
     date = gr2_add_text(3, 6, 12, 7,(uint8_t *)"?. ?. 20??", screen, &sda_sys_con);
     appsBtn = gr2_add_icon(2, 10, 5, 13,(uint8_t *)"", (uint8_t *)"Icons/apps.p16", screen, &sda_sys_con);
     optBtn = gr2_add_icon(6, 10, 9, 13,(uint8_t *)"", (uint8_t *)"Icons/options.p16", screen, &sda_sys_con);
     lockBtn = gr2_add_icon(4, 10, 7, 13,(uint8_t *)"", (uint8_t *)"Icons/lock.p16", screen, &sda_sys_con);
     gr2_set_visible(lockBtn, 0, &sda_sys_con);
-    gr2_text_set_size(text, 70, &sda_sys_con);
+    gr2_text_set_size(tHeading, 70, &sda_sys_con);
     gr2_text_set_size(time, 70, &sda_sys_con);
     oldtime = 5566; // absurd value, so current minute would not equal oldmin and time would update after init
 
