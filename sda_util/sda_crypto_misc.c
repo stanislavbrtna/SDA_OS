@@ -157,6 +157,8 @@ uint8_t svp_crypto_reencrypt_os_keyfile(uint8_t* oldpass, uint8_t* newpass) {
   svp_crypto_reencrypt_key("sys_keyfile.svk", oldpass, newpass);
 
   svp_chdir(dirbuf);
+
+  return 0;
 }
 
 uint8_t svp_crypto_reset_os_keyfile() {

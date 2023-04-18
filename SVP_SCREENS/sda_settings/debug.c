@@ -49,7 +49,7 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
     
     gr2_text_set_align(optDbgBack, GR2_ALIGN_CENTER, &sda_sys_con);
 
-    if (sda_dbg_serial_is_enabled()) {
+    if (sda_usb_serial_is_enabled()) {
       gr2_set_value(dbgUartEnable, 1, &sda_sys_con);
     }
 
@@ -58,10 +58,10 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
   }
 
   if (gr2_clicked(dbgUartEnable, &sda_sys_con)) {
-    if (sda_dbg_serial_is_enabled()) {
-      sda_dbg_serial_disable();
+    if (sda_usb_serial_is_enabled()) {
+      sda_usb_serial_disable();
     } else {
-      sda_dbg_serial_enable();
+      sda_usb_serial_enable();
     }
     
     init = 2;
@@ -83,7 +83,7 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
   }
 
   if (init == 2) {
-    if (sda_dbg_serial_is_enabled()) {
+    if (sda_usb_serial_is_enabled()) {
       gr2_set_value(dbgUartEnable, 1, &sda_sys_con);
     } else {
       gr2_set_value(dbgUartEnable, 0, &sda_sys_con);
