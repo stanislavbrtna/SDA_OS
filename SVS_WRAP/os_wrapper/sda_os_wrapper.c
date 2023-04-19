@@ -419,6 +419,21 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!#### OS settings functions
 
+  //#!##### Reload homescreen settings
+  //#!    sys.os.settings.homeRld();
+  //#!Reloads homescreen settings stored in homescreen.cfg
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "homeRld", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    sda_homescreen_configure();
+
+    result->value.val_s = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Requests high privileges
   //#!    sys.os.settings.rqAuth();
   //#!Requests authorization form user to change system settings.

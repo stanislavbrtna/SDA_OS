@@ -104,6 +104,10 @@ Return: [num] 1 - ok, 0 - string too long
 Gets the OS clipboard 256 chars max by default
 Return: [str] clipboard_string
 #### OS settings functions
+##### Reload homescreen settings
+    sys.os.settings.homeRld();
+Reloads homescreen settings stored in homescreen.cfg
+Return: none
 ##### Requests high privileges
     sys.os.settings.rqAuth();
 Requests authorization form user to change system settings.

@@ -278,12 +278,18 @@ SDA_OS has its own time and date overlay. This can be used to receive time and d
 Get folder from arg0 (path):
 
     function getFolder {
+      arg3 = 0;
       for(arg2 = len(arg0); arg2 > 0; arg2--;) {
         if (getcp(arg0, arg2) == "/") {
           return substr(arg0, 0, arg2);
         }
+        if (getcp(arg0, arg2) == ".") {
+          arg3 = 1;
+        }
       }
-      return ".";
+      if (arg3) return ""; # 
+      
+      return arg0;
     }
 
 #### Get Path
