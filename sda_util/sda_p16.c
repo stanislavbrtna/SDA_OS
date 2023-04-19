@@ -38,6 +38,9 @@ static void break_draw_cleanup(svp_file *fp);
 
 uint8_t sda_draw_p16_scaled(uint16_t x, uint16_t y, int16_t scale_w, int16_t scale_h, uint8_t *filename) {
   if (scale_w > 0 && scale_h > 0) {
+    if (scale_w == 1 && scale_h == 1) {
+      return sda_draw_p16(x, y, filename);
+    }
     return sda_draw_p16_scaled_up(x, y, (uint16_t)scale_w, (uint16_t)scale_h, filename);
   } else {
     return sda_draw_p16_scaled_down(x, y, (uint16_t)(scale_w*-1), (uint16_t)(scale_h*-1), filename);

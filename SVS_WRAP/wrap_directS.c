@@ -393,11 +393,13 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 
 #ifdef PPM_SUPPORT_ENABLED
     IRQ_BLOCK
-    if (argS->arg[3].val_s > 0 && argS->arg[4].val_s > 0) {
-      sda_draw_p16_scaled_up(x1 + argS->arg[1].val_s, y1 + argS->arg[2].val_s, argS->arg[3].val_s,argS->arg[4].val_s, s->stringField + argS->arg[5].val_str);
-    } else {
-      sda_draw_p16_scaled_down(x1 + argS->arg[1].val_s, y1 + argS->arg[2].val_s, (argS->arg[3].val_s*-1), (argS->arg[4].val_s*-1), s->stringField + argS->arg[5].val_str);
-    }
+    sda_draw_p16_scaled(
+      x1 + (int16_t)argS->arg[1].val_s,
+      y1 + (int16_t) argS->arg[2].val_s,
+      (int16_t) argS->arg[3].val_s,
+      (int16_t) argS->arg[4].val_s,
+      s->stringField + argS->arg[5].val_str
+    );
     IRQ_ENABLE
 #endif
     return 1;
