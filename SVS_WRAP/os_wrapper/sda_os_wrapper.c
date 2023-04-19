@@ -223,6 +223,19 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get Keyboard state
+  //#!    sys.os.kbdGetState();
+  //#!Gets if keyboard is deployed 1 - keyboard shown, 0 - keyboard hidden
+  //#!Return: [num] state
+  if (sysFuncMatch(argS->callId, "kbdGetState", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_s = (uint32_t) svpSGlobal.kbdVisible;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!
   //#!#### Misc
   //#!

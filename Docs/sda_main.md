@@ -53,6 +53,10 @@ Return: None
     sys.os.showKbd();
 Shows system keyboard
 Return: None
+##### Get Keyboard state
+    sys.os.kbdGetState();
+Gets if keyboard is deployed 1 - keyboard shown, 0 - keyboard hidden
+Return: [num] state
 
 #### Misc
 
