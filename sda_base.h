@@ -95,6 +95,7 @@ void sda_usb_serial_transmit(uint8_t *str, uint32_t len);
 uint8_t sda_usb_serial_recieve_init();
 uint8_t sda_usb_serial_get_rdy();
 uint16_t sda_usb_serial_get_str(uint8_t *str);
+void sda_usb_enable_for_dbg(uint8_t val);
 
 // [HW] System
 void svp_set_calibration_data(touchCalibDataStruct input);

@@ -39,7 +39,7 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
     optDbgScr = gr2_add_screen(&sda_sys_con);
     gr2_set_relative_init(1, &sda_sys_con);
     gr2_add_text(1, 1, 9, 1, (uint8_t *)"Debug", optDbgScr, &sda_sys_con);
-    dbgUartEnable = gr2_add_checkbox(1, 3, 6, 1, (uint8_t *)"Enable USB serial port", optDbgScr, &sda_sys_con);
+    dbgUartEnable = gr2_add_checkbox(1, 3, 9, 1, (uint8_t *)"Use USB port for debug", optDbgScr, &sda_sys_con);
 
     bMemInfo = gr2_add_button(1, 5, 6, 1, "Print memory info", optDbgScr, &sda_sys_con);
     bSvmInfo = gr2_add_button(1, 6, 6, 1, "Print SVSvm info", optDbgScr, &sda_sys_con);
@@ -58,11 +58,12 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
   }
 
   if (gr2_clicked(dbgUartEnable, &sda_sys_con)) {
-    if (sda_usb_serial_is_enabled()) {
+    /*if (sda_usb_serial_is_enabled()) {
       sda_usb_serial_disable();
     } else {
       sda_usb_serial_enable();
-    }
+    }*/
+    sda_usb_enable_for_dbg(gr2_get_value(dbgUartEnable, &sda_sys_con));
     
     init = 2;
   }
@@ -83,7 +84,7 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
   }
 
   if (init == 2) {
-    if (sda_usb_serial_is_enabled()) {
+    if (sda_usb_get_enable_for_dbg()) {
       gr2_set_value(dbgUartEnable, 1, &sda_sys_con);
     } else {
       gr2_set_value(dbgUartEnable, 0, &sda_sys_con);
