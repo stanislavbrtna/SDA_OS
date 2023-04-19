@@ -58,13 +58,8 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
   }
 
   if (gr2_clicked(dbgUartEnable, &sda_sys_con)) {
-    /*if (sda_usb_serial_is_enabled()) {
-      sda_usb_serial_disable();
-    } else {
-      sda_usb_serial_enable();
-    }*/
     sda_usb_enable_for_dbg(gr2_get_value(dbgUartEnable, &sda_sys_con));
-    
+    sda_store_dbg_options();
     init = 2;
   }
 

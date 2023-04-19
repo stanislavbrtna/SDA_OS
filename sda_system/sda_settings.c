@@ -56,6 +56,9 @@ void sda_load_config() {
 
   // mute
   svpSGlobal.mute = sda_conf_key_read_i32(&conffile, (uint8_t *)"mute", 0);
+
+  // usb debug
+  sda_usb_enable_for_dbg(sda_conf_key_read_i32(&conffile, (uint8_t *)"usb_debug", 0));
   
   svp_set_irq_redraw(); //po nastavení barev překreslíme panel / redraw the tray after loading color settings
   sda_conf_close(&conffile);
@@ -137,6 +140,22 @@ void sda_store_config() {
   printf("Done.\n");
 }
 
+
+void sda_store_dbg_options() {
+  sda_conf conffile;
+  uint8_t dirbuf[258];
+  svp_getcwd(dirbuf, 256);
+  svp_switch_main_dir();
+  printf("Storing dbg config: (svp.cfg)\n");
+  if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
+    printf("Failed to open cfg file\n");
+    return;
+  }
+  sda_conf_key_write_i32(&conffile, (uint8_t *)"usb_debug", sda_usb_get_enable_for_dbg());
+  sda_conf_close(&conffile);
+  svp_chdir(dirbuf);
+  printf("Done.\n");
+}
 
 void sda_store_mute_config() {
   sda_conf conffile;

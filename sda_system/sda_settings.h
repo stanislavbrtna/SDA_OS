@@ -29,5 +29,6 @@ void sda_store_config_gui(uint8_t set_def);
 void sda_store_config();
 void sda_store_calibration();
 void sda_store_mute_config();
+void sda_store_dbg_options();
 
 #endif
