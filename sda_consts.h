@@ -61,8 +61,11 @@ File description:
 
 // max name lenght of running SVS application, including its path
 #define APP_NAME_LEN     128
+#ifndef WEBTARGET
 #define APP_ARG_STR_LEN 2048 // 1024 magically works for the web sim
-
+#else
+#define APP_ARG_STR_LEN 1024 // magically works for the web sim
+#endif
 // maximum cached applications
 #define MAX_OF_SAVED_PROC 16
 
