@@ -665,12 +665,14 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
     }
 
     if (svmBeepHandler()) {
-      if (functionExists(svmMeta.beepTimerCallback, &svm)) {
-        commExec(svmMeta.beepTimerCallback, &svm);
-      } else {
-        svmCloseRunning();
-        sda_show_error_message((uint8_t *)"Beep callback function not found.\n");
-        return 0;
+      if (!svp_strcmp(svmMeta.beepTimerCallback, "")) {
+        if ( functionExists(svmMeta.beepTimerCallback, &svm)) {
+          commExec(svmMeta.beepTimerCallback, &svm);
+        } else {
+          svmCloseRunning();
+          sda_show_error_message((uint8_t *)"Beep callback function not found.\n");
+          return 0;
+        }
       }
     }
 
