@@ -1,6 +1,9 @@
   - system log
   - clean up that app-slot/screen-slot business
 
+Examples:
+  - ds image demo with scaling
+
 Docs:
   - specify the native API
   - specify all the used file formats:
@@ -12,6 +15,7 @@ Docs:
       - svp.cfg
       - alarms.cfg
       - calib.dat
+      - homescreen.cfg
     - PPM images
     - p16 images
     - autoexec.svs function
