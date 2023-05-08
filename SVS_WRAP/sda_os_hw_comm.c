@@ -122,6 +122,26 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### USB serial set speed
+  //#!    sys.com.usbSetBd([num] bd);
+  //#!Sets baud rate of the usb-serial port
+  //#!Return: none
+
+
+  if (sysFuncMatch(argS->callId, "usbSetBd", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    sda_usb_serial_init_bd((uint32_t) argS->arg[1].val_s);
+
+    result->value.val_s = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+
   //#!##### USB serial receive
   //#!    sys.com.usbRcv([num]timeout);
   //#!Gets string (max 512 bytes) from USB serial port.
@@ -324,6 +344,25 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
+  //#!##### Serial expansion set spped
+  //#!    sys.com.uartSetBd([num] bd);
+  //#!Sets baud rate of the uart expansion port
+  //#!Return: none
+
+
+  if (sysFuncMatch(argS->callId, "uartSetBd", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    sda_serial_init_bd((uint32_t) argS->arg[1].val_s);
+
+    result->value.val_s = 0;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 

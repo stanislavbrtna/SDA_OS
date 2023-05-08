@@ -61,6 +61,7 @@ void svp_set_backlight(uint8_t val);
 void sda_calibrate();
 
 // [HW] Expansion serial port
+void sda_serial_init_bd(uint32_t bd);
 void sda_serial_enable();
 void sda_serial_disable();
 
@@ -90,6 +91,7 @@ void sda_dbg_serial_enable();
 uint8_t sda_usb_serial_is_enabled();
 void sda_usb_serial_disable();
 void sda_usb_serial_enable();
+void sda_usb_serial_init_bd(uint32_t bd);
 uint8_t sda_usb_serial_recieve(uint8_t *str, uint32_t len, uint32_t timeout);
 void sda_usb_serial_transmit(uint8_t *str, uint32_t len);
 uint8_t sda_usb_serial_recieve_init();
