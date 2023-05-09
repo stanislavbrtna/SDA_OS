@@ -127,6 +127,10 @@ Sends previously stored queue to the initialized serial port.
 Queue can be filled with sys.srlTrsQAdd and cleared with sys.srlTrsQClr.
 Max 32 bytes.
 Return: None
+##### USB serial set speed
+    sys.com.usbSetBd([num] bd);
+Sets baud rate of the usb-serial port
+Return: none
 ##### USB serial receive
     sys.com.usbRcv([num]timeout);
 Gets string (max 512 bytes) from USB serial port.
@@ -183,6 +187,10 @@ Return: None
 Gets string (max 512 bytes) from currently initialized serial port.
 If nothing is sent during timeout (in ms), empty string is returned.
 Return: [str] data
+##### Serial expansion set spped
+    sys.com.uartSetBd([num] bd);
+Sets baud rate of the uart expansion port
+Return: none
 #### Serial recieve in non-blocking mode
 For more flexible serial interface operations
 ##### Serial expansion receive
