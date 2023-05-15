@@ -124,6 +124,7 @@ void sda_error_overlay_handle() {
   }
 
   if (gr2_clicked(error_overlay_ok, &sda_sys_con)) {
+    gr2_destroy(error_overlay_scr, &sda_sys_con);
     destroyOverlay();
     return;
   }
