@@ -171,6 +171,23 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get if running in simulator
+  //#!    sys.os.inSim();
+  //#!Gets if app is running in simulator. 1 - Simulator, 0 - Real hardware.
+  //#!Return: [num] result
+  if (sysFuncMatch(argS->callId, "inSim", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    #ifdef PLATFORM_PC
+    result->value.val_s = 1;
+    #else
+    result->value.val_s = 0;
+    #endif
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Show Error
   //#!    sys.os.error([str]errorText);
   //#!Throws error message

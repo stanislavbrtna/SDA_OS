@@ -36,6 +36,10 @@ Return: None
     sys.os.arise();
 If called from timer callback, the app is promoted to the foreground.
 Return: None
+##### Get if running in simulator
+    sys.os.inSim();
+Gets if app is running in simulator. 1 - Simulator, 0 - Real hardware.
+Return: [num] result
 ##### Show Error
     sys.os.error([str]errorText);
 Throws error message
