@@ -84,8 +84,8 @@
 #define ASCR_APPLICATIONS             (uint8_t *)"Programy:"
 #define ASCR_RUNNING_APP              (uint8_t *)"Běžící aplikace"
 
-#define SWICH_RUNNING_APPS            (uint8_t *)"Běžící procesy:"
-#define SWITCH_CLOSE_ALL              (uint8_t *)"Zavřit vše"
+#define SWITCH_RUNNING_APPS           (uint8_t *)"Běžící procesy:"
+#define SWITCH_CLOSE_ALL              (uint8_t *)"Zavřít vše"
 
 #define SCR_LED_NOTIFICATIONS         (uint8_t *)"Notifikační LED"
 #define IRQ_BATT_CHRG                 (uint8_t *)" NAB."

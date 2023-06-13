@@ -104,7 +104,7 @@ void taskSwitcherOpen() {
 
   gr2_add_text(
     1, 0, 14, 1,
-    SWICH_RUNNING_APPS,
+    SWITCH_RUNNING_APPS,
     task_switcher,
     &sda_sys_con
   );

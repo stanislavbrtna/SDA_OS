@@ -85,7 +85,7 @@
 #define ASCR_RUNNING_APP                              (uint8_t*)"Running apps"
 #define IRQ_BATT_CHRG                                 (uint8_t*)"Chrg."
 
-#define SWICH_RUNNING_APPS                            (uint8_t *)"Running applications:"
+#define SWITCH_RUNNING_APPS                           (uint8_t *)"Running applications:"
 #define SWITCH_CLOSE_ALL                              (uint8_t *)"Close all"
 #define MSG_ERROR_OCCURED                             (uint8_t *)"Error occured:"
 
