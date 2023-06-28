@@ -225,6 +225,7 @@ void inScreenResizer(uint16_t id) {
       gr2_set_xscroll(id, 0, &sda_sys_con);
     } else {
       gr2_set_xscroll(id, -16, &sda_sys_con);
+      gr2_set_yscroll(id, 0, &sda_sys_con);
       gr2_set_visible(scrollbar, 0, &sda_sys_con);
     }
   } else {
@@ -236,6 +237,7 @@ void inScreenResizer(uint16_t id) {
       gr2_set_xscroll(id, 0, &sda_sys_con);
     } else {
       gr2_set_xscroll(id, -16, &sda_sys_con);
+      gr2_set_yscroll(id, 0, &sda_sys_con);
       gr2_set_visible(scrollbar, 0, &sda_sys_con);
     }
   }
@@ -296,8 +298,10 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
     if (svpSGlobal.sdaDeviceLock == DEVICE_LOCKED) {
       sda_slot_on_top(0);
     }
-
-    gr2_set_yscroll(inScreen, gr2_get_value(scrollbar, &sda_sys_con) * 96, &sda_sys_con);
+    
+    if(gr2_get_visible(scrollbar, &sda_sys_con)) {
+      gr2_set_yscroll(inScreen, gr2_get_value(scrollbar, &sda_sys_con) * 96, &sda_sys_con);
+    }
 
     appActive = svmGetRunning();
 
