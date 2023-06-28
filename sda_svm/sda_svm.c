@@ -178,6 +178,33 @@ uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
   return 0;
 }
 
+void svmLaunchSetDefMetadata(id, parentId, fname) {
+  svmMeta.id = id;
+  svmMeta.parentId = parentId;
+  
+  sda_strcp(fname, svmMeta.name, sizeof(svmMeta.name));
+  
+  for(uint16_t i = 0; i < SDA_FILES_OPEN_MAX; i++) {
+    svmMeta.openFileUsed[i] = 0;
+    sda_strcp((uint8_t *)"", svmMeta.openFileName[i], sizeof(svmMeta.openFileName[i]));
+  }
+  
+  sda_strcp((uint8_t *)"", svmMeta.openConfName, sizeof(svmMeta.openConfName));
+  svmMeta.openConfUsed = 0;
+  sda_strcp((uint8_t *)"", svmMeta.openCsvName, sizeof(svmMeta.openCsvName));
+  svmMeta.openCsvUsed = 0;
+  sda_strcp((uint8_t *)"DATA", svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
+  
+  svmMeta.loadUptime = svpSGlobal.uptimeMs;
+  svmMeta.landscape = 0;
+  svmMeta.lcdOffButtons = 0;
+  svmMeta.launchFromCWD = 0;
+  svmMeta.cryptoUnlocked = 0;
+  svmMeta.beepTime = 0;
+  svmMeta.authorized = 0;
+}
+
+
 // launch app
 uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
   uint8_t cacheBuffer[256];
@@ -254,41 +281,28 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
   }
 
   // set metadata
-  svmMeta.id = nextId;
+  svmLaunchSetDefMetadata(nextId, parentId, fname);
   nextId++;
-  svmMeta.parentId = parentId;
-  svmMeta.landscape = 0;
-  sda_strcp(fname, svmMeta.name, sizeof(svmMeta.name));
-  
-  for(uint16_t i = 0; i < SDA_FILES_OPEN_MAX; i++) {
-    svmMeta.openFileUsed[i] = 0;
-    sda_strcp((uint8_t *)"", svmMeta.openFileName[i], sizeof(svmMeta.openFileName[i]));
-  }
-  
-  sda_strcp((uint8_t *)"", svmMeta.openConfName, sizeof(svmMeta.openConfName));
-  svmMeta.openConfUsed = 0;
-  sda_strcp((uint8_t *)"", svmMeta.openCsvName, sizeof(svmMeta.openCsvName));
-  svmMeta.openCsvUsed = 0;
-  sda_strcp((uint8_t *)"DATA", svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
-  svmMeta.lcdOffButtons = 0;
-  svmMeta.launchFromCWD = 0;
-  svmMeta.cryptoUnlocked = 0;
-  svmMeta.loadUptime = svpSGlobal.uptimeMs;
-  svmMeta.beepTime = 0;
-  svmMeta.authorized = 0;
   wrap_set_lcdOffButtons(0);
 
   // move to DATA
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"DATA");
+
   // reset gr2 context
   gr2_reset_context(&sda_app_con);
   svmGetGR2Settings();
+  
   // validate the app slot
   sda_slot_set_valid(4);
   sda_slot_on_top(4);
+  
   // insert to table of running apps
   svmSuspendAddId(svmMeta.id, svmMeta.name);
+  
+  // reset timers
+  sdaSvmClearTimer();
+
   // show the close button
   svpSGlobal.systemXBtnVisible = 1;
   svpSGlobal.systemXBtnClick = 0;
