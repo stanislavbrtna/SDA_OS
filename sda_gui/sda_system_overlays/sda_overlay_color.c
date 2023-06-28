@@ -28,9 +28,7 @@ static uint16_t col_id = 0xFFFF;
 
 static uint16_t col_ok;
 static uint16_t col_cancel;
-
 static uint16_t col_show;
-
 static uint16_t col_done;
 
 static uint16_t col_r;

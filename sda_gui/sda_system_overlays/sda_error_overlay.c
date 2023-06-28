@@ -87,7 +87,7 @@ void sda_show_error_message(uint8_t * text) {
       &sda_sys_con
   );
 
-  error_overlay_inscr = gr2_add_screen_ext(1, 2, 16, 7, error_overlay_scr, &sda_sys_con);
+  error_overlay_inscr = gr2_add_screen_ext(1, 2, 16, 7 - 4*svpSGlobal.lcdLandscape, error_overlay_scr, &sda_sys_con);
   error_overlay_slider = gr2_add_slider_v(15, 2, 2, 7, 2, 1, error_overlay_scr, &sda_sys_con);
 
   gr2_set_visible(error_overlay_slider, 0, &sda_sys_con);
@@ -99,7 +99,7 @@ void sda_show_error_message(uint8_t * text) {
   );
   
   error_overlay_ok = gr2_add_button(
-                        7, 10, 4, 1,
+                        7, 10 - 4*svpSGlobal.lcdLandscape, 4, 1,
                         OVRL_OK,
                         error_overlay_scr,
                         &sda_sys_con
@@ -113,9 +113,9 @@ void sda_show_error_message(uint8_t * text) {
   
   gr2_set_relative_init(0, &sda_sys_con);
 
-  setOverlayX1(16);
-  setOverlayX2(304);
-  setOverlayY2(432);
+  setOverlayX1(16 + svpSGlobal.lcdLandscape*80);
+  setOverlayX2(304 - 16 + svpSGlobal.lcdLandscape*80);
+  setOverlayY2(432 - 140*svpSGlobal.lcdLandscape);
 }
 
 void sda_error_overlay_handle() {

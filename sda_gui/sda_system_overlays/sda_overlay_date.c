@@ -35,8 +35,8 @@ static uint16_t date_month_text;
 
 //input/output date values
 static uint16_t date_year_val;
-static uint8_t date_month_val;
-static uint8_t date_day_val;
+static uint8_t  date_month_val;
+static uint8_t  date_day_val;
 
 static uint16_t date_selector_screen;
 static dateSelectorWidgetType date_widget;

@@ -25,6 +25,10 @@ SOFTWARE.
 #define MAX_APP_COUNT 25
 #define MAX_FOLDER_STACK 5
 
+#define OBJ_TYPE_ERROR 0
+#define OBJ_TYPE_MENU 1
+#define OBJ_TYPE_APP 2 
+
 /* APP screen
 feature request:
 de-init
@@ -38,6 +42,36 @@ static uint8_t folderStack[MAX_FOLDER_STACK][APP_NAME_LEN+1];
 static uint8_t folderStackStr[MAX_FOLDER_STACK][APP_NAME_LEN+1];
 static uint16_t folder_stack_max;
 static uint8_t appNum;
+
+
+void add_button(uint16_t x, svp_csvf appsCSV, uint8_t *appFName, uint8_t *appIcoName, uint8_t *appHumanName, uint16_t *appFNameBtn, uint16_t retScreen) {
+  // load data
+  // 0 filename.svs, 1 icon.ppm, 2 human name
+  svp_csv_get_cell(&appsCSV, 0, (uint8_t *)"", appFName, APP_NAME_LEN);
+  svp_csv_get_cell(&appsCSV, 1, (uint8_t *)"none.p16", appIcoName, APP_NAME_LEN);
+  svp_csv_get_cell(&appsCSV, 2, ASCR_NONAME, appHumanName, APP_NAME_LEN);
+#ifdef APP_SCREEN_DEBUG
+  printf("%u:app found: %s ico: %s name: %s id: ", x, appFName, appIcoName, appHumanName);
+#endif
+
+  // add icon
+  *appFNameBtn = gr2_add_icon(
+    1 + 6*(x%3), 1 + 6*(x/3), 7 + 6*(x%3), 7 + 6*(x/3),
+    appHumanName,
+    appIcoName,
+    retScreen,
+    &sda_sys_con
+  );
+
+  if (svp_strlen(appHumanName) <= 8) {
+    gr2_text_set_align(*appFNameBtn, GR2_ALIGN_CENTER, &sda_sys_con);
+  }
+  gr2_set_param(*appFNameBtn, 1, &sda_sys_con);
+#ifdef APP_SCREEN_DEBUG
+  printf("%u\n", appFNameBtn);
+#endif
+}
+
 
 // loads or handles inner screen
 uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
@@ -63,7 +97,6 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
       gr2_add_text(1, 1, 20, 4, ASCR_CARD_ERROR, retScreen, &sda_sys_con);
       return retScreen;
     }
-    // 0 filename.svs, 1 icon.ppm, 2 human name
 
     // test if file actualy works
     if (svp_csv_get_cell(&appsCSV, 1, (uint8_t *)"", appFName[x], APP_NAME_LEN) == 0) {
@@ -71,31 +104,8 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
       return retScreen;
     }
 
-    do{
-      // load data
-      svp_csv_get_cell(&appsCSV, 0, (uint8_t *)"", appFName[x], APP_NAME_LEN);
-      svp_csv_get_cell(&appsCSV, 1, (uint8_t *)"none.p16", appIcoName[x], APP_NAME_LEN);
-      svp_csv_get_cell(&appsCSV, 2, ASCR_NONAME, appHumanName[x], APP_NAME_LEN);
-#ifdef APP_SCREEN_DEBUG
-      printf("%u:app found: %s ico: %s name: %s id:", x, appFName[x], appIcoName[x], appHumanName[x]);
-#endif
-      // add icon
-      appFNameBtn[x] = gr2_add_icon(
-        1 + 6*(x%3), 1 + 6*(x/3), 7 + 6*(x%3), 7 + 6*(x/3),
-        appHumanName[x],
-        appIcoName[x],
-        retScreen,
-        &sda_sys_con
-      );
-
-      if (svp_strlen(appHumanName[x]) <= 8) {
-        gr2_text_set_align(appFNameBtn[x], GR2_ALIGN_CENTER, &sda_sys_con);
-      }
-      gr2_set_param(appFNameBtn[x], 1, &sda_sys_con);
-
-#ifdef APP_SCREEN_DEBUG
-      printf("%u\n", appFNameBtn[x]);
-#endif
+    do {
+      add_button(x, appsCSV, appFName[x], appIcoName[x], appHumanName[x], &appFNameBtn[x], retScreen);
       x++;
 
       if (x == MAX_APP_COUNT) {
@@ -103,7 +113,7 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
         break;
       }
 
-    }while(svp_csv_next_line(&appsCSV));
+    } while(svp_csv_next_line(&appsCSV));
 
     svp_csv_close(&appsCSV);
 
@@ -180,7 +190,7 @@ static void get_from_stack(uint8_t * fname) {
  *
  * fname - string filename
  *
- * return - 0:error 1:menu 2:svs
+ * return - OBJ_TYPE 0:error 1:menu 2:svs
  */
 static uint8_t detect_type(uint8_t * fname) {
   uint16_t x;
@@ -188,15 +198,15 @@ static uint8_t detect_type(uint8_t * fname) {
   for(x = 0; x < APP_NAME_LEN-3; x++) {
     if (fname[x] == '.'){
       if ((fname[x + 1] == 'm') && (fname[x + 2] == 'n') && (fname[x + 3] == 'u')) {
-        return 1;
+        return OBJ_TYPE_MENU;
       }
 
       if ((fname[x + 1] == 's') && (fname[x + 2] == 'v') && (fname[x + 3] == 's')) {
-        return 2;
+        return OBJ_TYPE_APP;
       }
     }
   }
-  return 0;
+  return OBJ_TYPE_ERROR;
 }
 
 
@@ -250,16 +260,15 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
   static uint16_t textLabel;
   static uint16_t btnBack;
   static uint16_t btnSwitch;
-  static uint8_t labelbuff[APP_NAME_LEN+1];
+  static uint8_t  labelbuff[APP_NAME_LEN+1];
+  static uint8_t  appActivePrev;
+  static uint8_t  inScrReloaded;
   uint8_t appActive;
-  static uint8_t appActivePrev;
-  static uint8_t inScrReloaded;
 
   if (init == 1) {
     folder_stack_max = 0;
 
     appScreen = gr2_add_screen(&sda_sys_con);
-
     scrollbar = gr2_add_slider_v(9, 1, 10, 12, 100, 0, appScreen, &sda_sys_con);
 
     if (inScreen != 0) {
@@ -276,16 +285,11 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
     gr2_set_screen(inScreen, appScreen, &sda_sys_con);
 
     textLabel = gr2_add_text(2, 0, 10, 1, ASCR_APPLICATIONS, appScreen, &sda_sys_con);
-
     btnBack = gr2_add_button(0, 0, 2, 1, (uint8_t *)"<-", appScreen, &sda_sys_con);
-
     btnSwitch = gr2_add_button(2, 13, 8, 14, ASCR_RUNNING_APP, appScreen, &sda_sys_con);
 
     gr2_text_set_align(btnSwitch, GR2_ALIGN_CENTER, &sda_sys_con);
-
     gr2_set_visible(btnBack, 0, &sda_sys_con);
-
-    //svmCloseRunning(); - ?? perhaps was here for mount/umount before sda went multi-process
 
     return appScreen;
   }
@@ -311,11 +315,11 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
       uint8_t type = 0;
       gr2_ki_unselect(inScreen, &sda_sys_con);
       type = detect_type(selectedObject);
-      if (type == 2) {
+      if (type == OBJ_TYPE_APP) {
         if(svmLaunch(selectedObject, 0) == 0) {
           sda_show_error_message((uint8_t *)"Error occured while launching file!");
         }
-      }else if (type == 1) {
+      }else if (type == OBJ_TYPE_MENU) {
         add_to_stack(selectedObject);
         sda_strcp(selectedObjectStr, labelbuff, sizeof(labelbuff));
         gr2_set_str(textLabel, labelbuff, &sda_sys_con);
@@ -369,27 +373,6 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
       gr2_set_event(btnSwitch, EV_NONE, &sda_sys_con);
     }
 
-    if (appNum > 9){ //scrollable
-      if (svpSGlobal.keyEv[BUTTON_UP] == EV_PRESSED){
-        if (gr2_get_value(scrollbar, &sda_sys_con)< 1){
-          gr2_set_value(scrollbar, 0, &sda_sys_con);
-        }else{
-          gr2_set_value(scrollbar, gr2_get_value(scrollbar, &sda_sys_con) - 1, &sda_sys_con);
-        }
-      }
-      svpSGlobal.keyEv[1] = EV_NONE;
-
-      if (svpSGlobal.keyEv[BUTTON_DOWN] == EV_PRESSED) {
-        if (gr2_get_value(scrollbar, &sda_sys_con) > gr2_get_param(scrollbar, &sda_sys_con)){
-          gr2_set_value(scrollbar, gr2_get_param(scrollbar, &sda_sys_con), &sda_sys_con);
-        }else{
-          gr2_set_value(scrollbar, gr2_get_value(scrollbar, &sda_sys_con) + 1, &sda_sys_con);
-        }
-      }
-
-      svpSGlobal.keyEv[2] = EV_NONE;
-    }
-
     if ((appActivePrev != appActive) || (inScrReloaded)) {
       inScreenResizer(inScreen);
 
@@ -401,9 +384,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
     }
 
     appActivePrev = appActive;
-
   }
-  //else: background jobs
   return 0;
 }
 
