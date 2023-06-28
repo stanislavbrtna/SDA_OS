@@ -71,7 +71,6 @@ void sda_show_error_message(uint8_t * text) {
     gr2_set_visible(error_overlay_slider, 1, &sda_sys_con);
     gr2_set_param(error_overlay_slider, error_count * 5 * 32, &sda_sys_con);
     gr2_set_relative_init(0, &sda_sys_con);
-    puts("additional");
     return;
   }
 
