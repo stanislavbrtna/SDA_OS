@@ -300,13 +300,14 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
   // insert to table of running apps
   svmSuspendAddId(svmMeta.id, svmMeta.name);
   
-  // reset timers
-  sdaSvmClearTimer();
-
   // show the close button
   svpSGlobal.systemXBtnVisible = 1;
   svpSGlobal.systemXBtnClick = 0;
   svmValid = 1;
+
+  // reset timers
+  sdaSvmClearTimer();
+
   return 1;
 }
 
