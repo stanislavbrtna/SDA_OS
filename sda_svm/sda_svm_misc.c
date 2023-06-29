@@ -21,6 +21,7 @@ SOFTWARE.
 */
 
 #include "sda_svm.h"
+#include "sda_svm_misc.h"
 static int32_t alarmId;
 static int32_t alarmParam;
 static uint8_t alarmFlag;
@@ -283,4 +284,51 @@ uint8_t svmUpdatePath(uint8_t *newFname, uint8_t *oldFname) {
 #endif
   // APPS string not in path...
   return 1;
+}
+
+
+void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsVM *s) {
+  for(uint8_t z = 0; z < 3; z++) {
+    s->commArgs.argType[z + 1] = argType[z];
+
+    if (argType[z] == SVS_TYPE_STR) {
+      s->commArgs.arg[z + 1] = (varType)strNew(svmArgs[z], s);
+    } else {
+      s->commArgs.arg[z + 1] = arg[z];
+    }
+  }
+    s->commArgs.usedup = 3;
+}
+
+
+void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **svmArgs, svsVM *s) {
+  uint32_t x, n;
+  uint8_t *prac;
+  uint8_t *prac2;
+  uint8_t *prac3;
+
+  n = 0;
+  prac = buff;
+  for(uint8_t z = 0; z < 3; z++) {
+    if (argType[z] == SVS_TYPE_STR) {
+      prac3 = s->stringField + arg[z].val_str;
+      prac2 = prac;
+      x = 0;
+      while(prac3[x] != 0) {
+        buff[n] = prac3[x];
+        x++;
+        n++;
+        prac++;
+      }
+      buff[n] = 0;
+      n++;
+      if(n > APP_ARG_STR_LEN - 1) {
+        buff[APP_ARG_STR_LEN - 1] = 0;
+        printf("Error: storeArguments owerflow!\n");
+        return;
+      }
+      prac++;
+      svmArgs[z] = prac2;
+    }
+  }
 }

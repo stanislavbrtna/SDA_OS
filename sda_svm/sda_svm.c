@@ -22,6 +22,7 @@ SOFTWARE.
 
 #include "sda_svm.h"
 #include "sda_svm_load_save.h"
+#include "sda_svm_misc.h"
 
 //svs VM
 svsVM          svm;
@@ -65,8 +66,6 @@ uint16_t mainScr; //obrazovka top slotu / top-slot screen
 uint8_t * pscgErrorString;
 
 // static headers
-static void storeArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **svmArgs, svsVM *s);
-static void restoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsVM *s);
 static void svmInValidate(uint16_t id);
 static void svmSuspendAddId(uint16_t id, uint8_t * name);
 static uint16_t GetIfSingular(uint8_t * name);
@@ -349,7 +348,7 @@ void svmCloseRunning() {
 
   if (svmMeta.parentId != 0) {
     uint8_t argBuff[2048];
-    storeArguments(argBuff, svmCallRetval, svmCallRetvalType, svmCallRetvalStr, &svm);
+    svmStoreArguments(argBuff, svmCallRetval, svmCallRetvalType, svmCallRetvalStr, &svm);
 
     if (svmGetValidId(svmMeta.parentId)) {
       if (svmLoadProcData(svmMeta.parentId) == 0) {
@@ -372,7 +371,7 @@ void svmCloseRunning() {
     }
 
     if(functionExists(svmCallback, &svm)) {
-      restoreArguments(svmCallRetvalType, svmCallRetval, svmCallRetvalStr, &svm);
+      svmRestoreArguments(svmCallRetvalType, svmCallRetval, svmCallRetvalStr, &svm);
       commExec(svmCallback, &svm);
     }
 
@@ -578,53 +577,6 @@ static void svmInValidate(uint16_t id) {
 }
 
 
-static void restoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsVM *s) {
-  for(uint8_t z = 0; z < 3; z++) {
-    s->commArgs.argType[z + 1] = argType[z];
-
-    if (argType[z] == SVS_TYPE_STR) {
-      s->commArgs.arg[z + 1] = (varType)strNew(svmArgs[z], s);
-    } else {
-      s->commArgs.arg[z + 1] = arg[z];
-    }
-  }
-    s->commArgs.usedup = 3;
-}
-
-
-static void storeArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **svmArgs, svsVM *s) {
-  uint32_t x, n;
-  uint8_t *prac;
-  uint8_t *prac2;
-  uint8_t *prac3;
-
-  n = 0;
-  prac = buff;
-  for(uint8_t z = 0; z < 3; z++) {
-    if (argType[z] == SVS_TYPE_STR) {
-      prac3 = s->stringField + arg[z].val_str;
-      prac2 = prac;
-      x = 0;
-      while(prac3[x] != 0) {
-        buff[n] = prac3[x];
-        x++;
-        n++;
-        prac++;
-      }
-      buff[n] = 0;
-      n++;
-      if(n > APP_ARG_STR_LEN - 1) {
-        buff[APP_ARG_STR_LEN - 1] = 0;
-        printf("Error: storeArguments owerflow!\n");
-        return;
-      }
-      prac++;
-      svmArgs[z] = prac2;
-    }
-  }
-}
-
-
 void sdaSvmKillApp_handle() {
   gr2_text_deactivate(&sda_app_con);
   svpSGlobal.systemXBtnClick = 0;
@@ -653,6 +605,31 @@ void sdaSvmKillApp_handle() {
 }
 
 
+uint8_t svmRunPerformCall() {
+  uint8_t argBuff[APP_ARG_STR_LEN];
+  uint16_t parentId = svmMeta.id;
+  //TODO: Storing and restoring arguments crashes on emcc     
+  
+  svmStoreArguments(argBuff, svmCallArg, svmCallArgType, svmCallArgStr, &svm);
+
+  if(svmLaunch(svmCallName, svmMeta.id) == 0) {
+    flag_svmCall = 0;
+    svmValid = 0;
+    svmWake(parentId);
+    sda_show_error_message("svmRun: subprocess launch failed!");
+    return 0;
+  }
+  
+  svmRestoreArguments(svmCallArgType, svmCallArg, svmCallArgStr, &svm);    
+
+  // init call here with args
+  commExec((uint8_t *)"init", &svm);
+  svmValid = 1;
+  svm_init = 1;
+  flag_svmCall = 0;
+}
+
+
 uint16_t svmRun(uint8_t init, uint8_t top) {
 
   if (init) {
@@ -664,8 +641,8 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
     return 0;
   }
 
+  //svs init call
   if (svm_init == 0) {
-    //svs init call
     commExec((uint8_t *)"init", &svm);
     svm_init = 1;
     return 0;
@@ -673,15 +650,18 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
 
   sda_files_copyer();
 
+  // SVM container is on top
   if (top == 1) {
     
+    // check for exit
     if (svmCheckAndExit()) {
       return 0;
     }
 
+    // Beep callback
     if (svmBeepHandler()) {
       if (!svp_strcmp(svmMeta.beepTimerCallback, "")) {
-        if ( functionExists(svmMeta.beepTimerCallback, &svm)) {
+        if (functionExists(svmMeta.beepTimerCallback, &svm)) {
           commExec(svmMeta.beepTimerCallback, &svm);
         } else {
           svmCloseRunning();
@@ -691,6 +671,7 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
       }
     }
 
+    // Run "update"
     if(functionExists((uint8_t *)"update", &svm)) {
       commExec((uint8_t *)"update", &svm);
     } else {
@@ -701,36 +682,19 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
     }
     sdaSetRedrawDetect(0);
 
+    // Perform app-kill
     if (svm.handbrake == 1) {
       sdaSvmKillApp_handle();
       sda_show_error_message(pscgErrorString);
       return 0;
     }
 
+    // Perform call
     if (flag_svmCall == 1) {
-      uint8_t argBuff[APP_ARG_STR_LEN];
-      uint16_t parentId = svmMeta.id;
-      //TODO: Storing and restoring arguments crashes on emcc     
-      
-      storeArguments(argBuff, svmCallArg, svmCallArgType, svmCallArgStr, &svm);
-
-      if(svmLaunch(svmCallName, svmMeta.id) == 0) {
-        flag_svmCall = 0;
-        svmValid = 0;
-        svmWake(parentId);
-        sda_show_error_message("svmRun: subprocess launch failed!");
-        return 0;
-      }
-      
-      restoreArguments(svmCallArgType, svmCallArg, svmCallArgStr, &svm);    
-
-      // init call here with args
-      commExec((uint8_t *)"init", &svm);
-      svmValid = 1;
-      svm_init = 1;
-      flag_svmCall = 0;
+      svmRunPerformCall();
     }
 
+    // Set new screen
     // This needs to be after all init calls
     if (svs_wrap_setScr_flag == 1) {
       svs_wrap_setScr_flag = 0;
