@@ -28,6 +28,10 @@ uint8_t sda_screen_button_handler(uint16_t screen_id, uint16_t back_id, gr2conte
     return 0;
   }
 
+  if (svpSGlobal.lcdState == LCD_OFF) {
+    return 0;
+  }
+
   if (sda_wrap_get_button(BUTTON_RIGHT) != EV_NONE) {
     gr2_keypad_input(GR2_BUTTON_RIGHT, sda_wrap_get_button(BUTTON_RIGHT), screen_id, con);
     sda_wrap_clear_button(BUTTON_RIGHT);
