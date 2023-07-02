@@ -56,10 +56,11 @@ void sda_show_error_message(uint8_t * text) {
 
   gr2_set_relative_init(1, &sda_sys_con);
 
+  // If there already is an overlay
   if (error_overlay == getOverlayId()) {
 
     gr2_set_x2(error_overlay_inscr, 14, &sda_sys_con);
-
+    // add new error
     gr2_text_set_fit(
       gr2_add_text(0, 5*error_count, 8, 5, text, error_overlay_inscr, &sda_sys_con),
       1,
@@ -71,23 +72,27 @@ void sda_show_error_message(uint8_t * text) {
     gr2_set_visible(error_overlay_slider, 1, &sda_sys_con);
     gr2_set_param(error_overlay_slider, error_count * 5 * 32, &sda_sys_con);
     gr2_set_relative_init(0, &sda_sys_con);
+
+    // and return
     return;
   }
 
+  // otherwise init the overlay
   error_count = 1;
   gr2_set_relative_init(1, &sda_sys_con);
   error_overlay_scr = gr2_add_screen(&sda_sys_con);
+  gr2_set_yscroll(error_overlay_scr, -8, &sda_sys_con);
 
   gr2_set_x_cell(error_overlay_scr, 16, &sda_sys_con);
   gr2_add_text(
-      2, 1, 12, 1,
+      2, 0, 12, 1,
       MSG_ERROR_OCCURED,
       error_overlay_scr,
       &sda_sys_con
   );
 
-  error_overlay_inscr = gr2_add_screen_ext(1, 2, 16, 7 - 4*svpSGlobal.lcdLandscape, error_overlay_scr, &sda_sys_con);
-  error_overlay_slider = gr2_add_slider_v(15, 2, 2, 7, 2, 1, error_overlay_scr, &sda_sys_con);
+  error_overlay_inscr = gr2_add_screen_ext(1, 1, 16, 8 - 3*svpSGlobal.lcdLandscape, error_overlay_scr, &sda_sys_con);
+  error_overlay_slider = gr2_add_slider_v(15, 1, 2, 8 - 3*svpSGlobal.lcdLandscape, 2, 1, error_overlay_scr, &sda_sys_con);
 
   gr2_set_visible(error_overlay_slider, 0, &sda_sys_con);
   
@@ -98,7 +103,7 @@ void sda_show_error_message(uint8_t * text) {
   );
   
   error_overlay_ok = gr2_add_button(
-                        7, 10 - 4*svpSGlobal.lcdLandscape, 4, 1,
+                        6, 10 - 4*svpSGlobal.lcdLandscape, 4, 1,
                         OVRL_OK,
                         error_overlay_scr,
                         &sda_sys_con
@@ -113,8 +118,8 @@ void sda_show_error_message(uint8_t * text) {
   gr2_set_relative_init(0, &sda_sys_con);
 
   setOverlayX1(16 + svpSGlobal.lcdLandscape*80);
-  setOverlayX2(304 - 16 + svpSGlobal.lcdLandscape*80);
-  setOverlayY2(432 - 140*svpSGlobal.lcdLandscape);
+  setOverlayX2(304 + svpSGlobal.lcdLandscape*80);
+  setOverlayY2(432 + 8 - 135*svpSGlobal.lcdLandscape);
 }
 
 void sda_error_overlay_handle() {
