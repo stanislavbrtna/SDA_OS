@@ -177,7 +177,7 @@ uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
   return 0;
 }
 
-void svmLaunchSetDefMetadata(id, parentId, fname) {
+void svmLaunchSetDefMetadata(uint16_t id, uint16_t parentId, uint8_t *fname) {
   svmMeta.id = id;
   svmMeta.parentId = parentId;
   
