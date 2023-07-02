@@ -274,6 +274,12 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
 
+  // check for cache
+  if (sda_fs_check_and_create_dir((uint8_t *)"cache")) {
+    sda_show_error_message((uint8_t *)"svmLaunch:\nCache folder is borked.\n/APPS/cache");
+    return 0;
+  }
+
   // loads app
   if (svmTokenizeFile(fname, cacheBuffer, 0) != 0) {
     return 0;

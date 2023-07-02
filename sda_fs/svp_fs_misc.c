@@ -54,3 +54,26 @@ uint16_t svp_store_svs_to_file(uint8_t * fname, uint8_t* str, svsVM *s) {
   svp_fclose(&fil);
   return 0;
 }
+
+uint8_t sda_fs_check_and_create_dir(uint8_t * fname) {
+  if(svp_fexists(fname) && svp_is_dir(fname)) {
+    return 0;
+  }
+
+  if(svp_fexists(fname) && !svp_is_dir(fname)) {
+    printf ("%s: Error: Given name is not a directory. (%s)\n", __FUNCTION__, fname);
+    return 1;
+  }
+
+  if(!svp_fexists(fname)) {
+    
+    svp_mkdir(fname);
+    if(svp_fexists(fname) && svp_is_dir(fname)) {
+      printf ("%s: Info: Created directory. (%s)\n", __FUNCTION__, fname);
+      return 0;
+    }
+    printf ("%s: ERROR: Directory creation failed. (%s)\n", __FUNCTION__, fname);
+    return 1;
+  }
+
+}
