@@ -135,7 +135,7 @@ uint16_t sda_settings_display_screen(uint8_t init) {
   }
 
   if (gr2_clicked(optLcdStore, &sda_sys_con)) {
-    sda_store_config();
+    sda_store_sleep_time();
   }
   return 0;
 }

@@ -22,8 +22,25 @@ SOFTWARE.
 
 #include "sda_settings.h"
 
+// Default colors
+#define DEFAULT_BORDER_COLOR     0
+#define DEFAULT_TEXT_COLOR       6435
+#define DEFAULT_BACKGROUND_COLOR 65535
+#define DEFAULT_FILL_COLOR       57083
+#define DEFAULT_ACTIVE_COLOR     32095
+
 // display calibration data structure
 extern touchCalibDataStruct touchCalibData;
+
+static uint8_t sda_settings_switch_to_main(sda_conf *conffile, uint8_t *dirbuf) {  
+  svp_getcwd(dirbuf, 256);
+  svp_switch_main_dir();
+  if (sda_conf_open(conffile, (uint8_t *)"svp.cfg") == 0) {
+    printf("ERROR: Failed to open cfg file!\n");
+    return 1;
+  }
+  return 0;
+}
 
 void sda_load_config() {
   uint8_t dirbuf[258];
@@ -36,16 +53,14 @@ void sda_load_config() {
 
   printf("Loading config: (svp.cfg)\n");
 
-  if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
-    printf("Failed to open cfg file\n");
-  }
+  if(sda_settings_switch_to_main(&conffile, dirbuf)) return;
 
   // Load color scheme
-  gr2_set_border_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"border_color", 0), &sda_sys_con);
-  gr2_set_text_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"text_color", 0), &sda_sys_con);
-  gr2_set_background_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"background_color", 0xF800), &sda_sys_con);
-  gr2_set_fill_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"fill_color", 0x07E0), &sda_sys_con);
-  gr2_set_active_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"active_color", 0xFFFF), &sda_sys_con);
+  gr2_set_border_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"border_color", DEFAULT_BORDER_COLOR), &sda_sys_con);
+  gr2_set_text_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"text_color", DEFAULT_TEXT_COLOR), &sda_sys_con);
+  gr2_set_background_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"background_color", DEFAULT_BACKGROUND_COLOR), &sda_sys_con);
+  gr2_set_fill_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"fill_color", DEFAULT_FILL_COLOR), &sda_sys_con);
+  gr2_set_active_color((uint16_t) sda_conf_key_read_i32(&conffile, (uint8_t *)"active_color", DEFAULT_ACTIVE_COLOR), &sda_sys_con);
 
   // sleep timer
   svpSGlobal.lcdShutdownTime = sda_conf_key_read_i32(&conffile, (uint8_t *)"sleep_time", 5);
@@ -72,7 +87,7 @@ void sda_load_config() {
       svp_set_calibration_data(calibData);
       svp_fclose(&calib);
     } else {
-      printf("Warning: calib.dat missing, using default calibration data.\n");
+      printf("Warning: calib.dat missing, calibrating now.\n");
       sdaLockState tickLockOld;
       tickLockOld = tick_lock;
       tick_lock = SDA_LOCK_LOCKED;
@@ -111,11 +126,11 @@ void sda_store_config_gui(uint8_t set_def) {
     sda_conf_key_write_i32(&conffile, (uint8_t *)"active_color", gr2_get_active_color(&sda_sys_con));
   } else {
     printf("Setting Default Values.\n");
-    sda_conf_key_write_i32(&conffile, (uint8_t *)"border_color", 0);
-    sda_conf_key_write_i32(&conffile, (uint8_t *)"text_color",0);
-    sda_conf_key_write_i32(&conffile, (uint8_t *)"background_color", 0xF800);
-    sda_conf_key_write_i32(&conffile, (uint8_t *)"fill_color", 0x07E0);
-    sda_conf_key_write_i32(&conffile, (uint8_t *)"active_color", 0xFFFF);
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"border_color", DEFAULT_BORDER_COLOR);
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"text_color", DEFAULT_TEXT_COLOR);
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"background_color", DEFAULT_BACKGROUND_COLOR);
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"fill_color", DEFAULT_FILL_COLOR);
+    sda_conf_key_write_i32(&conffile, (uint8_t *)"active_color", DEFAULT_ACTIVE_COLOR);
   }
   sda_conf_key_write_i32(&conffile, (uint8_t *)"sleep_time", svpSGlobal.lcdShutdownTime);
   sda_conf_close(&conffile);
@@ -124,16 +139,18 @@ void sda_store_config_gui(uint8_t set_def) {
 }
 
 
-void sda_store_config() {
+void sda_store_settings() {
+  sda_store_sleep_time();
+  sda_store_dbg_options();
+  sda_store_mute_config();
+  sda_store_calibration();
+}
+
+
+void sda_store_sleep_time() {
   sda_conf conffile;
   uint8_t dirbuf[258];
-  svp_getcwd(dirbuf, 256);
-  svp_switch_main_dir();
-  printf("Storing config: (svp.cfg)\n");
-  if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
-    printf("Failed to open cfg file\n");
-    return;
-  }
+  if(sda_settings_switch_to_main(&conffile, dirbuf)) return;
   sda_conf_key_write_i32(&conffile, (uint8_t *)"sleep_time", svpSGlobal.lcdShutdownTime);
   sda_conf_close(&conffile);
   svp_chdir(dirbuf);
@@ -144,29 +161,18 @@ void sda_store_config() {
 void sda_store_dbg_options() {
   sda_conf conffile;
   uint8_t dirbuf[258];
-  svp_getcwd(dirbuf, 256);
-  svp_switch_main_dir();
-  printf("Storing dbg config: (svp.cfg)\n");
-  if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
-    printf("Failed to open cfg file\n");
-    return;
-  }
+  if(sda_settings_switch_to_main(&conffile, dirbuf)) return;
   sda_conf_key_write_i32(&conffile, (uint8_t *)"usb_debug", sda_usb_get_enable_for_dbg());
   sda_conf_close(&conffile);
   svp_chdir(dirbuf);
   printf("Done.\n");
 }
 
+
 void sda_store_mute_config() {
   sda_conf conffile;
   uint8_t dirbuf[258];
-  svp_getcwd(dirbuf, 256);
-  svp_switch_main_dir();
-  printf("Storing mute config: (svp.cfg)\n");
-  if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
-    printf("Failed to open cfg file\n");
-    return;
-  }
+  if(sda_settings_switch_to_main(&conffile, dirbuf)) return;
   sda_conf_key_write_i32(&conffile, (uint8_t *)"mute", svpSGlobal.mute);
   sda_conf_close(&conffile);
   svp_chdir(dirbuf);

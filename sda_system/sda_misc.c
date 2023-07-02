@@ -188,23 +188,45 @@ void sda_draw_overlay_shadow(
 }
 
 
-void sda_check_fs() {
-  if (svp_fexists((uint8_t *)"svp.cfg") == 0) {
-    printf("Config file not found!\n");
+void sda_sw_halt_screen(uint8_t * message) {
+  LCD_Fill(LCD_MixColor(255, 0, 0));
+  LCD_DrawText_ext(32, 100, 0xFFFF, (uint8_t *)"SDA Error:");
+  LCD_DrawText_ext(32, 130, 0xFFFF, message);
 
-    // halt for now
-    // TODO: check and rebuild directory structure and configs
+  LCD_DrawText_ext(32, 320, 0xFFFF, (uint8_t *)"SDA-OS v."SDA_OS_VERSION);
 
-    LCD_Fill(LCD_MixColor(255, 0, 0));
-    LCD_DrawText_ext(32, 100, 0xFFFF, (uint8_t *)"SDA Error:\nConfig file not found!\nFix SD card and press Reset.");
-
-    LCD_DrawText_ext(32, 320, 0xFFFF, (uint8_t *)"SDA-OS v."SDA_OS_VERSION);
+  printf("%s: %s\n", __FUNCTION__, message);
 #ifdef PC
-    getchar();
+  getchar();
 #else
-    while(1);
+  while(1);
 #endif
+}
+
+
+void sda_check_fs() {
+  // check for config file
+  if (svp_fexists((uint8_t *)"svp.cfg") == 0) {
+    printf("Config file not found!, going with defaults\n");
+
+    // create new empty conf file, sda_load_config() will fill it with defaults
+    if (sda_fs_touch("svp.cfg")) {
+      sda_sw_halt_screen("Cannot create system config file!\nFix SD card and press Reset.");
+    }
   }
+
+  // create main directories
+  if(
+    sda_fs_check_and_create_dir("APPS")
+    || sda_fs_check_and_create_dir("DATA")
+    || sda_fs_check_and_create_dir("DATA/appdata")
+    || sda_fs_check_and_create_dir("DATA/settings")
+    || sda_fs_check_and_create_dir("APPS/cache")
+    || sda_fs_check_and_create_dir("APPS/lib")
+    || sda_fs_check_and_create_dir("APPS/Icons")
+  ) {
+    sda_sw_halt_screen("Cannot create system files!\nFix SD card and press Reset.");
+  }    
 }
 
 

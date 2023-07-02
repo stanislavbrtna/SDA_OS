@@ -75,5 +75,13 @@ uint8_t sda_fs_check_and_create_dir(uint8_t * fname) {
     printf ("%s: ERROR: Directory creation failed. (%s)\n", __FUNCTION__, fname);
     return 1;
   }
+}
 
+uint8_t sda_fs_touch(uint8_t * fname) {
+  svp_file fp;
+  if(svp_fopen_rw(&fp, fname) == 0) {
+    return 1;
+  }
+  svp_fclose(&fp);
+  return 0;
 }
