@@ -153,7 +153,6 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
         if (sda_app_con.textBlockStart != 0 || sda_app_con.textBlockEnd != 0) {
           strNewStreamInit(s);
           uint32_t i = 0;
-          uint32_t b = 0;
           uint8_t * str = gr2_get_str((uint16_t)argS->arg[1].val_str, sda_current_con);
           
           while(str[i] != 0) {

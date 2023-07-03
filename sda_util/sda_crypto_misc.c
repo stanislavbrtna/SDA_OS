@@ -33,11 +33,11 @@ void sda_crypto_keyfile_boot_check() {
   svp_switch_main_dir();
 
   // check if exists
-  if (svp_fexists("sys_keyfile.svk")) {
+  if (svp_fexists((uint8_t *)"sys_keyfile.svk")) {
     puts("Keyfile check: Keyfile exists.");
     if (svp_crypto_get_if_set_up()) {
-      fileCRC = svp_crypto_get_key_crc("sys_keyfile.svk");
-      printf("CRC: %u\n", fileCRC);
+      fileCRC = svp_crypto_get_key_crc((uint8_t *)"sys_keyfile.svk");
+      printf("CRC: %u\n", (unsigned int)fileCRC);
 
       if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
         printf("Failed to open cfg file\n");
@@ -46,7 +46,7 @@ void sda_crypto_keyfile_boot_check() {
       confCRC = sda_conf_key_read_i32(&conffile, (uint8_t *)"key_crc", 0);
       
       if (confCRC != fileCRC) {
-        printf("Key crc does not match, conf CRC: %u\n", confCRC);
+        printf("Key crc does not match, conf CRC: %u\n", (unsigned int)confCRC);
       }
       sda_conf_close(&conffile);
     } else {
@@ -78,16 +78,16 @@ uint8_t sda_crypto_keyfile_init_check() {
   }
 
   // check if exists
-  if (svp_fexists("sys_keyfile.svk")) {
+  if (svp_fexists((uint8_t *)"sys_keyfile.svk")) {
     puts("Keyfile check: Keyfile exists.");
     if (svp_crypto_get_if_set_up()) {
-      fileCRC = svp_crypto_get_key_crc("sys_keyfile.svk");
-      printf("CRC: %u\n", fileCRC);    
+      fileCRC = svp_crypto_get_key_crc((uint8_t *)"sys_keyfile.svk");
+      printf("CRC: %u\n", (unsigned int)fileCRC);
 
       confCRC = sda_conf_key_read_i32(&conffile, (uint8_t *)"key_crc", 0);
       
       if (confCRC != fileCRC) {
-        printf("Key crc does not match, conf CRC: %u\n", confCRC);
+        printf("Key crc does not match, conf CRC: %u\n", (unsigned int)confCRC);
       } else {
         puts("Key crc matches.");
         retval = 0;
@@ -97,9 +97,9 @@ uint8_t sda_crypto_keyfile_init_check() {
     }
   } else {
     puts("Keyfile check: Keyfile not found, will be created");
-    svp_crypto_generate_keyfile("sys_keyfile.svk");
-    fileCRC = svp_crypto_get_key_crc("sys_keyfile.svk");
-    printf("init_check CRC: %u\n", fileCRC);
+    svp_crypto_generate_keyfile((uint8_t *)"sys_keyfile.svk");
+    fileCRC = svp_crypto_get_key_crc((uint8_t *)"sys_keyfile.svk");
+    printf("init_check CRC: %u\n", (unsigned int)fileCRC);
     sda_conf_key_write_i32(&conffile, (uint8_t *)"key_crc", fileCRC);
     retval = 0;
   }
@@ -127,16 +127,16 @@ uint8_t svp_crypto_load_os_keyfile() {
     printf("Failed to open cfg file\n");
   }
 
-  if (svp_fexists("sys_keyfile.svk")) {
-    fileCRC = svp_crypto_get_key_crc("sys_keyfile.svk");
+  if (svp_fexists((uint8_t *)"sys_keyfile.svk")) {
+    fileCRC = svp_crypto_get_key_crc((uint8_t *)"sys_keyfile.svk");
     confCRC = sda_conf_key_read_i32(&conffile, (uint8_t *)"key_crc", 0);
     sda_conf_close(&conffile);
     
     if (confCRC != fileCRC) {
-      printf("Key crc does not match, conf CRC: %u, file CRC:%u \n", confCRC, fileCRC);
+      printf("Key crc does not match, conf CRC: %u, file CRC:%u \n", (unsigned int) confCRC, (unsigned int) fileCRC);
       return 1;
     } else {
-      svp_crypto_load_keyfile("sys_keyfile.svk");
+      svp_crypto_load_keyfile((uint8_t *)"sys_keyfile.svk");
       svp_chdir(dirbuf);
       return 0;
     }
@@ -154,7 +154,7 @@ uint8_t svp_crypto_reencrypt_os_keyfile(uint8_t* oldpass, uint8_t* newpass) {
   svp_getcwd(dirbuf, 256);
   svp_switch_main_dir();
 
-  svp_crypto_reencrypt_key("sys_keyfile.svk", oldpass, newpass);
+  svp_crypto_reencrypt_key((uint8_t *)"sys_keyfile.svk", oldpass, newpass);
 
   svp_chdir(dirbuf);
 
@@ -169,7 +169,7 @@ uint8_t svp_crypto_reset_os_keyfile() {
   svp_getcwd(dirbuf, 256);
   svp_switch_main_dir();
 
-  svp_unlink("sys_keyfile.svk");
+  svp_unlink((uint8_t *)"sys_keyfile.svk");
 
   if (sda_conf_open(&conffile, (uint8_t *)"svp.cfg") == 0) {
     printf("Failed to open cfg file\n");
@@ -178,9 +178,9 @@ uint8_t svp_crypto_reset_os_keyfile() {
   }
 
   puts("Reseting OS keyfile!");
-  svp_crypto_generate_keyfile("sys_keyfile.svk");
-  fileCRC = svp_crypto_get_key_crc("sys_keyfile.svk");
-  printf("init_check CRC: %u\n", fileCRC);
+  svp_crypto_generate_keyfile((uint8_t *)"sys_keyfile.svk");
+  fileCRC = svp_crypto_get_key_crc((uint8_t *)"sys_keyfile.svk");
+  printf("init_check CRC: %u\n", (unsigned int)fileCRC);
 
   sda_conf_key_write_i32(&conffile, (uint8_t *)"key_crc", fileCRC);
 

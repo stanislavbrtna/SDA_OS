@@ -120,7 +120,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     if (!csv_open) {
-      errSoft("No CSV file openned!", s);
+      errSoft((uint8_t *)"No CSV file openned!", s);
       return 0;
     }
     svp_csv_new(&csvFile, argS->arg[1].val_s);
@@ -139,7 +139,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
     uint8_t buff[512];
     if (!csv_open) {
-      errSoft("No CSV file openned!", s);
+      errSoft((uint8_t *)"No CSV file openned!", s);
       return 0;
     }
     svp_csv_get_cell(&csvFile, argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, buff, sizeof(buff));
@@ -159,7 +159,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     if (!csv_open) {
-      errSoft("No CSV file openned!", s);
+      errSoft((uint8_t *)"No CSV file openned!", s);
       return 0;
     }
     svp_csv_set_cell(&csvFile, argS->arg[1].val_s, s->stringField + argS->arg[2].val_str);
@@ -175,7 +175,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     if (!csv_open) {
-      errSoft("No CSV file openned!", s);
+      errSoft((uint8_t *)"No CSV file openned!", s);
       return 0;
     }
     result->value.val_s = svp_csv_next_line(&csvFile);
@@ -192,7 +192,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     if (!csv_open) {
-      errSoft("No CSV file openned!", s);
+      errSoft((uint8_t *)"No CSV file openned!", s);
       return 0;
     }
     svp_csv_remove_line(&csvFile);
@@ -208,7 +208,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     if (!csv_open) {
-      errSoft("No CSV file openned!", s);
+      errSoft((uint8_t *)"No CSV file openned!", s);
       return 0;
     }
 
@@ -276,7 +276,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     if (!conf_open) {
-      errSoft("Conf file not openned!", s);
+      errSoft((uint8_t *)"Conf file not openned!", s);
       return 0;
     }
 
@@ -297,7 +297,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     if (!conf_open) {
-      errSoft("Conf file not openned!", s);
+      errSoft((uint8_t *)"Conf file not openned!", s);
       return 0;
     }
 
@@ -321,7 +321,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     if (!conf_open) {
-      errSoft("Conf file not openned!", s);
+      errSoft((uint8_t *)"Conf file not openned!", s);
       return 0;
     }
 
@@ -342,7 +342,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     if (!conf_open) {
-      errSoft("Conf file not openned!", s);
+      errSoft((uint8_t *)"Conf file not openned!", s);
       return 0;
     }
 
@@ -361,7 +361,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
     
     if (!conf_open) {
-      errSoft("Conf file not openned!", s);
+      errSoft((uint8_t *)"Conf file not openned!", s);
       return 0;
     }
 

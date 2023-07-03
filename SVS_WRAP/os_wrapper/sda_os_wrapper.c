@@ -509,7 +509,7 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     if (!svmGetAuthorized()) {
-      errSoft("setTime: Not authorized!", s);
+      errSoft((uint8_t *)"setTime: Not authorized!", s);
       return 0;
     }
 

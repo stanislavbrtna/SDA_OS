@@ -38,34 +38,34 @@ static void set_element(uint16_t id, sda_conf *conffile, uint8_t * name, uint8_t
   uint8_t buff[32];
   buff[0] = 0;
   sda_str_add(buff, name);
-  sda_str_add(buff, "_x1");
+  sda_str_add(buff, (uint8_t *)"_x1");
   gr2_set_x1(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 0), &sda_sys_con);
   buff[0] = 0;
   sda_str_add(buff, name);
-  sda_str_add(buff, "_y1");
+  sda_str_add(buff, (uint8_t *)"_y1");
   gr2_set_y1(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 0), &sda_sys_con);
   buff[0] = 0;
   sda_str_add(buff, name);
-  sda_str_add(buff, "_w");
+  sda_str_add(buff, (uint8_t *)"_w");
   gr2_set_x2(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 0) + gr2_get_x1(id, &sda_sys_con), &sda_sys_con);
   buff[0] = 0;
   sda_str_add(buff, name);
-  sda_str_add(buff, "_h");
+  sda_str_add(buff, (uint8_t *)"_h");
   gr2_set_y2(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 0) + gr2_get_y1(id, &sda_sys_con), &sda_sys_con);
 
   buff[0] = 0;
   sda_str_add(buff, name);
-  sda_str_add(buff, "_fsize");
+  sda_str_add(buff, (uint8_t *)"_fsize");
   gr2_text_set_size(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 32), &sda_sys_con);
 
   buff[0] = 0;
   sda_str_add(buff, name);
-  sda_str_add(buff, "_align");
+  sda_str_add(buff, (uint8_t *)"_align");
   gr2_text_set_align(id, (uint16_t) sda_conf_key_read_i32(conffile, buff, 0), &sda_sys_con);
 
   buff[0] = 0;
   sda_str_add(buff, name);
-  sda_str_add(buff, "_str");
+  sda_str_add(buff, (uint8_t *)"_str");
 
   if (strbuff != 0) {
     sda_conf_key_read(conffile, buff, strbuff, 31);
@@ -78,7 +78,7 @@ void sda_homescreen_configure() {
   sda_conf conffile;
   svp_getcwd(dirbuf, 256);
   svp_switch_main_dir();
-  svp_chdir("APPS");
+  svp_chdir((uint8_t *)"APPS");
 
   if (!svp_fexists((uint8_t *)"homescreen.cfg")) {
     svp_chdir(dirbuf);
@@ -104,11 +104,11 @@ void sda_homescreen_configure() {
     gr2_set_str(screen, 0, &sda_sys_con);
   }
 
-  set_element(tHeading, &conffile, "heading", headingStr);
-  set_element(tSubheading, &conffile, "sub_heading", subHeadingStr);
+  set_element(tHeading, &conffile, (uint8_t *)"heading", headingStr);
+  set_element(tSubheading, &conffile, (uint8_t *)"sub_heading", subHeadingStr);
 
-  set_element(time, &conffile, "time", 0);
-  set_element(date, &conffile, "date", 0);
+  set_element(time, &conffile, (uint8_t *)"time", 0);
+  set_element(date, &conffile, (uint8_t *)"date", 0);
 
   svp_chdir(dirbuf);
 }

@@ -210,22 +210,22 @@ void sda_check_fs() {
     printf("Config file not found!, going with defaults\n");
 
     // create new empty conf file, sda_load_config() will fill it with defaults
-    if (sda_fs_touch("svp.cfg")) {
-      sda_sw_halt_screen("Cannot create system config file!\nFix SD card and press Reset.");
+    if (sda_fs_touch((uint8_t *)"svp.cfg")) {
+      sda_sw_halt_screen((uint8_t *)"Cannot create system config file!\nFix SD card and press Reset.");
     }
   }
 
   // create main directories
   if(
-    sda_fs_check_and_create_dir("APPS")
-    || sda_fs_check_and_create_dir("DATA")
-    || sda_fs_check_and_create_dir("DATA/appdata")
-    || sda_fs_check_and_create_dir("DATA/settings")
-    || sda_fs_check_and_create_dir("APPS/cache")
-    || sda_fs_check_and_create_dir("APPS/lib")
-    || sda_fs_check_and_create_dir("APPS/Icons")
+    sda_fs_check_and_create_dir((uint8_t *)"APPS")
+    || sda_fs_check_and_create_dir((uint8_t *)"DATA")
+    || sda_fs_check_and_create_dir((uint8_t *)"DATA/appdata")
+    || sda_fs_check_and_create_dir((uint8_t *)"DATA/settings")
+    || sda_fs_check_and_create_dir((uint8_t *)"APPS/cache")
+    || sda_fs_check_and_create_dir((uint8_t *)"APPS/lib")
+    || sda_fs_check_and_create_dir((uint8_t *)"APPS/Icons")
   ) {
-    sda_sw_halt_screen("Cannot create system files!\nFix SD card and press Reset.");
+    sda_sw_halt_screen((uint8_t *)"Cannot create system files!\nFix SD card and press Reset.");
   }    
 }
 

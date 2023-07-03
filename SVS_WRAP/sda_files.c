@@ -77,7 +77,7 @@ extern sdaSvmMetadata svmMeta;
 
 uint8_t sda_fr_fname_open(uint16_t index, uint8_t * fname) {
   if (index >= SDA_FILES_OPEN_MAX) {
-     errSoft("error: file index not valid!", &svm);
+     errSoft((uint8_t *)"error: file index not valid!", &svm);
   }
 
   sda_strcp(fname, svmMeta.openFileName[index], sizeof(svmMeta.openFileName[index]));
@@ -88,7 +88,7 @@ uint8_t sda_fr_fname_open(uint16_t index, uint8_t * fname) {
 
 uint8_t sda_fr_fname_reopen(uint16_t index) {
   if (index >= SDA_FILES_OPEN_MAX) {
-     errSoft("error: file index not valid!", &svm);
+     errSoft((uint8_t *)"error: file index not valid!", &svm);
   }
 
   if (!svp_fexists(svmMeta.openFileName[index])) {
@@ -378,7 +378,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       file_index = argS->arg[1].val_s;
     }
 
-    if (!fr_open) {
+    if (!fr_open[file_index]) {
       result->type = SVS_TYPE_NUM;
       result->value.val_s = 0;
       return 1;

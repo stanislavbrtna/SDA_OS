@@ -132,7 +132,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
   if (gr2_clicked(optSecuOk, &sda_sys_con)) {
     uint8_t retval;
     if (svp_crypto_get_if_set_up() == 0) {
-      retval = svp_crypto_unlock("def");
+      retval = svp_crypto_unlock((uint8_t *)"def");
     } else {
       retval = svp_crypto_unlock(optSecuOldStr);
     }

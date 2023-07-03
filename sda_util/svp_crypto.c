@@ -422,7 +422,7 @@ uint8_t svp_crypto_reencrypt_key(uint8_t *fname, uint8_t *oldpass, uint8_t *newp
 
   crc = svp_crypto_get_key_crc(fname);
   if (crc != crc32b(new_key)) {
-    printf("Error: CRC does not match! CRC before: %u, after : %u\n", crc32b(new_key), crc);
+    printf("Error: CRC does not match! CRC before: %u, after : %u\n", (unsigned int)crc32b(new_key), (unsigned int)crc);
   }
 
   return 0;
@@ -470,7 +470,7 @@ void svp_crypto_test() {
   svp_crypto_load_keyfile((uint8_t *)"keyfile.svk");
 
   // encrypt
-  svp_encrypt("testfile.txt");
+  svp_encrypt((uint8_t *)"testfile.txt");
 
   puts("encrypted");
   getchar();

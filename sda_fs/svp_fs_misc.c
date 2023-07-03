@@ -68,6 +68,7 @@ uint8_t sda_fs_check_and_create_dir(uint8_t * fname) {
   if(!svp_fexists(fname)) {
     
     svp_mkdir(fname);
+
     if(svp_fexists(fname) && svp_is_dir(fname)) {
       printf ("%s: Info: Created directory. (%s)\n", __FUNCTION__, fname);
       return 0;
@@ -75,6 +76,7 @@ uint8_t sda_fs_check_and_create_dir(uint8_t * fname) {
     printf ("%s: ERROR: Directory creation failed. (%s)\n", __FUNCTION__, fname);
     return 1;
   }
+  return 1;
 }
 
 uint8_t sda_fs_touch(uint8_t * fname) {

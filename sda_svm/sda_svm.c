@@ -622,7 +622,7 @@ uint8_t svmRunPerformCall() {
     flag_svmCall = 0;
     svmValid = 0;
     svmWake(parentId);
-    sda_show_error_message("svmRun: subprocess launch failed!");
+    sda_show_error_message((uint8_t *)"svmRun: subprocess launch failed!");
     return 0;
   }
   
@@ -633,6 +633,8 @@ uint8_t svmRunPerformCall() {
   svmValid = 1;
   svm_init = 1;
   flag_svmCall = 0;
+
+  return 1;
 }
 
 
@@ -666,7 +668,7 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
 
     // Beep callback
     if (svmBeepHandler()) {
-      if (!svp_strcmp(svmMeta.beepTimerCallback, "")) {
+      if (!svp_strcmp(svmMeta.beepTimerCallback, (uint8_t *)"")) {
         if (functionExists(svmMeta.beepTimerCallback, &svm)) {
           commExec(svmMeta.beepTimerCallback, &svm);
         } else {

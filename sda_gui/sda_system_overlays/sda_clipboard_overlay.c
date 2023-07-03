@@ -50,10 +50,10 @@ void init_screen() {
   uint8_t rel = gr2_get_relative_init(sda_current_con);
 
   gr2_set_relative_init(1, sda_current_con);
-  bCopy = gr2_add_button(0, 0, 3, 1, "Copy", scr, sda_current_con);
-  bCut = gr2_add_button(3, 0, 2, 1, "Cut", scr, sda_current_con);
-  bPaste = gr2_add_button(5, 0, 3, 1, "Paste", scr, sda_current_con);
-  bClose = gr2_add_button(8, 0, 1, 1, "X", scr, sda_current_con);
+  bCopy = gr2_add_button(0, 0, 3, 1, (uint8_t *)"Copy", scr, sda_current_con);
+  bCut = gr2_add_button(3, 0, 2, 1, (uint8_t *)"Cut", scr, sda_current_con);
+  bPaste = gr2_add_button(5, 0, 3, 1, (uint8_t *)"Paste", scr, sda_current_con);
+  bClose = gr2_add_button(8, 0, 1, 1, (uint8_t *)"X", scr, sda_current_con);
 
   if(svpSGlobal.clipboard[0] == 0) {
     gr2_set_grayout(bPaste, 1, sda_current_con);
@@ -148,7 +148,6 @@ uint16_t sda_clipboard_overlay_update() {
     svpSGlobal.newStringIdFlag = target_id;
     strNewStreamInit(&svm);
     uint32_t i = 0;
-    uint32_t b = 0;
     uint8_t * str = gr2_get_str(target_id, sda_current_con);
     
     while(str[i] != 0) {
@@ -186,4 +185,6 @@ uint16_t sda_clipboard_overlay_update() {
     handle_clipboard_exit();
     return 0;
   }
+
+  return 0;
 }
