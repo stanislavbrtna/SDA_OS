@@ -103,7 +103,7 @@ void sda_show_error_message(uint8_t * text) {
   );
   
   error_overlay_ok = gr2_add_button(
-                        6, 10 - 4*svpSGlobal.lcdLandscape, 4, 1,
+                        7, 10 - 4*svpSGlobal.lcdLandscape, 4, 1,
                         OVRL_OK,
                         error_overlay_scr,
                         &sda_sys_con
