@@ -40,10 +40,6 @@ static varType svmCallArg[3];
 static uint8_t svmCallArgType[3];
 static uint8_t *svmCallArgStr[3];
 
-static varType svmCallRetval[3];
-static uint8_t *svmCallRetvalStr[3];
-static uint8_t svmCallRetvalType[3];
-
 svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
 
 extern uint16_t svsLoadCounter;
@@ -189,18 +185,23 @@ void svmLaunchSetDefMetadata(uint16_t id, uint16_t parentId, uint8_t *fname) {
   }
   
   sda_strcp((uint8_t *)"", svmMeta.openConfName, sizeof(svmMeta.openConfName));
-  svmMeta.openConfUsed = 0;
   sda_strcp((uint8_t *)"", svmMeta.openCsvName, sizeof(svmMeta.openCsvName));
-  svmMeta.openCsvUsed = 0;
   sda_strcp((uint8_t *)"DATA", svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
+  svmMeta.openConfUsed = 0;
+  svmMeta.openCsvUsed  = 0;
   
-  svmMeta.loadUptime = svpSGlobal.uptimeMs;
-  svmMeta.landscape = 0;
-  svmMeta.lcdOffButtons = 0;
-  svmMeta.launchFromCWD = 0;
+  svmMeta.loadUptime     = svpSGlobal.uptimeMs;
+  svmMeta.landscape      = 0;
+  svmMeta.lcdOffButtons  = 0;
+  svmMeta.launchFromCWD  = 0;
   svmMeta.cryptoUnlocked = 0;
-  svmMeta.beepTime = 0;
-  svmMeta.authorized = 0;
+  svmMeta.beepTime       = 0;
+  svmMeta.authorized     = 0;
+
+  for (uint16_t i = 0; i < 3; i++) {
+    svmMeta.svmCallRetval[i].val_u = 0;
+    svmMeta.svmCallRetvalType[i]   = SVS_TYPE_UNDEF;
+  }
 }
 
 
@@ -353,9 +354,20 @@ void svmCloseRunning() {
   sda_files_close();
 
   if (svmMeta.parentId != 0) {
-    uint8_t argBuff[2048];
-    svmStoreArguments(argBuff, svmCallRetval, svmCallRetvalType, svmCallRetvalStr, &svm);
+    uint8_t  argBuff[2048];
+    varType  svmCallRetval[3];
+    uint8_t  svmCallRetvalType[3];
+    uint8_t* svmCallRetvalStr[3];
 
+    svmStoreArguments(argBuff, svmMeta.svmCallRetval, svmMeta.svmCallRetvalType, svmMeta.svmCallRetvalStr, &svm);
+
+    for (uint32_t i = 0; i < 3; i++) {
+      svmCallRetval[i]     = svmMeta.svmCallRetval[i];
+      svmCallRetvalType[i] = svmMeta.svmCallRetvalType[i];
+      svmCallRetvalStr[i]  = svmMeta.svmCallRetvalStr[i];
+    }
+
+    // load parent
     if (svmGetValidId(svmMeta.parentId)) {
       if (svmLoadProcData(svmMeta.parentId) == 0) {
         printf("svmCloseRunning: Loading parent app failed!\n");
@@ -376,6 +388,7 @@ void svmCloseRunning() {
       return;
     }
 
+    // Launch callback
     if(functionExists(svmCallback, &svm)) {
       svmRestoreArguments(svmCallRetvalType, svmCallRetval, svmCallRetvalStr, &svm);
       commExec(svmCallback, &svm);
@@ -737,12 +750,12 @@ void svmCallSubProc(
 
 
 void svmSetSubProcRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varType arg2, uint8_t type2) {
-  svmCallRetval[0]     = arg0;
-  svmCallRetvalType[0] = type0;
-  svmCallRetval[1]     = arg1;
-  svmCallRetvalType[1] = type1;
-  svmCallRetval[2]     = arg2;
-  svmCallRetvalType[2] = type2;
+  svmMeta.svmCallRetval[0]     = arg0;
+  svmMeta.svmCallRetvalType[0] = type0;
+  svmMeta.svmCallRetval[1]     = arg1;
+  svmMeta.svmCallRetvalType[1] = type1;
+  svmMeta.svmCallRetval[2]     = arg2;
+  svmMeta.svmCallRetvalType[2] = type2;
 }
 
 

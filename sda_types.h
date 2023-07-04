@@ -27,6 +27,8 @@ File description:
 #ifndef SDA_TYPES_H
 #define SDA_TYPES_H
 
+#include "SVS/svs.h" // for varType in svmMeta
+
 typedef enum {PRESSED, HOLD,LONGHOLD, RELEASED} eventType;
 
 typedef enum {LED_ON, LED_OFF ,LED_BLINK, LED_SHORTBLINK, LED_ALARM} ledPatternType;
@@ -150,6 +152,10 @@ typedef struct {
   uint8_t  beepTimerCallback[15];
   uint32_t beepTime;
   uint8_t  authorized;
+
+  varType  svmCallRetval[3];
+  uint8_t* svmCallRetvalStr[3];
+  uint8_t  svmCallRetvalType[3];
 } sdaSvmMetadata;
 
 typedef struct {

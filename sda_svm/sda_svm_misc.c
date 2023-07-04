@@ -293,6 +293,7 @@ void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsV
 
     if (argType[z] == SVS_TYPE_STR) {
       s->commArgs.arg[z + 1] = (varType)strNew(svmArgs[z], s);
+      //printf("%s-> restoring %s\n", __FUNCTION__, svmArgs[z]);
     } else {
       s->commArgs.arg[z + 1] = arg[z];
     }
@@ -312,6 +313,7 @@ void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **
   for(uint8_t z = 0; z < 3; z++) {
     if (argType[z] == SVS_TYPE_STR) {
       prac3 = s->stringField + arg[z].val_str;
+      //printf("%s-> storing: %s\n", __FUNCTION__, prac3);
       prac2 = prac;
       x = 0;
       while(prac3[x] != 0) {
@@ -324,7 +326,7 @@ void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **
       n++;
       if(n > APP_ARG_STR_LEN - 1) {
         buff[APP_ARG_STR_LEN - 1] = 0;
-        printf("Error: storeArguments owerflow!\n");
+        printf("%s: Error: storeArguments owerflow!\n", __FUNCTION__);
         return;
       }
       prac++;
