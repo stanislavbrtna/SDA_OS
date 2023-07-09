@@ -48,7 +48,7 @@
 #define SCR_SOUND_ON                                  (uint8_t*)"Sound ON"
 
 #define OVRL_ENTER_TIME                               (uint8_t*)"Enter time:"
-#define OVRL_OK                                       (uint8_t*)"OK"
+#define OVRL_OK                                       (uint8_t*)"Ok"
 #define OVRL_CANCEL                                   (uint8_t*)"Back"
 #define OVRL_SELECT_COLOR                             (uint8_t*)"Enter color:"
 #define OVRL_MON1                                     (uint8_t*)"January"

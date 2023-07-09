@@ -87,3 +87,29 @@ uint8_t sda_fs_touch(uint8_t * fname) {
   svp_fclose(&fp);
   return 0;
 }
+
+uint8_t sda_fs_copy_blocking(uint8_t* source, uint8_t* dest) {
+  svp_file fp_source;
+  svp_file fp_dest;
+
+  if (!svp_fopen_read(&fp_source, source)) {
+    printf("%s: ERROR: Source file cannot be openned: %s\n", __FUNCTION__, source);
+    return 1;
+  }
+  
+  if (!svp_fopen_rw(&fp_dest, dest)) {
+    printf("%s: ERROR: Destination File cannot be openned: %s\n", __FUNCTION__, source);
+    return 1;
+  }
+
+  uint8_t c;
+
+  while (!svp_feof(&fp_source)) {
+    c = svp_fread_u8(&fp_source);
+    svp_fwrite(&fp_dest, &c, 1);
+  }
+  svp_fclose(&fp_source);
+  svp_fclose(&fp_dest);
+
+  return 0;
+}

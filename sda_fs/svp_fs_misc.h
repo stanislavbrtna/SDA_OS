@@ -32,4 +32,6 @@ uint16_t svp_store_svs_to_file(uint8_t *fname, uint8_t *str, svsVM *s);
 uint8_t sda_fs_check_and_create_dir(uint8_t * fname);
 uint8_t sda_fs_touch(uint8_t * fname);
 
+uint8_t sda_fs_copy_blocking(uint8_t* source, uint8_t* dest);
+
 #endif

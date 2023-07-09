@@ -334,3 +334,48 @@ void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **
     }
   }
 }
+
+
+void svmPrecacheFile(uint8_t *fname) {
+  if (svmGetRunning()) {
+    printf("ERROR: cannot precache if svm is already running!");
+    return;
+  }
+
+  // check for pre-tokenized app
+  uint8_t fileBuffer[256];
+  uint8_t crcBuffer[32];
+
+  // get app name crc
+  int32_t crc = (int32_t) crc32b(fname);
+  if (crc < 0) {
+    crc *= -1;
+  }
+
+  // token cache
+  sda_int_to_str(crcBuffer, crc, sizeof(crcBuffer));
+  sda_strcp((uint8_t *) "cache/c/", fileBuffer, sizeof(fileBuffer));
+  sda_str_add(fileBuffer, crcBuffer);
+  sda_str_add(fileBuffer,(uint8_t *) ".stc");
+
+  svmTokenizeFile(fname, fileBuffer, 0);
+
+  // svm
+  sda_strcp((uint8_t *) "cache/c/", fileBuffer, sizeof(fileBuffer));
+  sda_str_add(fileBuffer, crcBuffer);
+  sda_str_add(fileBuffer,(uint8_t *) ".svm");
+
+  svp_file svmFile;
+
+  if(svp_fopen_rw(&svmFile, fileBuffer) == 0) {
+    printf("precacher: file open error\n");
+    return;
+  }
+  svp_fwrite(&svmFile, &svm, sizeof(svm));
+  
+  svp_fclose(&svmFile);
+
+  SVScloseCache(&svm);
+
+  printf("Precaching: %s\n", fileBuffer);
+}

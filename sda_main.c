@@ -60,6 +60,8 @@ void svsGr2WrapInit();
 
 void test_code() {
   // Testcode section is used for testing new things, it is called once after init
+
+  svmPrecacheFile("lib/fsl.svs");
   return;
 }
 

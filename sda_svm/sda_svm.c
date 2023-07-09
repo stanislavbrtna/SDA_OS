@@ -281,10 +281,56 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
     return 0;
   }
 
-  // loads app
-  if (svmTokenizeFile(fname, cacheBuffer, 0) != 0) {
+  if (sda_fs_check_and_create_dir((uint8_t *)"cache/c")) {
+    sda_show_error_message((uint8_t *)"svmLaunch:\nCache/c folder is borked.\n/APPS/cache");
     return 0;
   }
+
+  // check for pre-tokenized app
+  uint8_t fileBuffer[256];
+  uint8_t crcBuffer[32];
+
+  int32_t crc = (int32_t) crc32b(fname);
+
+  if (crc < 0) {
+    crc *= -1;
+  }
+
+  sda_int_to_str(crcBuffer, crc, sizeof(crcBuffer));
+  sda_strcp((uint8_t *) "cache/c/", fileBuffer, sizeof(fileBuffer));
+  sda_str_add(fileBuffer, crcBuffer);
+  sda_str_add(fileBuffer,(uint8_t *) ".stc");
+
+  //printf("cache test: try: %s\n", fileBuffer);  
+
+  if(svp_fexists(fileBuffer)) {
+    // todo: read error and solve stuff
+    sda_fs_copy_blocking(fileBuffer, cacheBuffer);
+    //printf("cache test: loading form file: %s to: %s\n", fileBuffer, cacheBuffer);
+
+    sda_strcp((uint8_t *) "cache/c/", fileBuffer, sizeof(fileBuffer));
+    sda_str_add(fileBuffer, crcBuffer);
+    sda_str_add(fileBuffer,(uint8_t *) ".svm");
+
+    svp_file svmFile;
+
+    if(svp_fopen_read(&svmFile, fileBuffer) == 0) {
+      printf("sdaSvmLoader: file open error (%s)\n", fileBuffer);
+      return 0;
+    }
+
+    svp_fread(&svmFile, &svm, sizeof(svm));
+    svp_fclose(&svmFile);
+
+    SVSopenCache(&svm);
+
+  } else {
+    // loads app
+    if (svmTokenizeFile(fname, cacheBuffer, 0) != 0) {
+      return 0;
+    }
+  }
+
 
   // set metadata
   svmLaunchSetDefMetadata(nextId, parentId, fname);
