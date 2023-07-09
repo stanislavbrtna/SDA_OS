@@ -60,8 +60,6 @@ void svsGr2WrapInit();
 
 void test_code() {
   // Testcode section is used for testing new things, it is called once after init
-
-  svmPrecacheFile("lib/fsl.svs");
   return;
 }
 
@@ -180,6 +178,11 @@ uint8_t sda_main_loop() {
     test_code();
   } else if (init == 1) {
     sda_main_run_autoexec();
+
+    // precache apps according to precache.lst
+    // this is aftear autoexec, so autoexec can generate
+    // precache.lst or something.
+    sda_precache();
     init = 2;
   }
 

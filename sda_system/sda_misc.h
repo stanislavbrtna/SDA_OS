@@ -67,4 +67,6 @@ void sda_check_fs();
 void sda_set_landscape(uint8_t val);
 void sda_set_init_struct_defaults();
 
+void sda_precache();
+
 #endif

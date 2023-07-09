@@ -379,3 +379,58 @@ void svmPrecacheFile(uint8_t *fname) {
 
   printf("Precaching: %s\n", fileBuffer);
 }
+
+
+uint8_t svmPreCachedExists(int32_t crc) {
+  uint8_t fileBuffer[256];
+  uint8_t crcBuffer[32];
+  
+  sda_int_to_str(crcBuffer, crc, sizeof(crcBuffer));
+  sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
+  sda_str_add(fileBuffer, crcBuffer);
+  sda_str_add(fileBuffer,(uint8_t *) ".stc");
+
+  if (!svp_fexists(fileBuffer)) {
+    return 0;
+  }
+
+  sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
+  sda_str_add(fileBuffer, crcBuffer);
+  sda_str_add(fileBuffer,(uint8_t *) ".svm");
+
+  if (!svp_fexists(fileBuffer)) {
+    return 0;
+  }
+
+  return 1;
+}
+
+
+uint8_t svmLoadPrecached(int32_t crc) {
+  uint8_t fileBuffer[256];
+  uint8_t crcBuffer[32];
+  svp_file svmFile;
+
+  sda_int_to_str(crcBuffer, crc, sizeof(crcBuffer));
+  sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
+  sda_str_add(fileBuffer, crcBuffer);
+  sda_str_add(fileBuffer,(uint8_t *) ".stc");
+
+  printf("%s: loading cached: %s\n",__FUNCTION__, fileBuffer);
+
+  sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
+  sda_str_add(fileBuffer, crcBuffer);
+  sda_str_add(fileBuffer,(uint8_t *) ".svm");
+
+  if(svp_fopen_read(&svmFile, fileBuffer) == 0) {
+    printf("sdaSvmLoader: file open error (%s)\n", fileBuffer);
+    return 1;
+  }
+
+  svp_fread(&svmFile, &svm, sizeof(svm));
+  svp_fclose(&svmFile);
+
+  SVSopenCache(&svm);
+
+  return 0;
+}

@@ -231,6 +231,31 @@ void sda_check_fs() {
 }
 
 
+void sda_precache() {
+  svp_csvf f_list;
+  uint8_t appname[APP_NAME_LEN + 1];
+
+  if(!svp_fexists((uint8_t*) "precache.lst")) {
+    printf("%s: No precache.lst, nothing to do.\n", __FUNCTION__);
+    return;
+  }
+
+  if (svp_csv_open(&f_list, (uint8_t*) "precache.lst") == 0) {
+    printf("%s: Could not open precache.lst\n", __FUNCTION__);
+    return;
+  }
+
+  printf("%s: Precaching:\n", __FUNCTION__);
+
+  do {
+    svp_csv_get_cell(&f_list, 0, (uint8_t *)"", appname, APP_NAME_LEN);
+    svmPrecacheFile(appname);
+  } while(svp_csv_next_line(&f_list));
+
+  printf("%s: Done\n", __FUNCTION__);
+}
+
+
 void sda_set_landscape(uint8_t val) {
   if (val == 1) {
     LCD_set_orientation(OR_ROT_RIGHT);
