@@ -354,14 +354,14 @@ void svmPrecacheFile(uint8_t *fname) {
 
   // token cache
   sda_int_to_str(crcBuffer, crc, sizeof(crcBuffer));
-  sda_strcp((uint8_t *) "cache/c/", fileBuffer, sizeof(fileBuffer));
+  sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
   sda_str_add(fileBuffer, crcBuffer);
   sda_str_add(fileBuffer,(uint8_t *) ".stc");
 
   svmTokenizeFile(fname, fileBuffer, 0);
 
   // svm
-  sda_strcp((uint8_t *) "cache/c/", fileBuffer, sizeof(fileBuffer));
+  sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
   sda_str_add(fileBuffer, crcBuffer);
   sda_str_add(fileBuffer,(uint8_t *) ".svm");
 
