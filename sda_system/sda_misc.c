@@ -222,6 +222,7 @@ void sda_check_fs() {
     || sda_fs_check_and_create_dir((uint8_t *)"DATA/appdata")
     || sda_fs_check_and_create_dir((uint8_t *)"DATA/settings")
     || sda_fs_check_and_create_dir((uint8_t *)"APPS/cache")
+    || sda_fs_check_and_create_dir((uint8_t *)"APPS/cache/c")
     || sda_fs_check_and_create_dir((uint8_t *)"APPS/lib")
     || sda_fs_check_and_create_dir((uint8_t *)"APPS/Icons")
   ) {
