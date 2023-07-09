@@ -301,13 +301,9 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
   sda_str_add(fileBuffer, crcBuffer);
   sda_str_add(fileBuffer,(uint8_t *) ".stc");
 
-  //printf("cache test: try: %s\n", fileBuffer);  
+  printf("%s: loading cached: %s\n",__FUNCTION__, fileBuffer);  
 
   if(svp_fexists(fileBuffer)) {
-    // todo: read error and solve stuff
-    sda_fs_copy_blocking(fileBuffer, cacheBuffer);
-    //printf("cache test: loading form file: %s to: %s\n", fileBuffer, cacheBuffer);
-
     sda_strcp((uint8_t *) "cache/c/", fileBuffer, sizeof(fileBuffer));
     sda_str_add(fileBuffer, crcBuffer);
     sda_str_add(fileBuffer,(uint8_t *) ".svm");
