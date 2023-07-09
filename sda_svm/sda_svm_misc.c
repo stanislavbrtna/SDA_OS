@@ -411,6 +411,9 @@ uint8_t svmLoadPrecached(int32_t crc) {
   uint8_t crcBuffer[32];
   svp_file svmFile;
 
+  svsReset(&svm);
+  tokenizerReset(&svm);
+
   sda_int_to_str(crcBuffer, crc, sizeof(crcBuffer));
   sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
   sda_str_add(fileBuffer, crcBuffer);

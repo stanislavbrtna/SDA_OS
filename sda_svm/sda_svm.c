@@ -292,6 +292,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
     if(svmLoadPrecached(crc)) {
       return 0;
     }
+    svm_init = 0;
   } else {
     // loads app
     if (svmTokenizeFile(fname, cacheBuffer, 0) != 0) {
