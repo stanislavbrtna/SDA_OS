@@ -171,7 +171,10 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
   }
   irq_redraw_block_enable();
 
-  p16_get_header(&fp, &header);
+  if(p16_get_header(&fp, &header)) {
+    printf("%s: Error decoding header %s!\n",__FUNCTION__, filename);
+    return 1;
+  }
 
   LCD_getDrawArea(&area);
   LCD_setSubDrawArea(x, y, x + header.imageWidth, y + header.imageHeight);
@@ -228,9 +231,14 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
     printf("sda_draw_p16: Error while opening file %s!\n", filename);
     return 1;
   }
+
+  if(p16_get_header(&fp, &header)) {
+    printf("%s: Error decoding header %s!\n",__FUNCTION__, filename);
+    return 1;
+  }
+
   irq_redraw_block_enable();
 
-  p16_get_header(&fp, &header);
   LCD_getDrawArea(&area);
   LCD_setSubDrawArea(x, y, x + header.imageWidth * width_n, y + header.imageHeight * height_n);
   LCD_canvas_set(x, y, x + header.imageWidth * width_n - 1, y + header.imageHeight * height_n - 1);
@@ -326,9 +334,14 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
     printf("sda_draw_p16: Error while opening file %s!\n", filename);
     return 1;
   }
+
+  if(p16_get_header(&fp, &header)) {
+    printf("%s: Error decoding header %s!\n",__FUNCTION__, filename);
+    return 1;
+  }
+
   irq_redraw_block_enable();
 
-  p16_get_header(&fp, &header);
   LCD_getDrawArea(&area);
   
   drawn_width = header.imageWidth / width_n + header.imageWidth % width_n;
@@ -407,7 +420,11 @@ uint16_t sda_p16_get_width(uint8_t *filename) {
     return 1;
   }
 
-  p16_get_header(&fp, &header);
+  if(p16_get_header(&fp, &header)) {
+    printf("%s: Error decoding header %s!\n",__FUNCTION__, filename);
+    return 1;
+  }
+
   svp_fclose(&fp);
   return header.imageWidth;
 }
