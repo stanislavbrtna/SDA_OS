@@ -153,6 +153,7 @@ void svmInit() {
   svmInitRemoveCache((uint8_t *) "met");
   svmInitRemoveCache((uint8_t *) "stc");
   svmInitRemoveCache((uint8_t *) "svm");
+  svmInitRemoveCache((uint8_t *) "str");
 
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
@@ -169,6 +170,7 @@ void svmRemoveCachedProc(uint16_t id) {
   svmRemoveCachedFile(id, (uint8_t *) ".met");
   svmRemoveCachedFile(id, (uint8_t *) ".stc");
   svmRemoveCachedFile(id, (uint8_t *) ".svm");
+  svmRemoveCachedFile(id, (uint8_t *) ".str");
 }
 
 
@@ -379,10 +381,12 @@ void svmPrecacheFile(uint8_t *fname) {
 
   // str
   svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".str");
+  
   if(svp_fopen_rw(&svmFile, fileBuffer) == 0) {
     printf("precacher: file open error\n");
     return;
   }
+
   svp_fwrite(&svmFile, svm.stringField, svm.stringFieldLen+1);
   
   svp_fclose(&svmFile);
@@ -425,7 +429,7 @@ uint8_t svmLoadPrecached(int32_t crc) {
   svsReset(&svm);
   tokenizerReset(&svm);
 
-  svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".stc");
+  svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".svm");
 
   printf("%s: loading cached: %s\n",__FUNCTION__, fileBuffer);
 
