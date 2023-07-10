@@ -27,6 +27,7 @@ SOFTWARE.
 //svs VM
 svsVM          svm;
 sdaSvmMetadata svmMeta;
+uint8_t        svmStrings[STRING_FIELD_L];
 
 static uint16_t nextId;
 
@@ -104,6 +105,14 @@ uint8_t svmGetRunning() {
   return 0;
 }
 
+void svmBootInit() {
+  svsSetStringField(svmStrings, sizeof(svmStrings), &svm);
+  svsDirectSWrapInit();
+  pcBasicWrapInit();
+  svsGr2WrapInit();
+  sda_files_wrapper_init();
+  sda_svs_wrapper_init();
+}
 
 uint8_t svmGetValidId(uint16_t id) {
   if (svmMeta.id == id && svmValid){
@@ -163,7 +172,6 @@ uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
 #else
     printf("Loading time: %ums\n", svsLoadCounter);
 #endif
-    svm_init = 0;
   }
 
 #ifdef SVM_DBG_ENABLED
@@ -292,14 +300,13 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
     if(svmLoadPrecached(crc)) {
       return 0;
     }
-    svm_init = 0;
   } else {
     // loads app
     if (svmTokenizeFile(fname, cacheBuffer, 0) != 0) {
       return 0;
     }
   }
-
+  svm_init = 0;
 
   // set metadata
   svmLaunchSetDefMetadata(nextId, parentId, fname);
@@ -798,6 +805,7 @@ void svmSaveProcData() {
   svmMeta.screen = slotScreen[4];
 
   sdaSvmSaver(svmMeta.id, (uint8_t *) ".svm", &svm, sizeof(svm));
+  sdaSvmSaver(svmMeta.id, (uint8_t *) ".str", svmStrings, svm.stringFieldLen + 1);
   sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX);
   sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX);
   sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context));
@@ -812,6 +820,9 @@ uint8_t svmLoadProcData(uint16_t id) {
 #endif
 
   if(!sdaSvmLoader(id, (uint8_t *) ".svm", &svm, sizeof(svm)))
+    return 0;
+
+  if(!sdaSvmLoader(id, (uint8_t *) ".str", svmStrings, svm.stringFieldLen + 1))
     return 0;
 
   if(!sdaSvmLoader(id, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX))

@@ -93,12 +93,8 @@ static void sda_main_init() {
 
   sda_check_fs(); // but better to be sure
 
-  // init wrappers
-  svsDirectSWrapInit();
-  pcBasicWrapInit();
-  svsGr2WrapInit();
-  sda_files_wrapper_init();
-  sda_svs_wrapper_init();
+  // init svm (wrappers, string field, etc)
+  svmBootInit();
 
   gr2_init_context(
       &sda_sys_con,

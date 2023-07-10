@@ -335,6 +335,14 @@ void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **
   }
 }
 
+void svmPrecacheGetName(uint8_t* buffer, uint32_t len, int32_t crc, uint8_t* ext) {
+   uint8_t crcBuffer[32];
+  sda_int_to_str(crcBuffer, crc, sizeof(crcBuffer));
+  sda_strcp((uint8_t *) "cache/pre/", buffer, len);
+  sda_str_add(buffer, crcBuffer);
+  sda_str_add(buffer, ext);
+}
+
 
 void svmPrecacheFile(uint8_t *fname) {
   if (svmGetRunning()) {
@@ -344,7 +352,6 @@ void svmPrecacheFile(uint8_t *fname) {
 
   // check for pre-tokenized app
   uint8_t fileBuffer[256];
-  uint8_t crcBuffer[32];
 
   // get app name crc
   int32_t crc = (int32_t) crc32b(fname);
@@ -353,17 +360,12 @@ void svmPrecacheFile(uint8_t *fname) {
   }
 
   // token cache
-  sda_int_to_str(crcBuffer, crc, sizeof(crcBuffer));
-  sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
-  sda_str_add(fileBuffer, crcBuffer);
-  sda_str_add(fileBuffer,(uint8_t *) ".stc");
+  svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".stc");
 
   svmTokenizeFile(fname, fileBuffer, 0);
 
   // svm
-  sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
-  sda_str_add(fileBuffer, crcBuffer);
-  sda_str_add(fileBuffer,(uint8_t *) ".svm");
+  svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".svm");
 
   svp_file svmFile;
 
@@ -375,6 +377,16 @@ void svmPrecacheFile(uint8_t *fname) {
   
   svp_fclose(&svmFile);
 
+  // str
+  svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".str");
+  if(svp_fopen_rw(&svmFile, fileBuffer) == 0) {
+    printf("precacher: file open error\n");
+    return;
+  }
+  svp_fwrite(&svmFile, svm.stringField, svm.stringFieldLen+1);
+  
+  svp_fclose(&svmFile);
+
   SVScloseCache(&svm);
 
   printf("Precaching: %s\n", fileBuffer);
@@ -383,20 +395,20 @@ void svmPrecacheFile(uint8_t *fname) {
 
 uint8_t svmPreCachedExists(int32_t crc) {
   uint8_t fileBuffer[256];
-  uint8_t crcBuffer[32];
   
-  sda_int_to_str(crcBuffer, crc, sizeof(crcBuffer));
-  sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
-  sda_str_add(fileBuffer, crcBuffer);
-  sda_str_add(fileBuffer,(uint8_t *) ".stc");
+  svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".stc");
 
   if (!svp_fexists(fileBuffer)) {
     return 0;
   }
 
-  sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
-  sda_str_add(fileBuffer, crcBuffer);
-  sda_str_add(fileBuffer,(uint8_t *) ".svm");
+  svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".svm");
+
+  if (!svp_fexists(fileBuffer)) {
+    return 0;
+  }
+
+  svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".str");
 
   if (!svp_fexists(fileBuffer)) {
     return 0;
@@ -408,22 +420,14 @@ uint8_t svmPreCachedExists(int32_t crc) {
 
 uint8_t svmLoadPrecached(int32_t crc) {
   uint8_t fileBuffer[256];
-  uint8_t crcBuffer[32];
   svp_file svmFile;
 
   svsReset(&svm);
   tokenizerReset(&svm);
 
-  sda_int_to_str(crcBuffer, crc, sizeof(crcBuffer));
-  sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
-  sda_str_add(fileBuffer, crcBuffer);
-  sda_str_add(fileBuffer,(uint8_t *) ".stc");
+  svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".stc");
 
   printf("%s: loading cached: %s\n",__FUNCTION__, fileBuffer);
-
-  sda_strcp((uint8_t *) "cache/pre/", fileBuffer, sizeof(fileBuffer));
-  sda_str_add(fileBuffer, crcBuffer);
-  sda_str_add(fileBuffer,(uint8_t *) ".svm");
 
   if(svp_fopen_read(&svmFile, fileBuffer) == 0) {
     printf("sdaSvmLoader: file open error (%s)\n", fileBuffer);
@@ -431,6 +435,16 @@ uint8_t svmLoadPrecached(int32_t crc) {
   }
 
   svp_fread(&svmFile, &svm, sizeof(svm));
+  svp_fclose(&svmFile);
+
+  svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".str");
+
+  if(svp_fopen_read(&svmFile, fileBuffer) == 0) {
+    printf("sdaSvmLoader: file open error (%s)\n", fileBuffer);
+    return 1;
+  }
+
+  svp_fread(&svmFile, svm.stringField, svm.stringFieldLen+1);
   svp_fclose(&svmFile);
 
   SVSopenCache(&svm);

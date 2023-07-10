@@ -79,6 +79,8 @@ void svmSetLandscape(uint8_t val);
 void svmAuthorize();
 uint8_t svmGetAuthorized();
 
+// init svs and svm
+void svmBootInit();
 
 // multiprocess
 void svmCallSubProc(
