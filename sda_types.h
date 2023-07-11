@@ -27,7 +27,8 @@ File description:
 #ifndef SDA_TYPES_H
 #define SDA_TYPES_H
 
-#include "SVS/svs.h" // for varType in svmMeta
+#include "SVS/svs_limits.h" // for varType in svmMeta
+#include "SVS/svs_types.h"
 
 typedef enum {PRESSED, HOLD,LONGHOLD, RELEASED} eventType;
 
