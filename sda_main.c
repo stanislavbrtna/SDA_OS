@@ -139,7 +139,8 @@ static void sda_main_init() {
 
   sda_splash_screen = gr2_add_screen(&sda_sys_con);
   gr2_set_str(sda_splash_screen, gr2_get_str(slotScreen[0], &sda_sys_con), &sda_sys_con);
-  gr2_text_set_align(gr2_add_text(0, 2, 10, 3, "Loading...", sda_splash_screen, &sda_sys_con), GR2_ALIGN_CENTER, &sda_sys_con);
+  gr2_text_set_align(gr2_add_text(0, 2, 10, 3, SCR_LOADING_TEXT, sda_splash_screen, &sda_sys_con), GR2_ALIGN_CENTER, &sda_sys_con);
+  gr2_set_param(sda_splash_screen, gr2_get_param(slotScreen[0], &sda_sys_con), &sda_sys_con);
 
   mainScr = sda_splash_screen;
   sda_current_con = &sda_sys_con;
@@ -184,10 +185,9 @@ uint8_t sda_main_loop() {
     // this is aftear autoexec, so autoexec can generate
     // precache.lst or something.
     sda_precache();
-    init = 2;
-  } else if (init == 2) {
     mainScr = slotScreen[0];
-    init == 3;
+    sda_slot_on_top(0);
+    init = 2;
   }
 
   if (svpSGlobal.sec != oldsec) {

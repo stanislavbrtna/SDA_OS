@@ -90,6 +90,7 @@
 #define SCR_LED_NOTIFICATIONS         (uint8_t *)"Notifikační LED"
 #define IRQ_BATT_CHRG                 (uint8_t *)" NAB."
 #define MSG_ERROR_OCCURED             (uint8_t *)"Nastala chyba:"
+#define SCR_LOADING_TEXT              (uint8_t *)"Nahrávání..."
 
 
 #endif

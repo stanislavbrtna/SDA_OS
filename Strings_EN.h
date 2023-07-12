@@ -88,5 +88,6 @@
 #define SWITCH_RUNNING_APPS                           (uint8_t *)"Running applications:"
 #define SWITCH_CLOSE_ALL                              (uint8_t *)"Close all"
 #define MSG_ERROR_OCCURED                             (uint8_t *)"Error occured:"
+#define SCR_LOADING_TEXT                              (uint8_t *)"Loading..."
 
 #endif
