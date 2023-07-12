@@ -37,6 +37,8 @@ gr2context * sda_current_con;
 uint8_t soft_error_flag; // 1 if error overlay is displayed
 uint8_t timeUpdateFlag; // 1 if time is updated
 
+uint16_t sda_splash_screen;
+
 uint8_t mainDir[258]; // name of main directory
 
 // battery overlay handling
@@ -135,7 +137,10 @@ static void sda_main_init() {
   svmRun(1, 0);
   sda_slot_init(4, 0, &sda_app_con, 0, 0);
 
-  mainScr = slotScreen[0];
+  sda_splash_screen = gr2_add_screen(&sda_sys_con);
+  gr2_add_text(1, 1, 9, 2, "Loading...", sda_splash_screen, &sda_sys_con);
+
+  mainScr = sda_splash_screen;
   sda_current_con = &sda_sys_con;
   led_set_pattern(LED_ON);
 
@@ -161,7 +166,6 @@ static void sda_main_init() {
     svpSGlobal.sdaDeviceLock = DEVICE_LOCKED;
     sda_slot_on_top(0);
   }
-  
 }
 
 
@@ -180,6 +184,9 @@ uint8_t sda_main_loop() {
     // precache.lst or something.
     sda_precache();
     init = 2;
+  } else if (init == 2) {
+    mainScr = slotScreen[0];
+    init == 3;
   }
 
   if (svpSGlobal.sec != oldsec) {
