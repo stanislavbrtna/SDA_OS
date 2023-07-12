@@ -79,7 +79,13 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   uint8_t argType[11];
 
+  // Default return
+  result->value.val_s = 0;
+  result->type = SVS_TYPE_NUM;
+
   //#!#### SDA CSV files API
+  //#!
+  //#!SDA_OS implements basic csv-like file api.
 
   //#!##### Open csv file
   //#!    sys.fs.csv.open([str]fname);
@@ -96,17 +102,47 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Set separator
+  //#!    sys.fs.csv.setSeparator([str]separator);
+  //#!Sets the csv separator default is "|".
+  //#!Return: none.
+  if (sysFuncMatch(argS->callId, "setSeparator", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    if (!csv_open) {
+      errSoft((uint8_t *)"No CSV file openned!", s);
+      return 0;
+    }
+
+    svp_csv_set_separator(&csvFile, s->stringField[argS->arg[1].val_str]);
+
+    return 1;
+  }
+
   //#!##### Close csv file
   //#!    sys.fs.csv.close();
   //#!Closes csv file.
-  //#!Return: None.
+  //#!Return: [num]1 on succes.
   if (sysFuncMatch(argS->callId, "close", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    csv_open = 0;
-    result->value.val_s = svp_csv_close(&csvFile);
+
     result->type = SVS_TYPE_NUM;
+    result->value.val_s = 0;
+
+    if (!csv_open) {
+      printf((uint8_t *)"sys.fs.csv.close: WARN: No CSV file openned!", s);
+      return 1;
+    }
+
+    if(svp_csv_close(&csvFile) == 0) {
+      csv_open = 0;
+      result->value.val_s = 1;
+    } 
+    
     return 1;
   }
 
@@ -139,7 +175,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
     uint8_t buff[512];
     if (!csv_open) {
-      errSoft((uint8_t *)"No CSV file openned!", s);
+      errSoft((uint8_t *)"No CSV file openned!\n", s);
       return 0;
     }
     svp_csv_get_cell(&csvFile, argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, buff, sizeof(buff));
@@ -151,6 +187,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set csv cell
   //#!    sys.fs.csv.setCell([num]cellNumber, [str]value);
   //#!Sets data of specified cell on current line.
+  //#!Cells are counted from 0.
   //#!Return: [str]cellContents
   if (sysFuncMatch(argS->callId, "setCell", s)) {
     argType[1] = SVS_TYPE_NUM;

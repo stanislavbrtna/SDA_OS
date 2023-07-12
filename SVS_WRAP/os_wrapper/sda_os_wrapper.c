@@ -92,7 +92,6 @@ svsConstType svsWrapConsts[] = {
 };
 
 
-
 void sda_svs_wrapper_init() {
   addSysConsts(svsWrapConsts);
   addSysWrapper(sda_os_wrapper, (uint8_t *)"os");

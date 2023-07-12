@@ -160,14 +160,20 @@ Return: [str]FileContents
 Writes svs string to file.
 Return: None
 #### SDA CSV files API
+
+SDA_OS implements basic csv-like file api.
 ##### Open csv file
     sys.fs.csv.open([str]fname);
 Opens csv file.
 Return: [num]1 on succes.
+##### Set separator
+    sys.fs.csv.setSeparator([str]separator);
+Sets the csv separator default is "|".
+Return: none.
 ##### Close csv file
     sys.fs.csv.close();
 Closes csv file.
-Return: None.
+Return: [num]1 on succes.
 ##### New csv line
     sys.fs.csv.newLine([num]numberOfCells);
 Adds new line to csv with given number of cells.
@@ -179,6 +185,7 @@ Return: [str]cellContents
 ##### Set csv cell
     sys.fs.csv.setCell([num]cellNumber, [str]value);
 Sets data of specified cell on current line.
+Cells are counted from 0.
 Return: [str]cellContents
 ##### Feed line
     sys.fs.csv.lineFeed();

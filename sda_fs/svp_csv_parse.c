@@ -1,3 +1,25 @@
+/*
+Copyright (c) 2018-2023 Stanislav Brtna
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #include "svp_csv_parse.h"
 
 uint8_t svp_csv_open(svp_csvf *fc, uint8_t * fname) {
@@ -5,12 +27,16 @@ uint8_t svp_csv_open(svp_csvf *fc, uint8_t * fname) {
     // error
     return 0;
   }
+  fc->separator = SDA_SEPARATOR;
   return 1;
 }
 
+void svp_csv_set_separator(svp_csvf *fc, uint8_t separator) {
+  fc->separator = separator;
+}
+
 uint8_t svp_csv_close(svp_csvf *fc) {
-  svp_fclose(&(fc->fil));
-  return 0;
+  return svp_fclose(&(fc->fil));
 }
 
 uint8_t seek_line_start(svp_csvf *fc) {
@@ -43,7 +69,7 @@ uint32_t seek_separator(svp_csvf *fc, uint8_t index, uint8_t *ok) {
   if (index != 0) {
     c = svp_fread_u8(&(fc->fil));
     while((c != SDA_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
-      if (c == SDA_SEPARATOR) {
+      if (c == fc->separator) {
         if (index > 1) {
           index--;
         } else {
@@ -81,7 +107,7 @@ uint16_t svp_csv_get_cell_svs(svp_csvf *fc, uint8_t index, uint8_t * def, svsVM 
 
   c=svp_fread_u8(&(fc->fil));
 
-  while((c != SDA_SEPARATOR) && (c != SDA_ENDLINE)) {
+  while((c != fc->separator) && (c != SDA_ENDLINE)) {
     if (strNewStreamPush(c,s)) {
       break;
     }
@@ -124,7 +150,7 @@ uint16_t svp_csv_get_cell(svp_csvf *fc, uint8_t index, uint8_t * def, uint8_t * 
   c = svp_fread_u8(&(fc->fil));
 
   i = 0;
-  while((c != SDA_SEPARATOR) && (c != SDA_ENDLINE) && !svp_feof(&(fc->fil))) {
+  while((c != fc->separator) && (c != SDA_ENDLINE) && !svp_feof(&(fc->fil))) {
     if (i < len) {
       buff[i] = c;
     } else {
@@ -159,7 +185,7 @@ uint8_t svp_csv_set_cell(svp_csvf *fc, uint8_t index, uint8_t * value) {
   if (index != 0) {
     c = svp_fread_u8(&(fc->fil));
     while((c != SDA_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
-      if (c == SDA_SEPARATOR) {
+      if (c == fc->separator) {
         if (index > 1) {
           index--;
         } else {
@@ -183,7 +209,7 @@ uint8_t svp_csv_set_cell(svp_csvf *fc, uint8_t index, uint8_t * value) {
 
   c = svp_fread_u8(&(fc->fil));
   while((c != SDA_ENDLINE) && (1 != svp_feof(&(fc->fil)))) {
-    if (c == SDA_SEPARATOR) {
+    if (c == fc->separator) {
         break;
     }
     key_len++;
@@ -266,6 +292,8 @@ void svp_csv_remove_line(svp_csvf *fc) {
     }
   }
 
+  key_len++; // counting the newline
+
   //printf("keylen: %s %u\n", key, keylen);
 
   svp_fseek(&(fc->fil), line_start);
@@ -316,7 +344,7 @@ uint8_t svp_csv_next_line(svp_csvf *fc){
 void svp_csv_new(svp_csvf *fc, uint8_t count) {
   uint8_t x;
   uint32_t startpos;
-  //seek end
+  // seek end
   if (svp_get_size(&(fc->fil)) != 0) {
     svp_fseek(&(fc->fil), svp_get_size(&(fc->fil)));
     svp_fwrite_u8(&(fc->fil), SDA_ENDLINE);
@@ -324,9 +352,9 @@ void svp_csv_new(svp_csvf *fc, uint8_t count) {
 
   startpos = svp_ftell(&(fc->fil));
 
-  //separátorů je o jeden méně než hodnot
-  for(x = 1; x < count; x++) {
-    svp_fwrite_u8(&(fc->fil), SDA_SEPARATOR);
+  // line is ended with separator, for consitency reasons...
+  for(x = 0; x < count; x++) {
+    svp_fwrite_u8(&(fc->fil), fc->separator);
   }
 
   svp_fseek(&(fc->fil), startpos);
