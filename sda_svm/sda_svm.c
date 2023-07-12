@@ -56,7 +56,6 @@ uint8_t * pscgErrorString;
 
 // static headers
 static void svmInValidate(uint16_t id);
-static void svmSuspendAddId(uint16_t id, uint8_t * name);
 static uint16_t GetIfSingular(uint8_t * name);
 
 
@@ -117,6 +116,9 @@ uint8_t svmGetValidId(uint16_t id) {
   return 0;
 }
 
+// SVS wrapper headers
+void pcBasicWrapInit();
+void svsGr2WrapInit();
 
 void svmBootInit() {
   svsSetStringField(svmStrings, sizeof(svmStrings), &svm);

@@ -55,10 +55,6 @@ static void sda_main_handle_soft_buttons();
 static void sda_main_run_autoexec();
 static void sda_main_check_for_alarm();
 
-// SVS wrapper headers
-void pcBasicWrapInit();
-void svsGr2WrapInit();
-
 
 void test_code() {
   // Testcode section is used for testing new things, it is called once after init

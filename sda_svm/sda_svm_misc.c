@@ -22,6 +22,7 @@ SOFTWARE.
 
 #include "sda_svm.h"
 #include "sda_svm_misc.h"
+#include "sda_svm_cache.h"
 static int32_t alarmId;
 static int32_t alarmParam;
 static uint8_t alarmFlag;

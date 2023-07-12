@@ -126,6 +126,9 @@ int32_t sda_alarm_get_param();
 int8_t sda_alarm_get_flag();
 void sda_alarm_clear_flag();
 
+// Pre-caching
+void svmPrecacheFile(uint8_t *fname);
+
 // *****************************************************************************
 //                                 internal functions
 // *****************************************************************************
