@@ -30,7 +30,7 @@ void sda_irq_update_timestruct(
   // uptime coul be modified when wake from sleep occurs
   if (svpSGlobal.sec != oldsec) {
     svpSGlobal.uptime++;
-    if (svpSGlobal.uptimeMs < svpSGlobal.uptime * 1000 || svpSGlobal.uptimeMs > (svpSGlobal.uptime + 1) * 1000) {
+    if (svpSGlobal.uptimeMs < (svpSGlobal.uptime - 2) * 1000 || svpSGlobal.uptimeMs > (svpSGlobal.uptime + 2) * 1000) {
       svpSGlobal.uptimeMs = svpSGlobal.uptime * 1000;
     }
     oldsec = sec;
