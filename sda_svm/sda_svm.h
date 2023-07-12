@@ -111,6 +111,7 @@ void svmCloseAll();
 uint8_t svmGetRunning();
 uint16_t svmGetId();
 uint8_t svmGetValid();
+void svmSetValid(uint8_t val);
 
 uint16_t svmGetSuspendedId(uint16_t id);
 uint8_t *svmGetSuspendedName(uint16_t id);

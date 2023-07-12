@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2018 Stanislav Brtna
+Copyright (c) 2018-2023 Stanislav Brtna
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,8 +21,9 @@ SOFTWARE.
 */
 
 #include "sda_svm.h"
-#include "sda_svm_load_save.h"
 #include "sda_svm_misc.h"
+#include "sda_svm_subproc.h"
+#include "sda_svm_wake_suspend.h"
 
 //svs VM
 svsVM          svm;
@@ -34,21 +35,12 @@ static uint16_t nextId;
 static uint8_t svmValid;
 static uint8_t svm_init;
 
-static uint8_t flag_svmCall;
-static uint8_t svmCallName[APP_NAME_LEN];
-static uint8_t svmCallback[NAME_LENGTH];
-static varType svmCallArg[3];
-static uint8_t svmCallArgType[3];
-static uint8_t *svmCallArgStr[3];
-
 svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
 
 extern uint16_t svsLoadCounter;
 extern uint8_t soft_error_flag;
 
-extern gr2Element *sda_app_gr2_elements;
-extern gr2Screen *sda_app_gr2_screens;
-extern gr2context sda_app_con; //
+extern gr2context sda_app_con;
 
 extern uint8_t svs_wrap_setScr_flag;
 extern uint16_t svs_wrap_setScr_id;
@@ -87,6 +79,14 @@ uint16_t svmGetMainScreen() {
   return mainScr;
 }
 
+// gets if current SVM is valid
+uint8_t svmGetValid() {
+  return svmValid;
+}
+
+void svmSetValid(uint8_t val) {
+  svmValid = val;
+}
 
 uint8_t * svmGetName() {
   return svmMeta.name;
@@ -105,15 +105,6 @@ uint8_t svmGetRunning() {
   return 0;
 }
 
-void svmBootInit() {
-  svsSetStringField(svmStrings, sizeof(svmStrings), &svm);
-  svsDirectSWrapInit();
-  pcBasicWrapInit();
-  svsGr2WrapInit();
-  sda_files_wrapper_init();
-  sda_svs_wrapper_init();
-}
-
 uint8_t svmGetValidId(uint16_t id) {
   if (svmMeta.id == id && svmValid){
     return 1;
@@ -126,14 +117,18 @@ uint8_t svmGetValidId(uint16_t id) {
   return 0;
 }
 
-// gets if current SVM is valid
-uint8_t svmGetValid() {
-  return svmValid;
+
+void svmBootInit() {
+  svsSetStringField(svmStrings, sizeof(svmStrings), &svm);
+  svsDirectSWrapInit();
+  pcBasicWrapInit();
+  svsGr2WrapInit();
+  sda_files_wrapper_init();
+  sda_svs_wrapper_init();
 }
 
 
 // app loading/closing
-
 // wrapper for svs loadApp, loads fname in svm
 uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
   uint8_t dirbuf[258];
@@ -211,7 +206,6 @@ void svmLaunchSetDefMetadata(uint16_t id, uint16_t parentId, uint8_t *fname) {
     svmMeta.svmCallRetvalType[i]   = SVS_TYPE_UNDEF;
   }
 }
-
 
 
 // launch app
@@ -306,7 +300,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
       return 0;
     }
   }
-  svm_init = 0;
+  svm_init = 0; //TODO: is this needed?
 
   // set metadata
   svmLaunchSetDefMetadata(nextId, parentId, fname);
@@ -411,9 +405,9 @@ void svmCloseRunning() {
     }
 
     // Launch callback
-    if(functionExists(svmCallback, &svm)) {
+    if(functionExists(svmGetCallback(), &svm)) {
       svmRestoreArguments(svmCallRetvalType, svmCallRetval, svmCallRetvalStr, &svm);
-      commExec(svmCallback, &svm);
+      commExec(svmGetCallback(), &svm);
     }
 
     svmOnTop();
@@ -468,86 +462,6 @@ void svmCloseAll() {
 }
 
 
-static void svmSuspendAddId(uint16_t id, uint8_t * name) {
-  uint16_t index = 0;
-  while (svmSavedProc[index].valid != 0) {
-    if (index == MAX_OF_SAVED_PROC - 1) {
-      return;
-    }
-    index++;
-  }
-
-  sda_strcp(name, svmSavedProc[index].name, APP_NAME_LEN);
-  svmSavedProc[index].id = id;
-  svmSavedProc[index].valid = 1;
-  svmSavedProc[index].singular = 0;
-}
-
-
-uint8_t svmSuspend() {
-  if(functionExists(SUSPEND_FUNCTION, &svm)) {
-    commExec(SUSPEND_FUNCTION, &svm);
-    if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-      svp_errSoftPrint(&svm);
-      return 1;
-    }
-    if (svmCheckAndExit()) {
-      return 0;
-    }
-  }
-  svmSaveProcData();
-  return 0;
-}
-
-
-uint8_t svmWake(uint16_t id) {
-  if(id == svmMeta.id && svmValid) {
-    svmOnTop();
-    if(functionExists(WAKEUP_FUNCTION, &svm)) { // execute the wakeup
-      commExec(WAKEUP_FUNCTION, &svm);
-      if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-        svp_errSoftPrint(&svm);
-        return 1;
-      }
-      if (svmCheckAndExit()) { // handle potential exit call
-        return 0;
-      }
-    }
-    return 0;
-  }
-
-  if (svmValid) {
-    svmSuspend();
-  }
-
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].id == id && svmSavedProc[x].valid == 1) {
-      if (svmLoadProcData(id) == 0) {
-        printf("svmWake: error while loading app (1)\n");
-        svmSavedProc[x].valid = 0;
-        return 1;
-      }
-      sda_slot_set_valid(4);
-      svmValid = 1;
-      svmOnTop();
-      if(functionExists(WAKEUP_FUNCTION, &svm)) {
-        commExec(WAKEUP_FUNCTION, &svm);
-        if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-          svp_errSoftPrint(&svm);
-          return 1;
-        }
-        if (svmCheckAndExit()) {
-          return 0;
-        }
-      }
-      return 0;
-    }
-  }
-  printf("svmWake: error while loading app (2)\n");
-  return 1;
-}
-
-
 static uint16_t GetIfSingular(uint8_t * name) {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProc[x].valid == 1) {
@@ -566,22 +480,6 @@ void svmSetSingular(uint16_t id) {
       svmSavedProc[x].singular = 1;
     }
   }
-}
-
-
-uint16_t svmGetSuspendedId(uint16_t id) { 
-  if (svmSavedProc[id].valid == 1) {
-    return svmSavedProc[id].id;
-  }
-  return 0;
-}
-
-
-uint8_t *svmGetSuspendedName(uint16_t id) {
-  if (svmSavedProc[id].valid == 1) {
-    return svmSavedProc[id].name;
-  }
-  return (uint8_t *)"";
 }
 
 
@@ -646,33 +544,6 @@ void sdaSvmKillApp_handle() {
 }
 
 
-uint8_t svmRunPerformCall() {
-  uint8_t argBuff[APP_ARG_STR_LEN];
-  uint16_t parentId = svmMeta.id;
-  //TODO: Storing and restoring arguments crashes on emcc     
-  
-  svmStoreArguments(argBuff, svmCallArg, svmCallArgType, svmCallArgStr, &svm);
-
-  if(svmLaunch(svmCallName, svmMeta.id) == 0) {
-    flag_svmCall = 0;
-    svmValid = 0;
-    svmWake(parentId);
-    sda_show_error_message((uint8_t *)"svmRun: subprocess launch failed!");
-    return 0;
-  }
-  
-  svmRestoreArguments(svmCallArgType, svmCallArg, svmCallArgStr, &svm);    
-
-  // init call here with args
-  commExec((uint8_t *)"init", &svm);
-  svmValid = 1;
-  svm_init = 1;
-  flag_svmCall = 0;
-
-  return 1;
-}
-
-
 uint16_t svmRun(uint8_t init, uint8_t top) {
 
   if (init) {
@@ -732,11 +603,13 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
       return 0;
     }
 
-    // Perform call
-    if (flag_svmCall == 1) {
-      svmRunPerformCall();
-    }
-
+    // Check and perform call
+    if(svmRunPerformCall()) {
+      // init call here with args
+      commExec((uint8_t *)"init", &svm);
+      svm_init = 1; 
+    } 
+    
     // Set new screen
     // This needs to be after all init calls
     if (svs_wrap_setScr_flag == 1) {
@@ -747,129 +620,4 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
 
   }
   return 0;
-}
-
-
-// call and retval
-void svmCallSubProc(
-    uint8_t *name,
-    uint8_t *callback,
-    varType arg0, uint8_t type0,
-    varType arg1, uint8_t type1,
-    varType arg2, uint8_t type2
-  ) {
-  flag_svmCall      = 1;
-  svmCallArg[0]     = arg0;
-  svmCallArgType[0] = type0;
-  svmCallArg[1]     = arg1;
-  svmCallArgType[1] = type1;
-  svmCallArg[2]     = arg2;
-  svmCallArgType[2] = type2;
-
-  sda_strcp(callback, svmCallback, sizeof(svmCallback));
-  sda_strcp(name, svmCallName, APP_NAME_LEN);
-}
-
-
-void svmSetSubProcRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varType arg2, uint8_t type2) {
-  svmMeta.svmCallRetval[0]     = arg0;
-  svmMeta.svmCallRetvalType[0] = type0;
-  svmMeta.svmCallRetval[1]     = arg1;
-  svmMeta.svmCallRetvalType[1] = type1;
-  svmMeta.svmCallRetval[2]     = arg2;
-  svmMeta.svmCallRetvalType[2] = type2;
-}
-
-
-void svmSaveProcData() {
-#ifdef SVM_DBG_ENABLED
-  printf("svmSaveProcData: saving: id: %u\n", svmMeta.id);
-#endif
-  SVScloseCache(&svm);
-
-  // general purpose files are already stored in the metadata structure
-
-  if (sda_get_conf_fname() != 0)  {
-    sda_strcp(sda_get_conf_fname(), svmMeta.openConfName, sizeof(svmMeta.openConfName));
-    svmMeta.openConfUsed = 1;
-  }
-  if (sda_get_csv_fname() != 0)  {
-    sda_strcp(sda_get_csv_fname(), svmMeta.openCsvName, sizeof(svmMeta.openCsvName));
-    svmMeta.openCsvUsed = 1;
-  }
-
-  //printf("storing workdir: %s\n", svmMeta.currentWorkDir);
-  svmMeta.lcdOffButtons = wrap_get_lcdOffButtons();
-
-  sda_files_close();
-  svmMeta.screen = slotScreen[4];
-
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".svm", &svm, sizeof(svm));
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".str", svmStrings, svm.stringFieldLen + 1);
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX);
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX);
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context));
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta));
-}
-
-
-uint8_t svmLoadProcData(uint16_t id) {
-
-#ifdef SVM_DBG_ENABLED
-  printf("svmLoadProcData: loading: id: %u\n", id);
-#endif
-
-  if(!sdaSvmLoader(id, (uint8_t *) ".svm", &svm, sizeof(svm)))
-    return 0;
-
-  if(!sdaSvmLoader(id, (uint8_t *) ".str", svmStrings, svm.stringFieldLen + 1))
-    return 0;
-
-  if(!sdaSvmLoader(id, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX))
-    return 0;
-
-  if(!sdaSvmLoader(id, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX))
-    return 0;
-
-  if(!sdaSvmLoader(id, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context)))
-    return 0;
-
-  if(!sdaSvmLoader(id, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta)))
-    return 0;
-
-  SVSopenCache(&svm);
-
-  svp_switch_main_dir();
-  svp_chdir(svmMeta.currentWorkDir);
-  //printf("restoring workdir: %s\n", svmMeta.currentWorkDir);
-
-  for(uint16_t i = 0; i < SDA_FILES_OPEN_MAX; i++) {
-    if (svmMeta.openFileUsed[i]) {
-      sda_fr_fname_reopen(i);
-    }
-  }
-
-  if (svmMeta.openConfUsed) {
-    sda_files_conf_open(svmMeta.openConfName);
-  }
-
-  if (svmMeta.openCsvUsed) {
-    sda_files_csv_open(svmMeta.openCsvName);
-  }
-
-  if (svmMeta.lcdOffButtons) {
-    wrap_set_lcdOffButtons(1);
-  } else {
-    wrap_set_lcdOffButtons(0);
-  }
-
-  if (svmMeta.landscape != svpSGlobal.lcdLandscape) {
-    sda_set_landscape(svmMeta.landscape);
-  }
-
-  svp_chdir(svmMeta.currentWorkDir);
-
-  slotScreen[4] = svmMeta.screen;
-  mainScr = slotScreen[4];
-  return 1;
 }

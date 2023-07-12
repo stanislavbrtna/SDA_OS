@@ -20,17 +20,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SDA_SVM_MISC
-#define SDA_SVM_MISC
+#ifndef SDA_SVM_WAKE_SUSPEND_H
+#define SDA_SVM_WAKE_SUSPEND_H
+
 #include "sda_svm.h"
-#include "sda_svm_subproc.h"
+#include "sda_svm_misc.h"
 
-void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **svmArgs, svsVM *s);
-void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsVM *s);
+uint16_t svmGetSuspendedId(uint16_t id);
+uint8_t *svmGetSuspendedName(uint16_t id);
+void svmSuspendAddId(uint16_t id, uint8_t * name);
 
-void svmPrecacheFile(uint8_t *fname);
-
-uint8_t svmPreCachedExists(int32_t crc);
-uint8_t svmLoadPrecached(int32_t crc);
+uint8_t svmSuspend();
+uint8_t svmWake(uint16_t id);
 
 #endif

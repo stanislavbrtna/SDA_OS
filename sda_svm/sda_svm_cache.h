@@ -20,16 +20,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SDA_SVM_MISC
-#define SDA_SVM_MISC
+#ifndef SDA_SVM_CACHE_H
+#define SDA_SVM_CACHE_H
 #include "sda_svm.h"
-#include "sda_svm_subproc.h"
+#include "sda_svm_misc.h"
 
-void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **svmArgs, svsVM *s);
-void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsVM *s);
-
+void svmInitRemoveCache(uint8_t *ext);
+void svmRemoveCachedProc(uint16_t id);
+void svmRemoveCachedFile(uint16_t id, uint8_t * tail);
+void svmPrecacheGetName(uint8_t* buffer, uint32_t len, int32_t crc, uint8_t* ext);
 void svmPrecacheFile(uint8_t *fname);
-
 uint8_t svmPreCachedExists(int32_t crc);
 uint8_t svmLoadPrecached(int32_t crc);
 

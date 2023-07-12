@@ -20,17 +20,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SDA_SVM_MISC
-#define SDA_SVM_MISC
-#include "sda_svm.h"
-#include "sda_svm_subproc.h"
+#ifndef SVM_SUBPROC_H
+#define SVM_SUBPROC_H
 
+#include "sda_svm.h"
+#include "sda_svm_misc.h"
+
+uint8_t * svmGetCallback();
+uint8_t svmRunPerformCall();
+
+void svmCallSubProc(
+    uint8_t *name,
+    uint8_t *callback,
+    varType arg0, uint8_t type0,
+    varType arg1, uint8_t type1,
+    varType arg2, uint8_t type2
+  );
+void svmSetSubProcRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varType arg2, uint8_t type2);
 void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **svmArgs, svsVM *s);
 void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsVM *s);
 
-void svmPrecacheFile(uint8_t *fname);
+void svmSaveProcData();
+uint8_t svmLoadProcData(uint16_t id);
 
-uint8_t svmPreCachedExists(int32_t crc);
-uint8_t svmLoadPrecached(int32_t crc);
-
+uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t size);
+void sdaSvmSaver(uint16_t id, uint8_t * tail, void *target, uint32_t size);
 #endif
