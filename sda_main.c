@@ -138,7 +138,8 @@ static void sda_main_init() {
   sda_slot_init(4, 0, &sda_app_con, 0, 0);
 
   sda_splash_screen = gr2_add_screen(&sda_sys_con);
-  gr2_add_text(1, 1, 9, 2, "Loading...", sda_splash_screen, &sda_sys_con);
+  gr2_set_str(sda_splash_screen, gr2_get_str(slotScreen[0], &sda_sys_con), &sda_sys_con);
+  gr2_text_set_align(gr2_add_text(0, 2, 10, 3, "Loading...", sda_splash_screen, &sda_sys_con), GR2_ALIGN_CENTER, &sda_sys_con);
 
   mainScr = sda_splash_screen;
   sda_current_con = &sda_sys_con;
