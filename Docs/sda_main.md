@@ -97,7 +97,7 @@ Return: None
 ##### Enable launching subprocess from cwd
     sys.os.subProcCWD([num] val);
 Sets if subprocesses are launched from cwd or from APPS folder.
-val: 0 - APPS folder,1 - cwd
+val: 0 - APPS folder, 1 - cwd
 Return: None
 ##### Return data to parent process
     sys.os.subRetval([str] arg0, [str] arg1, [str] arg2);

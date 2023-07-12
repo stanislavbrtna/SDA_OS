@@ -372,7 +372,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Enable launching subprocess from cwd
   //#!    sys.os.subProcCWD([num] val);
   //#!Sets if subprocesses are launched from cwd or from APPS folder.
-  //#!val: 0 - APPS folder,1 - cwd
+  //#!val: 0 - APPS folder, 1 - cwd
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subProcCWD", s)) {
     argType[1] = SVS_TYPE_NUM;
