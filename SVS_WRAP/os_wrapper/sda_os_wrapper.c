@@ -273,12 +273,29 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Quit program
   //#!    sys.os.exit();
+  //#!    sys.os.exit([undef] arg0, [undef] arg1, [undef] arg2); # optional return values
   //#!Stops program execution after exiting *update* function and performing *exit* function.
   //#!Return: None
   if (sysFuncMatch(argS->callId, "exit", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
+    if(argS->usedup == 0) {
+      if(sysExecTypeCheck(argS, argType, 0, s)) {
+        return 0;
+      }
+    } else {
+      argType[1] = SVS_TYPE_UNDEF;
+      argType[2] = SVS_TYPE_UNDEF;
+      argType[3] = SVS_TYPE_UNDEF;
+      if(sysExecTypeCheck(argS, argType, 3, s)) {
+        return 0;
+      }
+
+      svmSetSubProcRetval(
+        argS->arg[1], argS->argType[1],
+        argS->arg[2], argS->argType[2],
+        argS->arg[3], argS->argType[3]
+      );
     }
+
     svpSGlobal.systemXBtnClick = 1;
     return 1;
   }
@@ -346,15 +363,15 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Launch subprocess
-  //#!    sys.os.subProcess([str]fileName, [str/ref] callback, [str] arg0, [str] arg1, [str] arg2);
+  //#!    sys.os.subProcess([str]fileName, [str/ref] callback, [undef] arg0, [undef] arg1, [undef] arg2);
   //#!Runs child process
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subProcess", s)) {
     argType[1] = SVS_TYPE_STR;
     argType[2] = SVS_TYPE_STR;
-    argType[3] = 3;
-    argType[4] = 3;
-    argType[5] = 3;
+    argType[3] = SVS_TYPE_UNDEF;
+    argType[4] = SVS_TYPE_UNDEF;
+    argType[5] = SVS_TYPE_UNDEF;
     if(sysExecTypeCheck(argS, argType, 5, s)) {
       return 0;
     }
@@ -384,13 +401,13 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Return data to parent process
-  //#!    sys.os.subRetval([str] arg0, [str] arg1, [str] arg2);
+  //#!    sys.os.subRetval([undef] arg0, [undef] arg1, [undef] arg2);
   //#!Sets values that will be returned to parent process
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subRetval", s)) {
-    argType[1] = 3;
-    argType[2] = 3;
-    argType[3] = 3;
+    argType[1] = SVS_TYPE_UNDEF;
+    argType[2] = SVS_TYPE_UNDEF;
+    argType[3] = SVS_TYPE_UNDEF;
     if(sysExecTypeCheck(argS, argType, 3, s)) {
       return 0;
     }

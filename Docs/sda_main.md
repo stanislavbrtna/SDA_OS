@@ -70,6 +70,7 @@ Returns random number
 Return: [num]RandomValue
 ##### Quit program
     sys.os.exit();
+    sys.os.exit([undef] arg0, [undef] arg1, [undef] arg2); # optional return values
 Stops program execution after exiting *update* function and performing *exit* function.
 Return: None
 ##### Check API level
@@ -91,7 +92,7 @@ Return: 0 if czech, 1 if english, also defines SVP_LANG_CZ SVP_LANG_ENG
 Sets current process as singular.
 Return: None
 ##### Launch subprocess
-    sys.os.subProcess([str]fileName, [str/ref] callback, [str] arg0, [str] arg1, [str] arg2);
+    sys.os.subProcess([str]fileName, [str/ref] callback, [undef] arg0, [undef] arg1, [undef] arg2);
 Runs child process
 Return: None
 ##### Enable launching subprocess from cwd
@@ -100,7 +101,7 @@ Sets if subprocesses are launched from cwd or from APPS folder.
 val: 0 - APPS folder, 1 - cwd
 Return: None
 ##### Return data to parent process
-    sys.os.subRetval([str] arg0, [str] arg1, [str] arg2);
+    sys.os.subRetval([undef] arg0, [undef] arg1, [undef] arg2);
 Sets values that will be returned to parent process
 Return: None
 ##### Sets the clipboard string
