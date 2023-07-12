@@ -134,7 +134,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     result->value.val_s = 0;
 
     if (!csv_open) {
-      printf((uint8_t *)"sys.fs.csv.close: WARN: No CSV file openned!", s);
+      printf((uint8_t *)"sys.fs.csv.close: WARN: No CSV file openned!\n", s);
       return 1;
     }
 
@@ -175,7 +175,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
     uint8_t buff[512];
     if (!csv_open) {
-      errSoft((uint8_t *)"No CSV file openned!\n", s);
+      errSoft((uint8_t *)"No CSV file openned!", s);
       return 0;
     }
     svp_csv_get_cell(&csvFile, argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, buff, sizeof(buff));
