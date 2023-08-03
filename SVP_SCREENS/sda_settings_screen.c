@@ -176,7 +176,9 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 }
 
 void settings_sd_umount() {
-  sda_slot_on_top(2);
+  if (svpSGlobal.sdaDeviceLock == DEVICE_UNLOCKED) {
+    sda_slot_on_top(2);
+  }
   svp_umount();
   gr2_set_str(optMntSel, SCR_SD_MOUNT, &sda_sys_con);
   prac_screen = slotScreen[1];
@@ -193,7 +195,10 @@ void settings_sd_mount() {
     gr2_destroy(slotScreen[1], &sda_sys_con);
     gr2_destroy(prac_screen, &sda_sys_con);
     slotScreen[1] = svp_appScreen(1, 0);
-    sda_slot_on_top(2);
+
+    if (svpSGlobal.sdaDeviceLock == DEVICE_UNLOCKED) {
+      sda_slot_on_top(2);
+    }
 
     //next little hack, relod the main screen, this will be replaced someday
     sda_homescreen_configure();
