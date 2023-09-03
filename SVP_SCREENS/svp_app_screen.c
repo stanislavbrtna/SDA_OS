@@ -22,7 +22,7 @@ SOFTWARE.
 
 #include "svp_screens.h"
 
-#define MAX_APP_COUNT 25
+#define MAX_APP_COUNT 10
 #define MAX_FOLDER_STACK 5
 
 #define OBJ_TYPE_ERROR 0
@@ -38,10 +38,15 @@ sd-unmounted lock state
 static uint16_t scrollbar;
 static uint8_t * selectedObject;
 static uint8_t * selectedObjectStr;
+static uint16_t innerPage;
+
 static uint8_t folderStack[MAX_FOLDER_STACK][APP_NAME_LEN+1];
 static uint8_t folderStackStr[MAX_FOLDER_STACK][APP_NAME_LEN+1];
 static uint16_t folder_stack_max;
 static uint8_t appNum;
+
+static uint16_t appScreen;
+static uint16_t inScreen;
 
 
 void add_button(uint16_t x, svp_csvf appsCSV, uint8_t *appFName, uint8_t *appIcoName, uint8_t *appHumanName, uint16_t *appFNameBtn, uint16_t retScreen) {
@@ -77,10 +82,12 @@ void add_button(uint16_t x, svp_csvf appsCSV, uint8_t *appFName, uint8_t *appIco
 uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
   static uint16_t retScreen;
   static uint16_t appCount;
-  static uint8_t appFName[MAX_APP_COUNT][APP_NAME_LEN + 1];
-  static uint8_t appHumanName[MAX_APP_COUNT][APP_NAME_LEN + 1];
-  static uint8_t appIcoName[MAX_APP_COUNT][APP_NAME_LEN + 1];
+  static uint8_t  appFName[MAX_APP_COUNT][APP_NAME_LEN + 1];
+  static uint8_t  appHumanName[MAX_APP_COUNT][APP_NAME_LEN + 1];
+  static uint8_t  appIcoName[MAX_APP_COUNT][APP_NAME_LEN + 1];
   static uint16_t appFNameBtn[MAX_APP_COUNT];
+  static uint16_t pageButton[6];
+
   uint16_t x = 0;
   uint8_t retval = 0;
   svp_csvf appsCSV;
@@ -91,6 +98,10 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
     gr2_set_y_cell(retScreen, 16, &sda_sys_con);
     svp_switch_main_dir();
     svp_chdir((uint8_t *)"APPS");
+
+    for(int x = 0; x < 6; x++) {
+      pageButton[x] = 0;
+    }
 
     // file error detection
     if (svp_csv_open(&appsCSV, fileName) == 0) {
@@ -104,16 +115,32 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
       return retScreen;
     }
 
-    do {
-      add_button(x, appsCSV, appFName[x], appIcoName[x], appHumanName[x], &appFNameBtn[x], retScreen);
-      x++;
+    uint16_t listLen = 0;
 
-      if (x == MAX_APP_COUNT) {
-        printf("Loading semi-FAILED, too mavy apps!\n");
-        break;
+    do {
+      if (listLen/9 == innerPage) {
+        add_button(x, appsCSV, appFName[x], appIcoName[x], appHumanName[x], &appFNameBtn[x], retScreen);
+        x++;
+      }
+      listLen++;
+    } while(svp_csv_next_line(&appsCSV));
+
+    if (listLen > 9) {
+      int x = 0;
+      for(x = 0; x < listLen/9 || x > 4; x++) {
+        pageButton[x] = gr2_add_button(1 + 2*x, 20, 3 + 2*x, 22, date_days_strs[x + 1], retScreen, &sda_sys_con);
+        if (innerPage == x) {
+          gr2_set_select(pageButton[x], 1, &sda_sys_con);
+        }
       }
 
-    } while(svp_csv_next_line(&appsCSV));
+      if (listLen%9) {
+        pageButton[x] = gr2_add_button(1 + 2*x, 20, 3 + 2*x, 22, date_days_strs[x + 1], retScreen, &sda_sys_con);
+        if (innerPage == x) {
+          gr2_set_select(pageButton[x], 1, &sda_sys_con);
+        }
+      }
+    }
 
     svp_csv_close(&appsCSV);
 
@@ -139,11 +166,22 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
 #endif
         break;
       }
+    }
+    
+    for(int x = 0; x < 6; x++) {
+      if (pageButton[x] != 0) {
+        if (gr2_clicked(pageButton[x], &sda_sys_con)) {
+          innerPage = x;
 
-      if (gr2_get_event(appFNameBtn[x], &sda_sys_con) != EV_NONE) {
-        gr2_set_event(appFNameBtn[x], EV_NONE, &sda_sys_con);
+          if (inScreen != 0) {
+            gr2_destroy_screen(inScreen, &sda_sys_con);
+          }
+          inScreen = inner_handler(1, folderStack[folder_stack_max]);
+          inScreenResizer(inScreen);
+          gr2_set_screen(inScreen, appScreen, &sda_sys_con);
+          return 0;
+        }
       }
-
     }
 
     return retval;
@@ -255,8 +293,6 @@ void inScreenResizer(uint16_t id) {
 
 
 uint16_t svp_appScreen(uint8_t init, uint8_t top) {
-  static uint16_t appScreen;
-  static uint16_t inScreen;
   static uint16_t textLabel;
   static uint16_t btnBack;
   static uint16_t btnSwitch;
@@ -327,6 +363,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
         gr2_set_visible(btnBack, 1, &sda_sys_con);
         gr2_destroy_screen(inScreen, &sda_sys_con);
+        innerPage = 0;
         inScreen = inner_handler(1, selectedObject);
         inScrReloaded = 1;
 #ifdef APP_SCREEN_DEBUG
@@ -350,6 +387,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 #ifdef APP_SCREEN_DEBUG
       printf("screen id %u\n", inScreen);
 #endif
+      innerPage = 0;
       inScreen = inner_handler(1, labelbuff);
       inScrReloaded = 1;
       inScreenResizer(inScreen);
