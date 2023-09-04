@@ -63,6 +63,9 @@ uint16_t time_overlay_init() {
 
   sda_keyboard_hide();
 
+  uint8_t rel_prev = gr2_get_relative_init(sda_current_con);
+  gr2_set_relative_init(0, sda_current_con);
+
   tov_screen = gr2_add_screen(sda_current_con);
 
   gr2_add_text(1, 0, 8, 1, OVRL_ENTER_TIME, tov_screen, sda_current_con);
@@ -106,6 +109,7 @@ uint16_t time_overlay_init() {
 
   setOverlayY2(272);
   setOverlayDestructor(time_overlay_destructor);
+  gr2_set_relative_init(rel_prev, sda_current_con);
 
   return tov_id;
 }

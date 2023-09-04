@@ -150,6 +150,9 @@ void date_select_widget_load_days(
   ) {
   uint16_t x, y;
 
+  uint8_t rel_prev = gr2_get_relative_init(sda_current_con);
+  gr2_set_relative_init(0, sda_current_con);
+
   if (month != 2) {
     d->dayCount = date_month_lenghts[month];
   } else {
@@ -192,6 +195,8 @@ void date_select_widget_load_days(
   d->selectedDay = day;
   d->currentMonth = month;
   d->currentYear = year;
+
+  gr2_set_relative_init(rel_prev, sda_current_con);
 }
 
 
@@ -203,6 +208,9 @@ uint16_t date_select_widget_init(
   ) {
 
   uint16_t scr;
+
+  uint8_t rel_prev = gr2_get_relative_init(sda_current_con);
+  gr2_set_relative_init(0, sda_current_con);
 
   scr = gr2_add_screen(sda_current_con);
   gr2_add_text(0, 0, 1, 1, OVRL_DAY1, scr, sda_current_con);
@@ -217,6 +225,8 @@ uint16_t date_select_widget_init(
   d->currentMonth = month;
   d->currentYear = year;
   date_select_widget_load_days(d, year, month, day);
+
+  gr2_set_relative_init(rel_prev, sda_current_con);
 
   return scr;
 }

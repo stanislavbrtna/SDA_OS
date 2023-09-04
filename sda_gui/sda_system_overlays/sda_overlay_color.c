@@ -49,6 +49,9 @@ uint16_t color_overlay_init() {
 
   col_screen = gr2_add_screen(sda_current_con);
 
+  uint8_t rel_prev = gr2_get_relative_init(sda_current_con);
+  gr2_set_relative_init(0, sda_current_con);
+
   gr2_add_text(1, 0, 8, 1, OVRL_SELECT_COLOR , col_screen, sda_current_con);
   col_show = gr2_add_cbutton(1, 1, 7, 2, (uint8_t *)"", col_screen, sda_current_con);
 
@@ -62,6 +65,7 @@ uint16_t color_overlay_init() {
 
   col_id = setOverlayScreen(col_screen, sda_current_con);
   setOverlayDestructor(color_overlay_destructor);
+  gr2_set_relative_init(rel_prev, sda_current_con);
 
   return col_id;
 }

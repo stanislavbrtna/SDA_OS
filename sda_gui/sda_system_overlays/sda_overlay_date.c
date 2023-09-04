@@ -120,6 +120,9 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
 
   sda_keyboard_hide();
 
+  uint8_t rel_prev = gr2_get_relative_init(sda_current_con);
+  gr2_set_relative_init(0, sda_current_con);
+
   date_screen = gr2_add_screen(sda_current_con);
   gr2_set_cell_space_bottom(date_screen, 4, sda_current_con);
   gr2_set_y_cell(date_screen, 34, sda_current_con);
@@ -159,6 +162,8 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
   setOverlayDestructor(date_overlay_destructor);
 
   setOverlayY2(442);
+
+  gr2_set_relative_init(rel_prev, sda_current_con);
 
   return date_id;
 }
