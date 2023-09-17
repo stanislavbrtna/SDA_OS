@@ -101,6 +101,7 @@ uint16_t sda_settings_display_screen(uint8_t init) {
 
     sda_store_calibration();
     setRedrawFlag();
+    gr2_ki_unselect(optLcdScr, &sda_sys_con);
   }
 
   if (gr2_clicked(optLcdDecr, &sda_sys_con)) {
