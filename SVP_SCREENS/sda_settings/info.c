@@ -99,7 +99,7 @@ uint16_t sda_settings_info_screen(uint8_t init) {
     gr2_add_text(0, 8, 10, 9,(uint8_t *)"SVS version: "SVS_VERSION, internalScr, &sda_sys_con);
     gr2_add_text(0, 9, 10, 12,(uint8_t *)"Compiled:\n"__DATE__" "__TIME__"\n(c) Standa", internalScr, &sda_sys_con);
 
-    optInfoBack = gr2_add_button(1, 11, 4, 12, SCR_BACK, optInfoScr, &sda_sys_con);
+    optInfoBack = gr2_add_button(1, 12, 4, 13, SCR_BACK, optInfoScr, &sda_sys_con);
     gr2_text_set_align(optInfoBack, GR2_ALIGN_CENTER, &sda_sys_con);
     return optInfoScr;
   }
