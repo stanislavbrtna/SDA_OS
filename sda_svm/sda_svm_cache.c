@@ -74,6 +74,24 @@ void svmPrecacheGetName(uint8_t* buffer, uint32_t len, int32_t crc, uint8_t* ext
 }
 
 
+void svmPrecacheGetFingerprint(uint8_t * runtimeFingerprint, uint16_t len, uint32_t siz) {
+  for(int i = 0; i < len; i++){
+    runtimeFingerprint[i] = 0;
+  }
+
+  sda_int_to_str(runtimeFingerprint, siz, sizeof(runtimeFingerprint));
+  sda_str_add(runtimeFingerprint, "b\n");
+  #ifdef PC
+  sda_str_add(runtimeFingerprint, "Platform:PC\n");
+  #else
+  sda_str_add(runtimeFingerprint, "Platform:UMC\n");
+  #endif
+  sda_str_add(runtimeFingerprint, "OSver: "SDA_OS_VERSION);
+  sda_str_add(runtimeFingerprint, "\nSVSver: "SVS_VERSION);
+  sda_str_add(runtimeFingerprint, "\nR:"__DATE__"-"__TIME__"\n");
+}
+
+
 void svmPrecacheFile(uint8_t *fname) {
   if (svmGetRunning()) {
     printf("ERROR: cannot precache if svm is already running!");
@@ -87,6 +105,16 @@ void svmPrecacheFile(uint8_t *fname) {
   int32_t crc = (int32_t) crc32b(fname);
   if (crc < 0) {
     crc *= -1;
+  }
+
+  svp_file fil;
+  svp_fopen_rw(&fil, fname);
+  uint32_t siz = svp_get_size(&fil);
+  svp_fclose(&fil);
+
+  if(svmPreCachedExists(crc, siz)) {
+    printf("%s: Already cached (%s)\n",__FUNCTION__, fname);
+    return;
   }
 
   // token cache
@@ -121,11 +149,28 @@ void svmPrecacheFile(uint8_t *fname) {
 
   SVScloseCache(&svm);
 
+  // build fingerprint file
+  // str
+  
+  svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".sec");
+  
+  if(svp_fopen_rw(&svmFile, fileBuffer) == 0) {
+    printf("precacher: file open error\n");
+    return;
+  }
+
+  uint8_t runtimeFingerprint[256];
+  svmPrecacheGetFingerprint(runtimeFingerprint, sizeof(runtimeFingerprint), siz);
+  
+  svp_fwrite(&svmFile, runtimeFingerprint, sizeof(runtimeFingerprint));
+  svp_fclose(&svmFile);
+
+
   printf("Precaching: %s\n", fileBuffer);
 }
 
 
-uint8_t svmPreCachedExists(int32_t crc) {
+uint8_t svmPreCachedExists(int32_t crc, uint32_t siz) {
   uint8_t fileBuffer[256];
   
   svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".stc");
@@ -143,6 +188,32 @@ uint8_t svmPreCachedExists(int32_t crc) {
   svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".str");
 
   if (!svp_fexists(fileBuffer)) {
+    return 0;
+  }
+
+  svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".sec");
+
+  if (!svp_fexists(fileBuffer)) {
+    return 0;
+  }
+
+  svp_file svmFile;
+
+  if(svp_fopen_rw(&svmFile, fileBuffer) == 0) {
+    printf("fingerprint check: file open error\n");
+    return 0;
+  }
+
+  uint8_t runtimeFingerprint[256];
+  uint8_t myFingerprint[256];
+
+  svp_fread(&svmFile, runtimeFingerprint, sizeof(runtimeFingerprint));
+  svp_fclose(&svmFile);
+
+  svmPrecacheGetFingerprint(myFingerprint, sizeof(myFingerprint), siz);
+
+  if(svp_strcmp(runtimeFingerprint, myFingerprint) == 0) {
+    printf("%s: Error: OS Fingerprint mismatch! (%s)\n",__FUNCTION__, fileBuffer);
     return 0;
   }
 

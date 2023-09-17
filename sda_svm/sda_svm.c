@@ -290,9 +290,15 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
   int32_t crc = (int32_t) crc32b(fname);
   if (crc < 0) {
     crc *= -1;
-  } 
+  }
 
-  if(svmPreCachedExists(crc)) {
+  svp_file fil;
+  svp_fopen_rw(&fil, fname);
+  uint32_t siz = svp_get_size(&fil);
+  svp_fclose(&fil);
+
+  if(svmPreCachedExists(crc, siz)) {
+    printf("%s: loading cached: %s\n",__FUNCTION__, fname);
     if(svmLoadPrecached(crc)) {
       return 0;
     }

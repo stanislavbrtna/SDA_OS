@@ -30,7 +30,6 @@ void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsV
 
 void svmPrecacheFile(uint8_t *fname);
 
-uint8_t svmPreCachedExists(int32_t crc);
 uint8_t svmLoadPrecached(int32_t crc);
 
 #endif
