@@ -30,7 +30,7 @@ void svmInitRemoveCache(uint8_t *ext) {
 
   retval = svp_extFind(buffer, 30, ext, (uint8_t *) ".");
 
-  while (retval){
+  while (retval) {
     svp_unlink(buffer);
     retval = svp_extFindNext(buffer, 30);
   }
@@ -62,6 +62,21 @@ void svmRemoveCachedFile(uint16_t id, uint8_t * tail) {
 #ifdef SVM_DBG_ENABLED
   printf("unlinking: %s\n", cacheBuffer);
 #endif
+}
+
+
+void svmRemovePrecache() {
+  uint8_t dirbuf[258];
+  svp_getcwd(dirbuf, 256);
+
+  svp_switch_main_dir();
+  svp_chdir((uint8_t *)"APPS/cache/pre");
+  printf("Cleaning up precached apps.\n");
+  svmInitRemoveCache((uint8_t *) "stc");
+  svmInitRemoveCache((uint8_t *) "svm");
+  svmInitRemoveCache((uint8_t *) "str");
+  svmInitRemoveCache((uint8_t *) "sec");
+  svp_chdir(dirbuf);
 }
 
 
