@@ -35,7 +35,6 @@ de-init
 sd-unmounted lock state
 */
 
-static uint16_t scrollbar;
 static uint8_t * selectedObject;
 static uint8_t * selectedObjectStr;
 static uint16_t innerPage;
@@ -147,8 +146,6 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
     appCount = x;
     appNum = x;
 
-    gr2_set_param(scrollbar, appCount / 3, &sda_sys_con);
-
 #ifdef APP_SCREEN_DEBUG
     printf("Loading Done\n");
 #endif
@@ -249,7 +246,7 @@ static uint8_t detect_type(uint8_t * fname) {
 
 
 /*
- * Resizes screen according to scrollbar and app runing
+ * Resizes screen according app runing
  *
  * id - pscg id of the screen to resize
  *
@@ -263,31 +260,12 @@ void inScreenResizer(uint16_t id) {
     printf("Error: trying to resize screen zero!\n");
     return;
   }
-  gr2_set_x1y1x2y2(id, 0, 1, 10, 13, &sda_sys_con);
+  gr2_set_x1y1x2y2(id, 0, 2, 10, 26, &sda_sys_con);
+  gr2_set_xscroll(id, -16, &sda_sys_con);
   if (svmGetRunning()) {
-    gr2_set_y2(id, 12, &sda_sys_con);
-    if (appNum > 9) {
-      gr2_set_visible(scrollbar, 1, &sda_sys_con);
-      gr2_set_x1y1x2y2(id, 0, 1, 9, 12, &sda_sys_con);
-      gr2_set_y2(scrollbar, 12, &sda_sys_con);
-      gr2_set_xscroll(id, 0, &sda_sys_con);
-    } else {
-      gr2_set_xscroll(id, -16, &sda_sys_con);
-      gr2_set_yscroll(id, 0, &sda_sys_con);
-      gr2_set_visible(scrollbar, 0, &sda_sys_con);
-    }
+    gr2_set_y2(id, 24, &sda_sys_con);
   } else {
-    gr2_set_y2(id, 14, &sda_sys_con);
-    if (appNum > 12) {
-      gr2_set_visible(scrollbar, 1, &sda_sys_con);
-      gr2_set_x1y1x2y2(id, 0, 1, 9, 14, &sda_sys_con);
-      gr2_set_y2(scrollbar, 12, &sda_sys_con);
-      gr2_set_xscroll(id, 0, &sda_sys_con);
-    } else {
-      gr2_set_xscroll(id, -16, &sda_sys_con);
-      gr2_set_yscroll(id, 0, &sda_sys_con);
-      gr2_set_visible(scrollbar, 0, &sda_sys_con);
-    }
+    gr2_set_y2(id, 28, &sda_sys_con);
   }
 }
 
@@ -305,7 +283,8 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
     folder_stack_max = 0;
 
     appScreen = gr2_add_screen(&sda_sys_con);
-    scrollbar = gr2_add_slider_v(9, 1, 10, 12, 100, 0, appScreen, &sda_sys_con);
+
+    gr2_set_y_cell(appScreen, 16, &sda_sys_con);
 
     if (inScreen != 0) {
       gr2_destroy_screen(inScreen, &sda_sys_con);
@@ -320,9 +299,9 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
     gr2_set_screen(inScreen, appScreen, &sda_sys_con);
 
-    textLabel = gr2_add_text(2, 0, 10, 1, ASCR_APPLICATIONS, appScreen, &sda_sys_con);
-    btnBack = gr2_add_button(0, 0, 2, 1, (uint8_t *)"<-", appScreen, &sda_sys_con);
-    btnSwitch = gr2_add_button(2, 13, 8, 14, ASCR_RUNNING_APP, appScreen, &sda_sys_con);
+    textLabel = gr2_add_text(2, 0, 10, 2, ASCR_APPLICATIONS, appScreen, &sda_sys_con);
+    btnBack = gr2_add_button(0, 0, 2, 2, (uint8_t *)"<-", appScreen, &sda_sys_con);
+    btnSwitch = gr2_add_button(2, 25, 8, 27, ASCR_RUNNING_APP, appScreen, &sda_sys_con);
 
     gr2_text_set_align(btnSwitch, GR2_ALIGN_CENTER, &sda_sys_con);
     gr2_set_visible(btnBack, 0, &sda_sys_con);
@@ -339,10 +318,6 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
       sda_slot_on_top(0);
     }
     
-    if(gr2_get_visible(scrollbar, &sda_sys_con)) {
-      gr2_set_yscroll(inScreen, gr2_get_value(scrollbar, &sda_sys_con) * 96, &sda_sys_con);
-    }
-
     appActive = svmGetRunning();
 
     gr2_set_visible(btnSwitch, appActive, &sda_sys_con);
@@ -413,10 +388,6 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
     if ((appActivePrev != appActive) || (inScrReloaded)) {
       inScreenResizer(inScreen);
-
-      if (inScrReloaded) {
-        gr2_set_value(scrollbar, 0, &sda_sys_con);
-      }
 
       inScrReloaded = 0;
     }
