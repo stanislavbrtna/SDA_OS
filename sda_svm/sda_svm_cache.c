@@ -94,7 +94,7 @@ void svmPrecacheGetFingerprint(uint8_t * runtimeFingerprint, uint16_t len, uint3
     runtimeFingerprint[i] = 0;
   }
 
-  sda_int_to_str(runtimeFingerprint, siz, sizeof(runtimeFingerprint));
+  sda_int_to_str(runtimeFingerprint, siz, len);
   sda_str_add(runtimeFingerprint, "b\n");
   #ifdef PC
   sda_str_add(runtimeFingerprint, "Platform:PC\n");
