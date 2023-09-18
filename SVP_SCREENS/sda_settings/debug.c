@@ -36,7 +36,7 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
   
   uint16_t optDbgScr;
 
-  if (init == 1){
+  if (init == 1) {
     // notifiacations screen
     optDbgScr = gr2_add_screen(&sda_sys_con);
     gr2_set_relative_init(1, &sda_sys_con);
@@ -54,17 +54,20 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
     
     gr2_text_set_align(optDbgBack, GR2_ALIGN_CENTER, &sda_sys_con);
 
-    if (sda_usb_serial_is_enabled()) {
-      gr2_set_value(dbgUartEnable, 1, &sda_sys_con);
-    }
-
-    if (svmGetAutocahceEnable()) {
-      gr2_set_value(dbgAutocahceEnable, 1, &sda_sys_con);
-    }
+    sda_settings_debug_screen(2); // reload options
 
     gr2_set_relative_init(0, &sda_sys_con);
     return optDbgScr;
   }
+
+  if (init == 2) {
+    gr2_set_value(dbgUartEnable, (int32_t)sda_usb_get_enable_for_dbg(), &sda_sys_con);
+    gr2_set_value(dbgAutocahceEnable, (uint8_t)svmGetAutocahceEnable(), &sda_sys_con);
+    gr2_set_grayout(bCClean, svmGetRunning(), &sda_sys_con); 
+
+    return optDbgBack;
+  }
+
 
   if (gr2_clicked(dbgUartEnable, &sda_sys_con)) {
     sda_usb_enable_for_dbg(gr2_get_value(dbgUartEnable, &sda_sys_con));
@@ -95,16 +98,6 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
 
   if (gr2_clicked(bCClean, &sda_sys_con)) {
     svmRemovePrecache();
-  }
-
-  if (init == 2) {
-    if (sda_usb_get_enable_for_dbg()) {
-      gr2_set_value(dbgUartEnable, 1, &sda_sys_con);
-    } else {
-      gr2_set_value(dbgUartEnable, 0, &sda_sys_con);
-    }
-
-    return optDbgBack;
   }
 
   if (gr2_clicked(optDbgBack, &sda_sys_con)) {
