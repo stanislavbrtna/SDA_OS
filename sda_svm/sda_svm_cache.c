@@ -36,24 +36,24 @@ void svmInitRemoveCache(uint8_t *ext) {
   }
 }
 
-void svmRemoveCachedProc(uint16_t id) {
+void svmRemoveCachedProc(uint16_t pid) {
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
-  svmRemoveCachedFile(id, (uint8_t *) ".gr0");
-  svmRemoveCachedFile(id, (uint8_t *) ".gr1");
-  svmRemoveCachedFile(id, (uint8_t *) ".gr2");
-  svmRemoveCachedFile(id, (uint8_t *) ".met");
-  svmRemoveCachedFile(id, (uint8_t *) ".stc");
-  svmRemoveCachedFile(id, (uint8_t *) ".svm");
-  svmRemoveCachedFile(id, (uint8_t *) ".str");
+  svmRemoveCachedFile(pid, (uint8_t *) ".gr0");
+  svmRemoveCachedFile(pid, (uint8_t *) ".gr1");
+  svmRemoveCachedFile(pid, (uint8_t *) ".gr2");
+  svmRemoveCachedFile(pid, (uint8_t *) ".met");
+  svmRemoveCachedFile(pid, (uint8_t *) ".stc");
+  svmRemoveCachedFile(pid, (uint8_t *) ".svm");
+  svmRemoveCachedFile(pid, (uint8_t *) ".str");
 }
 
 
-void svmRemoveCachedFile(uint16_t id, uint8_t * tail) {
+void svmRemoveCachedFile(uint16_t pid, uint8_t * tail) {
   uint8_t cacheBuffer[256];
   uint8_t numbuff[25];
 
-  sda_int_to_str(numbuff, (int32_t)id, sizeof(numbuff));
+  sda_int_to_str(numbuff, (int32_t)pid, sizeof(numbuff));
   sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
   sda_str_add(cacheBuffer, numbuff);
   sda_str_add(cacheBuffer, tail);

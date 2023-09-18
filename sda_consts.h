@@ -66,7 +66,7 @@ File description:
 #else
 #define APP_ARG_STR_LEN 1024 // magically works for the web sim
 #endif
-// maximum cached applications
+// maximum available applications
 #define MAX_OF_SAVED_PROC 16
 
 // Max number of openned general-purpose files

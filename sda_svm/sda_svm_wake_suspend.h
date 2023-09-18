@@ -26,9 +26,14 @@ SOFTWARE.
 #include "sda_svm.h"
 #include "sda_svm_misc.h"
 
-uint16_t svmGetSuspendedId(uint16_t id);
+// Gets Pid from id
+uint16_t svmGetSuspendedPid(uint16_t id);
+
+// Gets name from id
 uint8_t *svmGetSuspendedName(uint16_t id);
-void svmSuspendAddId(uint16_t id, uint8_t * name);
+
+// inits new entry in process table
+void svmSuspendInitPid(uint16_t pid, uint8_t * name);
 
 uint8_t svmSuspend();
 uint8_t svmWake(uint16_t id);

@@ -45,7 +45,7 @@ uint8_t * svmGetCallback() {
 
 uint8_t svmRunPerformCall() {
   uint8_t argBuff[APP_ARG_STR_LEN];
-  uint16_t parentId = svmMeta.id;
+  uint16_t parentPid = svmMeta.pid;
   //TODO: Storing and restoring arguments crashes on emcc     
 
   if (flag_svmCall != 1) {
@@ -54,9 +54,9 @@ uint8_t svmRunPerformCall() {
  
   svmStoreArguments(argBuff, svmCallArg, svmCallArgType, svmCallArgStr, &svm);
 
-  if(svmLaunch(svmCallName, svmMeta.id) == 0) {
+  if(svmLaunch(svmCallName, svmMeta.pid) == 0) {
     flag_svmCall = 0;
-    svmWake(parentId);
+    svmWake(parentPid);
     sda_show_error_message((uint8_t *)"svmRun: subprocess launch failed!");
     return 0;
   }
@@ -172,12 +172,12 @@ void svmSaveProcData() {
   printf("svmSaveProcData: cache files\n");
 #endif
 
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".svm", &svm, sizeof(svm));
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".str", svmStrings, svm.stringFieldLen + 1);
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX);
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX);
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context));
-  sdaSvmSaver(svmMeta.id, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta));
+  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".svm", &svm, sizeof(svm));
+  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".str", svmStrings, svm.stringFieldLen + 1);
+  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX);
+  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX);
+  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context));
+  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta));
 
 #ifdef SVM_DBG_ENABLED
   printf("svmSaveProcData: done\n");
@@ -185,28 +185,28 @@ void svmSaveProcData() {
 }
 
 
-uint8_t svmLoadProcData(uint16_t id) {
+uint8_t svmLoadProcData(uint16_t pid) {
 
 #ifdef SVM_DBG_ENABLED
   printf("svmLoadProcData: loading: id: %u\n", id);
 #endif
 
-  if(!sdaSvmLoader(id, (uint8_t *) ".svm", &svm, sizeof(svm)))
+  if(!sdaSvmLoader(pid, (uint8_t *) ".svm", &svm, sizeof(svm)))
     return 0;
 
-  if(!sdaSvmLoader(id, (uint8_t *) ".str", svmStrings, svm.stringFieldLen + 1))
+  if(!sdaSvmLoader(pid, (uint8_t *) ".str", svmStrings, svm.stringFieldLen + 1))
     return 0;
 
-  if(!sdaSvmLoader(id, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX))
+  if(!sdaSvmLoader(pid, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX))
     return 0;
 
-  if(!sdaSvmLoader(id, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX))
+  if(!sdaSvmLoader(pid, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX))
     return 0;
 
-  if(!sdaSvmLoader(id, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context)))
+  if(!sdaSvmLoader(pid, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context)))
     return 0;
 
-  if(!sdaSvmLoader(id, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta)))
+  if(!sdaSvmLoader(pid, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta)))
     return 0;
 
   SVSopenCache(&svm);
@@ -247,7 +247,7 @@ uint8_t svmLoadProcData(uint16_t id) {
 }
 
 
-uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t size) {
+uint8_t sdaSvmLoader(uint16_t pid, uint8_t * tail, void *target, uint32_t size) {
   uint8_t cacheBuffer[256];
   uint8_t numbuff[25];
   svp_file svmFile;
@@ -255,7 +255,7 @@ uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t size) {
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
 
-  sda_int_to_str(numbuff, (int32_t)id, sizeof(numbuff));
+  sda_int_to_str(numbuff, (int32_t)pid, sizeof(numbuff));
   sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
   sda_str_add(cacheBuffer, numbuff);
   sda_str_add(cacheBuffer, tail);
@@ -272,7 +272,7 @@ uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t size) {
 }
 
 
-void sdaSvmSaver(uint16_t id, uint8_t * tail, void *target, uint32_t size) {
+void sdaSvmSaver(uint16_t pid, uint8_t * tail, void *target, uint32_t size) {
   uint8_t cacheBuffer[256];
   uint8_t numbuff[25];
   svp_file svmFile;
@@ -280,7 +280,7 @@ void sdaSvmSaver(uint16_t id, uint8_t * tail, void *target, uint32_t size) {
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
 
-  sda_int_to_str(numbuff, (int32_t)id, sizeof(numbuff));
+  sda_int_to_str(numbuff, (int32_t)pid, sizeof(numbuff));
   sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
   sda_str_add(cacheBuffer, numbuff);
   sda_str_add(cacheBuffer, tail);

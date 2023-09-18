@@ -28,9 +28,9 @@ extern svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
 extern uint8_t soft_error_flag;
 
 
-uint16_t svmGetSuspendedId(uint16_t id) { 
+uint16_t svmGetSuspendedPid(uint16_t id) { 
   if (svmSavedProc[id].valid == 1) {
-    return svmSavedProc[id].id;
+    return svmSavedProc[id].pid;
   }
   return 0;
 }
@@ -43,7 +43,7 @@ uint8_t *svmGetSuspendedName(uint16_t id) {
   return (uint8_t *)"";
 }
 
-void svmSuspendAddId(uint16_t id, uint8_t * name) {
+void svmSuspendInitPid(uint16_t pid, uint8_t * name) {
   uint16_t index = 0;
   while (svmSavedProc[index].valid != 0) {
     if (index == MAX_OF_SAVED_PROC - 1) {
@@ -53,7 +53,7 @@ void svmSuspendAddId(uint16_t id, uint8_t * name) {
   }
 
   sda_strcp(name, svmSavedProc[index].name, APP_NAME_LEN);
-  svmSavedProc[index].id = id;
+  svmSavedProc[index].pid = pid;
   svmSavedProc[index].valid = 1;
   svmSavedProc[index].singular = 0;
 }
@@ -75,8 +75,8 @@ uint8_t svmSuspend() {
 }
 
 
-uint8_t svmWake(uint16_t id) {
-  if(id == svmMeta.id && svmGetValid()) {
+uint8_t svmWake(uint16_t pid) {
+  if(pid == svmMeta.pid && svmGetValid()) {
     svmOnTop();
     if(functionExists(WAKEUP_FUNCTION, &svm)) { // execute the wakeup
       commExec(WAKEUP_FUNCTION, &svm);
@@ -96,8 +96,8 @@ uint8_t svmWake(uint16_t id) {
   }
 
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].id == id && svmSavedProc[x].valid == 1) {
-      if (svmLoadProcData(id) == 0) {
+    if (svmSavedProc[x].pid == pid && svmSavedProc[x].valid == 1) {
+      if (svmLoadProcData(pid) == 0) {
         printf("svmWake: error while loading app (1)\n");
         svmSavedProc[x].valid = 0;
         return 1;

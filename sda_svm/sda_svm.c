@@ -31,7 +31,7 @@ svsVM          svm;
 sdaSvmMetadata svmMeta;
 uint8_t        svmStrings[STRING_FIELD_L];
 
-static uint16_t nextId;
+static uint16_t nextPid;
 
 static uint8_t svmValid;
 static uint8_t svm_init;
@@ -58,7 +58,7 @@ uint16_t mainScr; //obrazovka top slotu / top-slot screen
 uint8_t * pscgErrorString;
 
 // static headers
-static void svmInValidate(uint16_t id);
+static void svmInValidate(uint16_t pid);
 static uint16_t GetIfSingular(uint8_t * name);
 
 
@@ -75,13 +75,13 @@ uint8_t svmGetSavedProcValid(uint16_t proc_array_index) {
 }
 
 
-uint16_t svmGetSavedProcId(uint16_t proc_array_index) {
-  return svmSavedProc[proc_array_index].id;
+uint16_t svmGetSavedProcPid(uint16_t id) {
+  return svmSavedProc[id].pid;
 }
 
 
-void svmSetNextId(uint16_t id) {
-  nextId = id;
+void svmSetNextPid(uint16_t pid) {
+  nextPid = pid;
 }
 
 
@@ -116,12 +116,12 @@ uint8_t svmGetRunning() {
   return 0;
 }
 
-uint8_t svmGetValidId(uint16_t id) {
-  if (svmMeta.id == id && svmValid){
+uint8_t svmGetValidPid(uint16_t pid) {
+  if (svmMeta.pid == pid && svmValid){
     return 1;
   }
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].id == id) {
+    if (svmSavedProc[x].pid == pid) {
       return svmSavedProc[x].valid;
     }
   }
@@ -190,9 +190,10 @@ uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
   return 0;
 }
 
-void svmLaunchSetDefMetadata(uint16_t id, uint16_t parentId, uint8_t *fname) {
-  svmMeta.id = id;
-  svmMeta.parentId = parentId;
+
+void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname) {
+  svmMeta.pid = pid;
+  svmMeta.parentPid = parentPid;
   
   sda_strcp(fname, svmMeta.name, sizeof(svmMeta.name));
   
@@ -204,9 +205,8 @@ void svmLaunchSetDefMetadata(uint16_t id, uint16_t parentId, uint8_t *fname) {
   sda_strcp((uint8_t *)"", svmMeta.openConfName, sizeof(svmMeta.openConfName));
   sda_strcp((uint8_t *)"", svmMeta.openCsvName, sizeof(svmMeta.openCsvName));
   sda_strcp((uint8_t *)"DATA", svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
-  svmMeta.openConfUsed = 0;
-  svmMeta.openCsvUsed  = 0;
-  
+  svmMeta.openConfUsed   = 0;
+  svmMeta.openCsvUsed    = 0;
   svmMeta.loadUptime     = svpSGlobal.uptimeMs;
   svmMeta.landscape      = 0;
   svmMeta.lcdOffButtons  = 0;
@@ -223,7 +223,7 @@ void svmLaunchSetDefMetadata(uint16_t id, uint16_t parentId, uint8_t *fname) {
 
 
 // launch app
-uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
+uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   uint8_t cacheBuffer[256];
   uint8_t numbuff[25];
   uint8_t dirbuf[258];
@@ -253,7 +253,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
     }
   }
 
-  sda_int_to_str(numbuff, (int32_t)nextId, sizeof(numbuff));
+  sda_int_to_str(numbuff, (int32_t)nextPid, sizeof(numbuff));
   sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
   sda_str_add(cacheBuffer, numbuff);
   sda_str_add(cacheBuffer,(uint8_t *) ".stc");
@@ -275,7 +275,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
 
   set_gr2_workaround_context(&sda_app_con);
 
-  if (parentId != 0 && svmMeta.launchFromCWD == 1) {
+  if (parentPid != 0 && svmMeta.launchFromCWD == 1) {
     svp_chdir(dirbuf);
 
     // if we do not launch from launcher, we update the path of the executable
@@ -332,8 +332,8 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
   svm_init = 0; //TODO: is this needed?
 
   // set metadata
-  svmLaunchSetDefMetadata(nextId, parentId, fname);
-  nextId++;
+  svmLaunchSetDefMetadata(nextPid, parentPid, fname);
+  nextPid++;
   wrap_set_lcdOffButtons(0);
 
   // move to DATA
@@ -349,7 +349,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
   sda_slot_on_top(4);
   
   // insert to table of running apps
-  svmSuspendAddId(svmMeta.id, svmMeta.name);
+  svmSuspendInitPid(svmMeta.pid, svmMeta.name);
   
   // show the close button
   svpSGlobal.systemXBtnVisible = 1;
@@ -391,14 +391,14 @@ void svmCloseRunning() {
   }
 
   SVScloseCache(&svm);
-  svmInValidate(svmMeta.id);
+  svmInValidate(svmMeta.pid);
   sda_set_sleep_lock(0);
   svpSGlobal.kbdVisible = 0;
   sda_set_landscape(0);
   sda_alarm_clear_flag();
   sda_files_close();
 
-  if (svmMeta.parentId != 0) {
+  if (svmMeta.parentPid != 0) {
     uint8_t  argBuff[2048];
     varType  svmCallRetval[3];
     uint8_t  svmCallRetvalType[3];
@@ -413,8 +413,8 @@ void svmCloseRunning() {
     }
 
     // load parent
-    if (svmGetValidId(svmMeta.parentId)) {
-      if (svmLoadProcData(svmMeta.parentId) == 0) {
+    if (svmGetValidPid(svmMeta.parentPid)) {
+      if (svmLoadProcData(svmMeta.parentPid) == 0) {
         printf("svmCloseRunning: Loading parent app failed!\n");
         svmValid = 0;
         sda_slot_set_invalid(4);
@@ -472,7 +472,7 @@ void svmCloseAll() {
 
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProc[x].valid == 1) {
-      svmClose(svmSavedProc[x].id);
+      svmClose(svmSavedProc[x].pid);
     }
   }
 
@@ -495,7 +495,7 @@ static uint16_t GetIfSingular(uint8_t * name) {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProc[x].valid == 1) {
       if (strCmp(svmSavedProc[x].name, name) && svmSavedProc[x].singular) {
-        return svmSavedProc[x].id;
+        return svmSavedProc[x].pid;
       }
     }
   }
@@ -503,9 +503,9 @@ static uint16_t GetIfSingular(uint8_t * name) {
 }
 
 
-void svmSetSingular(uint16_t id) {
+void svmSetSingular(uint16_t pid) {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].valid == 1 && svmSavedProc[x].id == id) {
+    if (svmSavedProc[x].valid == 1 && svmSavedProc[x].pid == pid) {
       svmSavedProc[x].singular = 1;
     }
   }
@@ -516,11 +516,11 @@ void svmSetSingular(uint16_t id) {
 void svmClose(uint16_t id) {
   uint16_t prevApp = 0;
 
-  if (svmMeta.id != id && sda_get_top_slot() == 4) {
-    prevApp = svmMeta.id;
+  if (svmMeta.pid != id && sda_get_top_slot() == 4) {
+    prevApp = svmMeta.pid;
   }
 
-  if (svmMeta.id != id) {
+  if (svmMeta.pid != id) {
     svmWake(id);
   }
 
@@ -532,11 +532,11 @@ void svmClose(uint16_t id) {
 }
 
 
-static void svmInValidate(uint16_t id) {
+static void svmInValidate(uint16_t pid) {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].id == id && svmSavedProc[x].valid == 1) {
+    if (svmSavedProc[x].pid == pid && svmSavedProc[x].valid == 1) {
       svmSavedProc[x].valid = 0;
-      svmRemoveCachedProc(id);
+      svmRemoveCachedProc(pid);
 #ifdef SVM_DBG_ENABLED
       printf("svmInValidate: removing cached proc x:%u id:%u\n", x, id);
 #endif
@@ -558,7 +558,7 @@ void sdaSvmKillApp_handle() {
   }
   sda_slot_set_invalid(4);
 
-  svmInValidate(svmMeta.id);
+  svmInValidate(svmMeta.pid);
   sda_set_sleep_lock(0);
 
   sda_alarm_clear_flag();

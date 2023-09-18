@@ -357,7 +357,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    svmSetSingular(svmGetId());
+    svmSetSingular(svmGetPid());
     return 1;
   }
 

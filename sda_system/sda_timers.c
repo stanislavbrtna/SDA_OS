@@ -35,7 +35,7 @@ static uint8_t svmSavedProcTimerCallback[MAX_OF_SAVED_PROC][NAME_LENGTH];
 
 void sdaSvmSetTimer(uint32_t time_ms, uint8_t *callback) {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmGetSavedProcId(x) == svmMeta.id && svmGetSavedProcValid(x) == 1) {
+    if (svmGetSavedProcPid(x) == svmMeta.pid && svmGetSavedProcValid(x) == 1) {
       svmSavedProcTimer[x] = svpSGlobal.uptimeMs + time_ms;
       sda_strcp(callback, svmSavedProcTimerCallback[x], sizeof(svmSavedProcTimerCallback[x]));
       //printf("setting %u, %s\n", svmSavedProcTimer[x], svmSavedProcTimerCallback[x]);
@@ -46,7 +46,7 @@ void sdaSvmSetTimer(uint32_t time_ms, uint8_t *callback) {
 
 void sdaSvmClearTimer() {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmGetSavedProcId(x) == svmMeta.id && svmGetSavedProcValid(x) == 1) {
+    if (svmGetSavedProcPid(x) == svmMeta.pid && svmGetSavedProcValid(x) == 1) {
       svmSavedProcTimer[x] = 0;
     }
   }
@@ -60,7 +60,7 @@ uint8_t sdaSvmHandleTimers() {
       if (svmSavedProcTimer[x] <= svpSGlobal.uptimeMs && svmSavedProcTimer[x] != 0) {
         //printf("triggered!\n");
         svmSavedProcTimer[x] = 0; // reset
-        if (svmGetSavedProcId(x) == svmMeta.id) {
+        if (svmGetSavedProcPid(x) == svmMeta.pid) {
           //execute
           commExec(svmSavedProcTimerCallback[x], &svm);
           if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
@@ -76,10 +76,10 @@ uint8_t sdaSvmHandleTimers() {
             timer_wkup_flag = 0;
           }
         } else {
-          uint16_t prev_id;
-          prev_id = svmMeta.id;
+          uint16_t prev_pid;
+          prev_pid = svmMeta.pid;
           //wakeup
-          svmWake(svmGetSavedProcId(x));
+          svmWake(svmGetSavedProcPid(x));
 
           //execute
           commExec(svmSavedProcTimerCallback[x], &svm);
@@ -93,7 +93,7 @@ uint8_t sdaSvmHandleTimers() {
 
           //go back
           if (timer_wkup_flag == 0) {
-            svmWake(prev_id);
+            svmWake(prev_pid);
             return 0;
           }
           timer_wkup_flag = 0;

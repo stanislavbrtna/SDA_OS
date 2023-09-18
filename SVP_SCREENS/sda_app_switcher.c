@@ -29,7 +29,7 @@ static uint8_t valid;
 
 static uint16_t appButtons[MAX_OF_SAVED_PROC];
 static uint16_t appButtonsClose[MAX_OF_SAVED_PROC];
-static uint16_t appId[MAX_OF_SAVED_PROC];
+static uint16_t appPid[MAX_OF_SAVED_PROC];
 static uint16_t ok;
 static uint16_t close_all;
 static uint16_t scrollbar;
@@ -117,9 +117,9 @@ void taskSwitcherOpen() {
   );
 
   for(uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    appId[n] = svmGetSuspendedId(x);
+    appPid[n] = svmGetSuspendedPid(x);
 
-    if(appId[n] == 0){
+    if(appPid[n] == 0){
       continue;
     }
 
@@ -178,7 +178,7 @@ void taskSwitcherUpdate() {
   for(uint16_t x = 0; x < numberOfApps; x++) {
     if (gr2_get_event(appButtons[x], &sda_sys_con) == EV_RELEASED) {
       sda_keyboard_hide();
-      if (svmWake(appId[x])) {
+      if (svmWake(appPid[x])) {
         sda_show_error_message((uint8_t *)"Error occured while waking app.");
       }
       setRedrawFlag();
@@ -187,7 +187,7 @@ void taskSwitcherUpdate() {
     }
 
     if (gr2_get_event(appButtonsClose[x], &sda_sys_con) == EV_RELEASED) {
-      svmClose(appId[x]);
+      svmClose(appPid[x]);
       destroyOverlay();
       taskSwitcherOpen();
       return;

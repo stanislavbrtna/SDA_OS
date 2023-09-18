@@ -100,9 +100,9 @@ uint8_t svmGetAuthorized() {
 }
 
 
-uint16_t svmGetId() {
+uint16_t svmGetPid() {
   if (svmGetValid()) {
-    return svmMeta.id;
+    return svmMeta.pid;
   } else {
     return 0;
   }
@@ -144,7 +144,7 @@ void svmInit() {
 
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
-  svmSetNextId(1);
+  svmSetNextPid(1);
 }
 
 
@@ -201,8 +201,8 @@ uint8_t svmCheckAndExit() {
   return 0;
 }
 
-
-void svmUpdateCurrentWD() { // get current wd relative to main dir
+// get current wd relative to main dir
+void svmUpdateCurrentWD() {
   uint8_t dirbuf[258];
   uint8_t path[258];
   svp_getcwd(dirbuf, 256);

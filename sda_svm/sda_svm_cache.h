@@ -26,8 +26,8 @@ SOFTWARE.
 #include "sda_svm_misc.h"
 
 void svmInitRemoveCache(uint8_t *ext);
-void svmRemoveCachedProc(uint16_t id);
-void svmRemoveCachedFile(uint16_t id, uint8_t * tail);
+void svmRemoveCachedProc(uint16_t pid);
+void svmRemoveCachedFile(uint16_t pid, uint8_t * tail);
 void svmPrecacheGetName(uint8_t* buffer, uint32_t len, int32_t crc, uint8_t* ext);
 void svmPrecacheFile(uint8_t *fname);
 uint8_t svmPreCachedExists(int32_t crc, uint32_t siz);

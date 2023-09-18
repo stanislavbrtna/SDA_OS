@@ -31,12 +31,12 @@ SOFTWARE.
 // *****************************************************************************
 
 // launches .svs file from APPS directory
-uint8_t svmLaunch(uint8_t * fname, uint16_t parentId);
+uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid);
 
 // if instance of some app is running, this switches to it
 void svmOnTop();
 
-// returns non-zero if some app is currently loaded
+// Gets if there is currently valid, or suspended valid svm 
 uint8_t svmGetRunning();
 
 // gently closes the currently running app, performs exit() call
@@ -101,22 +101,39 @@ void svmSetSubProcRetval(
 // suspend currently running app
 uint8_t svmSuspend();
 
-// wake app with given id
-uint8_t svmWake(uint16_t id);
+// wake app with given pid
+uint8_t svmWake(uint16_t pid);
 
-// close app with given id
-void svmClose(uint16_t id);
+// close app with given pid
+void svmClose(uint16_t pid);
+
+// Closes all apps, running or suspended
 void svmCloseAll();
 
+// Gets if there is currently valid, or suspended valid svm 
 uint8_t svmGetRunning();
-uint16_t svmGetId();
+
+// Gets Pid of the currently running app
+uint16_t svmGetPid();
+
+// gets if svm contains valid running app
 uint8_t svmGetValid();
+// sets validity of currently running app
 void svmSetValid(uint8_t val);
 
-uint16_t svmGetSuspendedId(uint16_t id);
+uint16_t svmGetSuspendedPid(uint16_t id);
 uint8_t *svmGetSuspendedName(uint16_t id);
 
-void svmSetSingular(uint16_t id);
+// Marks app with given Pid as singular
+void svmSetSingular(uint16_t pid);
+
+/*
+Singular app has only one instance running,
+if another instance is to be launched,
+currently running instance is waken up instead 
+*/
+
+// get current wd relative to main dir
 void svmUpdateCurrentWD();
 
 // notification flags
@@ -127,10 +144,12 @@ int8_t sda_alarm_get_flag();
 void sda_alarm_clear_flag();
 
 // Pre-caching
+// Precaches given svs file 
 void svmPrecacheFile(uint8_t *fname);
 
-// Autocache on app launch
+// Enable/Disable autocache on app launch
 void svmSetAutocahceEnable(uint8_t val);
+// Get if auto-caching is enabled
 uint8_t svmGetAutocahceEnable();
 
 // *****************************************************************************
@@ -143,15 +162,15 @@ void svmSetRestoreSlot(uint8_t slot);
 
 // multiprocess internal functions
 void svmSaveProcData();
-uint8_t svmLoadProcData(uint16_t id);
+uint8_t svmLoadProcData(uint16_t pid);
 
 uint8_t svmCheckAndExit();
 
-uint8_t svmGetSavedProcValid(uint16_t proc_array_index);
-uint16_t svmGetSavedProcId(uint16_t proc_array_index);
-void svmSetNextId(uint16_t id);
-void svmRemoveCachedProc(uint16_t id);
-void svmRemoveCachedFile(uint16_t id, uint8_t * tail);
+uint8_t svmGetSavedProcValid(uint16_t id);
+uint16_t svmGetSavedProcPid(uint16_t id);
+void svmSetNextPid(uint16_t pid);
+void svmRemoveCachedProc(uint16_t pid);
+void svmRemoveCachedFile(uint16_t pid, uint8_t * tail);
 void svmInit();
 uint8_t svmUpdatePath(uint8_t *newFname, uint8_t *oldFname);
 void svmSetBeepCallback(uint8_t * cb, uint32_t time);

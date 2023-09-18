@@ -134,8 +134,8 @@ typedef struct {
 #endif
 
 typedef struct {
-  uint16_t id;
-  uint16_t parentId;
+  uint16_t pid;
+  uint16_t parentPid;
   uint8_t  name[APP_NAME_LEN];
   uint8_t  currentWorkDir[APP_NAME_LEN];
   uint8_t  landscape;
@@ -161,7 +161,7 @@ typedef struct {
 
 typedef struct {
   uint8_t  name[APP_NAME_LEN];
-  uint16_t id;
+  uint16_t pid;
   uint8_t  valid;
   uint8_t  singular;
 } svmSavedProcType;
