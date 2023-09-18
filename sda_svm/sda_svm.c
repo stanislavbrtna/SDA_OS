@@ -102,11 +102,12 @@ uint8_t * svmGetName() {
   return svmMeta.name;
 }
 
-// app misc
+// Gets if there is currently valid, or suspended valid svm 
 uint8_t svmGetRunning() {
-  if (svmValid){
+  if (svmValid) {
     return 1;
   }
+
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProc[x].valid == 1) {
       return 1;

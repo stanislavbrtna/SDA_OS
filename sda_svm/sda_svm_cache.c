@@ -108,7 +108,7 @@ void svmPrecacheGetFingerprint(uint8_t * runtimeFingerprint, uint16_t len, uint3
 
 
 void svmPrecacheFile(uint8_t *fname) {
-  if (svmGetRunning()) {
+  if (svmGetValid()) {
     printf("ERROR: cannot precache if svm is already running!");
     return;
   }
