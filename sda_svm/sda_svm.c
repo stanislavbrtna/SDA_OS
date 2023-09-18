@@ -21,6 +21,7 @@ SOFTWARE.
 */
 
 #include "sda_svm.h"
+#include "sda_svm_cache.h"
 #include "sda_svm_misc.h"
 #include "sda_svm_subproc.h"
 #include "sda_svm_wake_suspend.h"
@@ -47,6 +48,8 @@ extern uint16_t svs_wrap_setScr_id;
 
 static uint8_t slot_restore; // what appslot to restore after close
 
+static uint8_t autocahceEnable;
+
 // Globals:
 // main screen
 uint16_t mainScr; //obrazovka top slotu / top-slot screen
@@ -58,6 +61,14 @@ uint8_t * pscgErrorString;
 static void svmInValidate(uint16_t id);
 static uint16_t GetIfSingular(uint8_t * name);
 
+
+void svmSetAutocahceEnable(uint8_t val) {
+  autocahceEnable = val;
+}
+
+uint8_t svmGetAutocahceEnable() {
+  return autocahceEnable;
+}
 
 uint8_t svmGetSavedProcValid(uint16_t proc_array_index) {
   return svmSavedProc[proc_array_index].valid;
@@ -303,9 +314,18 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentId) {
       return 0;
     }
   } else {
-    // loads app
-    if (svmTokenizeFile(fname, cacheBuffer, 0) != 0) {
-      return 0;
+    if(autocahceEnable) {
+      // precahce the app, then launch it from cahce
+      svmPrecacheFile(fname);
+      if(svmLoadPrecached(crc)) {
+        printf("%s: caching, then loading app failed: %s\n",__FUNCTION__, fname);
+        return 0;
+      }
+    } else {
+      // loads app
+      if (svmTokenizeFile(fname, cacheBuffer, 0) != 0) {
+        return 0;
+      }
     }
   }
   svm_init = 0; //TODO: is this needed?

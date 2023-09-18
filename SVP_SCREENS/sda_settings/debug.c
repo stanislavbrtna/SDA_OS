@@ -28,6 +28,7 @@ extern sdaSvmMetadata svmMeta;
 uint16_t sda_settings_debug_screen(uint8_t init) {
 
   static uint16_t dbgUartEnable;
+  static uint16_t dbgAutocahceEnable;
   static uint16_t optDbgBack;
   static uint16_t bMemInfo;
   static uint16_t bSvmInfo;
@@ -42,20 +43,23 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
     gr2_add_text(1, 1, 9, 1, (uint8_t *)"Debug", optDbgScr, &sda_sys_con);
     dbgUartEnable = gr2_add_checkbox(1, 3, 9, 1, (uint8_t *)"Use USB port for debug", optDbgScr, &sda_sys_con);
 
-    bCClean = gr2_add_button(1, 5, 6, 1, (uint8_t *)"Clean cached Apps", optDbgScr, &sda_sys_con);
+    dbgAutocahceEnable = gr2_add_checkbox(1, 4, 9, 1, (uint8_t *)"Precache App on launch", optDbgScr, &sda_sys_con);
 
-    bMemInfo = gr2_add_button(1, 7, 6, 1, (uint8_t *)"Print memory info", optDbgScr, &sda_sys_con);
-    bSvmInfo = gr2_add_button(1, 8, 6, 1, (uint8_t *)"Print SVSvm info", optDbgScr, &sda_sys_con);
+    bCClean = gr2_add_button(1, 6, 6, 1, (uint8_t *)"Clean cached Apps", optDbgScr, &sda_sys_con);
 
-    
+    bMemInfo = gr2_add_button(1, 8, 6, 1, (uint8_t *)"Print memory info", optDbgScr, &sda_sys_con);
+    bSvmInfo = gr2_add_button(1, 9, 6, 1, (uint8_t *)"Print SVSvm info", optDbgScr, &sda_sys_con);
 
-    optDbgBack = gr2_add_button(1, 10, 3, 1, SCR_BACK, optDbgScr, &sda_sys_con);
-
+    optDbgBack = gr2_add_button(1, 11, 3, 1, SCR_BACK, optDbgScr, &sda_sys_con);
     
     gr2_text_set_align(optDbgBack, GR2_ALIGN_CENTER, &sda_sys_con);
 
     if (sda_usb_serial_is_enabled()) {
       gr2_set_value(dbgUartEnable, 1, &sda_sys_con);
+    }
+
+    if (svmGetAutocahceEnable()) {
+      gr2_set_value(dbgAutocahceEnable, 1, &sda_sys_con);
     }
 
     gr2_set_relative_init(0, &sda_sys_con);
@@ -64,6 +68,12 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
 
   if (gr2_clicked(dbgUartEnable, &sda_sys_con)) {
     sda_usb_enable_for_dbg(gr2_get_value(dbgUartEnable, &sda_sys_con));
+    sda_store_dbg_options();
+    init = 2;
+  }
+
+  if (gr2_clicked(dbgAutocahceEnable, &sda_sys_con)) {
+    svmSetAutocahceEnable((uint8_t)gr2_get_value(dbgAutocahceEnable, &sda_sys_con));
     sda_store_dbg_options();
     init = 2;
   }

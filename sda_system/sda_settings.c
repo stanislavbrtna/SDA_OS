@@ -74,6 +74,7 @@ void sda_load_config() {
 
   // usb debug
   sda_usb_enable_for_dbg(sda_conf_key_read_i32(&conffile, (uint8_t *)"usb_debug", 0));
+  svmSetAutocahceEnable(sda_conf_key_read_i32(&conffile, (uint8_t *)"svm_autocache_enabled", 0));
   
   svp_set_irq_redraw(); //po nastavení barev překreslíme panel / redraw the tray after loading color settings
   sda_conf_close(&conffile);
@@ -163,6 +164,7 @@ void sda_store_dbg_options() {
   uint8_t dirbuf[258];
   if(sda_settings_switch_to_main(&conffile, dirbuf)) return;
   sda_conf_key_write_i32(&conffile, (uint8_t *)"usb_debug", sda_usb_get_enable_for_dbg());
+  sda_conf_key_write_i32(&conffile, (uint8_t *)"svm_autocache_enabled", svmGetAutocahceEnable());
   sda_conf_close(&conffile);
   svp_chdir(dirbuf);
   printf("Done.\n");

@@ -129,6 +129,10 @@ void sda_alarm_clear_flag();
 // Pre-caching
 void svmPrecacheFile(uint8_t *fname);
 
+// Autocache on app launch
+void svmSetAutocahceEnable(uint8_t val);
+uint8_t svmGetAutocahceEnable();
+
 // *****************************************************************************
 //                                 internal functions
 // *****************************************************************************
