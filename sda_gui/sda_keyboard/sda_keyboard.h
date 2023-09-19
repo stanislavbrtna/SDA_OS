@@ -35,6 +35,7 @@ void init_kblayout_standard(psvcKbdLayout *l);
 void init_kblayout_uppcase(psvcKbdLayout *l);
 void init_kblayout_special(psvcKbdLayout *l);
 void init_kblayout_special_shift(psvcKbdLayout *l);
+void init_kblayout_numeric(psvcKbdLayout *l);
 
 uint8_t sda_keyboard_set_layout(uint8_t layoutId, psvcKbdLayout *layout);
 

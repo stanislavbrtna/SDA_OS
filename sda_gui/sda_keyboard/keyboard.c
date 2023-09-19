@@ -62,7 +62,24 @@ void svp_draw_keyboard(uint16_t x, uint16_t y, psvcKbdLayout *layout) {
   curr_font = LCD_Get_Font_Size();
   LCD_Set_Sys_Font(18);
 
-  for(i = 0; i < 10; i++) {
+
+  i = 0;
+  uint8_t siz = 2;
+  if (layout->keyStr[i][1] != 0) {
+    siz = 1;
+  }
+
+  pm_keyboard_draw_key(
+    x + 32 * i,
+    y + line * 32,
+    x + 32 * (i + 1),
+    y + (line + 1) * 32,
+    layout->keyStr[i],
+    0,
+    siz
+  );
+
+  for(i = 1; i < 10; i++) {
     pm_keyboard_draw_key(
       x + 32 * i,
       y + line * 32,
@@ -295,8 +312,18 @@ uint8_t svp_touch_keyboard(
     }
   }
 
-  for(i = 0; i < 10; i++) {
-    if (pm_keyboard_touch_key(event,&prevState[i],x+32*(i),y+line*32,x+32*(i+1),y+(line+1)*32,layout->keyStr[i],2, touch_x, touch_y)) {
+  i = 0;
+  uint8_t siz = 2;
+  if (layout->keyStr[i][1] != 0) {
+    siz = 1;
+  }
+  if (pm_keyboard_touch_key(event,&prevState[i],x+32*(i),y+line*32,x+32*(i+1),y+(line+1)*32,layout->keyStr[i], siz, touch_x, touch_y)) {
+    retStrCpy(retStr, layout->key[i]);
+    return 1;
+  }
+
+  for(i = 1; i < 10; i++) {
+    if (pm_keyboard_touch_key(event,&prevState[i],x+32*(i),y+line*32,x+32*(i+1),y+(line+1)*32,layout->keyStr[i], 2, touch_x, touch_y)) {
       retStrCpy(retStr, layout->key[i]);
       //printf("dbg: %s\n", retStr) ;
       return 1;
@@ -373,6 +400,8 @@ uint8_t sda_keyboard_set_layout(uint8_t layoutId, psvcKbdLayout *layout) {
     init_kblayout_special(layout);
   } else if (layoutId == 3) {
     init_kblayout_special_shift(layout);
+  } else if (layoutId == 4) {
+    init_kblayout_numeric(layout);
   } else {
     // default
     init_kblayout_standard(layout);
