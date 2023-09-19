@@ -107,10 +107,10 @@ void svmPrecacheGetFingerprint(uint8_t * runtimeFingerprint, uint16_t len, uint3
 }
 
 
-void svmPrecacheFile(uint8_t *fname) {
+uint8_t svmPrecacheFile(uint8_t *fname) {
   if (svmGetValid()) {
     printf("ERROR: cannot precache if svm is already running!");
-    return;
+    return 1;
   }
 
   // check for pre-tokenized app
@@ -129,13 +129,15 @@ void svmPrecacheFile(uint8_t *fname) {
 
   if(svmPreCachedExists(crc, siz)) {
     printf("%s: Already cached (%s)\n",__FUNCTION__, fname);
-    return;
+    return 0;
   }
 
   // token cache
   svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".stc");
 
-  svmTokenizeFile(fname, fileBuffer, 0);
+  if (svmTokenizeFile(fname, fileBuffer, 0) != 0) {
+    return 1;
+  }
 
   // svm
   svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".svm");
@@ -144,7 +146,7 @@ void svmPrecacheFile(uint8_t *fname) {
 
   if(svp_fopen_rw(&svmFile, fileBuffer) == 0) {
     printf("precacher: file open error\n");
-    return;
+    return 1;
   }
   svp_fwrite(&svmFile, &svm, sizeof(svm));
   
@@ -155,7 +157,7 @@ void svmPrecacheFile(uint8_t *fname) {
   
   if(svp_fopen_rw(&svmFile, fileBuffer) == 0) {
     printf("precacher: file open error\n");
-    return;
+    return 1;
   }
 
   svp_fwrite(&svmFile, svm.stringField, svm.stringFieldLen+1);
@@ -171,7 +173,7 @@ void svmPrecacheFile(uint8_t *fname) {
   
   if(svp_fopen_rw(&svmFile, fileBuffer) == 0) {
     printf("precacher: file open error\n");
-    return;
+    return 1;
   }
 
   uint8_t runtimeFingerprint[256];
@@ -180,8 +182,9 @@ void svmPrecacheFile(uint8_t *fname) {
   svp_fwrite(&svmFile, runtimeFingerprint, sizeof(runtimeFingerprint));
   svp_fclose(&svmFile);
 
-
   printf("Precaching: %s\n", fileBuffer);
+
+  return 0;
 }
 
 

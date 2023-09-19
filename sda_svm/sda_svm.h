@@ -144,8 +144,11 @@ int8_t sda_alarm_get_flag();
 void sda_alarm_clear_flag();
 
 // Pre-caching
-// Precaches given svs file 
-void svmPrecacheFile(uint8_t *fname);
+// Precaches given svs file, returns 0 on success 
+uint8_t svmPrecacheFile(uint8_t *fname);
+
+// next svmLaunch will be forced to not use cache
+void svmSetNocacheFlag();
 
 // Enable/Disable autocache on app launch
 void svmSetAutocahceEnable(uint8_t val);

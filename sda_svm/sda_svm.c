@@ -49,6 +49,7 @@ extern uint16_t svs_wrap_setScr_id;
 static uint8_t slot_restore; // what appslot to restore after close
 
 static uint8_t autocahceEnable;
+static uint8_t nocacheLaunchFlag;
 
 // Globals:
 // main screen
@@ -68,6 +69,10 @@ void svmSetAutocahceEnable(uint8_t val) {
 
 uint8_t svmGetAutocahceEnable() {
   return autocahceEnable;
+}
+
+void svmSetNocacheFlag() {
+  nocacheLaunchFlag = 1;
 }
 
 uint8_t svmGetSavedProcValid(uint16_t proc_array_index) {
@@ -309,20 +314,25 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   uint32_t siz = svp_get_size(&fil);
   svp_fclose(&fil);
 
-  if(svmPreCachedExists(crc, siz)) {
+  if(svmPreCachedExists(crc, siz) && nocacheLaunchFlag == 0) {
     printf("%s: loading cached: %s\n",__FUNCTION__, fname);
     if(svmLoadPrecached(crc)) {
       return 0;
     }
   } else {
-    if(autocahceEnable) {
+    if(autocahceEnable && nocacheLaunchFlag == 0) {
       // precahce the app, then launch it from cahce
-      svmPrecacheFile(fname);
+      if(svmPrecacheFile(fname)) {
+        printf("%s: caching app failed: %s\n",__FUNCTION__, fname);
+        sda_show_error_message("svmPrecacheFile: Tokenizer error!");
+        return 0;
+      }
       if(svmLoadPrecached(crc)) {
         printf("%s: caching, then loading app failed: %s\n",__FUNCTION__, fname);
         return 0;
       }
     } else {
+      nocacheLaunchFlag = 0;
       // loads app
       if (svmTokenizeFile(fname, cacheBuffer, 0) != 0) {
         return 0;

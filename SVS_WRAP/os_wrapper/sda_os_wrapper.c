@@ -399,6 +399,19 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Disable caching
+  //#!    sys.os.subProcNC();
+  //#!Disables caching for next call of sys.os.subProcess.
+  //#!Usefull when running modified content
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "subProcNC", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    svmSetNocacheFlag();
+    return 1;
+  }
+
   //#!##### Return data to parent process
   //#!    sys.os.subRetval([undef] arg0, [undef] arg1, [undef] arg2);
   //#!Sets values that will be returned to parent process

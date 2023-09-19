@@ -100,6 +100,11 @@ Return: None
 Sets if subprocesses are launched from cwd or from APPS folder.
 val: 0 - APPS folder, 1 - cwd
 Return: None
+##### Disable caching
+    sys.os.subProcNC();
+Disables caching for next call of sys.os.subProcess.
+Usefull when running modified content
+Return: None
 ##### Return data to parent process
     sys.os.subRetval([undef] arg0, [undef] arg1, [undef] arg2);
 Sets values that will be returned to parent process

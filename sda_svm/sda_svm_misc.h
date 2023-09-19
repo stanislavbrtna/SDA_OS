@@ -28,8 +28,4 @@ SOFTWARE.
 void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **svmArgs, svsVM *s);
 void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsVM *s);
 
-void svmPrecacheFile(uint8_t *fname);
-
-uint8_t svmLoadPrecached(int32_t crc);
-
 #endif
