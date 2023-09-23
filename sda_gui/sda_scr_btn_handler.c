@@ -32,6 +32,30 @@ uint8_t sda_screen_button_handler(uint16_t screen_id, uint16_t back_id, gr2conte
     return 0;
   }
 
+  // Text field handler
+  if (con->textActive && gr2_get_screen(con->textActiveId, con) == screen_id) {
+    if (sda_wrap_get_button(BUTTON_RIGHT) == EV_PRESSED) {
+      gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) + 1, con);
+    }
+
+    if (sda_wrap_get_button(BUTTON_LEFT) == EV_PRESSED) {
+      if(gr2_get_param(con->textActiveId, con) != 0) {
+        gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) - 1, con);
+      }
+    }
+
+    if (sda_wrap_get_button(BUTTON_A) == EV_PRESSED) {
+      gr2_text_deactivate(con);
+      sda_keyboard_hide();
+    }
+
+    sda_wrap_clear_button(BUTTON_LEFT);
+    sda_wrap_clear_button(BUTTON_RIGHT);
+    sda_wrap_clear_button(BUTTON_A);
+
+    return 0;
+  }
+
   if (sda_wrap_get_button(BUTTON_RIGHT) != EV_NONE) {
     gr2_keypad_input(GR2_BUTTON_RIGHT, sda_wrap_get_button(BUTTON_RIGHT), screen_id, con);
     sda_wrap_clear_button(BUTTON_RIGHT);
