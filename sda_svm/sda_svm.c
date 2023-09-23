@@ -374,6 +374,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
 
 // gracefully closes running svm (app)
 void svmCloseRunning() {
+  uint8_t errorOccured = 0;
 
   if (sda_slot_get_valid(4) == 0 || svmValid == 0) {
     return;
@@ -381,6 +382,7 @@ void svmCloseRunning() {
 
   if((errCheck(&svm) == 1) && (soft_error_flag == 0)) {
     svp_errSoftPrint(&svm);
+    errorOccured = 1;
   } else {
     if ((getOverlayId() != 0) && (soft_error_flag == 0)) {
       destroyOverlay();
@@ -446,7 +448,15 @@ void svmCloseRunning() {
     // Launch callback
     if(functionExists(svmGetCallback(), &svm)) {
       svmRestoreArguments(svmCallRetvalType, svmCallRetval, svmCallRetvalStr, &svm);
-      commExec(svmGetCallback(), &svm);
+      if(!errorOccured) {
+        commExec(svmGetCallback(), &svm);
+      } else {
+        printf("%s: Error occured in child process, callback won't be launched!\n", __FUNCTION__);
+      }
+    } else {
+      if (!svp_strcmp(svmGetCallback(), "")) {
+        printf("%s: Callback \"%s\" does not exist!\n", __FUNCTION__, svmGetCallback());
+      }
     }
 
     svmOnTop();
