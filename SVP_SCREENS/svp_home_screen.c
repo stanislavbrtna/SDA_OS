@@ -24,8 +24,8 @@ SOFTWARE.
 
 static uint8_t background_img[64];
 
-static uint8_t headingStr[32];
-static uint8_t subHeadingStr[32];
+static uint8_t headingStr[64];
+static uint8_t subHeadingStr[64];
 
 static uint16_t tHeading;
 static uint16_t tSubheading;
