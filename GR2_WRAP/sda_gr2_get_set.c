@@ -413,6 +413,22 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!
+  //#!    sys.gui.getTxtSize([num]Id);
+  //#!Gets size of text inside buttons or text fields.
+  //#!Return: [num] font_size
+  if (sysFuncMatch(argS->callId, "getTxtSize", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = gr2_text_get_size(argS->arg[1].val_s, &sda_app_con);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Keypad control
   //#!    sys.gui.getBtnSel([num]screenId);
   //#!Gets element selected by the keypad input method

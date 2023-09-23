@@ -167,6 +167,10 @@ Sets size of text inside buttons or text fields.
 Possible values are those used by LCD_Set_Sys_Font
 By default they are: 12, 18, 32, 70, 87
 Return: None
+
+    sys.gui.getTxtSize([num]Id);
+Gets size of text inside buttons or text fields.
+Return: [num] font_size
 ##### Keypad control
     sys.gui.getBtnSel([num]screenId);
 Gets element selected by the keypad input method
