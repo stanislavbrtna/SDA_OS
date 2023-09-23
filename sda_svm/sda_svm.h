@@ -33,6 +33,11 @@ SOFTWARE.
 // launches .svs file from APPS directory
 uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid);
 
+// Set argument from out of SVM, should be called after svmLaunch
+void svmSetArgumentNum(uint8_t id, int32_t val);
+void svmSetArgumentStr(uint8_t id, uint8_t* val);
+void svmSetArgumentFlt(uint8_t id, float val);
+
 // if instance of some app is running, this switches to it
 void svmOnTop();
 

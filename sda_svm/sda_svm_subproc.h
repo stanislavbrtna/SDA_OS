@@ -29,6 +29,11 @@ SOFTWARE.
 uint8_t * svmGetCallback();
 uint8_t svmRunPerformCall();
 
+// Set argument from out of SVM
+void svmSetArgumentNum(uint8_t id, int32_t val);
+void svmSetArgumentStr(uint8_t id, uint8_t* val);
+void svmSetArgumentFlt(uint8_t id, float val);
+
 void svmCallSubProc(
     uint8_t *name,
     uint8_t *callback,
@@ -45,4 +50,5 @@ uint8_t svmLoadProcData(uint16_t id);
 
 uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t size);
 void sdaSvmSaver(uint16_t id, uint8_t * tail, void *target, uint32_t size);
+
 #endif

@@ -108,7 +108,28 @@ void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsV
       s->commArgs.arg[z + 1] = arg[z];
     }
   }
-    s->commArgs.usedup = 3;
+  s->commArgs.usedup = 3;
+}
+/*
+ * Arguments: 3 possible arguments indexed 0 - 2
+*/
+
+void svmSetArgumentNum(uint8_t id, int32_t val) {
+  svm.commArgs.argType[id + 1] = SVS_TYPE_NUM;
+  svm.commArgs.arg[id + 1].val_s = val;
+  svm.commArgs.usedup = 3;
+}
+
+void svmSetArgumentStr(uint8_t id, uint8_t* val) {
+  svm.commArgs.argType[id + 1] = SVS_TYPE_STR;
+  svm.commArgs.arg[id + 1] = (varType)strNew(val, &svm);
+  svm.commArgs.usedup = 3;
+}
+
+void svmSetArgumentFlt(uint8_t id, float val) {
+  svm.commArgs.argType[id + 1] = SVS_TYPE_NUM;
+  svm.commArgs.arg[id + 1].val_f = val;
+  svm.commArgs.usedup = 3;
 }
 
 
