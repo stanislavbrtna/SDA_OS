@@ -413,6 +413,23 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Keypad control
+  //#!    sys.gui.getBtnSel([num]screenId);
+  //#!Gets element selected by the keypad input method
+  //#!from the given screen.
+  //#!Return: [num] Id if something is selected, otherwise 0
+  if (sysFuncMatch(argS->callId, "getBtnSel", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = gr2_ki_get_selected(argS->arg[1].val_s, &sda_app_con);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Size and placement
   //#!
   //#!    sys.gui.setRelInit([num]val);
