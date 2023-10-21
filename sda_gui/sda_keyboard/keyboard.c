@@ -21,6 +21,10 @@ SOFTWARE.
 */
 #include "sda_keyboard.h"
 
+#define ICON_BKSP 1
+
+static uint8_t spec_icon;
+
 void pm_keyboard_draw_key(
   uint16_t x1,
   uint16_t y1,
@@ -36,7 +40,7 @@ void pm_keyboard_draw_key(
 
   LCD_DrawRectangle(x1, y1, x2, y2, sda_current_con->border_color);
   if (size == 1) {
-    LCD_DrawText(x1 + 3, y1 + 3, sda_current_con->text_color, 0, str, 1);
+    LCD_DrawText(x1 + 5, y1 + 8, sda_current_con->text_color, 0, str, 1);
   } else {
     LCD_DrawText_ext(x1 + 8, y1 + 8, sda_current_con->text_color, str);
   }
@@ -51,6 +55,28 @@ static void draw_esc_icon(int16_t x, int16_t y) {
   LCD_DrawLine(x + 8, y + 32 - 8 , x + 4, y + 32 - 16 , sda_current_con->text_color);
   LCD_DrawLine(x + 8, y + 32 - 8 , x + 16, y + 32 - 4, sda_current_con->text_color);
 
+}
+
+static void draw_backspace_icon(int16_t x, int16_t y) {
+  LCD_FillRect(x + 15, y + 8 , x + 40, y + 9, sda_current_con->text_color);
+  LCD_FillRect(x + 15, y + 25, x + 40, y + 26, sda_current_con->text_color);
+  LCD_FillRect(x + 39, y + 8 , x + 40, y + 26, sda_current_con->text_color);
+
+  LCD_DrawLine(x + 5, y + 17 , x + 14, y + 8, sda_current_con->text_color);
+  LCD_DrawLine(x + 6, y + 17 , x + 15, y + 8, sda_current_con->text_color);
+  LCD_DrawLine(x + 7, y + 17 , x + 16, y + 8, sda_current_con->text_color);
+
+  LCD_DrawLine(x + 5, y + 17 , x + 14, y + 26, sda_current_con->text_color);
+  LCD_DrawLine(x + 6, y + 17 , x + 15, y + 26, sda_current_con->text_color);
+  LCD_DrawLine(x + 7, y + 17 , x + 16, y + 26, sda_current_con->text_color);
+
+  int16_t xmod = 3;
+
+  LCD_DrawLine(x + 24 - xmod, y + 13 , x + 32 - xmod, y + 21, sda_current_con->text_color);
+  LCD_DrawLine(x + 25 - xmod, y + 13 , x + 33 - xmod, y + 21, sda_current_con->text_color);
+
+  LCD_DrawLine(x + 24 - xmod, y + 21 , x + 32 - xmod, y + 13, sda_current_con->text_color);
+  LCD_DrawLine(x + 25 - xmod, y + 21 , x + 33 - xmod, y + 13, sda_current_con->text_color);
 }
 
 void svp_draw_keyboard(uint16_t x, uint16_t y, psvcKbdLayout *layout) {
@@ -145,10 +171,11 @@ void svp_draw_keyboard(uint16_t x, uint16_t y, psvcKbdLayout *layout) {
     y + line * 32,
     16 + x + 32*(i + 2),
     y + (line + 1) * 32,
-    (uint8_t *)"<=",
+    (uint8_t *)"", // <=
     0,
     2
   );
+  draw_backspace_icon(x + 16 + 32*i, y + line * 32);
   line++;
 
   i = 0;
@@ -232,10 +259,14 @@ uint8_t pm_keyboard_touch_key(
       LCD_DrawRectangle(x1, y1, x2, y2, sda_current_con->border_color);
       repeatCnt = 0;
       repeatQuickCnt = 0;
-      if (size == 1) {
-        LCD_DrawText(x1 + 3, y1 + 3, sda_current_con->text_color, 0, str, 1);
+      if (spec_icon == 0) {
+        if (size == 1) {
+          LCD_DrawText(x1 + 5, y1 + 8, sda_current_con->text_color, 0, str, 1);
+        } else {
+          LCD_DrawText_ext(x1 + 8, y1 + 8, sda_current_con->text_color, str);
+        }
       } else {
-        LCD_DrawText_ext(x1 + 8, y1 + 8, sda_current_con->text_color, str);
+        draw_backspace_icon(x1, y1);
       }
     }
     if ((event == EV_HOLD) && (*prevState == 1)) {
@@ -252,10 +283,14 @@ uint8_t pm_keyboard_touch_key(
     if (event == EV_RELEASED) {
       LCD_FillRect(x1, y1, x2, y2, sda_current_con->fill_color);
       LCD_DrawRectangle(x1, y1, x2, y2, sda_current_con->border_color);
-      if (size == 1) {
-        LCD_DrawText(x1 + 3, y1 + 3, sda_current_con->text_color, 0, str, 1);
+      if (spec_icon == 0) {
+        if (size == 1) {
+          LCD_DrawText(x1 + 5, y1 + 8, sda_current_con->text_color, 0, str, 1);
+        } else {
+          LCD_DrawText_ext(x1 + 8, y1 + 8, sda_current_con->text_color, str);
+        }
       } else {
-        LCD_DrawText_ext(x1 + 8, y1 + 8, sda_current_con->text_color, str);
+        draw_backspace_icon(x1, y1);
       }
       *prevState = 0;
       repeatCnt = 0;
@@ -267,10 +302,14 @@ uint8_t pm_keyboard_touch_key(
     if (*prevState == 1) {
       LCD_FillRect(x1, y1, x2, y2, sda_current_con->fill_color);
       LCD_DrawRectangle(x1, y1, x2, y2, sda_current_con->border_color);
-      if (size == 1) {
-        LCD_DrawText(x1 + 3, y1 + 3, sda_current_con->text_color, 0, str, 1);
+      if (spec_icon == 0) {
+        if (size == 1) {
+          LCD_DrawText(x1 + 5, y1 + 8, sda_current_con->text_color, 0, str, 1);
+        } else {
+          LCD_DrawText_ext(x1 + 8, y1 + 8, sda_current_con->text_color, str);
+        }
       } else {
-        LCD_DrawText_ext(x1 + 8, y1 + 8, sda_current_con->text_color, str);
+        draw_backspace_icon(x1, y1);
       }
       *prevState = 0;
       repeatCnt = 0;
@@ -351,16 +390,19 @@ uint8_t svp_touch_keyboard(
 
   line++;
   for(i=0;i<7;i++){
-    if(pm_keyboard_touch_key(event,&prevState[i+29],x+16+32*(i),y+line*32,16+x+32*(i+1),y+(line+1)*32,layout->keyStr[i+29],2, touch_x, touch_y)){
+    if(pm_keyboard_touch_key(event,&prevState[i+29],x+16+32*(i),y+line*32,16+x+32*(i+1),y+(line+1)*32,layout->keyStr[i+29], 2, touch_x, touch_y)){
       retStrCpy(retStr, layout->key[i+29]);
       return 1;
     }
   }
   i++;
-  if(pm_keyboard_touch_key(event,&prevState[40],x+16+32*(i),y+line*32,x+32*(i+2),y+(line+1)*32,(uint8_t *)"<=",2, touch_x, touch_y)){
+  spec_icon = ICON_BKSP;
+  if(pm_keyboard_touch_key(event,&prevState[40],x+16+32*(i),y+line*32,x+32*(i+2),y+(line+1)*32,(uint8_t *)"",2, touch_x, touch_y)) {
+    spec_icon = 0;
     retStrCpy(retStr, (uint8_t *)"\x08\x00");
     return 1;
   }
+  spec_icon = 0;
   line++;
   i=0;
   if(pm_keyboard_touch_key(event,&prevState[37],x+32*(i),y+line*32,x+32*(i+1),y+(line+1)*32,(uint8_t *)"",1, touch_x, touch_y)){

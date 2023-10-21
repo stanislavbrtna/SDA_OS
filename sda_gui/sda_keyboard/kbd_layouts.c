@@ -23,7 +23,7 @@ SOFTWARE.
 #include "sda_keyboard.h"
 
 void init_kblayout_standard(psvcKbdLayout *l) {
-  l->keyStr[0] = (uint8_t*)"num";
+  l->keyStr[0] = (uint8_t*)"Num";
   l->key[0]    = (uint8_t*)"\x01\x04\x00";
   l->keyStr[1] = (uint8_t*)"ě";
   l->key[1]    = (uint8_t*)"ě";
