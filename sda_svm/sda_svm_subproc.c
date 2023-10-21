@@ -53,6 +53,8 @@ uint8_t svmRunPerformCall() {
   }
  
   svmStoreArguments(argBuff, svmCallArg, svmCallArgType, svmCallArgStr, &svm);
+  // if there is an overlay, we destroy it before switching the context
+  destroyOverlay();
 
   if(svmLaunch(svmCallName, svmMeta.pid) == 0) {
     flag_svmCall = 0;
