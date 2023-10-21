@@ -159,6 +159,8 @@ void svmSetNocacheFlag();
 void svmSetAutocahceEnable(uint8_t val);
 // Get if auto-caching is enabled
 uint8_t svmGetAutocahceEnable();
+// Cleans the app cache
+void svmRemovePrecache();
 
 // *****************************************************************************
 //                                 internal functions

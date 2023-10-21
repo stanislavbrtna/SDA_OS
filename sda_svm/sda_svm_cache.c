@@ -64,7 +64,7 @@ void svmRemoveCachedFile(uint16_t pid, uint8_t * tail) {
 #endif
 }
 
-
+// Cleans the app cache
 void svmRemovePrecache() {
   uint8_t dirbuf[258];
   svp_getcwd(dirbuf, 256);

@@ -47,6 +47,9 @@ static uint8_t appNum;
 static uint16_t appScreen;
 static uint16_t inScreen;
 
+// static headers
+void inScreenResizer(uint16_t id);
+
 
 void add_button(uint16_t x, svp_csvf appsCSV, uint8_t *appFName, uint8_t *appIcoName, uint8_t *appHumanName, uint16_t *appFNameBtn, uint16_t retScreen) {
   // load data
