@@ -28,8 +28,8 @@ File description:
 #define SDA_CONSTS_H
 
 // version number string and version number,
-#define SDA_OS_VERSION     "1.2.1"
-#define SDA_OS_VERSION_NUM  1210
+#define SDA_OS_VERSION     "1.3.0"
+#define SDA_OS_VERSION_NUM  1300
 
 // GR2 elements for system
 #define SDA_SYS_ELEM_MAX   190
