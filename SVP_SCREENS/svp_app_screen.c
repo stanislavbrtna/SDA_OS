@@ -284,6 +284,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
   if (init == 1) {
     folder_stack_max = 0;
+    innerPage = 0;
 
     appScreen = gr2_add_screen(&sda_sys_con);
 
