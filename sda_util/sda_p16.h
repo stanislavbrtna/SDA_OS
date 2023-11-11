@@ -1,7 +1,7 @@
 #ifndef SDA_P16_H
 #define SDA_P16_H
 
-#define P16_BUFFER_SIZE 64
+#define P16_BUFFER_SIZE 512
 
 typedef struct {
   uint8_t version;

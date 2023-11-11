@@ -36,6 +36,9 @@ uint16_t p16_buffer[P16_BUFFER_SIZE];
 uint16_t p16_buffer_pos;
 uint8_t p16_buffer_init;
 
+uint8_t p16_buffer_keep;
+uint32_t p16_file_crc;
+
 uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t *filename);
 
 static void break_draw_cleanup(svp_file *fp);
@@ -127,9 +130,11 @@ uint8_t p16_get_header(svp_file * fp, p16Header * header) {
 
 uint16_t p16_buffer_reset() {
   p16_buffer_pos = 0;
-  p16_buffer_init = 0;
-  for(int i = 0; i < P16_BUFFER_SIZE; i++) {
-    p16_buffer[i] = 0;
+  if (p16_buffer_keep == 0) {
+    p16_buffer_init = 0;
+    for(int i = 0; i < P16_BUFFER_SIZE; i++) {
+      p16_buffer[i] = 0;
+    }
   }
 }
 
@@ -170,7 +175,7 @@ uint16_t p16_get_pixel(svp_file * fp, p16Header * header, p16State * state) {
   uint16_t color;
 
   if (header->storageMode == 0) {
-    svp_fread(fp, &color, sizeof(color));
+    color = p16_read_buffered(fp);
     return color;
   }
 
@@ -218,6 +223,13 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
   if (!svp_fopen_read(&fp, filename)) {
     printf("sda_draw_p16: Error while opening file %s!\n", filename);
     return 1;
+  }
+
+  if(svp_get_size(&fp) < P16_BUFFER_SIZE*2 && p16_file_crc == crc32b(filename)) {
+    p16_buffer_keep = 1;
+  } else {
+    p16_buffer_keep = 0;
+    p16_file_crc = crc32b(filename);
   }
 
   if(p16_get_header(&fp, &header)) {
