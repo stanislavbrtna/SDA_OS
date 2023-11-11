@@ -32,6 +32,10 @@ static uint8_t p16_use_alpha;
 static uint16_t p16_alpha_color;
 static uint16_t p16_bg_color;
 
+uint16_t p16_buffer[P16_BUFFER_SIZE];
+uint16_t p16_buffer_pos;
+uint8_t p16_buffer_init;
+
 uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t *filename);
 
 static void break_draw_cleanup(svp_file *fp);
@@ -115,7 +119,50 @@ uint8_t p16_get_header(svp_file * fp, p16Header * header) {
     printf("Can parse p16 version 1 only\n");
     return 1;
   }
+
+  p16_buffer_reset();
   return 0;
+}
+
+
+uint16_t p16_buffer_reset() {
+  p16_buffer_pos = 0;
+  p16_buffer_init = 0;
+  for(int i = 0; i < P16_BUFFER_SIZE; i++) {
+    p16_buffer[i] = 0;
+  }
+}
+
+uint16_t p16_read_buffered(svp_file * fp) {
+  
+  if (p16_buffer_init == 0) {
+    svp_fread(fp, p16_buffer, sizeof(p16_buffer));
+    p16_buffer_pos = 0;
+    p16_buffer_init = 1;
+  }
+
+  uint16_t r = p16_buffer[p16_buffer_pos];
+  
+  if (p16_buffer_pos == P16_BUFFER_SIZE - 1) {
+    for(int i = 0; i < P16_BUFFER_SIZE; i++) {
+      p16_buffer[i] = 0;
+    }
+    svp_fread(fp, p16_buffer, sizeof(p16_buffer));
+    p16_buffer_pos = 0;
+  } else {
+    p16_buffer_pos++;
+  }
+  
+  return r;
+}
+
+
+uint32_t p16_get_fpos(svp_file * fp) {
+
+  if(p16_buffer_init == 1)
+    return svp_ftell(fp) - P16_BUFFER_SIZE*2 + p16_buffer_pos*2;
+  else
+    return svp_ftell(fp);
 }
 
 
@@ -126,21 +173,24 @@ uint16_t p16_get_pixel(svp_file * fp, p16Header * header, p16State * state) {
     svp_fread(fp, &color, sizeof(color));
     return color;
   }
+
   if (header->storageMode == 1) {
     if (state->init == 0) {
-      svp_fread(fp, &color, sizeof(color));
+      //svp_fread(fp, &color, sizeof(color));
+      color = p16_read_buffered(fp);
       state->fpos = svp_ftell(fp);
       state->init = 1;
       state->prevVal = 0;
-      state->repeat = 0;
-
+      state->repeat  = 0;
       state->prevVal = color;
       return color;
     } else {
       if (state->repeat == 0) {
-        svp_fread(fp, &color, sizeof(color));
+        //svp_fread(fp, &color, sizeof(color));
+        color = p16_read_buffered(fp);
         if (state->prevVal == color) {
-          svp_fread(fp, &state->repeat, sizeof(state->repeat));
+          //svp_fread(fp, &state->repeat, sizeof(state->repeat));
+          state->repeat = p16_read_buffered(fp);
           state->repeat--;
           state->prevVal = color;
           return color;
@@ -169,12 +219,13 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
     printf("sda_draw_p16: Error while opening file %s!\n", filename);
     return 1;
   }
-  irq_redraw_block_enable();
 
   if(p16_get_header(&fp, &header)) {
     printf("%s: Error decoding header %s!\n",__FUNCTION__, filename);
     return 1;
   }
+
+  irq_redraw_block_enable();
 
   LCD_getDrawArea(&area);
   LCD_setSubDrawArea(x, y, x + header.imageWidth, y + header.imageHeight);
@@ -251,13 +302,14 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
   uint16_t pix = 0;
 
   for(uint32_t n = 0; n < header.imageHeight; n++) {
-    fpos = svp_ftell(&fp);
+    fpos = p16_get_fpos(&fp);
     prevVal = imageState.prevVal;
     repeat = imageState.repeat;
     init = imageState.init;
 
     for (int a = 0; a < height_n; a++) {
       svp_fseek(&fp, fpos);
+      p16_buffer_reset();
       imageState.prevVal = prevVal;
       imageState.repeat = repeat;
       imageState.init = init;

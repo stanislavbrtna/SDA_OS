@@ -1,6 +1,8 @@
 #ifndef SDA_P16_H
 #define SDA_P16_H
 
+#define P16_BUFFER_SIZE 64
+
 typedef struct {
   uint8_t version;
   uint16_t imageWidth;
@@ -24,5 +26,7 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
 uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint16_t height_n, uint8_t *filename);
 uint16_t sda_p16_get_width(uint8_t *filename);
 uint16_t sda_p16_get_height(uint8_t *filename);
+
+uint16_t p16_buffer_reset();
 
 #endif
