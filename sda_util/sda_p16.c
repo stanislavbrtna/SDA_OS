@@ -35,9 +35,11 @@ static uint16_t p16_bg_color;
 uint16_t p16_buffer[P16_BUFFER_SIZE];
 uint16_t p16_buffer_pos;
 uint8_t p16_buffer_init;
+uint32_t p16_read_size;
 
 uint8_t p16_buffer_keep;
 uint32_t p16_file_crc;
+uint32_t p16_file_size;
 
 uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t *filename);
 
@@ -124,6 +126,7 @@ uint8_t p16_get_header(svp_file * fp, p16Header * header) {
   }
 
   p16_buffer_reset();
+  p16_file_size = svp_get_size(fp);
   return 0;
 }
 
@@ -141,7 +144,12 @@ uint16_t p16_buffer_reset() {
 uint16_t p16_read_buffered(svp_file * fp) {
   
   if (p16_buffer_init == 0) {
-    svp_fread(fp, p16_buffer, sizeof(p16_buffer));
+    if (svp_ftell(fp) + 2*P16_BUFFER_SIZE < p16_file_size) {
+      p16_read_size = 2*P16_BUFFER_SIZE;
+    } else {
+      p16_read_size = p16_file_size - svp_ftell(fp);
+    }
+    svp_fread(fp, p16_buffer, p16_read_size);
     p16_buffer_pos = 0;
     p16_buffer_init = 1;
   }
@@ -152,7 +160,13 @@ uint16_t p16_read_buffered(svp_file * fp) {
     for(int i = 0; i < P16_BUFFER_SIZE; i++) {
       p16_buffer[i] = 0;
     }
-    svp_fread(fp, p16_buffer, sizeof(p16_buffer));
+    if (svp_ftell(fp) + 2*P16_BUFFER_SIZE < p16_file_size) {
+      p16_read_size = 2*P16_BUFFER_SIZE;
+    } else {
+      p16_read_size = p16_file_size - svp_ftell(fp);
+    }
+    svp_fread(fp, p16_buffer, p16_read_size);
+      
     p16_buffer_pos = 0;
   } else {
     p16_buffer_pos++;
@@ -164,10 +178,11 @@ uint16_t p16_read_buffered(svp_file * fp) {
 
 uint32_t p16_get_fpos(svp_file * fp) {
 
-  if(p16_buffer_init == 1)
-    return svp_ftell(fp) - P16_BUFFER_SIZE*2 + p16_buffer_pos*2;
-  else
+  if(p16_buffer_init == 1) {
+    return (svp_ftell(fp) - p16_read_size + (uint32_t)p16_buffer_pos*2);
+  } else {
     return svp_ftell(fp);
+  }
 }
 
 
@@ -289,6 +304,8 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
   uint16_t prevVal;
   uint16_t repeat;
   LCD_drawArea area;
+
+  p16_buffer_keep = 0;
 
   if (!svp_fopen_read(&fp, filename)) {
     printf("sda_draw_p16: Error while opening file %s!\n", filename);
