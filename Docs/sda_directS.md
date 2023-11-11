@@ -4,11 +4,13 @@ Automatically generated documentation on wrap_directS.c
 
 ##### Get color from RGB
     sys.ds.mixColor([num] r, [num] g, [num] b)
-Mixes the right color
-Return: [num] Color
+Mixes the right color from red, green and blue values (0 - 255)
+Return: [num] Color (16bit RGB565)
 ##### Set draw area
     sys.ds.setArea([num] x1, [num] y1, [num] x2, [num] y2)
-Sets the draw area
+Sets the draw area. Uses hardware coordinates.
+For example: sys.ds.setArea(0, 32, 319, 479);
+This will init all app available space as a draw area.
 Return: None
 ##### Draw rectangle
     sys.ds.drawRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)

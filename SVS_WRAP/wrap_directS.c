@@ -68,8 +68,8 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 
   //#!##### Get color from RGB
   //#!    sys.ds.mixColor([num] r, [num] g, [num] b)
-  //#!Mixes the right color
-  //#!Return: [num] Color
+  //#!Mixes the right color from red, green and blue values (0 - 255)
+  //#!Return: [num] Color (16bit RGB565)
   if (sysFuncMatch(argS->callId, "mixColor", s)) {
     argType[1] = SVS_TYPE_NUM;
     argType[2] = SVS_TYPE_NUM;
@@ -88,7 +88,9 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 
   //#!##### Set draw area
   //#!    sys.ds.setArea([num] x1, [num] y1, [num] x2, [num] y2)
-  //#!Sets the draw area
+  //#!Sets the draw area. Uses hardware coordinates.
+  //#!For example: sys.ds.setArea(0, 32, 319, 479);
+  //#!This will init all app available space as a draw area.
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setArea", s)) {
     argType[1] = SVS_TYPE_NUM;
