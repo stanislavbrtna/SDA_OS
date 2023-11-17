@@ -45,6 +45,8 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width, uint16_t 
 
 static void break_draw_cleanup(svp_file *fp);
 
+uint16_t p16_get_pmc_alpha_color(uint16_t color);
+
 uint8_t sda_draw_p16_scaled(uint16_t x, uint16_t y, int16_t scale_w, int16_t scale_h, uint8_t *filename) {
   if (scale_w > 0 && scale_h > 0) {
     if (scale_w == 1 && scale_h == 1) {
@@ -229,6 +231,26 @@ uint16_t p16_get_pixel(svp_file * fp, p16Header * header, p16State * state) {
 }
 
 
+uint16_t p16_get_pmc_alpha_color(uint16_t color) {
+  if (p16_use_alpha) {
+    if (color == p16_alpha_color) {
+      return p16_bg_color;
+    }
+  } 
+
+  if (p16_use_pmc) {
+    uint8_t r, g, b;
+    r = (uint8_t)((color>>11)&0x1F);
+    g = (uint8_t)(((color&0x07E0)>>5)&0x3F);
+    b = (uint8_t)(color&0x1F);
+
+    return (((r+p16_R)/2) & 0x1F)<<11 | (((g+p16_G)/2)<<5  & 0x7E0 ) | (((b+p16_B)/2)&0x1F);
+  }
+
+  return color;
+}
+
+
 uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
   svp_file fp;
   p16Header header;
@@ -264,22 +286,7 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
   for(uint32_t n = 0; n < header.imageWidth*header.imageHeight ; n++) {
     color = p16_get_pixel(&fp, &header, &imageState);
 
-    if (p16_use_alpha) {
-      if (color == p16_alpha_color) {
-        color = p16_bg_color;
-      }
-    }
-
-    if (p16_use_pmc) {
-      uint8_t r, g, b;
-    //printf("drawing1 %s, x1: %d, y1: %d\n", c->pscgElements[id].str_value, x1, y1);
-      r = (uint8_t)((color>>11)&0x1F);
-      g = (uint8_t)(((color&0x07E0)>>5)&0x3F);
-      b = (uint8_t)(color&0x1F);
-
-      color = (((r+p16_R)/2) & 0x1F)<<11 | (((g+p16_G)/2)<<5  & 0x7E0 ) | (((b+p16_B)/2)&0x1F);
-
-    }
+    color = p16_get_pmc_alpha_color(color);   
 
     LCD_canvas_putcol(color);
     if (svpSGlobal.breakP16Draw == 1) {break_draw_cleanup(&fp); return 0;}
@@ -346,20 +353,7 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
       for(uint32_t b = 0; b < header.imageWidth; b++) {
         color = p16_get_pixel(&fp, &header, &imageState);
 
-        if (p16_use_alpha) {
-          if (color == p16_alpha_color) {
-            color = p16_bg_color;
-          }
-        }
-
-        if (p16_use_pmc) {
-          uint8_t r, g, b;
-          r = (uint8_t)((color>>11)&0x1F);
-          g = (uint8_t)(((color&0x07E0)>>5)&0x3F);
-          b = (uint8_t)(color&0x1F);
-
-          color = (((r+p16_R)/2) & 0x1F)<<11 | (((g+p16_G)/2)<<5  & 0x7E0 ) | (((b+p16_B)/2)&0x1F);
-        }
+        color = p16_get_pmc_alpha_color(color);  
 
         for (int c = 0; c < width_n; c++) {
           LCD_canvas_putcol(color);
@@ -444,21 +438,9 @@ uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint1
     for(uint32_t b = 0; b < drawn_width; b++) {
       for(uint32_t c = 0; c < width_n; c++) {
         color = p16_get_pixel(&fp, &header, &imageState);
-
-        if (p16_use_alpha) {
-          if (color == p16_alpha_color) {
-            color = p16_bg_color;
-          }
-        }
-
-        if (p16_use_pmc) {
-          uint8_t r, g, b;
-          r = (uint8_t)((color>>11)&0x1F);
-          g = (uint8_t)(((color&0x07E0)>>5)&0x3F);
-          b = (uint8_t)(color&0x1F);
-          color = (((r+p16_R)/2) & 0x1F)<<11 | (((g+p16_G)/2)<<5  & 0x7E0 ) | (((b+p16_B)/2)&0x1F);
-        }
       }
+
+      color = p16_get_pmc_alpha_color(color);
 
       LCD_canvas_putcol(color);
       pix++;
