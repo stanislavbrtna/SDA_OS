@@ -51,3 +51,11 @@ Return: 0 if success, 1 if error
     sys.cr.decrypt([str]fname);
 Encrypts file.
 Return: 0 if success, 1 if error
+##### Encrypt string
+    sys.cr.encryptStr([str]source);
+Encrypts given string.
+Return: [str] encryptedString
+##### Decrypt string
+    sys.cr.decryptStr([str]source);
+Decrypts given string.
+Return: [str] decryptedString
