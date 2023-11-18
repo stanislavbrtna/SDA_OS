@@ -33,17 +33,19 @@ void svp_settings_set_spacing(uint16_t id) {
   gr2_set_param(id, SDA_SETTINGS_SPACER, &sda_sys_con);
 }
 
+static uint16_t globBack;
+static uint16_t optSecuScr;
+
+
 uint16_t svp_optScreen(uint8_t init, uint8_t top) {
   static uint16_t optScreen;
-  static uint16_t globBack;
+
 
   static uint16_t optTimeScr;
   static uint16_t optLcdScr;
   static uint16_t optInfoScr;
   static uint16_t optNotifyScr;
-  static uint16_t optSecuScr;
   static uint16_t optDbgScr;
-
   static uint16_t optTimSel;
   static uint16_t optLcdSel;
   static uint16_t optDbgSel;
@@ -122,9 +124,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
     }
 
     if (gr2_clicked(optSecuSel, &sda_sys_con)) {
-      mainScr = optSecuScr;
-      globBack = sda_settings_security_screen(2);
-      setRedrawFlag();
+      sda_settings_open_security();
     }
 
     if (gr2_clicked(optSound, &sda_sys_con)) {
@@ -205,3 +205,10 @@ void settings_sd_mount() {
   }
 }
 
+void sda_settings_open_security() {
+  svpSGlobal.systemXBtnVisible = 0;
+  sda_slot_on_top(2);
+  mainScr = optSecuScr;
+  globBack = sda_settings_security_screen(2);
+  setRedrawFlag();
+}

@@ -31,7 +31,7 @@
 #define SCR_SECURITY_SCREEN                           (uint8_t*)"Security settings:"
 #define SCR_OLD_PASSWORD                              (uint8_t*)"Old password::"
 #define SCR_NEW_PASSWORD                              (uint8_t*)"New password:"
-#define SCR_CHANGE_PASSWORD                           (uint8_t*)"Apply change"
+#define SCR_CHANGE_PASSWORD                           (uint8_t*)"Apply changes"
 #define SCR_LOCK_DEVICE                               (uint8_t*)"Lock device"
 #define SCR_RESET_KEY                                 (uint8_t*)"Reset key"
 #define SCR_WRONG_PASSWORD                            (uint8_t*)"Wrong password!"
@@ -77,6 +77,7 @@
 #define OVRL_GRANT_PERMISSIONS                        (uint8_t*)"Allow this application to change system settins?"
 #define SCR_KEY_ERROR_MSG                             (uint8_t*)"Given password doesn\'t match the device encryption key."
 #define OVRL_SEC_NOT_SET_UP                           (uint8_t*)"Not configured!"
+#define OVRL_SETUP_PASSWORD                           (uint8_t*)"Set password"
 
 #define ASCR_CARD_ERROR                               (uint8_t*)"Card error!"
 #define ASCR_FILE_ERROR                               (uint8_t*)"File error!"

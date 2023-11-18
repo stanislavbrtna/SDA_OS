@@ -77,6 +77,7 @@
 #define OVRL_SEC_NOT_SET_UP           (uint8_t *)"Nenastaveno!"
 #define OVRL_GRANT_PERMISSIONS        (uint8_t *)"Povolit této aplikaci měnit nastavení systému?"
 #define OVRL_ENTER_PASSWORD           (uint8_t *)"Zadejte heslo:"
+#define OVRL_SETUP_PASSWORD           (uint8_t *)"Nastavit"
 
 #define ASCR_CARD_ERROR               (uint8_t *)"Chyba Karty"
 #define ASCR_FILE_ERROR               (uint8_t *)"Chyba Souboru"
