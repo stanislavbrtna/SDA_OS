@@ -107,6 +107,26 @@ uint8_t * svmGetName() {
   return svmMeta.name;
 }
 
+
+// Crypto lock/unlock 
+void svmSetCryptoUnlock(uint8_t unlock) {
+  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+    if (svmSavedProc[x].pid == svmMeta.pid) {
+      svmSavedProc[x].cryptoUnlocked = unlock;
+    }
+  }
+}
+
+
+uint8_t svmGetCryptoUnlock() {
+  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+    if (svmSavedProc[x].pid == svmMeta.pid) {
+      return svmSavedProc[x].cryptoUnlocked;
+    }
+  }
+}
+
+
 // Gets if there is currently valid, or suspended valid svm 
 uint8_t svmGetRunning() {
   if (svmValid) {
@@ -216,7 +236,6 @@ void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname) {
   svmMeta.landscape      = 0;
   svmMeta.lcdOffButtons  = 0;
   svmMeta.launchFromCWD  = 0;
-  svmMeta.cryptoUnlocked = 0;
   svmMeta.beepTime       = 0;
   svmMeta.authorized     = 0;
 
@@ -343,6 +362,10 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
 
   // set metadata
   svmLaunchSetDefMetadata(nextPid, parentPid, fname);
+
+  // insert to table of running apps
+  svmSuspendInitPid(svmMeta.pid, svmMeta.name);
+
   nextPid++;
   wrap_set_lcdOffButtons(0);
 
@@ -358,8 +381,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   sda_slot_set_valid(4);
   sda_slot_on_top(4);
   
-  // insert to table of running apps
-  svmSuspendInitPid(svmMeta.pid, svmMeta.name);
+  
   
   // show the close button
   svpSGlobal.systemXBtnVisible = 1;
@@ -398,7 +420,7 @@ void svmCloseRunning() {
     }
   }
 
-  if (svmMeta.cryptoUnlocked) {
+  if (svmGetCryptoUnlock()) {
     svp_crypto_lock();
   }
 

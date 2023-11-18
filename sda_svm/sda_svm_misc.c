@@ -182,17 +182,6 @@ uint64_t svmGetAppUptime() {
 }
 
 
-// Crypto
-void svmSetCryptoUnlock(uint8_t unlock) {
-  svmMeta.cryptoUnlocked = unlock;
-}
-
-
-uint8_t svmGetCryptoUnlock() {
-  return svmMeta.cryptoUnlocked;
-}
-
-
 uint8_t svmCheckAndExit() {
   if((svpSGlobal.systemXBtnClick) || (errCheck(&svm) != 0)) {
     svmCloseRunning();

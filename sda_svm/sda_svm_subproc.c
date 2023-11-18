@@ -262,6 +262,10 @@ uint8_t svmLoadProcData(uint16_t pid) {
     sda_set_landscape(svmMeta.landscape);
   }
 
+  if (svmGetCryptoUnlock()) {
+    svp_crypto_unlock_nopass();
+  }
+
   svp_chdir(svmMeta.currentWorkDir);
 
   slotScreen[4] = svmMeta.screen;

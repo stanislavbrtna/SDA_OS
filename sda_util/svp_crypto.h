@@ -6,8 +6,18 @@
 #define PASS_LEN_MAX 32
 
 // setup
+
+// init crypto
 void svp_crypto_init();
+
+// Check key and unlock
 uint8_t svp_crypto_unlock(uint8_t * key);
+
+// Just unlock, works only after an successful unlock with password
+// for OS use only
+uint8_t svp_crypto_unlock_nopass();
+
+// Lock
 void svp_crypto_lock();
 
 // getters

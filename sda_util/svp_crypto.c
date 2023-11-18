@@ -5,6 +5,8 @@ uint8_t svp_crypto_password[PASS_LEN_MAX];
 uint8_t svp_crypto_unlocked;
 uint8_t svp_crypto_set_up;
 
+uint8_t svp_successfull_unlock;
+
 
 void svp_crypto_init() {
   uint16_t i = 0;
@@ -21,6 +23,7 @@ void svp_crypto_init() {
   }
   
   svp_crypto_unlocked = 0;
+  svp_successfull_unlock = 0;
   return;
 }
 
@@ -63,7 +66,19 @@ uint8_t svp_crypto_unlock(uint8_t * password) {
   }
 
   svp_crypto_unlocked = 1;
+  svp_successfull_unlock = 1;
   fails = 0;
+  svp_crypto_set_pass_as_key();
+  return 0;
+}
+
+uint8_t svp_crypto_unlock_nopass() {
+  
+  if(svp_successfull_unlock == 0) {
+    return 1;
+  }
+  
+  svp_crypto_unlocked = 1;
   svp_crypto_set_pass_as_key();
   return 0;
 }

@@ -56,6 +56,7 @@ void svmSuspendInitPid(uint16_t pid, uint8_t * name) {
   svmSavedProc[index].pid = pid;
   svmSavedProc[index].valid = 1;
   svmSavedProc[index].singular = 0;
+  svmSavedProc[index].cryptoUnlocked = 0;
 }
 
 
@@ -70,6 +71,11 @@ uint8_t svmSuspend() {
       return 0;
     }
   }
+
+  if (svmGetCryptoUnlock()) {
+    svp_crypto_lock();
+  }
+
   svmSaveProcData();
   return 0;
 }
@@ -78,6 +84,11 @@ uint8_t svmSuspend() {
 uint8_t svmWake(uint16_t pid) {
   if(pid == svmMeta.pid && svmGetValid()) {
     svmOnTop();
+
+    if (svmGetCryptoUnlock()) {
+      svp_crypto_unlock_nopass();
+    }
+
     if(functionExists(WAKEUP_FUNCTION, &svm)) { // execute the wakeup
       commExec(WAKEUP_FUNCTION, &svm);
       if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
@@ -105,6 +116,7 @@ uint8_t svmWake(uint16_t pid) {
       sda_slot_set_valid(4);
       svmSetValid(1);
       svmOnTop();
+
       if(functionExists(WAKEUP_FUNCTION, &svm)) {
         commExec(WAKEUP_FUNCTION, &svm);
         if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {

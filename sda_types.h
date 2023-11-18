@@ -148,7 +148,6 @@ typedef struct {
   uint8_t  openCsvUsed;
   uint8_t  lcdOffButtons;
   uint8_t  launchFromCWD;
-  uint8_t  cryptoUnlocked;
   uint64_t loadUptime;
   uint8_t  beepTimerCallback[15];
   uint32_t beepTime;
@@ -161,6 +160,7 @@ typedef struct {
 
 typedef struct {
   uint8_t  name[APP_NAME_LEN];
+  uint8_t  cryptoUnlocked;
   uint16_t pid;
   uint8_t  valid;
   uint8_t  singular;
