@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "sda_crypto_misc.h"
+#include "sda_crypto_key_mgmt.h"
 
 
 void sda_crypto_keyfile_boot_check() {

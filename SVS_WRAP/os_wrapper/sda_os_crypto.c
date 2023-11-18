@@ -246,5 +246,57 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Encrypt string
+  //#!    sys.cr.encryptStr([str]source);
+  //#!Encrypts given string.
+  //#!Return: [str] encryptedString
+  if (sysFuncMatch(argS->callId, "encryptStr", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (svmGetCryptoUnlock()) {
+      uint8_t *dest;
+      uint16_t str_id;
+
+      dest = strNewPLen(sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1, &str_id, s);
+      sda_encrypt_string((uint8_t*) (s->stringField + argS->arg[1].val_str), dest, sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1);
+
+      result->value.val_str = str_id;
+    } else {
+      result->value.val_str = strNew((uint8_t*) "", s);
+    }
+
+    result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
+  //#!##### Decrypt string
+  //#!    sys.cr.decryptStr([str]source);
+  //#!Decrypts given string.
+  //#!Return: [str] decryptedString
+  if (sysFuncMatch(argS->callId, "decryptStr", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (svmGetCryptoUnlock()) {
+      uint8_t *dest;
+      uint16_t str_id;
+
+      dest = strNewPLen(sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1, &str_id, s);
+      sda_decrypt_string((uint8_t*) (s->stringField + argS->arg[1].val_str), dest, sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1);
+
+      result->value.val_str = str_id;
+    } else {
+      result->value.val_str = strNew((uint8_t*) "", s);
+    }
+
+    result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
   return 0;
 }
