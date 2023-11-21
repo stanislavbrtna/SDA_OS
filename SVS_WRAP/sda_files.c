@@ -579,7 +579,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    uint8_t ok = 1;
+    uint8_t ok;
 
     if (copyStatus != 0) {
       result->value.val_s = 0;
@@ -587,7 +587,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 1;
     }
 
-    ok *= svp_fopen_read(&copySource, s->stringField + argS->arg[1].val_str);
+    ok = svp_fopen_read(&copySource, s->stringField + argS->arg[1].val_str);
 
     if (ok == 0) {
       result->value.val_s = 0;
@@ -614,7 +614,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    uint8_t ok = 1;
+    uint8_t ok;
 
     if (copyStatus != 1) {
       result->value.val_s = 0;
@@ -622,7 +622,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 1;
     }
 
-    ok *= svp_fopen_rw(&copyDest, s->stringField + argS->arg[1].val_str);
+    ok = svp_fopen_rw(&copyDest, s->stringField + argS->arg[1].val_str);
 
     if (ok == 0) {
       result->value.val_s = 0;
@@ -644,7 +644,9 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### File copy status
   //#!    sys.fs.copyStat([num]opt);
   //#! opt: 0 - status ret: [num]0 - nothing, 1 - source selected, 2 - copy in progress
+  //#!
   //#! opt: 1 - size of source [num]bytes
+  //#!
   //#! opt: 2 - remaining bytes [num]bytes
   if (sysFuncMatch(argS->callId, "copyStat", s)) {
     argType[1] = SVS_TYPE_NUM;
