@@ -317,8 +317,13 @@ static void sda_main_handle_soft_buttons() {
       svp_set_backlight(svpSGlobal.lcdBacklight);
     }
 
+    if (svpSGlobal.systemPwrLongPress == 0 && sda_batt_overlay_shown()) {
+      destroyOverlay();
+    } else {
+      sda_batt_overlay_init();
+    }
+    
     svpSGlobal.systemPwrLongPress = 0;
-    sda_batt_overlay_init();
   }
 }
 
