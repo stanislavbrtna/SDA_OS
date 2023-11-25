@@ -527,39 +527,39 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Changes working directory.
   //#!call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA directory
   //#!call sys.fs.chDir(1); to get to the APPS directory
-  //#!Return: None
+  //#!Return: 1 - ok, 0 - fail
   if (sysFuncMatch(argS->callId, "chDir", s)) {
 
+    uint8_t r = 0;
+
     if (argS->usedup == 1 && argS->argType[1] == SVS_TYPE_STR) {
-      result->value.val_s = (int32_t)svp_chdir(s->stringField + argS->arg[1].val_str);
-      result->type = SVS_TYPE_NUM;
+      r = svp_chdir(s->stringField + argS->arg[1].val_str);
       svmUpdateCurrentWD();
-      return 1;
     }
 
     if (argS->usedup == 1 && argS->argType[1] == SVS_TYPE_NUM) {
       if (argS->arg[1].val_s == 1) {
         svp_switch_main_dir();
-        result->value.val_s = (int32_t)svp_chdir((uint8_t *)"APPS");
-        result->type = SVS_TYPE_NUM;
+        r = svp_chdir((uint8_t *)"APPS");
         svmUpdateCurrentWD();
       }
+
       if (argS->arg[1].val_s == 0) {
         svp_switch_main_dir();
-        result->value.val_s = (int32_t)svp_chdir((uint8_t *)"DATA");
-        result->type = SVS_TYPE_NUM;
+        r = svp_chdir((uint8_t *)"DATA");
         svmUpdateCurrentWD();
       }
-      return 1;
     }
 
     if (argS->usedup == 0) {
       svp_switch_main_dir();
-      result->value.val_s = (int32_t)svp_chdir((uint8_t *)"DATA");
-      result->type = SVS_TYPE_NUM;
+      r = svp_chdir((uint8_t *)"DATA");
       svmUpdateCurrentWD();
-      return 1;
     }
+
+    result->value.val_s = (int32_t) (1 - r);
+    result->type = SVS_TYPE_NUM;
+    return 1;
 
     errSoft((uint8_t *)"sysExecTypeCheck: Wrong type or count of arguments for sys function fChDir()!", s);
     return 0;

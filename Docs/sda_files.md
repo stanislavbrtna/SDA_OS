@@ -72,7 +72,7 @@ Return: [num] 1 - ok, 0 - fail
 Changes working directory.
 call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA directory
 call sys.fs.chDir(1); to get to the APPS directory
-Return: None
+Return: 1 - ok, 0 - fail
 
 #### File copy
 
@@ -87,7 +87,9 @@ Return: [num] 1 - ok, 0 - failed
 ##### File copy status
     sys.fs.copyStat([num]opt);
  opt: 0 - status ret: [num]0 - nothing, 1 - source selected, 2 - copy in progress
+
  opt: 1 - size of source [num]bytes
+
  opt: 2 - remaining bytes [num]bytes
 ##### Stop current copy operation
     sys.fs.copyStop();
