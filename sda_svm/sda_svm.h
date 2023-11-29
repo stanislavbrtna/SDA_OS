@@ -23,6 +23,9 @@ SOFTWARE.
 #ifndef SDA_SVM_H
 #define SDA_SVM_H
 #include "../SDA_OS.h"
+
+#include "sda_svm_timers.h" 
+
 #define SUSPEND_FUNCTION (uint8_t *)"suspend"
 #define WAKEUP_FUNCTION (uint8_t *)"wakeup"
 

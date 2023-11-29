@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "sda_timers.h"
+#include "sda_svm_timers.h"
 
 extern svsVM          svm;
 extern sdaSvmMetadata svmMeta;
@@ -87,7 +87,9 @@ uint8_t sdaSvmHandleTimers() {
             svp_errSoftPrint(&svm);
             return 1;
           }
-          if (svmCheckAndExit()) { // handle potential exit call
+
+          // handle potential exit call
+          if (svmCheckAndExit()) {
             return 0;
           }
 

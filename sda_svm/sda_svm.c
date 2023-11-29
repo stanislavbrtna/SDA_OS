@@ -381,8 +381,6 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   sda_slot_set_valid(4);
   sda_slot_on_top(4);
   
-  
-  
   // show the close button
   svpSGlobal.systemXBtnVisible = 1;
   svpSGlobal.systemXBtnClick = 0;
