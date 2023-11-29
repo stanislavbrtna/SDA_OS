@@ -77,9 +77,29 @@ uint8_t sdaSvmHandleTimers() {
           }
         } else {
           uint16_t prev_pid;
-          prev_pid = svmMeta.pid;
+          if (svmGetValid()) {
+            prev_pid = svmMeta.pid;
+          } else {
+            prev_pid = 0;
+          }
+          
           //wakeup
-          svmWake(svmGetSavedProcPid(x));
+          if(svmWake(svmGetSavedProcPid(x))) {
+            // error occured during wakeup
+            // wake the previous and exit
+            if (prev_pid) {
+              svmWake(prev_pid);
+              svmOnTop();
+              setRedrawFlag();
+            } else {
+              // TODO: fix all of this slot mess
+              svp_switch_main_dir();
+              svp_chdir((uint8_t *)"APPS");
+              sda_slot_on_top(1);
+            }
+            
+            return 0;
+          }
 
           //execute
           commExec(svmSavedProcTimerCallback[x], &svm);

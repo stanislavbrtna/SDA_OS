@@ -240,15 +240,31 @@ uint8_t svmLoadProcData(uint16_t pid) {
 
   for(uint16_t i = 0; i < SDA_FILES_OPEN_MAX; i++) {
     if (svmMeta.openFileUsed[i]) {
-      sda_fr_fname_reopen(i);
+      if (!sda_fr_fname_reopen(i)) {
+        printf("Failed to open file: %s\n", svmMeta.openFileName);
+        sda_show_error_message("Filed to open file!");
+        return 0;
+      }
     }
   }
 
   if (svmMeta.openConfUsed) {
+    if (!svp_fexists(svmMeta.openConfName)) {
+      printf("Failed to open conf file: %s\n", svmMeta.openConfName);
+      sda_show_error_message("Filed to open conf file!");
+      return 0;
+    }
+
     sda_files_conf_open(svmMeta.openConfName);
   }
 
   if (svmMeta.openCsvUsed) {
+    if (!svp_fexists(svmMeta.openCsvName)) {
+      printf("Failed to open csv file: %s\n", svmMeta.openCsvName);
+      sda_show_error_message("Filed to open conf file!");
+      return 0;
+    }
+
     sda_files_csv_open(svmMeta.openCsvName);
   }
 

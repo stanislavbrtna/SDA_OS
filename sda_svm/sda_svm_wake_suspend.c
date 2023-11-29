@@ -80,7 +80,7 @@ uint8_t svmSuspend() {
   return 0;
 }
 
-
+// wakes up given pid, returns: 0 - ok, 1 - error 
 uint8_t svmWake(uint16_t pid) {
   if(pid == svmMeta.pid && svmGetValid()) {
     svmOnTop();
