@@ -95,6 +95,33 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Set root for redraw
+  //#!    sys.os.gui.setRoot([num]in_apps, [str]dir);
+  //#!Sets custom root directory for the redraw function.
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setRoot", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 2, s)){
+      return 0;
+    }
+
+    uint8_t buff[128];
+    if (argS->arg[1].val_s == 0) {
+      sda_strcp("DATA/", buff, sizeof(buff));
+      sda_str_add(buff, s->stringField + argS->arg[2].val_str);
+      svmSetDrawRoot(buff);
+    }
+
+    if (argS->arg[1].val_s == 1) {
+      sda_strcp("APPS/", buff, sizeof(buff));
+      sda_str_add(buff, s->stringField + argS->arg[2].val_str);
+      svmSetDrawRoot(buff);
+    }
+    
+    return 1;
+  }
+
   //#!##### Handle keypad input of a screen
   //#!    sys.os.gui.btnCtrl([num]screen_id, [num]back_btn_id);
   //#!Allows control of a given screen via buttons.

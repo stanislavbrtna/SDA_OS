@@ -28,4 +28,6 @@ SOFTWARE.
 void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **svmArgs, svsVM *s);
 void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsVM *s);
 
+void svmSetDrawRoot(uint8_t * str);
+
 #endif

@@ -8,6 +8,10 @@ Return: None
     sys.os.gui.getMainScr();
 Gets main screen id
 Return: [num]id
+##### Set root for redraw
+    sys.os.gui.setRoot([num]in_apps, [str]dir);
+Sets custom root directory for the redraw function.
+Return: None
 ##### Handle keypad input of a screen
     sys.os.gui.btnCtrl([num]screen_id, [num]back_btn_id);
 Allows control of a given screen via buttons.

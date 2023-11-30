@@ -152,6 +152,8 @@ typedef struct {
   uint8_t  beepTimerCallback[15];
   uint32_t beepTime;
   uint8_t  authorized;
+  uint8_t  useDrawRoot;
+  uint8_t  drawRoot[128];
 
   varType  svmCallRetval[3];
   uint8_t* svmCallRetvalStr[3];

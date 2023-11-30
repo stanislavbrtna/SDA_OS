@@ -36,8 +36,19 @@ uint8_t kbdRedraw;
 psvcKbdLayout kbdLayout;
 uint8_t kbdVisibleOld;
 
+extern sdaSvmMetadata svmMeta;
+
 
 void sda_main_redraw() {
+  uint8_t dirBuff[256];
+
+  if(sda_get_top_slot() == 4 && svmGetValid() && svmMeta.useDrawRoot == 1) {
+    svp_getcwd(dirBuff, 256);
+    svp_switch_main_dir();
+    svp_chdir(svmMeta.drawRoot);
+  }
+  
+
   // lock tick for redraw
   tick_lock = SDA_LOCK_LOCKED;
   LCD_setDrawArea(0, 0, SDA_LCD_W + 160 * svpSGlobal.lcdLandscape, SDA_LCD_H - 160 * svpSGlobal.lcdLandscape);
@@ -146,8 +157,14 @@ void sda_main_redraw() {
     gr2_draw_screen(overlayX1, overlayY1, overlayX2, overlayY2, overlayScr, 0, overlayCont);
   }
   gr2_draw_end(sda_current_con);
+  
   if (overlayScr != 0) {
     gr2_draw_end(overlayCont);
+  }
+
+  if(sda_get_top_slot() == 4 && svmGetValid() && svmMeta.useDrawRoot == 1) {
+    svp_switch_main_dir();
+    svp_chdir(dirBuff);
   }
 
   tick_lock = SDA_LOCK_UNLOCKED;

@@ -114,6 +114,11 @@ void svmSetLandscape(uint8_t val) {
 }
 
 
+void svmSetDrawRoot(uint8_t * str) {
+  sda_strcp(str, svmMeta.drawRoot, sizeof(svmMeta.drawRoot));
+  svmMeta.useDrawRoot = 1;
+}
+
 // beep callback init & handler
 void svmSetBeepCallback(uint8_t * cb, uint32_t time) {
  sda_strcp(cb, svmMeta.beepTimerCallback, sizeof(svmMeta.beepTimerCallback));
