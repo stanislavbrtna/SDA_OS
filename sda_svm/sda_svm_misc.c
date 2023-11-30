@@ -154,7 +154,7 @@ void svmInit() {
 
 
 void svmOnTop() {
-  sda_slot_on_top(4);
+  sda_slot_on_top(SDA_SLOT_SVM);
   svp_switch_main_dir();
   svp_chdir(svmMeta.currentWorkDir);
 

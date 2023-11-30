@@ -208,13 +208,13 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 
     if (gr2_get_event(appsBtn, &sda_sys_con) == EV_RELEASED) {
       gr2_ki_unselect(screen, &sda_sys_con);
-      sda_slot_on_top(1);
+      sda_slot_on_top(SDA_SLOT_APPLIST);
     }
     gr2_set_event(appsBtn, EV_NONE, &sda_sys_con);
 
     if (gr2_get_event(optBtn, &sda_sys_con) == EV_RELEASED) {
       gr2_ki_unselect(screen, &sda_sys_con);
-      sda_slot_on_top(2);
+      sda_slot_on_top(SDA_SLOT_SETTINGS);
     }
     gr2_set_event(optBtn, EV_NONE, &sda_sys_con);
 

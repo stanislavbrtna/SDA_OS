@@ -319,7 +319,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
     svpSGlobal.systemXBtnVisible = 0;
 
     if (svpSGlobal.sdaDeviceLock == DEVICE_LOCKED) {
-      sda_slot_on_top(0);
+      sda_slot_on_top(SDA_SLOT_HOMESCREEN);
     }
     
     appActive = svmGetRunning();

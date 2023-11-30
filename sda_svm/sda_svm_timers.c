@@ -95,7 +95,7 @@ uint8_t sdaSvmHandleTimers() {
               // TODO: fix all of this slot mess
               svp_switch_main_dir();
               svp_chdir((uint8_t *)"APPS");
-              sda_slot_on_top(1);
+              sda_slot_on_top(SDA_SLOT_APPLIST);
             }
             
             return 0;

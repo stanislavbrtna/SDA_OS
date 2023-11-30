@@ -107,4 +107,10 @@ File description:
 #define TOUCH_USE_BATTERY_MEASUREMENT
 #endif
 
+// Screen slot defines
+#define SDA_SLOT_HOMESCREEN 0
+#define SDA_SLOT_APPLIST    1
+#define SDA_SLOT_SETTINGS   2
+#define SDA_SLOT_SVM        4
+
 #endif

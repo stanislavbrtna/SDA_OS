@@ -177,7 +177,7 @@ uint16_t svp_optScreen(uint8_t init, uint8_t top) {
 
 void settings_sd_umount() {
   if (svpSGlobal.sdaDeviceLock == DEVICE_UNLOCKED) {
-    sda_slot_on_top(2);
+    sda_slot_on_top(SDA_SLOT_SETTINGS);
   }
   svp_umount();
   gr2_set_str(optMntSel, SCR_SD_MOUNT, &sda_sys_con);
@@ -197,7 +197,7 @@ void settings_sd_mount() {
     slotScreen[1] = svp_appScreen(1, 0);
 
     if (svpSGlobal.sdaDeviceLock == DEVICE_UNLOCKED) {
-      sda_slot_on_top(2);
+      sda_slot_on_top(SDA_SLOT_SETTINGS);
     }
 
     //next little hack, relod the main screen, this will be replaced someday
@@ -207,7 +207,7 @@ void settings_sd_mount() {
 
 void sda_settings_open_security() {
   svpSGlobal.systemXBtnVisible = 0;
-  sda_slot_on_top(2);
+  sda_slot_on_top(SDA_SLOT_SETTINGS);
   mainScr = optSecuScr;
   globBack = sda_settings_security_screen(2);
   setRedrawFlag();

@@ -380,8 +380,8 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   svmGetGR2Settings();
   
   // validate the app slot
-  sda_slot_set_valid(4);
-  sda_slot_on_top(4);
+  sda_slot_set_valid(SDA_SLOT_SVM);
+  sda_slot_on_top(SDA_SLOT_SVM);
   
   // show the close button
   svpSGlobal.systemXBtnVisible = 1;
@@ -451,16 +451,16 @@ void svmCloseRunning() {
       if (svmLoadProcData(svmMeta.parentPid) == 0) {
         printf("svmCloseRunning: Loading parent app failed!\n");
         svmValid = 0;
-        sda_slot_set_invalid(4);
-        sda_slot_on_top(1);
+        sda_slot_set_invalid(SDA_SLOT_SVM);
+        sda_slot_on_top(SDA_SLOT_APPLIST);
         svp_switch_main_dir();
         svp_chdir((uint8_t *)"APPS");
         return;
       }
     } else {
       svmValid = 0;
-      sda_slot_set_invalid(4);
-      sda_slot_on_top(1);
+      sda_slot_set_invalid(SDA_SLOT_SVM);
+      sda_slot_on_top(SDA_SLOT_APPLIST);
       printf("svmCloseRunning: Parent is not valid.\n");
       svp_switch_main_dir();
       svp_chdir((uint8_t *)"APPS");
@@ -489,14 +489,14 @@ void svmCloseRunning() {
   gr2_text_deactivate(&sda_app_con);
   svpSGlobal.systemXBtnVisible = 0;
   svmValid = 0;
-  if (sda_slot_get_screen(4) != 0) {
-    gr2_destroy(sda_slot_get_screen(4), &sda_app_con);
+  if (sda_slot_get_screen(SDA_SLOT_SVM) != 0) {
+    gr2_destroy(sda_slot_get_screen(SDA_SLOT_SVM), &sda_app_con);
   }
-  sda_slot_set_invalid(4);
+  sda_slot_set_invalid(SDA_SLOT_SVM);
 
   // TODO: restore right slot.. previous app perhaps...
   if (slot_restore == 0) {
-    sda_slot_on_top(1);
+    sda_slot_on_top(SDA_SLOT_APPLIST);
   }
 
   svp_switch_main_dir();
@@ -526,7 +526,7 @@ void svmCloseAll() {
     if (sda_slot_get_valid(slot_restore)) {
       sda_slot_on_top(slot_restore);
     } else {
-      sda_slot_on_top(0);
+      sda_slot_on_top(SDA_SLOT_HOMESCREEN);
     }
     slot_restore = 0;
   }
@@ -595,10 +595,10 @@ void sdaSvmKillApp_handle() {
   svpSGlobal.kbdVisible = 0;
   svpSGlobal.touchType = EV_NONE;
   svpSGlobal.touchValid = 0;
-  if (sda_slot_get_screen(4) != 0) {
-    gr2_destroy(sda_slot_get_screen(4), &sda_app_con);
+  if (sda_slot_get_screen(SDA_SLOT_SVM) != 0) {
+    gr2_destroy(sda_slot_get_screen(SDA_SLOT_SVM), &sda_app_con);
   }
-  sda_slot_set_invalid(4);
+  sda_slot_set_invalid(SDA_SLOT_SVM);
 
   svmInValidate(svmMeta.pid);
   sda_set_sleep_lock(0);
@@ -608,7 +608,7 @@ void sdaSvmKillApp_handle() {
 
   svp_crypto_lock();
   gr2_cleanup(&sda_app_con); // performs cleanup of pscg elements
-  sda_slot_on_top(1);
+  sda_slot_on_top(SDA_SLOT_APPLIST);
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
   sda_set_sleep_lock(0);

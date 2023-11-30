@@ -125,13 +125,13 @@ static void sda_main_init() {
   sda_load_config();
 
   // initialize screens: home, apps and options
-  sda_slot_init(0, svp_homeScreen(1, 0), &sda_sys_con, 1, 1);
+  sda_slot_init(SDA_SLOT_HOMESCREEN, svp_homeScreen(1, 0), &sda_sys_con, 1, 1);
   sda_homescreen_configure();
 
-  sda_slot_init(1, svp_appScreen(1, 0), &sda_sys_con, 1, 0);
-  sda_slot_init(2, svp_optScreen(1, 0), &sda_sys_con, 1, 0);
+  sda_slot_init(SDA_SLOT_APPLIST, svp_appScreen(1, 0), &sda_sys_con, 1, 0);
+  sda_slot_init(SDA_SLOT_SETTINGS, svp_optScreen(1, 0), &sda_sys_con, 1, 0);
   svmRun(1, 0);
-  sda_slot_init(4, 0, &sda_app_con, 0, 0);
+  sda_slot_init(SDA_SLOT_SVM, 0, &sda_app_con, 0, 0);
 
   sda_splash_screen = gr2_add_screen(&sda_sys_con);
   gr2_set_str(sda_splash_screen, gr2_get_str(slotScreen[0], &sda_sys_con), &sda_sys_con);
@@ -162,7 +162,7 @@ static void sda_main_init() {
   // check for screen lock
   if (rtc_read_locked() == 1) {
     svpSGlobal.sdaDeviceLock = DEVICE_LOCKED;
-    sda_slot_on_top(0);
+    sda_slot_on_top(SDA_SLOT_HOMESCREEN);
   }
 }
 
@@ -182,7 +182,7 @@ uint8_t sda_main_loop() {
     // precache.lst or something.
     sda_precache();
     mainScr = slotScreen[0];
-    sda_slot_on_top(0);
+    sda_slot_on_top(SDA_SLOT_HOMESCREEN);
     init = 2;
   }
 
@@ -215,24 +215,24 @@ uint8_t sda_main_loop() {
   sda_clipboard_overlay_update();
 
   // updating screens
-  if (sda_slot_get_valid(0)) {
-    svp_homeScreen(0, sda_if_slot_on_top(0));
+  if (sda_slot_get_valid(SDA_SLOT_HOMESCREEN)) {
+    svp_homeScreen(0, sda_if_slot_on_top(SDA_SLOT_HOMESCREEN));
   }
 
-  if (sda_slot_get_valid(1)) {
-    svp_appScreen(0, sda_if_slot_on_top(1));
+  if (sda_slot_get_valid(SDA_SLOT_APPLIST)) {
+    svp_appScreen(0, sda_if_slot_on_top(SDA_SLOT_APPLIST));
   }
 
-  if (sda_slot_get_valid(2)) {
-    svp_optScreen(0, sda_if_slot_on_top(2));
+  if (sda_slot_get_valid(SDA_SLOT_SETTINGS)) {
+    svp_optScreen(0, sda_if_slot_on_top(SDA_SLOT_SETTINGS));
   }
 
-  if (sda_slot_get_valid(4)) {
-    svmRun(0, sda_if_slot_on_top(4));
+  if (sda_slot_get_valid(SDA_SLOT_SVM)) {
+    svmRun(0, sda_if_slot_on_top(SDA_SLOT_SVM));
   }
 
   if (sda_slot_get_valid(sda_get_top_slot()) == 0) {
-    sda_slot_on_top(0);
+    sda_slot_on_top(SDA_SLOT_HOMESCREEN);
   }
 
   // handling misc stuff
@@ -268,7 +268,7 @@ static void sda_main_run_autoexec() {
       svmRun(0, 1);
     }
   }
-  sda_slot_on_top(0);
+  sda_slot_on_top(SDA_SLOT_HOMESCREEN);
 }
 
 
@@ -290,9 +290,9 @@ static void sda_main_handle_soft_buttons() {
       if(sda_get_prev_top_screen_slot() == 1
          || sda_get_prev_top_screen_slot() == 2)
       {
-        sda_slot_on_top(0);
+        sda_slot_on_top(SDA_SLOT_HOMESCREEN);
       } else {
-        sda_slot_on_top(1);
+        sda_slot_on_top(SDA_SLOT_APPLIST);
       }
       
       svp_chdir(mainDir);
