@@ -44,7 +44,7 @@ uint8_t sda_screen_button_handler(uint16_t screen_id, uint16_t back_id, gr2conte
       }
     }
 
-    if (sda_wrap_get_button(BUTTON_A) == EV_PRESSED) {
+    if (sda_wrap_get_button(BUTTON_A) == EV_RELEASED) {
       gr2_text_deactivate(con);
       sda_keyboard_hide();
     }
