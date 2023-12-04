@@ -97,20 +97,31 @@ void taskSwitcherOpen() {
   uint16_t n = 0;
   gr2_set_relative_init(1, &sda_sys_con);
   task_switcher = gr2_add_screen(&sda_sys_con);
+  gr2_set_cell_spacing(task_switcher, 2, 1, 2, 1, &sda_sys_con);
+  gr2_set_x_cell(task_switcher, 19, &sda_sys_con);
+  gr2_set_y_cell(task_switcher, 18, &sda_sys_con);
+  gr2_set_yscroll(task_switcher, -8, &sda_sys_con);
+  gr2_set_xscroll(task_switcher, -12, &sda_sys_con);
+
   task_switcher_inner = gr2_add_screen(&sda_sys_con);
+
   gr2_set_screen(task_switcher_inner, task_switcher, &sda_sys_con);
-  gr2_set_x_cell(task_switcher, 16, &sda_sys_con);
-  gr2_set_x1y1x2y2(task_switcher_inner, 1, 1, 14, 7 - svpSGlobal.lcdLandscape*3, &sda_sys_con);
+  gr2_set_x1y1x2y2(task_switcher_inner, 0, 2, 12, 14 - svpSGlobal.lcdLandscape*6, &sda_sys_con);
+
+  gr2_set_cell_spacing(task_switcher_inner, 1, 2, 1, 1, &sda_sys_con);
+  gr2_set_yscroll(task_switcher_inner, -5, &sda_sys_con);
+  gr2_set_xscroll_initial(task_switcher_inner, -4, &sda_sys_con);
+  gr2_set_x_cell(task_switcher_inner, 31, &sda_sys_con);
 
   gr2_add_text(
-    1, 0, 14, 1,
+    0, 0, 14, 2,
     SWITCH_RUNNING_APPS,
     task_switcher,
     &sda_sys_con
   );
   scrollbar = gr2_add_slider_v(
-    15, 1, 2, 7 - svpSGlobal.lcdLandscape*3,
-    MAX_OF_SAVED_PROC * 10 + 32,
+    12, 2, 2, 14 - svpSGlobal.lcdLandscape*6,
+    MAX_OF_SAVED_PROC * 32 - 7*32,
     0,
     task_switcher,
     &sda_sys_con
@@ -119,21 +130,21 @@ void taskSwitcherOpen() {
   for(uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     appPid[n] = svmGetSuspendedPid(x);
 
-    if(appPid[n] == 0){
+    if(appPid[n] == 0) {
       continue;
     }
 
     reloadNiceNames();
 
     appButtons[n] = gr2_add_button(
-      0, 1 + n, 6, 1,
+      0, n, 6, 1,
       niceSuspendName[x],
       task_switcher_inner,
       &sda_sys_con
     );
 
     appButtonsClose[n] = gr2_add_button(
-      6, 1 + n, 1, 1,
+      6, n, 1, 1,
       (uint8_t *)"-",
       task_switcher_inner,
       &sda_sys_con
@@ -144,20 +155,23 @@ void taskSwitcherOpen() {
   }
   numberOfApps = n;
 
-  ok = gr2_add_button(12, 9 - svpSGlobal.lcdLandscape*3, 3, 1, OVRL_OK, task_switcher, &sda_sys_con);
+  ok = gr2_add_button(9, 16 - svpSGlobal.lcdLandscape*6, 3, 2, OVRL_OK, task_switcher, &sda_sys_con);
 
   close_all = gr2_add_button(
-    1, 9 - svpSGlobal.lcdLandscape*3, 8, 1,
+    0, 16 - svpSGlobal.lcdLandscape*6, 7, 2,
     SWITCH_CLOSE_ALL,
     task_switcher,
     &sda_sys_con
   );
 
+  gr2_text_set_align(ok, GR2_ALIGN_CENTER, &sda_sys_con);
+  gr2_text_set_align(close_all, GR2_ALIGN_CENTER, &sda_sys_con);
+
   task_overlay = setOverlayScreen(task_switcher, &sda_sys_con);
   setOverlayX1(16 + svpSGlobal.lcdLandscape*80);
   setOverlayY1(32 + 16);
   setOverlayX2(320 - 16 + svpSGlobal.lcdLandscape*80);
-  setOverlayY2(480 - 96 - 96*svpSGlobal.lcdLandscape);
+  setOverlayY2(480 - 80 - 8 - 104*svpSGlobal.lcdLandscape);
 
   setOverlayDestructor(taskSwitcherDestructor);
   valid = 1;
@@ -188,8 +202,10 @@ void taskSwitcherUpdate() {
 
     if (gr2_get_event(appButtonsClose[x], &sda_sys_con) == EV_RELEASED) {
       svmClose(appPid[x]);
+      int32_t prevScroll = gr2_get_value(scrollbar, &sda_sys_con);
       destroyOverlay();
       taskSwitcherOpen();
+      gr2_set_value(scrollbar, prevScroll, &sda_sys_con);
       return;
     }
 
@@ -213,7 +229,7 @@ void taskSwitcherUpdate() {
 
   gr2_set_yscroll(
     task_switcher_inner,
-    gr2_get_value(scrollbar, &sda_sys_con) * 32 / 10,
+    gr2_get_value(scrollbar, &sda_sys_con) - 5,
     &sda_sys_con
   );
 
