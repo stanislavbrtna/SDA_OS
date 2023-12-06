@@ -44,9 +44,10 @@ Return: [num] result
     sys.os.error([str]errorText);
 Throws error message
 Return: None
-##### Get path to executable
+##### Gets app path
     sys.os.getAppPath();
-Get path to the executable
+Gets diretory path of the currently running svs app
+includung the name of the app. 
 Return: [str] Path
 #### Keyboard
 ##### Hide keyboard

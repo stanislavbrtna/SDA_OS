@@ -200,9 +200,10 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Get path to executable
+  //#!##### Gets app path
   //#!    sys.os.getAppPath();
-  //#!Get path to the executable
+  //#!Gets diretory path of the currently running svs app
+  //#!includung the name of the app. 
   //#!Return: [str] Path
   if (sysFuncMatch(argS->callId, "getAppPath", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
