@@ -133,9 +133,9 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     tSubheading = gr2_add_text(1, 3, 9, 4,(uint8_t *)"", screen, &sda_sys_con);
     time = gr2_add_text(3, 4, 12, 6,(uint8_t *)"??:??", screen, &sda_sys_con);
     date = gr2_add_text(3, 6, 12, 7,(uint8_t *)"?. ?. 20??", screen, &sda_sys_con);
-    appsBtn = gr2_add_icon(2, 10, 5, 13,(uint8_t *)"", (uint8_t *)"Icons/apps.p16", screen, &sda_sys_con);
-    optBtn = gr2_add_icon(6, 10, 9, 13,(uint8_t *)"", (uint8_t *)"Icons/options.p16", screen, &sda_sys_con);
-    lockBtn = gr2_add_icon(4, 10, 7, 13,(uint8_t *)"", (uint8_t *)"Icons/lock.p16", screen, &sda_sys_con);
+    appsBtn = gr2_add_icon(2, 10, 4, 13,(uint8_t *)"", (uint8_t *)"Icons/apps.p16", screen, &sda_sys_con);
+    optBtn = gr2_add_icon(6, 10, 8, 13,(uint8_t *)"", (uint8_t *)"Icons/options.p16", screen, &sda_sys_con);
+    lockBtn = gr2_add_icon(4, 10, 6, 13,(uint8_t *)"", (uint8_t *)"Icons/lock.p16", screen, &sda_sys_con);
     gr2_set_visible(lockBtn, 0, &sda_sys_con);
     gr2_text_set_size(tHeading, 70, &sda_sys_con);
     gr2_text_set_size(time, 70, &sda_sys_con);
