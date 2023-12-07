@@ -73,8 +73,7 @@ uint16_t sda_settings_info_screen(uint8_t init) {
     optInfoScr = gr2_add_screen(&sda_sys_con);
     internalScr = gr2_add_screen(&sda_sys_con);
 
-    //TODO: make os icon work better with transparency
-    gr2_set_param(gr2_add_image(1, 1, 8, 4, (uint8_t *)"Icons/logo.p16", optInfoScr, &sda_sys_con), 0, &sda_sys_con);
+    gr2_set_param(gr2_add_image(1, 1, 8, 4, (uint8_t *)"Icons/logo.p16", optInfoScr, &sda_sys_con), 1, &sda_sys_con);
     gr2_add_text(1, 4, 10, 5, SCR_OS_VERSION" "SDA_OS_VERSION, optInfoScr, &sda_sys_con);
 
     slider = gr2_add_slider_v(8, 5, 9, 11, 170, 0, optInfoScr, &sda_sys_con);
