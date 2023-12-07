@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2018 Stanislav Brtna
+Copyright (c) 2023 Stanislav Brtna
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,23 +20,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SDA_UTIL_H
-#define SDA_UTIL_H
+#ifndef SDA_IMAGES_H
+#define SDA_IMAGES_H
+
 #include "../SDA_OS.h"
 
-// PPM image functions
-void svp_ppm_set_pmc(uint8_t enable, uint16_t color);
-void draw_ppm(uint16_t x,uint16_t y, uint8_t scale, uint8_t *filename);
-uint16_t ppm_get_width(uint8_t *filename);
-uint16_t ppm_get_height(uint8_t *filename);
+uint8_t sda_get_if_p16(uint8_t * filename);
+uint8_t sda_get_if_ppm(uint8_t * filename);
 
-// P16 image functions
-uint8_t sda_draw_p16(int16_t x, int16_t y, uint8_t *filename);
-uint8_t sda_draw_p16_scaled_up(int16_t x, int16_t y, uint16_t width_n, uint16_t height_n, uint8_t *filename);
-uint16_t sda_p16_get_width(uint8_t *filename);
-void sda_p16_set_pmc(uint8_t enable, uint16_t color);
-void sda_p16_set_alpha(uint8_t enable, uint16_t color, uint16_t bg_color);
-
-void svp_calibrator();
+void sda_img_set_mix_color(uint8_t enable, uint16_t color);
+void sda_img_draw(int16_t x, int16_t y, int16_t scale_w, int16_t scale_h, uint8_t *filename);
+uint16_t sda_img_get_width(uint8_t *filename);
+uint16_t sda_img_get_height(uint8_t *filename);
 
 #endif

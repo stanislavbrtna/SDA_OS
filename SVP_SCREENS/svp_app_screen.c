@@ -70,9 +70,7 @@ void add_button(uint16_t x, svp_csvf appsCSV, uint8_t *appFName, uint8_t *appIco
     &sda_sys_con
   );
 
-  if (svp_strlen(appHumanName) <= 8) {
-    gr2_text_set_align(*appFNameBtn, GR2_ALIGN_CENTER, &sda_sys_con);
-  }
+  gr2_text_set_align(*appFNameBtn, GR2_ALIGN_CENTER, &sda_sys_con);
   gr2_set_param(*appFNameBtn, 1, &sda_sys_con);
 #ifdef APP_SCREEN_DEBUG
   printf("%u\n", appFNameBtn);
@@ -130,14 +128,14 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
     if (listLen > 9) {
       int x = 0;
       for(x = 0; x < listLen/9 || x > 4; x++) {
-        pageButton[x] = gr2_add_button(1 + 2*x, 20, 3 + 2*x, 22, date_days_strs[x + 1], retScreen, &sda_sys_con);
+        pageButton[x] = gr2_add_button(2 + 2*x, 20, 4 + 2*x, 22, date_days_strs[x + 1], retScreen, &sda_sys_con);
         if (innerPage == x) {
           gr2_set_select(pageButton[x], 1, &sda_sys_con);
         }
       }
 
       if (listLen%9) {
-        pageButton[x] = gr2_add_button(1 + 2*x, 20, 3 + 2*x, 22, date_days_strs[x + 1], retScreen, &sda_sys_con);
+        pageButton[x] = gr2_add_button(2 + 2*x, 20, 4 + 2*x, 22, date_days_strs[x + 1], retScreen, &sda_sys_con);
         if (innerPage == x) {
           gr2_set_select(pageButton[x], 1, &sda_sys_con);
         }
@@ -264,7 +262,7 @@ void inScreenResizer(uint16_t id) {
     return;
   }
   gr2_set_x1y1x2y2(id, 0, 2, 10, 26, &sda_sys_con);
-  gr2_set_xscroll(id, -16, &sda_sys_con);
+  gr2_set_xscroll(id, 0, &sda_sys_con);
   if (svmGetRunning()) {
     gr2_set_y2(id, 24, &sda_sys_con);
   } else {

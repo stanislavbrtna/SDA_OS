@@ -41,13 +41,13 @@ uint8_t p16_buffer_keep;
 uint32_t p16_file_crc;
 uint32_t p16_file_size;
 
-uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t *filename);
+uint8_t sda_draw_p16_scaled_up(int16_t x, int16_t y, uint16_t width, uint16_t height, uint8_t *filename);
 
 static void break_draw_cleanup(svp_file *fp);
 
 uint16_t p16_get_pmc_alpha_color(uint16_t color);
 
-uint8_t sda_draw_p16_scaled(uint16_t x, uint16_t y, int16_t scale_w, int16_t scale_h, uint8_t *filename) {
+uint8_t sda_draw_p16_scaled(int16_t x, int16_t y, int16_t scale_w, int16_t scale_h, uint8_t *filename) {
   if (scale_w > 0 && scale_h > 0) {
     if (scale_w == 1 && scale_h == 1) {
       return sda_draw_p16(x, y, filename);
@@ -251,7 +251,7 @@ uint16_t p16_get_pmc_alpha_color(uint16_t color) {
 }
 
 
-uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
+uint8_t sda_draw_p16(int16_t x, int16_t y, uint8_t *filename) {
   svp_file fp;
   p16Header header;
   p16State imageState;
@@ -303,7 +303,7 @@ uint8_t sda_draw_p16(uint16_t x, uint16_t y, uint8_t *filename) {
 }
 
 
-uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_t height_n, uint8_t *filename) {
+uint8_t sda_draw_p16_scaled_up(int16_t x, int16_t y, uint16_t width_n, uint16_t height_n, uint8_t *filename) {
   svp_file fp;
   p16Header header;
   p16State imageState;
@@ -377,7 +377,7 @@ uint8_t sda_draw_p16_scaled_up(uint16_t x, uint16_t y, uint16_t width_n, uint16_
 
 // size 0 - 1/2, 1 - 1/4, 2 - 1/8, 3 - 1/16
 
-uint8_t sda_draw_p16_scaled_down(uint16_t x, uint16_t y, uint16_t width_n, uint16_t height_n, uint8_t *filename) {
+uint8_t sda_draw_p16_scaled_down(int16_t x, int16_t y, uint16_t width_n, uint16_t height_n, uint8_t *filename) {
   svp_file fp;
   p16Header header;
   p16State imageState;
