@@ -32,9 +32,10 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   //#!
 
   //#!##### Init calendar widget
-  //#!    sys.w.cal.init([num]year, [num]month, [num]day) #return: cal screen ID
+  //#!    sys.w.cal.init([num]year, [num]month, [num]day);
   //#!Creates callendar widget screen.
   //#!With given year, month and day.
+  //#!
   //#!Return: [num]Callendar widget screen id.
   if (sysFuncMatch(argS->callId, "init", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -51,6 +52,7 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   //#!##### Select date
   //#!    sys.w.cal.select([num]year, [num]month, [num]day);
   //#!Sets year, month and day to callendar widget.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "select", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -66,7 +68,8 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   //#!##### Update
   //#!    sys.w.cal.update();
   //#!Updates callendar widget.
-  //#!Return: [num]1 when callendar is clicked.
+  //#!
+  //#!Return: [num] 1 when callendar is clicked.
   if (sysFuncMatch(argS->callId, "update", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -79,6 +82,7 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   //#!##### Mark day
   //#!    sys.w.cal.mark([num]day);
   //#!Marks day in callendar widget.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "mark", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -92,6 +96,7 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   //#!##### Set highlighting
   //#!    sys.w.cal.highlight([num]val);
   //#!Enable that all buttons except marked are rendered as ghost buttons.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "highlight", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -105,6 +110,7 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   //#!##### Get selected day
   //#!    sys.w.cal.getDay();
   //#!Returns selected day.
+  //#!
   //#!Return: [num]day
   if (sysFuncMatch(argS->callId, "getDay", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -126,6 +132,7 @@ uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set counter
   //#!    sys.cnt.set([num] ms);
   //#!Sets system timer, it counts down and stops at zero.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "set", s)) {
     argType[1] = SVS_TYPE_NUM; //ms
@@ -139,6 +146,7 @@ uint8_t sda_counter_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Gets counter
   //#!    sys.cnt.get();
   //#!Gets system timer value
+  //#!
   //#!Return: value of system timer
   if (sysFuncMatch(argS->callId, "get", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {

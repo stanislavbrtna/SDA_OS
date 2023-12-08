@@ -31,6 +31,7 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Beep the speaker
   //#!    sys.snd.beep();
   //#!Initiates system beep.
+  //#!
   //#!Return: None
    if (sysFuncMatch(argS->callId, "beep", s)) {
 
@@ -46,6 +47,7 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Makes sound of given frequency and duration, calls given callback afterwards.
   //#!Internally calls sys.snd.beepTime and sys.snd.beepFreq, so calling sys.snd.beep();
   //#!will produce tone with frequency nad duration of last sys.snd.beepC call.
+  //#!
   //#!Return: None
    if (sysFuncMatch(argS->callId, "beepC", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -65,6 +67,7 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set beep param to default
   //#!    sys.snd.beepDef();
   //#!Sets beep to its default values.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "beepDef", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -77,6 +80,7 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set the duration
   //#!    sys.snd.beepTime([num]time (~ms));
   //#!Sets lenght of beep.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "beepTime", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -90,6 +94,7 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set the frequency
   //#!    sys.snd.beepFreq([num]frequency (Hz));
   //#!Sets frequency of the beep in Hz in range from 27 to 20000.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "beepFreq", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -103,6 +108,7 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get if system sound is disabled
   //#!    sys.snd.getMute();
   //#!Returns system mute
+  //#!
   //#!Return: [num]1 if system is on mute.
   if (sysFuncMatch(argS->callId, "getMute", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {

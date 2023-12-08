@@ -40,35 +40,35 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!#### Constants
 
   //#!##### Indicator LED
-  //#!| Constant | Description |
-  //#!|   ---    |    ---      |
-  //#!| LED_ON | Nonification led on |
-  //#!| LED_OFF | Nonification led off |
-  //#!| LED_BLINK | Nonification led pattern |
+  //#!| Constant       | Description              |
+  //#!|   ---          |    ---                   |
+  //#!| LED_ON         | Nonification led on      |
+  //#!| LED_OFF        | Nonification led off     |
+  //#!| LED_BLINK      | Nonification led pattern |
   //#!| LED_SHORTBLINK | Nonification led pattern |
-  //#!| LED_ALARM | Nonification led pattern |
+  //#!| LED_ALARM      | Nonification led pattern |
 
   //#!##### Buttons
-  //#!| Constant | Description |
-  //#!|   ---    |    ---      |
-  //#!| BTN_A | Button define |
-  //#!| BTN_LEFT | Button define |
-  //#!| BTN_UP | Button define |
-  //#!| BTN_DOWN | Button define |
+  //#!| Constant  | Description   |
+  //#!|   ---     |    ---        |
+  //#!| BTN_A     | Button define |
+  //#!| BTN_LEFT  | Button define |
+  //#!| BTN_UP    | Button define |
+  //#!| BTN_DOWN  | Button define |
   //#!| BTN_RIGHT | Button define |
-  //#!| BTN_B | Button define |
-
+  //#!| BTN_B     | Button define |
+  //#!
   //#! ![Buttons layout](sda_buttons.png)
 
   //#!##### Expansion pin states
-  //#!| Constant | Description |
-  //#!|   ---    |    ---      |
-  //#!| PIN_IN | Expansion pin setup define |
-  //#!| PIN_OUT | Expansion pin setup define |
-  //#!| PIN_ALT | Expansion pin setup define |
-  //#!| PIN_NOPULL | Expansion pin setup define |
-  //#!| PIN_PULLUP | Expansion pin setup define |
-  //#!| PIN_PULLDOWN | Expansion pin setup define |
+  //#!| Constant     | Description                            |
+  //#!|   ---        |    ---                                 |
+  //#!| PIN_IN       | Pin set as input                       |
+  //#!| PIN_OUT      | Pin set as output                      |
+  //#!| PIN_ALT      | Pin set to its alternate function      |
+  //#!| PIN_NOPULL   | Pin set as input with pulldown         |
+  //#!| PIN_PULLUP   | Pin set as input with pullup           |
+  //#!| PIN_PULLDOWN | Pin set as input with no pull resistor |
   //#!
 
   //#!#### LCD Functions
@@ -76,6 +76,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Lock LCD sleep
   //#!    sys.hw.lockSleep([num]val);
   //#!Sets sleep lock value. On 1 system wont go to sleep.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "lockSleep", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -89,6 +90,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Turn on the LCD
   //#!    sys.hw.wakeLcd();
   //#!Turns on the LCD screen.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "wakeLcd", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -101,6 +103,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get LCD state
   //#!    sys.hw.getLcdState();
   //#!Gets state of lcd.
+  //#!
   //#!Return: 1 if lcd is on, otherwise 0
   if (sysFuncMatch(argS->callId, "getLcdState", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -115,27 +118,11 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Get USB State
-  //#!    sys.hw.getUsbState();
-  //#!Gets state of usb port. Useful for determining if the SDA is connected to PC.
-  //#!Return: 1 when powered from usb, otherwise 0
-  if (sysFuncMatch(argS->callId, "getUsbState", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    if (svpSGlobal.pwrType == POWER_USB) {
-      result->value.val_u = 1;
-    } else {
-      result->value.val_u = 0;
-    }
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
   //#!##### Set notification led pattern
   //#!    sys.hw.setLed([num]led_type);
   //#!Sets notification led to a given pattern, uses:
   //#!LED_ON, LED_OFF ,LED_BLINK, LED_SHORTBLINK, LED_ALARM
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setLed", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -172,11 +159,31 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!#### Expansion Ports
   //#
 
+  //#!##### Get USB State
+  //#!    sys.hw.getUsbState();
+  //#!Gets state of usb port. Useful for determining if the SDA is connected to PC.
+  //#!
+  //#!Return: 1 when powered from usb, otherwise 0
+  if (sysFuncMatch(argS->callId, "getUsbState", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    if (svpSGlobal.pwrType == POWER_USB) {
+      result->value.val_u = 1;
+    } else {
+      result->value.val_u = 0;
+    }
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+
   //#!##### Define direction of pins on the internal expansion
   //#!    sys.iPinDef([num]Pin, [num]type, [num]pullUp);
   //#!Sets direction of internal expansion pins.
   //#!Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
   //#!Pin number is number of pin on the connector, can be read from schematics.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "iPinDef", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -197,6 +204,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Sets state of internal expansion pin.
   //#!Value 1 sets the pin high, value 0 sets it low.
   //#!Pin number is number of pin on the connector, can be read from schematics.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "iPinSet", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -214,6 +222,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.iPinGet([num]Pin, [num]val);
   //#!Gets state of internal expansion pin.
   //#!Pin number is number of pin on the connector, can be read from schematics.
+  //#!
   //#!Return: 1 if the pin is high, 0 if it is low.
   if (sysFuncMatch(argS->callId, "iPinGet", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -232,12 +241,12 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Sets direction of external expansion pins.
   //#!Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
   //#!Pin number is number of pin on the connector, can be read from schematics.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "ePinDef", s)) {
     argType[1] = SVS_TYPE_NUM;
     argType[2] = SVS_TYPE_NUM;
     argType[3] = SVS_TYPE_NUM;
-
 
     if(sysExecTypeCheck(argS, argType, 3, s)) {
       return 0;
@@ -252,6 +261,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Sets state of external expansion pin.
   //#!Value 1 sets the pin high, value 0 sets it low.
   //#!Pin number is number of pin on the connector, can be read from schematics.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "ePinSet", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -269,6 +279,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.ePinGet([num]Pin, [num]val);
   //#!Gets state of external expansion pin.
   //#!Pin number is number of pin on the connector, can be read from schematics.
+  //#!
   //#!Return: 1 if the pin is high, 0 if it is low.
   if (sysFuncMatch(argS->callId, "ePinGet", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -285,6 +296,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.eADCRead();
   //#!Gets state of external expansion pin.
   //#!Pin number is number of pin on the connector, can be read from schematics.
+  //#!
   //#!Return: [float] measured voltage in volts.
   if (sysFuncMatch(argS->callId, "eADCRead", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -305,8 +317,9 @@ uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   //#!#### Buttons
   //#!##### Get button event
   //#!    sys.hw.btn.getEvent([num] btn)
-  //#!Return last button event
-  //#!Return: 0 - none, 1-pressed, 2 - hold, 3 - released
+  //#!Return last button event. 
+  //#!
+  //#!Return: [num] event define (EV_NONE, EV_PRESSED, EV_HOLD, EV_RELEASED)
   if (sysFuncMatch(argS->callId, "getEvent", s)) {
     gr2EventType ev;
     argType[1] = SVS_TYPE_NUM;
@@ -348,6 +361,7 @@ uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   //#!##### Clears button events
   //#!    sys.hw.btn.clrEvent([num]btn)
   //#!Sets button event to EV_NONE
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "clrEvent", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -368,7 +382,9 @@ uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
 
   //#!##### Enable button events with LCD off
   //#!    sys.hw.btn.stdbyEn([num]val)
-  //#!Enables button readout with LCD off
+  //#!Enables button readout with LCD off.
+  //#!When this is enabled, SDA won't go in deep sleep.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "stdbyEn", s)) {
     argType[1] = SVS_TYPE_NUM;

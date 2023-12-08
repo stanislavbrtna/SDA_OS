@@ -63,12 +63,15 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 
   //#!Automatically generated documentation on wrap_directS.c
   //#!
+  //#!### Direct Screen draw functions
+  //#!
   //#!####  Color & Areas
   //#!
 
   //#!##### Get color from RGB
-  //#!    sys.ds.mixColor([num] r, [num] g, [num] b)
+  //#!    sys.ds.mixColor([num]r, [num]g, [num]b);
   //#!Mixes the right color from red, green and blue values (0 - 255)
+  //#!
   //#!Return: [num] Color (16bit RGB565)
   if (sysFuncMatch(argS->callId, "mixColor", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -87,10 +90,11 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Set draw area
-  //#!    sys.ds.setArea([num] x1, [num] y1, [num] x2, [num] y2)
+  //#!    sys.ds.setArea([num] x1, [num] y1, [num] x2, [num] y2);
   //#!Sets the draw area. Uses hardware coordinates.
   //#!For example: sys.ds.setArea(0, 32, 319, 479);
   //#!This will init all app available space as a draw area.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setArea", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -122,8 +126,9 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draw rectangle
-  //#!    sys.ds.drawRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
-  //#!Draws rectangle
+  //#!    sys.ds.drawRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col);
+  //#!Draws rectangle outline
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawRect", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -153,8 +158,9 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draw filled rectangle
-  //#!    sys.ds.fillRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
-  //#!Draws rectangle
+  //#!    sys.ds.fillRect([num] x1, [num] y1, [num] x2, [num] y2, [num]col);
+  //#!Draws filled rectangle
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "fillRect", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -184,8 +190,9 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draw circle
-  //#!    sys.ds.drawCircle([num] x1, [num] y1, [num] radius, [num]col)
+  //#!    sys.ds.drawCircle([num] x1, [num] y1, [num] radius, [num]col);
   //#!Draws circle
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawCircle", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -213,8 +220,9 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draw filled circle
-  //#!    sys.ds.fillCircle([num] x1, [num] y1, [num] radius, [num]col)
+  //#!    sys.ds.fillCircle([num] x1, [num] y1, [num] radius, [num]col);
   //#!Fills circle
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "fillCircle", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -242,8 +250,9 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draw line
-  //#!    sys.ds.drawLine([num] x1, [num] y1, [num] x2, [num] y2, [num]col)
+  //#!    sys.ds.drawLine([num] x1, [num] y1, [num] x2, [num] y2, [num]col);
   //#!Draws line
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawLine", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -273,8 +282,9 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Draw text
-  //#!    sys.ds.drawText([num] x1, [num] y1, [str] txt, [num]col)
+  //#!    sys.ds.drawText([num] x1, [num] y1, [str] txt, [num]col);
   //#!Draws text
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawText", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -302,8 +312,9 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Set text to fit specified width
-  //#!    sys.ds.setTextFit([num] enable, [num] width)
+  //#!    sys.ds.setTextFit([num] enable, [num] width);
   //#!Sets max width for next drawn text
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setTextFit", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -318,8 +329,9 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Get text width
-  //#!    sys.ds.getTextWidth([str] txt)
+  //#!    sys.ds.getTextWidth([str] txt);
   //#!Gets width of a string, when drawn with current font.
+  //#!
   //#!Return: [num] width (px)
   if (sysFuncMatch(argS->callId, "getTextWidth", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -334,8 +346,9 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Get text height
-  //#!    sys.ds.getTextHeight([str] txt)
+  //#!    sys.ds.getTextHeight([str] txt);
   //#!Gets height of a string, when drawn with current font.
+  //#!
   //#!Return: [num] height (px)
   if (sysFuncMatch(argS->callId, "getTextHeight", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -350,8 +363,9 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   }
 
   //#!##### Fill area with color
-  //#!    sys.ds.clearArea([num]col)
+  //#!    sys.ds.clearArea([num]col);
   //#!Clears draw area with goven color
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "clearArea", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -376,14 +390,15 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!    sys.ds.drawImage([num]x, [num]y, [num]scale_w, [num]scale_h, [str]name);
   //#!Draws p16 image from the working directory. Supports upscaling, and downscaling
   //#!Scale table:
-  //#!|Scale value| Image size|
-  //#!|-3| 1/16 |
-  //#!|-2| 1/8 |
-  //#!|-1| 1/4 |
-  //#!|0| 1/2 |
-  //#!|1| 1 |
-  //#!|2| 2x |
-  //#!|n| n*x |
+  //#!|Scale value | Image size|
+  //#!|  -3        |   1/16    |
+  //#!|  -2        |   1/8     |
+  //#!|  -1        |   1/4     |
+  //#!|   0        |   1/2     |
+  //#!|   1        |    1      |
+  //#!|   2        |    2x     |
+  //#!|   n        |    n*x    |
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawImage", s)) {
     argType[1] = SVS_TYPE_NUM; //x
@@ -416,6 +431,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!##### Get P16 image width
   //#!    sys.ds.getImageW([str]name);
   //#!Gets width of given p16 file.
+  //#!
   //#!Return: [num] width (px)
   if (sysFuncMatch(argS->callId, "getImageW", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -432,6 +448,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!##### Get P16 image height
   //#!    sys.ds.getImageH([str]name);
   //#!Gets height of given p16 file.
+  //#!
   //#!Return: [num] height (px)
   if (sysFuncMatch(argS->callId, "getImageH", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -448,6 +465,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!##### Draws PPM
   //#!    sys.ds.drawPPM([num]x, [num]y, [num]scale, [str]name);
   //#!Draws ppm image (To be removed).
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawPPM", s)) {
     argType[1] = SVS_TYPE_NUM; //x
@@ -474,6 +492,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!##### Get if screen is touched
   //#!    sys.ds.touchEv();
   //#!Gets if screen is touched, returns last touch event
+  //#!
   //#!Return: [num] Touch event (from event defines)
   if (sysFuncMatch(argS->callId, "touchEv", s)) {
 
@@ -498,6 +517,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!##### Clears touch event
   //#!    sys.ds.touchClr();
   //#!Clears touch event
+  //#!
   //#!Return: none
   if (sysFuncMatch(argS->callId, "touchClr", s)) {
 
@@ -512,6 +532,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!##### Get touch y
   //#!    sys.ds.touchY();
   //#!Gives y coordinate of touch event
+  //#!
   //#!Return: [num] Touch y coordinate
   if (sysFuncMatch(argS->callId, "touchY", s)) {
 
@@ -527,6 +548,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
   //#!##### Get touch x
   //#!    sys.ds.touchX();
   //#!Gives x coordinate of touch event
+  //#!
   //#!Return: [num] Touch y coordinate
   if (sysFuncMatch(argS->callId, "touchX", s)) {
 

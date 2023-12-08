@@ -90,6 +90,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Open csv file
   //#!    sys.fs.csv.open([str]fname);
   //#!Opens csv file.
+  //#!
   //#!Return: [num]1 on succes.
   if (sysFuncMatch(argS->callId, "open", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -105,6 +106,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set separator
   //#!    sys.fs.csv.setSeparator([str]separator);
   //#!Sets the csv separator default is "|".
+  //#!
   //#!Return: none.
   if (sysFuncMatch(argS->callId, "setSeparator", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -124,6 +126,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Close csv file
   //#!    sys.fs.csv.close();
   //#!Closes csv file.
+  //#!
   //#!Return: [num]1 on succes.
   if (sysFuncMatch(argS->callId, "close", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -149,6 +152,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### New csv line
   //#!    sys.fs.csv.newLine([num]numberOfCells);
   //#!Adds new line to csv with given number of cells.
+  //#!
   //#!Return: None.
   if (sysFuncMatch(argS->callId, "newLine", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -166,6 +170,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get csv cell
   //#!    sys.fs.csv.getCell([num]cellNumber, [str]default);
   //#!Gets data from specified cell on current line.
+  //#!
   //#!Return: [str]cellContents
   if (sysFuncMatch(argS->callId, "getCell", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -188,6 +193,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.fs.csv.setCell([num]cellNumber, [str]value);
   //#!Sets data of specified cell on current line.
   //#!Cells are counted from 0.
+  //#!
   //#!Return: [str]cellContents
   if (sysFuncMatch(argS->callId, "setCell", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -206,6 +212,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Feed line
   //#!    sys.fs.csv.lineFeed();
   //#!Moves to the next lone of csv file
+  //#!
   //#!Return: [num] 1 - ok, 0 - end of file
   if (sysFuncMatch(argS->callId, "lineFeed", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -223,6 +230,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Remove line
   //#!    sys.fs.csv.removeLine();
   //#!Removes current line from csv
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "removeLine", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -239,6 +247,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Rewind file
   //#!    sys.fs.csv.rewind();
   //#!Rewinds file back on the start.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "rewind", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -266,6 +275,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Open config file
   //#!    sys.fs.conf.open([str]fname);
   //#!Opens config file.
+  //#!
   //#!Return: [num]1 on succes.
   if (sysFuncMatch(argS->callId, "open", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -286,6 +296,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Close config file
   //#!    sys.fs.conf.close();
   //#!Close conf file.
+  //#!
   //#!Return: [num]1 on succes.
   if (sysFuncMatch(argS->callId, "close", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -305,6 +316,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Check if key exists
   //#!    sys.fs.conf.exists([str]key);
   //#!Checks if key exists in conf file
+  //#!
   //#!Return: [num] 1 if key exists.
   if (sysFuncMatch(argS->callId, "exists", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -325,6 +337,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Read key
   //#!    sys.fs.conf.read([str]key);
   //#!Reads key from config file as a string, 128 chars max.
+  //#!
   //#!Return: [str]Value
   if (sysFuncMatch(argS->callId, "read", s)) {
     uint8_t buff[512];
@@ -349,6 +362,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Read Key as int
   //#!    sys.fs.conf.readInt([str]key, [num]default);
   //#!Reads key from config file as num (integrer). To be removed.
+  //#!
   //#!Return: [num]Value
   if (sysFuncMatch(argS->callId, "readInt", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -370,6 +384,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Write key
   //#!    sys.fs.conf.write([str]key, [str]val);
   //#!Writes value in specified key.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "write", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -390,6 +405,7 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Remove key
   //#!    sys.fs.conf.remove([str]key);
   //#!Removes given key.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "remove", s)) {
     argType[1] = SVS_TYPE_STR;

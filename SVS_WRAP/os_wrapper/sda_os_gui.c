@@ -72,6 +72,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.os.gui.setMainScr([num]id);
   //#!Sets main screen to screen with given id
   //#!When you wish to display overlay only, set this to 0.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setMainScr", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -85,6 +86,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get main application screen
   //#!    sys.os.gui.getMainScr();
   //#!Gets main screen id
+  //#!
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "getMainScr", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)){
@@ -98,6 +100,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set root for redraw
   //#!    sys.os.gui.setRoot([num]in_apps, [str]dir);
   //#!Sets custom root directory for the redraw function.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setRoot", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -127,6 +130,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Allows control of a given screen via buttons.
   //#!Element given as back_btn_id will be linked with back button,
   //#!otherwise back button will bring the user on the SDA_OS main screen.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "btnCtrl", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -143,6 +147,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Handle text input
   //#!    sys.os.gui.handleText([num]id, [str]text);
   //#!Handles text input fields. Id is field id. Text is default text value.
+  //#!
   //#!Return: [str] New modified text value
   if (sysFuncMatch(argS->callId, "handleText", s)) {
     argType[1] = SVS_TYPE_NUM; //id
@@ -300,6 +305,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.os.gui.setKbdStr([str] string);
   //#!Sets the current keyboard string (max 63 chars)
   //#!Backspace code is "\b", delete is "\bd"
+  //#!
   //#!Return: [num] 1 - ok, 0 - string too long
   if (sysFuncMatch(argS->callId, "setKbdStr", s)) {
     argType[1] = SVS_TYPE_STR; // new keyboard string
@@ -323,6 +329,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Paste clipboard
   //#!    sys.os.gui.pasteClipboard();
   //#!Pastes clipboard into active text field
+  //#!
   //#!Return: none
   if (sysFuncMatch(argS->callId, "pasteClipboard", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)){
@@ -352,6 +359,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get text cursor position
   //#!    sys.os.gui.getCPos([num] id);
   //#!Gets the cursor position of a text field
+  //#!
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "getCPos", s)) {
     argType[1] = SVS_TYPE_NUM; //id
@@ -368,6 +376,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set text cursor position
   //#!    sys.os.gui.setCPos([num] id, [num]val);
   //#!Sets the cursor position of a text field
+  //#! 
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "setCPos", s)) {
     argType[1] = SVS_TYPE_NUM; //id

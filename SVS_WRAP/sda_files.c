@@ -133,6 +133,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.fs.open([str]fname);
   //#!    sys.fs.open([num]index, [str]fname);
   //#!Opens text file for read or write. If no file index is given, index 0 is used.
+  //#!
   //#!Return: 1 on success, 0 on failure
   if (sysFuncMatch(argS->callId, "open", s)) {
     if(argS->usedup == 1) {
@@ -161,6 +162,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.fs.readChars([num]index, [num] bytes);
   //#!Reads given number of chars from file.
   //#!If no file index is given, index 0 is used.
+  //#!
   //#!Return: [str] result
   if (sysFuncMatch(argS->callId, "readChars", s)) {
     uint16_t file_index = 0;
@@ -210,6 +212,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.fs.writeChars([str]string);
   //#!    sys.fs.writeChars([num]index, [str]string);
   //#!Writes given string to file.
+  //#!
   //#!Return: 1 - ok, 0 - fail
   if (sysFuncMatch(argS->callId, "writeChars", s)) {
     uint16_t file_index = 0;
@@ -252,6 +255,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.fs.readByte();
   //#!    sys.fs.readByte([num]index);
   //#!Reads byte from file.
+  //#!
   //#!Return: [num] result: 0 to 255 - ok, -1 - error, -2 - EOF
   if (sysFuncMatch(argS->callId, "readByte", s)) {
     uint16_t file_index = 0;
@@ -289,6 +293,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.fs.writeByte([num] byte (0 - 255));
   //#!    sys.fs.writeByte([num]index, [num] byte (0 - 255));
   //#!Writes byte to file.
+  //#!
   //#!Return: [num] 0 - fail, 1 - ok
   if (sysFuncMatch(argS->callId, "writeByte", s)) {
     uint16_t file_index = 0;
@@ -327,6 +332,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.fs.seek([num] pos_from_start);
   //#!    sys.fs.seek([num]index, [num] pos_from_start);
   //#!Writes byte to file.
+  //#!
   //#!Return: [num] 0 - fail, 1 - ok
   if (sysFuncMatch(argS->callId, "seek", s)) {
     uint16_t file_index = 0;
@@ -365,6 +371,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Truncate file
   //#!    sys.fs.truncate();
   //#!Truncate currently opened file at the position of write pointer.
+  //#!
   //#!Return: [num] 0 - fail, 1 - ok
   if (sysFuncMatch(argS->callId, "truncate", s)) {
     uint16_t file_index = 0;
@@ -398,6 +405,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.fs.tell();
   //#!    sys.fs.tell([num]index);
   //#!Returns current write pointer position in the file.
+  //#!
   //#!Return: [num] pos
   if (sysFuncMatch(argS->callId, "tell", s)) {
     uint16_t file_index = 0;
@@ -430,6 +438,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.fs.size();
   //#!    sys.fs.size([num] index);
   //#!Returns size of openned file.
+  //#!
   //#!Return: [num] size in bytes
   if (sysFuncMatch(argS->callId, "size", s)) {
     uint16_t file_index = 0;
@@ -460,6 +469,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.fs.close();
   //#!    sys.fs.close([num] index);
   //#!Closes open file.
+  //#!
   //#!Return: [num] 1 - ok, 0 - error
   if (sysFuncMatch(argS->callId, "close", s)) {
     uint16_t file_index = 0;
@@ -496,6 +506,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get if path is dir
   //#!    sys.fs.isDir([str] path);
   //#!Gets if path is a directory or not.
+  //#!
   //#!Return: [num] 0 - file, 1 - dir
   if (sysFuncMatch(argS->callId, "isDir", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -512,6 +523,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Create directory
   //#!    sys.fs.mkDir([str] name);
   //#!Creates new directory
+  //#!
   //#!Return: [num] 1 - ok, 0 - fail
   if (sysFuncMatch(argS->callId, "mkDir", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -530,6 +542,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Changes working directory.
   //#!call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA directory
   //#!call sys.fs.chDir(1); to get to the APPS directory
+  //#!
   //#!Return: 1 - ok, 0 - fail
   if (sysFuncMatch(argS->callId, "chDir", s)) {
 
@@ -575,6 +588,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### File copy select source
   //#!    sys.fs.copySource([str]source);
   //#!Selects source file for copy operation.
+  //#!
   //#!Return: [num] 1 - ok, 0 - failed
   if (sysFuncMatch(argS->callId, "copySource", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -609,6 +623,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### File copy start
   //#!    sys.fs.copyStart([str]dest, [num]ChunkSize);
   //#!Starts copy operation, chunksize of bytes will be copyed each cycle.
+  //#!
   //#!Return: [num] 1 - ok, 0 - failed
   if (sysFuncMatch(argS->callId, "copyStart", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -678,6 +693,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Stop current copy operation
   //#!    sys.fs.copyStop();
   //#!Stops current copy operation.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "copyStop", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -704,6 +720,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Check if file exist
   //#!    sys.fs.exists([str]fname);
   //#!Checks if file exists.
+  //#!
   //#!Return: 1 if file exists, otherwise 0
   if (sysFuncMatch(argS->callId, "exists", s)) {
     argType[1] = 1;
@@ -720,6 +737,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Remove file
   //#!    sys.fs.delete([str]fname);
   //#!Deletes file with fiven fname. Can also delete empty directories.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "delete", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -737,6 +755,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Move/rename file
   //#!    sys.fs.rename([str]oldPath, [str]newPath);
   //#!Moves/renames given file.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "rename", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -755,6 +774,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Find begin
   //#!    sys.fs.find([str]extension, [str]directory);
   //#!Inits file find operation, returns first result.
+  //#!
   //#!Return: [str]filename or "" if none
   if (sysFuncMatch(argS->callId, "find", s)) {
     uint8_t buff[129];
@@ -777,6 +797,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Find next
   //#!    sys.fs.findNext();
   //#!Next iteration of file find operation.
+  //#!
   //#!Return: [str]filename or "" if none
   if (sysFuncMatch(argS->callId, "findNext", s)) {
     uint8_t buff[129];
@@ -833,6 +854,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Reads file as string
   //#!    sys.fs.readStr([str]fname);
   //#!Reads text file to svs string buffer.
+  //#!
   //#!Return: [str]FileContents
   if (sysFuncMatch(argS->callId, "readStr", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -847,6 +869,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Write string as file
   //#!    sys.fs.writeStr([str]str, [str]fname);
   //#!Writes svs string to file.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "writeStr", s)) {
     argType[1] = SVS_TYPE_STR;

@@ -38,9 +38,9 @@ SOFTWARE.
 //#!
 
 //#!#### Constants
-//#!| Constant | Description |
-//#!|   ---    |    ---      |
-//#!| SVP_LANG_CZ | Czech language |
+//#!| Constant     | Description      |
+//#!|   ---        |    ---           |
+//#!| SVP_LANG_CZ  | Czech language   |
 //#!| SVP_LANG_ENG | English language |
 //#!
 
@@ -123,6 +123,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get redraw flag
   //#!    sys.os.getRedraw();
   //#!Gets redraw flag. *getRedraw* also works.
+  //#!
   //#!Return: [num] 1 if redraw flag is set, otherwise 0
   if (sysFuncMatch(argS->callId, "getRedraw", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -136,6 +137,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set redraw
   //#!    sys.os.setRedraw();
   //#!Sets redraw flag
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setRedraw", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -149,6 +151,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.os.wake();
   //#!Wakes SDA without turning the screen on.
   //#!SDA will wake in the low power mode and will sleep again after the lcd shutdown time.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "wake", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -161,6 +164,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Pushes app to foreground
   //#!    sys.os.arise();
   //#!If called from timer callback, the app is promoted to the foreground.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "arise", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -173,6 +177,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get if running in simulator
   //#!    sys.os.inSim();
   //#!Gets if app is running in simulator. 1 - Simulator, 0 - Real hardware.
+  //#!
   //#!Return: [num] result
   if (sysFuncMatch(argS->callId, "inSim", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -190,6 +195,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Show Error
   //#!    sys.os.error([str]errorText);
   //#!Throws error message
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "error", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -204,6 +210,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.os.getAppPath();
   //#!Gets diretory path of the currently running svs app
   //#!includung the name of the app. 
+  //#!
   //#!Return: [str] Path
   if (sysFuncMatch(argS->callId, "getAppPath", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -219,6 +226,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Hide keyboard
   //#!    sys.os.hideKbd();
   //#!Hides system keyboard.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "hideKbd", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -231,6 +239,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Show keyboard
   //#!    sys.os.showKbd();
   //#!Shows system keyboard
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "showKbd", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -243,6 +252,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get Keyboard state
   //#!    sys.os.kbdGetState();
   //#!Gets if keyboard is deployed 1 - keyboard shown, 0 - keyboard hidden
+  //#!
   //#!Return: [num] state
   if (sysFuncMatch(argS->callId, "kbdGetState", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -260,6 +270,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get random number
   //#!    sys.os.rnd();
   //#!Returns random number
+  //#!
   //#!Return: [num]RandomValue
   if (sysFuncMatch(argS->callId, "rnd", s)) {
 
@@ -275,6 +286,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.os.exit();
   //#!    sys.os.exit([undef] arg0, [undef] arg1, [undef] arg2); # optional return values
   //#!Stops program execution after exiting *update* function and performing *exit* function.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "exit", s)) {
     if(argS->usedup == 0) {
@@ -304,6 +316,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.os.checkVer([num] API_Level);
   //#!Checks for API Lvl support.
   //#!If host level is below given API_Level, error is thrown and app is terminated.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "checkVer", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -323,6 +336,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get API level
   //#!    sys.os.getVer();
   //#!Checks for API Lvl support.
+  //#!
   //#!Return: [num] SDA_OS version number
   if (sysFuncMatch(argS->callId, "getVer", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -336,8 +350,9 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Get system language
   //#!    sys.os.getLang();
-  //#!Returns SDA_OS language.
-  //#!Return: 0 if czech, 1 if english, also defines SVP_LANG_CZ SVP_LANG_ENG
+  //#!Returns language of the running SDA_OS build.
+  //#!
+  //#!Return: defines SVP_LANG_CZ (0) or SVP_LANG_ENG(1)
   if (sysFuncMatch(argS->callId, "getLang", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -353,6 +368,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set process as singular
   //#!    sys.os.setSingular();
   //#!Sets current process as singular.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setSingular", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -365,6 +381,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Launch subprocess
   //#!    sys.os.subProcess([str]fileName, [str/ref] callback, [undef] arg0, [undef] arg1, [undef] arg2);
   //#!Runs child process
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subProcess", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -389,7 +406,9 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Enable launching subprocess from cwd
   //#!    sys.os.subProcCWD([num] val);
   //#!Sets if subprocesses are launched from cwd or from APPS folder.
+  //#!
   //#!val: 0 - APPS folder, 1 - cwd
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subProcCWD", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -404,6 +423,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.os.subProcNC();
   //#!Disables caching for next call of sys.os.subProcess.
   //#!Usefull when running modified content
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subProcNC", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -416,6 +436,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Return data to parent process
   //#!    sys.os.subRetval([undef] arg0, [undef] arg1, [undef] arg2);
   //#!Sets values that will be returned to parent process
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subRetval", s)) {
     argType[1] = SVS_TYPE_UNDEF;
@@ -435,6 +456,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Sets the clipboard string
   //#!    sys.os.setClipboard([str] string);
   //#!Sets the OS clipboard 256 chars by default
+  //#!
   //#!Return: [num] 1 - ok, 0 - string too long
   if (sysFuncMatch(argS->callId, "setClipboard", s)) {
     argType[1] = SVS_TYPE_STR; // new keyboard string
@@ -457,6 +479,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Gets the clipboard string
   //#!    sys.os.getClipboard();
   //#!Gets the OS clipboard 256 chars max by default
+  //#!
   //#!Return: [str] clipboard_string
   if (sysFuncMatch(argS->callId, "getClipboard", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)){
@@ -482,6 +505,7 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Reload homescreen settings
   //#!    sys.os.settings.homeRld();
   //#!Reloads homescreen settings stored in homescreen.cfg
+  //#!
   //#!Return: none
   if (sysFuncMatch(argS->callId, "homeRld", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -498,6 +522,7 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.os.settings.rqAuth();
   //#!Requests authorization form user to change system settings.
   //#!Result can be retrieved with 'sys.os.settings.getAuth();'
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "rqAuth", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -514,6 +539,7 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Gets if privileges are granted
   //#!    sys.os.settings.getAuth();
   //#!Gets if high privileges are granted.
+  //#!
   //#!Return: [num] 1 if authorization is given
   if (sysFuncMatch(argS->callId, "getAuth", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -527,6 +553,7 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Sets time and date
   //#!    sys.os.settings.setTime([num] year, [num] month, [num] day, [num] hour, [num] min);
   //#!Sets values that will be returned to parent process
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setTime", s)) {
     argType[1] = SVS_TYPE_NUM;

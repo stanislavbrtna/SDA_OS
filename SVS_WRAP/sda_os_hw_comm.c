@@ -37,6 +37,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.com.qAdd([num]data);
   //#!Queues given hex value to transmit buffer.
   //#!Max 32 bytes.
+  //#!
   //#!Return: [num] 1-ok, 0-full buffer
   if (sysFuncMatch(argS->callId, "qAdd", s)) {
 
@@ -59,6 +60,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Serial expansion transmit queue clear
   //#!    sys.com.qClr();
   //#!Clears transmit buffer.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "sqClr", s)) {
 
@@ -76,6 +78,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### USB serial transmit
   //#!    sys.com.usbTrs([str]data);
   //#!Sends given string to usb serial port.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "usbTrs", s)) {
     int32_t i = 0;
@@ -108,6 +111,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Sends previously stored queue to the initialized serial port.
   //#!Queue can be filled with sys.srlTrsQAdd and cleared with sys.srlTrsQClr.
   //#!Max 32 bytes.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "usbTrsQ", s)) {
 
@@ -125,9 +129,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### USB serial set speed
   //#!    sys.com.usbSetBd([num] bd);
   //#!Sets baud rate of the usb-serial port
+  //#!
   //#!Return: none
-
-
   if (sysFuncMatch(argS->callId, "usbSetBd", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
@@ -146,6 +149,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.com.usbRcv([num]timeout);
   //#!Gets string (max 512 bytes) from USB serial port.
   //#!If nothing is sent during timeout (in ms), empty string is returned.
+  //#!
   //#!Return: [str] data
   if (sysFuncMatch(argS->callId, "usbRcv", s)) {
     uint8_t c[512];
@@ -170,9 +174,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.com.usbRcvIT();
   //#!Initializes usb serial port receive operation in non-blocking mode
   //#!Returns 1 if ok, 0 if error occurred
+  //#!
   //#!Return: [num] result
-
-
   if (sysFuncMatch(argS->callId, "usbRcvIT", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -187,6 +190,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.com.usbGetRd();
   //#!Gets transmission ready flag. Returns 1 if data is pending,
   //#!2 if whole line of data is pending
+  //#!
   //#!Return: [num] ready
   if (sysFuncMatch(argS->callId, "usbGetRd", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -202,8 +206,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.com.usbGetStr();
   //#!Gets the pending string and resets the serial interface
   //#!for another ready flag.
+  //#!
   //#!Return: [str] pending
-
   static uint8_t usb_c[513];
   static uint16_t usb_len;
 
@@ -226,8 +230,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### USB serial get pending data
   //#!    sys.com.usbGetBytes();
   //#!Gets the bytes from a serial interface and stores them in local buffer (512 Bytes max)
+  //#!
   //#!Return: [num] bytes used
-
   if (sysFuncMatch(argS->callId, "usbGetBytes", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -242,8 +246,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### USB serial get pending data
   //#!    sys.com.usbGetByte([num] index);
   //#!Reads the byte value from a serial interface local buffer (512 Bytes)
+  //#!
   //#!Return: [num] byte value (0 - 255, -1 when error occurs)
-
   if (sysFuncMatch(argS->callId, "usbGetByte", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
@@ -278,6 +282,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.com.uartTrs([str]data);
   //#!Sends given string to serial port on internal or external expansion connector.
   //#!Depends on what is initialized.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "uartTrs", s)) {
     int32_t i = 0;
@@ -309,6 +314,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.com.uartTrsQ();
   //#!Sends previously stored queue to the initialized serial port.
   //#!Max 32 bytes.
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "uartTrsQ", s)) {
 
@@ -327,6 +333,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.com.uartRcv([num]timeout);
   //#!Gets string (max 512 bytes) from currently initialized serial port.
   //#!If nothing is sent during timeout (in ms), empty string is returned.
+  //#!
   //#!Return: [str] data
   if (sysFuncMatch(argS->callId, "uartRcv", s)) {
     uint8_t c[512];
@@ -350,9 +357,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Serial expansion set spped
   //#!    sys.com.uartSetBd([num] bd);
   //#!Sets baud rate of the uart expansion port
+  //#!
   //#!Return: none
-
-
   if (sysFuncMatch(argS->callId, "uartSetBd", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {
@@ -372,10 +378,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Serial expansion receive
   //#!    sys.com.uartRcvIT();
   //#!Initializes serial port receive operation in non-blocking mode
-  //#!Returns 1 if ok, 0 if error occurred
-  //#!Return: [num] result
-
-
+  //#!
+  //#!Return: [num] result (1 if ok, 0 if error occurred)
   if (sysFuncMatch(argS->callId, "uartRcvIT", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -390,6 +394,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.com.uartGetRd();
   //#!Gets transmission ready flag. Returns 1 if data is pending,
   //#!2 if whole line of data is pending
+  //#!
   //#!Return: [num] ready
   if (sysFuncMatch(argS->callId, "uartGetRd", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -405,6 +410,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.com.uartGetStr();
   //#!Gets the pending string and resets the serial interface
   //#!for another ready flag.
+  //#!
   //#!Return: [str] pending
 
   static uint8_t c[513];
@@ -429,8 +435,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Serial expansion get pending data
   //#!    sys.com.uartGetBytes();
   //#!Gets the bytes from a serial interface and stores them in local buffer (512 Bytes)
+  //#!
   //#!Return: [num] bytes used
-
   if (sysFuncMatch(argS->callId, "uartGetBytes", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
@@ -445,8 +451,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Serial expansion get pending data
   //#!    sys.com.uartGetByte([num] index);
   //#!Gets the byte value from a serial interface local buffer (512 Bytes)
+  //#!
   //#!Return: [num] byte value (0 - 255, -1 when error occurs)
-
   if (sysFuncMatch(argS->callId, "uartGetByte", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)) {

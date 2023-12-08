@@ -27,10 +27,10 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!#### Text obfuscation
 
-
   //#!##### Unlock overlay init
   //#!    sys.cr.unLockInit();
   //#!Creates unlock overlay
+  //#!
   //#!Return: [num] overlay ID, 0 when error
   if (sysFuncMatch(argS->callId, "unLockInit", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -48,6 +48,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Unlock overlay update
   //#!    sys.cr.update([num] ovId);
   //#!Updates unlock overlay
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "update", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -63,6 +64,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Unlock overlay get ok
   //#!    sys.cr.getOk([num] ovId);
   //#!Gets if unlock was successfull
+  //#!
   //#!Return: [num] 1 - unlock success, 2 - unlock canceled
   if (sysFuncMatch(argS->callId, "getOk", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -80,6 +82,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Unlock overlay clear ok
   //#!    sys.cr.clrOk([num] ovId);
   //#!Creates unlock overlay
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "clrOk", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -95,6 +98,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Get if is locked
   //#!    sys.cr.getLock();
   //#!Gets if crypto is unlocked
+  //#!
   //#!Return: [num] 1 - crypto unlocked, 0 - crypto locked
   if (sysFuncMatch(argS->callId, "getLock", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -108,6 +112,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Loads password as a key
   //#!    sys.cr.loadPass();
   //#!Loads OS password as a key
+  //#!
   //#!Return: 0 if success, 1 if error
   if (sysFuncMatch(argS->callId, "loadPass", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -127,6 +132,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Load custom key string
   //#!    sys.cr.loadStr([str]key);
   //#!Loads custom string as a crypto key
+  //#!
   //#!Return: 0 if success, 1 if error
   if (sysFuncMatch(argS->callId, "loadStr", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -145,6 +151,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Load custom keyfile
   //#!    sys.cr.loadKey([str]keyfile);
   //#!Loads custom keyfile as a crypto key
+  //#!
   //#!Return: 0 if success, 1 if error
   if (sysFuncMatch(argS->callId, "loadKey", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -163,6 +170,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Load OS keyfile
   //#!    sys.cr.loadOSKey();
   //#!Loads OS keyfile as a crypto key
+  //#!
   //#!Return: 0 if success, 1 if error
   if (sysFuncMatch(argS->callId, "loadOSKey", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -180,6 +188,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Generate keyfile
   //#!    sys.cr.genKey([str]keyfile);
   //#!Generates custom keyfile.
+  //#!
   //#!Return: 0 if success, 1 if error
   if (sysFuncMatch(argS->callId, "genKey", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -198,6 +207,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Lock
   //#!    sys.cr.lock();
   //#!Locks sda encryption
+  //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "lock", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
@@ -213,6 +223,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Encrypt file
   //#!    sys.cr.encrypt([str]fname);
   //#!Encrypts file.
+  //#!
   //#!Return: 0 if success, 1 if error
   if (sysFuncMatch(argS->callId, "encrypt", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -231,6 +242,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Decrypt file
   //#!    sys.cr.decrypt([str]fname);
   //#!Encrypts file.
+  //#!
   //#!Return: 0 if success, 1 if error
   if (sysFuncMatch(argS->callId, "decrypt", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -249,6 +261,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Encrypt string
   //#!    sys.cr.encryptStr([str]source);
   //#!Encrypts given string.
+  //#!
   //#!Return: [str] encryptedString
   if (sysFuncMatch(argS->callId, "encryptStr", s)) {
     argType[1] = SVS_TYPE_STR;
@@ -275,6 +288,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Decrypt string
   //#!    sys.cr.decryptStr([str]source);
   //#!Decrypts given string.
+  //#!
   //#!Return: [str] decryptedString
   if (sysFuncMatch(argS->callId, "decryptStr", s)) {
     argType[1] = SVS_TYPE_STR;
