@@ -24,22 +24,35 @@ SOFTWARE.
 
 //#!  Automatically generated documentation for GR2 SVS wrapper, follows markdown syntax.
 //#!
+//#!### GR2 Graphics library
+//#!
+//#!
 //#!#### Constants
-//#!| Constant | Value | Meaning |
-//#!|---|---|---|
-//#!|EV_PRESSED|1| Event: pressed|
-//#!|EV_RELEASED|3| Event: released|
-//#!|EV_HOLD|2| Event: hold|
-//#!|EV_NONE|0| Event: none|
-
-//#!|COL_BORDER|1| Color: Border|
-//#!|COL_TEXT|2| Color: Text|
-//#!|COL_BACKGROUND|3| Color: Background|
-//#!|COL_FILL|4| Color: Fill|
-//#!|COL_ACTIVE|5| Color: active|
-//#!|ALIGN_LEFT|5| Text align: Left|
-//#!|ALIGN_RIGHT|5| Text align: Right|
-//#!|ALIGN_CENTER|5| Text align: Center|
+//#!
+//#!##### Element events
+//#!|  Constant     |  Value |  Meaning          |
+//#!|  ---          |  ---   |  ---              |
+//#!|  EV_PRESSED   |  1     |  Event: pressed   |
+//#!|  EV_RELEASED  |  3     |  Event: released  |
+//#!|  EV_HOLD      |  2     |  Event: hold      |
+//#!|  EV_NONE      |  0     |  Event: none      |
+//#!
+//#!##### UI Colors
+//#!|  Constant       |  Value |  Meaning            |
+//#!|  ---            |  ---   |  ---                |
+//#!|  COL_BORDER     |  1     |  Color: Border      |
+//#!|  COL_TEXT       |  2     |  Color: Text        |
+//#!|  COL_BACKGROUND |  3     |  Color: Background  |
+//#!|  COL_FILL       |  4     |  Color: Fill        |
+//#!|  COL_ACTIVE     |  5     |  Color: active      |
+//#!
+//#!##### Text alignment
+//#!|  Constant     |  Value |  Meaning            |
+//#!|  ---          |  ---   |  ---                |
+//#!|  ALIGN_LEFT   |  5     |  Text align: Left   |
+//#!|  ALIGN_RIGHT  |  5     |  Text align: Right  |
+//#!|  ALIGN_CENTER |  5     |  Text align: Center |
+//#!
 
 svsConstType gr2WrapConsts[] = {
   {"EV_PRESSED", 1},
@@ -71,13 +84,17 @@ void svsGr2WrapInit(){
 uint8_t svsGr2Wrap(varRetVal *result, argStruct *argS, svsVM *s) {
   uint8_t ret = 0;
   
-
-  ret = sda_gr2_inits_subwrap(result, argS, s);
+  ret = sda_gr2_getset_subwrap(result, argS, s);
   if (ret != 2) {
     return ret;
   }
 
-  ret = sda_gr2_getset_subwrap(result, argS, s);
+  ret = sda_gr2_txt_subwrap(result, argS, s);
+  if (ret != 2) {
+    return ret;
+  }
+
+  ret = sda_gr2_inits_subwrap(result, argS, s);
   if (ret != 2) {
     return ret;
   }

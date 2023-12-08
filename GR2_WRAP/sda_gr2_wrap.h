@@ -27,5 +27,6 @@ SOFTWARE.
 
 uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_gr2_txt_subwrap(varRetVal *result, argStruct *argS, svsVM *s);
 
 #endif

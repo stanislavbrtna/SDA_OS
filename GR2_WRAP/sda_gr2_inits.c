@@ -34,6 +34,7 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!or also
   //#!    sys.gui.addScreen([num]x1, [num]y1, [num]x2, [num]y2, [num]scrId);
   //#!Creates new screen.
+  //#!
   //#!Return: [num]scrId
   if (sysFuncMatch(argS->callId, "addScreen", s)) {
     if (argS->usedup == 0) {
@@ -68,6 +69,7 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### New frame
   //#!    sys.gui.addFrame([num]x1, [num]y1, [num]x2, [num]y2, [num]value, [num]scrId);
   //#!Creates new pscg frame. Value contains id of screen inside frame.
+  //#!
   //#!Return: [num]elementId
   if (sysFuncMatch(argS->callId,"addFrame",s)) {
     argType[1] = 0; //x1
@@ -96,6 +98,7 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### New text field
   //#!    sys.gui.addText([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
   //#!Adds a new text field.
+  //#!
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "addText", s)) {
     argType[1] = 0; //x1
@@ -125,6 +128,7 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### New button
   //#!    sys.gui.addButton([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
   //#!Creates new button.
+  //#!
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "addButton", s)) {
     argType[1] = 0; //x1
@@ -154,6 +158,7 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### New color button
   //#!    sys.gui.addCButton([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
   //#!Adds color button, color is stored in its value.
+  //#!
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "addCButton", s)) {
     argType[1] = 0; //x1
@@ -183,6 +188,7 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### New check box
   //#!    sys.gui.addCheckBox([num]x1, [num]y1, [num]x2, [num]y2, [str]str, [num]scrId);
   //#!Creates new checkbox. Checkbox state is stored in its value.
+  //#!
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "addCheckBox", s)) {
     argType[1] = 0; //x1
@@ -211,8 +217,11 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### New icon
   //#!    sys.gui.addIcon([num]x1, [num]y1, [num]x2, [num]y2, [str]description, [str]image, [num]scrId);
-  //#!Adds icon. Image must be a file in current working directory, with resolution 64x64px.
+  //#!Adds icon. Image must be a file in current working directory.
+  //#!Optimal resolution is 64x64px. Icon will try to accomodate given space by scaling itself.
+  //#!use sys.gui.setTxtAlign to change position of the description box.
   //#!When parameter of icon element is not zero, color of value param - 1 (16bit RGB565) is drawn as transparent.
+  //#!
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "addIcon", s)) {
     argType[1] = 0; //x1
@@ -245,6 +254,7 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.gui.setIcon([num]id, [str]image);
   //#!Sets image for given icon. Image must be a file in current working directory, with resolution 64x64px.
   //#!When parameter of icon element is not zero, color of value param - 1 (16bit RGB565) is drawn as transparent.
+  //#!
   //#!Return: none
 
   if (sysFuncMatch(argS->callId, "setIcon", s)) {
@@ -264,8 +274,10 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### New image
   //#!    sys.gui.addImage([num]x1, [num]y1, [num]x2, [num]y2, [str]fname, [num]scrId);
-  //#!Creates new .ppm image container. Name of image is stored in str_value
+  //#!Creates new image (ppm or p16) container. Name of image is stored in str_value
   //#!Size attribute is stored in value, (one by default)
+  //#!Color of value param - 1 (16bit RGB565) is drawn as transparent.
+  //#!
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "addImage", s)) {
     argType[1] = 0; //x1
@@ -295,6 +307,7 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### New vertical slider
   //#!    sys.gui.addSliderV([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
   //#!Adds a new vertical slider. (pAddSlider is also accepted)
+  //#!
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "addSlider", s) || sysFuncMatch(argS->callId, "addSliderV", s)) {
     argType[1] = 0; //x1
@@ -326,6 +339,7 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### New horizontal slider
   //#!    sys.gui.addSliderH([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
   //#!Adds a new horizontal slider.
+  //#!
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "addSliderH", s)) {
     argType[1] = 0; //x1
@@ -356,7 +370,8 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### New progress bar
   //#!    sys.gui.addBar([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
-  //#!Adds progress bar. Orientation depends on bar dimensions.
+  //#!Adds progress bar. Orientation depends on its dimensions.
+  //#!
   //#!Return: [num]id
   if (sysFuncMatch(argS->callId, "addBar", s)) {
     argType[1] = 0; //x1
@@ -389,6 +404,7 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!    sys.gui.destroy([num]id);
   //#!Destroys element with given id.
+  //#!
   //#!Return: none
   if (sysFuncMatch(argS->callId, "destroy", s)) {
     argType[1] = 0;
