@@ -388,16 +388,19 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 
   //#!##### Draws P16 image
   //#!    sys.ds.drawImage([num]x, [num]y, [num]scale_w, [num]scale_h, [str]name);
-  //#!Draws p16 image from the working directory. Supports upscaling, and downscaling
+  //#!Draws p16 image from the working directory. Supports upscaling, and downscaling.
+  //#!
   //#!Scale table:
-  //#!|Scale value | Image size|
-  //#!|  -3        |   1/16    |
-  //#!|  -2        |   1/8     |
-  //#!|  -1        |   1/4     |
-  //#!|   0        |   1/2     |
-  //#!|   1        |    1      |
-  //#!|   2        |    2x     |
-  //#!|   n        |    n*x    |
+  //#!
+  //#!|  Scale value | Image size|
+  //#!|      ---     |   ---     |
+  //#!|    -3        |   1/16    |
+  //#!|    -2        |   1/8     |
+  //#!|    -1        |   1/4     |
+  //#!|     0        |   1/2     |
+  //#!|     1        |    1      |
+  //#!|     2        |    2x     |
+  //#!|     n        |    n*x    |
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "drawImage", s)) {
