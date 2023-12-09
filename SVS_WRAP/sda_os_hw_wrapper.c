@@ -177,6 +177,23 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!#### Internal expansion port
+  //#!
+  //#!Internal expansion connector pinout:
+  //#!
+  //#!|  MCU pin | Exc pin number | Exc pin number | MCU pin |
+  //#!|   ---    |    ---         |    ---         |  ---    |
+  //#!|   PD15   |    01          |    09          |  PB15   |
+  //#!|   PD14   |    02          |    10          |  PB14   |
+  //#!|   PD13   |    03          |    11          |  PB13   |
+  //#!|   PD12   |    04          |    GND         |  -      |
+  //#!|   PD11   |    05          |    Vcc (3.3V)  |  -      |
+  //#!|   PD10   |    06          |    14          |  PE12   |
+  //#!|   PD09   |    07          |    15          |  PE13   |
+  //#!|   PD08   |    08          |    16          |  PE14   |
+  //#!
+  //#!Dot marks the pin no. 1
+  //#!
 
   //#!##### Define direction of pins on the internal expansion
   //#!    sys.iPinDef([num]Pin, [num]type, [num]pullUp);
@@ -235,6 +252,22 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     result->type = SVS_TYPE_NUM;
     return 1;
   }
+
+  //#!#### External expansion pins
+  //#!
+  //#!External expansion connector pinout:
+  //#!
+  //#!| Exc pin number |  MCU pin | Alt Function | 
+  //#!|   ---          |   ---    |   ---        |
+  //#!|   1            |   GND    |              |
+  //#!|   2            |   PA1    |   ADC_IN     |
+  //#!|   3            |   3.3V   |              |
+  //#!|   4            |   PE15   |   I/O        |
+  //#!|   5            |   PB10   |   Tx         |
+  //#!|   6            |   PB11   |   Rx         |
+  //#!
+  //#!Pin no. 1 is the one closest ot the charging LED
+  //#!
 
   //#!##### Define direction of pins on the expansion
   //#!    sys.ePinDef([num]Pin, [num]type, [num]pullUp);
