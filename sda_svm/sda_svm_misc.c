@@ -98,6 +98,14 @@ void svmAuthorize() {
   svmMeta.authorized = 1;
 }
 
+void svmSetSuspendOnClose(uint8_t val) {
+  svmMeta.suspendOnClose = val;
+}
+
+uint8_t svmGetSuspendOnClose() {
+  return svmMeta.suspendOnClose;
+}
+
 uint8_t svmGetAuthorized() {
   return svmMeta.authorized;
 }

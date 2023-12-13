@@ -240,6 +240,7 @@ void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname) {
   svmMeta.beepTime       = 0;
   svmMeta.authorized     = 0;
   svmMeta.useDrawRoot    = 0;
+  svmMeta.suspendOnClose = 0;
 
   for (uint16_t i = 0; i < 3; i++) {
     svmMeta.svmCallRetval[i].val_u = 0;
@@ -399,6 +400,32 @@ void svmCloseRunning() {
   uint8_t errorOccured = 0;
 
   if (sda_slot_get_valid(4) == 0 || svmValid == 0) {
+    return;
+  }
+
+  // just suspend instead of closing
+  if(svmGetSuspendOnClose()) {
+    gr2_text_deactivate(&sda_app_con);
+    svpSGlobal.systemXBtnClick = 0;
+    svpSGlobal.systemXBtnVisible = 0;
+    
+    if (getOverlayId() != 0) {
+      destroyOverlay();
+    }
+    sda_set_landscape(0);
+    
+    sda_keyboard_hide();
+    if(sda_get_prev_top_screen_slot() == 1
+        || sda_get_prev_top_screen_slot() == 2)
+    {
+      sda_slot_on_top(SDA_SLOT_HOMESCREEN);
+    } else {
+      sda_slot_on_top(SDA_SLOT_APPLIST);
+    }
+    
+    svp_switch_main_dir();
+    svp_chdir((uint8_t *)"APPS");
+    sda_set_sleep_lock(0);
     return;
   }
 
@@ -565,6 +592,9 @@ void svmClose(uint16_t id) {
   if (svmMeta.pid != id) {
     svmWake(id);
   }
+
+  // here we close even the unclosable apps
+  svmSetSuspendOnClose(0);
 
   svmCloseRunning();
   

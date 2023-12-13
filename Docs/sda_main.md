@@ -40,6 +40,13 @@ Return: None
 If called from timer or uart callback, the app is promoted to the foreground.
 
 Return: None
+##### Disable app close
+    sys.os.noClose([num] enabled);
+If enabled, running application is only suspended
+when close button is pressed.
+Application can still be closed from task manager.
+
+Return: None
 ##### Get if running in simulator
     sys.os.inSim();
 Gets if app is running in simulator. 1 - Simulator, 0 - Real hardware.

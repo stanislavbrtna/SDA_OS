@@ -174,6 +174,24 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Disable app close
+  //#!    sys.os.noClose([num] enabled);
+  //#!If enabled, running application is only suspended
+  //#!when close button is pressed.
+  //#!Application can still be closed from task manager.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "noClose", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    svmSetSuspendOnClose(argS->arg[1].val_s);
+      
+    return 1;
+  }
+
   //#!##### Get if running in simulator
   //#!    sys.os.inSim();
   //#!Gets if app is running in simulator. 1 - Simulator, 0 - Real hardware.
