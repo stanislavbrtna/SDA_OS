@@ -87,7 +87,7 @@ Color of value param - 1 (16bit RGB565) is drawn as transparent.
 Return: [num]id
 ##### New vertical slider
     sys.gui.addSliderV([num]x1, [num]y1, [num]x2, [num]y2, [num]howMuchOverall, [num]howMuch, [num]scrId);
-Adds a new vertical slider. (pAddSlider is also accepted)
+Adds a new vertical slider.
 
 Return: [num]id
 ##### New horizontal slider
