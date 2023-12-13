@@ -284,3 +284,12 @@ Return: [num] bytes used
 Gets the byte value from a serial interface local buffer (512 Bytes)
 
 Return: [num] byte value (0 - 255, -1 when error occurs)
+##### Serial expansion register wakeup callback
+    sys.com.uartRdClb([str] callback, [num] val);
+Registers callback on expansion uart, when rd flag goes
+to *val*, application will be waken up and callback
+will be called. Application can fully resume by calling sys.os.arise();
+Serial port needs to be previously configured for IT receive.
+Setting *val* to zero will disable the callback.
+
+Return: [num] success

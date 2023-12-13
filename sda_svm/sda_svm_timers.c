@@ -27,9 +27,9 @@ extern sdaSvmMetadata svmMeta;
 
 extern uint8_t soft_error_flag;
 
-static uint8_t timer_wkup_flag;
+uint8_t callback_arise_flag;
 static uint32_t svmSavedProcTimer[MAX_OF_SAVED_PROC];
-static uint8_t svmSavedProcTimerCallback[MAX_OF_SAVED_PROC][NAME_LENGTH];
+static uint8_t  svmSavedProcTimerCallback[MAX_OF_SAVED_PROC][NAME_LENGTH];
 
 // timers
 
@@ -71,9 +71,9 @@ uint8_t sdaSvmHandleTimers() {
             return 0;
           }
 
-          if (timer_wkup_flag == 1) {
+          if (callback_arise_flag == 1) {
             svmOnTop();
-            timer_wkup_flag = 0;
+            callback_arise_flag = 0;
           }
         } else {
           uint16_t prev_pid;
@@ -114,11 +114,11 @@ uint8_t sdaSvmHandleTimers() {
           }
 
           //go back
-          if (timer_wkup_flag == 0) {
+          if (callback_arise_flag == 0) {
             svmWake(prev_pid);
             return 0;
           }
-          timer_wkup_flag = 0;
+          callback_arise_flag = 0;
           svmOnTop();
           setRedrawFlag();
         }
@@ -129,8 +129,8 @@ uint8_t sdaSvmHandleTimers() {
 }
 
 
-void sdaSvmSetTimerWkup() {
-  timer_wkup_flag = 1;
+void sdaSvmSetAriseFlag() {
+  callback_arise_flag = 1;
 }
 
 

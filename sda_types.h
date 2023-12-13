@@ -158,6 +158,8 @@ typedef struct {
   varType  svmCallRetval[3];
   uint8_t* svmCallRetvalStr[3];
   uint8_t  svmCallRetvalType[3];
+
+  uint8_t  uartCallback[NAME_LENGTH];
 } sdaSvmMetadata;
 
 typedef struct {
@@ -166,6 +168,7 @@ typedef struct {
   uint16_t pid;
   uint8_t  valid;
   uint8_t  singular;
+  uint8_t  uartCallbackEnabled;
 } svmSavedProcType;
 
 

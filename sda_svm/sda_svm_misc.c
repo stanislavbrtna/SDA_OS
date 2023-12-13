@@ -30,13 +30,16 @@ static uint8_t alarmFlag;
 static uint8_t redrawDetect;
 
 // svs
-uint8_t svs_wrap_setScr_flag;
+uint8_t  svs_wrap_setScr_flag;
 uint16_t svs_wrap_setScr_id;
 
-extern svsVM          svm;
-extern sdaSvmMetadata svmMeta;
-extern uint8_t * pscgErrorString;
+extern svsVM            svm;
+extern sdaSvmMetadata   svmMeta;
+extern uint8_t *        pscgErrorString;
+extern svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
+extern uint8_t          soft_error_flag;
 
+extern uint8_t callback_arise_flag;
 
 void svmGetGR2Settings() {
   // load colors from system to app context
@@ -194,6 +197,103 @@ uint8_t svmCheckAndExit() {
   }
   return 0;
 }
+
+// registers serial receive callback for current app, returns 0 when ok
+uint8_t svmRegisterUartCallback(uint8_t* callback, uint8_t val) {
+  // check stored proc for empty callback
+  for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
+    if (svmSavedProc[i].uartCallbackEnabled == 1 && svmSavedProc[i].valid) {
+      return 1;
+    }
+  }
+
+  // register callback
+  for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
+    if (svmSavedProc[i].pid == svmGetPid()) {
+      svmSavedProc[i].uartCallbackEnabled = val;
+      // set callback name
+      sda_strcp(callback, svmMeta.uartCallback, NAME_LENGTH);
+    }
+  }
+
+  return 0;
+}
+
+
+void svmHandleUartCallbacks() {
+  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+    if (svmGetSavedProcValid(x) == 1) {
+      if (svmSavedProc[x].uartCallbackEnabled && svmSavedProc[x].uartCallbackEnabled == sda_serial_get_rdy()) {
+        // App is already on top
+        if (svmGetSavedProcPid(x) == svmMeta.pid) {
+          //execute
+          commExec(svmMeta.uartCallback, &svm);
+          if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
+            svp_errSoftPrint(&svm);
+            return 1;
+          }
+          if (svmCheckAndExit()) { // handle potential exit call
+            return 0;
+          }
+
+          if (callback_arise_flag == 1) {
+            svmOnTop();
+            callback_arise_flag = 0;
+          }
+
+        } else {
+          uint16_t prev_pid;
+          if (svmGetValid()) {
+            prev_pid = svmMeta.pid;
+          } else {
+            prev_pid = 0;
+          }
+          
+          //wakeup
+          if(svmWake(svmGetSavedProcPid(x))) {
+            // error occured during wakeup
+            // wake the previous and exit
+            if (prev_pid) {
+              svmWake(prev_pid);
+              svmOnTop();
+              setRedrawFlag();
+            } else {
+              // TODO: fix all of this slot mess
+              svp_switch_main_dir();
+              svp_chdir((uint8_t *)"APPS");
+              sda_slot_on_top(SDA_SLOT_APPLIST);
+            }
+            
+            return 0;
+          }
+
+          //execute
+          commExec(svmMeta.uartCallback, &svm);
+          if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
+            svp_errSoftPrint(&svm);
+            return 1;
+          }
+
+          // handle potential exit call
+          if (svmCheckAndExit()) {
+            return 0;
+          }
+
+          //go back
+          if (callback_arise_flag == 0) {
+            svmWake(prev_pid);
+            return 0;
+          }
+          callback_arise_flag = 0;
+          svmOnTop();
+          setRedrawFlag();
+        }
+      }
+    }
+  }
+  return;
+}
+
 
 // get current wd relative to main dir
 void svmUpdateCurrentWD() {

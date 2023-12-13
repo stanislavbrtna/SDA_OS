@@ -28,6 +28,6 @@ uint8_t sdaSvmHandleTimers();
 uint8_t sdaSvmIsTimerSet();
 void sdaSvmSetTimer(uint32_t time_ms, uint8_t *callback);
 void sdaSvmClearTimer();
-void sdaSvmSetTimerWkup();
+void sdaSvmSetAriseFlag();
 
 #endif

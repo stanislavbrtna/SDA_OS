@@ -239,6 +239,7 @@ uint8_t sda_main_loop() {
   sda_main_handle_soft_buttons();
   sda_main_check_for_alarm();
   sdaSvmHandleTimers();
+  svmHandleUartCallbacks();
   sda_power_management_handler();
   sda_handle_battery_status();
 

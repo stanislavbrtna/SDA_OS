@@ -468,5 +468,26 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Serial expansion register wakeup callback
+  //#!    sys.com.uartRdClb([str] callback, [num] val);
+  //#!Registers callback on expansion uart, when rd flag goes
+  //#!to *val*, application will be waken up and callback
+  //#!will be called. Application can fully resume by calling sys.os.arise();
+  //#!Serial port needs to be previously configured for IT receive.
+  //#!Setting *val* to zero will disable the callback.
+  //#!
+  //#!Return: [num] success
+  if (sysFuncMatch(argS->callId, "uartRdClb", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    result->value.val_s = svmRegisterUartCallback(s->stringField + argS->arg[1].val_str, argS->arg[2].val_u);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   return 0;
 }

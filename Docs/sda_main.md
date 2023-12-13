@@ -37,7 +37,7 @@ SDA will wake in the low power mode and will sleep again after the lcd shutdown 
 Return: None
 ##### Pushes app to foreground
     sys.os.arise();
-If called from timer callback, the app is promoted to the foreground.
+If called from timer or uart callback, the app is promoted to the foreground.
 
 Return: None
 ##### Get if running in simulator

@@ -163,14 +163,14 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Pushes app to foreground
   //#!    sys.os.arise();
-  //#!If called from timer callback, the app is promoted to the foreground.
+  //#!If called from timer or uart callback, the app is promoted to the foreground.
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "arise", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    sdaSvmSetTimerWkup();
+    sdaSvmSetAriseFlag();
     return 1;
   }
 

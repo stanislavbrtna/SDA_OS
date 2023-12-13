@@ -57,6 +57,7 @@ void svmSuspendInitPid(uint16_t pid, uint8_t * name) {
   svmSavedProc[index].valid = 1;
   svmSavedProc[index].singular = 0;
   svmSavedProc[index].cryptoUnlocked = 0;
+  svmSavedProc[index].uartCallbackEnabled = 0;
 }
 
 
