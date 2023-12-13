@@ -38,4 +38,7 @@ void svmSuspendInitPid(uint16_t pid, uint8_t * name);
 uint8_t svmSuspend();
 uint8_t svmWake(uint16_t id);
 
+// executes the suspend call
+uint8_t svmExecSuspend();
+
 #endif

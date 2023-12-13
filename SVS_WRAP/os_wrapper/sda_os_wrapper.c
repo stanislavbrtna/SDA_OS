@@ -29,6 +29,28 @@ SOFTWARE.
 //#! - [Text obfuscation](sda_os_crypto.md)
 //#!
 
+//#!### Basic Application structure
+//#!
+//#!#### Required functions
+//#!
+//#!##### Init function
+//#!    function init
+//#!
+//#!##### Update function
+//#!    function update
+//#!
+//#!#### Optional functions
+//#!
+//#!##### Exit function
+//#!    function exit
+//#!
+//#!##### Suspend function
+//#!    function suspend
+//#!
+//#!##### Wakeup function
+//#!    function wakeup
+//#!
+
 //#!#### SVP API Level history
 //#!
 //#!API level given by *sys.os.getVer* etc. works like this: 

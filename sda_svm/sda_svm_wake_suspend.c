@@ -60,23 +60,41 @@ void svmSuspendInitPid(uint16_t pid, uint8_t * name) {
   svmSavedProc[index].uartCallbackEnabled = 0;
 }
 
+// execs the suspend function, result: 0 - ok, 1 - app exited, 2 - svs error occured
+uint8_t svmExecSuspend() {
+  // marks that suspend was executed only once
+  if (svmMeta.suspendExecuted == 1) {
+    return 0;
+  }
+  svmMeta.suspendExecuted = 1;
 
-uint8_t svmSuspend() {
   if(functionExists(SUSPEND_FUNCTION, &svm)) {
     commExec(SUSPEND_FUNCTION, &svm);
     if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
       svp_errSoftPrint(&svm);
-      return 1;
+      return 2;
     }
     if (svmCheckAndExit()) {
-      return 0;
+      return 1;
     }
   }
+
+  return 0;
+}
+
+uint8_t svmSuspend() {
+
+  uint8_t r = svmExecSuspend();
+
+  if (r == 2) return 1; // error occured
+  if (r == 1) return 0; // sys.os.exit called
 
   if (svmGetCryptoUnlock()) {
     svp_crypto_lock();
   }
-
+  // reset the flag
+  svmMeta.suspendExecuted = 0;
+  
   svmSaveProcData();
   return 0;
 }

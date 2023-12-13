@@ -231,16 +231,17 @@ void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname) {
   sda_strcp((uint8_t *)"", svmMeta.openCsvName, sizeof(svmMeta.openCsvName));
   sda_strcp((uint8_t *)"DATA", svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
   sda_strcp((uint8_t *)"DATA", svmMeta.drawRoot, sizeof(svmMeta.drawRoot));
-  svmMeta.openConfUsed   = 0;
-  svmMeta.openCsvUsed    = 0;
-  svmMeta.loadUptime     = svpSGlobal.uptimeMs;
-  svmMeta.landscape      = 0;
-  svmMeta.lcdOffButtons  = 0;
-  svmMeta.launchFromCWD  = 0;
-  svmMeta.beepTime       = 0;
-  svmMeta.authorized     = 0;
-  svmMeta.useDrawRoot    = 0;
-  svmMeta.suspendOnClose = 0;
+  svmMeta.openConfUsed    = 0;
+  svmMeta.openCsvUsed     = 0;
+  svmMeta.loadUptime      = svpSGlobal.uptimeMs;
+  svmMeta.landscape       = 0;
+  svmMeta.lcdOffButtons   = 0;
+  svmMeta.launchFromCWD   = 0;
+  svmMeta.beepTime        = 0;
+  svmMeta.authorized      = 0;
+  svmMeta.useDrawRoot     = 0;
+  svmMeta.suspendOnClose  = 0;
+  svmMeta.suspendExecuted = 0;
 
   for (uint16_t i = 0; i < 3; i++) {
     svmMeta.svmCallRetval[i].val_u = 0;
