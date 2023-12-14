@@ -31,14 +31,27 @@ SOFTWARE.
 
 //#!### Basic Application structure
 //#!
-//#!#### Required functions
+//#!    function init {
+//#!      screen = sys.gui.addScreen();
+//#!      sys.gui.addText(1, 1, 2, 6, "Hello, world!", screen);
+//#!      sys.os.gui.setMainScr(screen);
+//#!    }
+//#!    
+//#!    function update {
+//#!      # empty in this example
+//#!    }
 //#!
+//#!#### Required functions
+//#!Each application must implement all required functions.
 //#!##### Init function
-//#!    function init
+//#!    init(call_arguments)
+//#!Init is called once when the app is loaded.
+//#!arg0 - arg2: call arguments passed from sys.os.subProcess
 //#!
 //#!##### Update function
 //#!    function update
-//#!
+//#!Update function is called each update cycle, when the app
+//#!is active and in the foreground.
 //#!#### Optional functions
 //#!
 //#!##### Exit function
@@ -420,7 +433,12 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Launch subprocess
   //#!    sys.os.subProcess([str]fileName, [str/ref] callback, [undef] arg0, [undef] arg1, [undef] arg2);
-  //#!Runs child process
+  //#!Runs child process with given arguments. 
+  //#!*fileName* must contain valid path to .svs file located in APPS directory.
+  //#!*callback* stores name of a function that will be called after child process exits.
+  //#!Subprocess will be launched after the current application returns from its *update* function.
+  //#!When strings are passed as arguments,
+  //#!their total size must not exceed APP_ARG_STR_LEN define (2048 by default).
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subProcess", s)) {
@@ -447,7 +465,11 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.os.subProcCWD([num] val);
   //#!Sets if subprocesses are launched from cwd or from APPS folder.
   //#!
-  //#!val: 0 - APPS folder, 1 - cwd
+  //#!val:
+  //#! | Value: | Description            |
+  //#! | ---    | ---                    |
+  //#! |    0   | APPS folder (default)  |
+  //#! |    1   | CWD                    |
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subProcCWD", s)) {
@@ -459,10 +481,11 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Disable caching
+  //#!##### Disable caching for launched subprocess
   //#!    sys.os.subProcNC();
   //#!Disables caching for next call of sys.os.subProcess.
-  //#!Usefull when running modified content
+  //#!Usefull when running modified content and precaching on launch is enabled
+  //#!in settings.
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subProcNC", s)) {
@@ -476,6 +499,8 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Return data to parent process
   //#!    sys.os.subRetval([undef] arg0, [undef] arg1, [undef] arg2);
   //#!Sets values that will be returned to parent process
+  //#!When strings are passed as arguments,
+  //#!their total size must not exceed APP_ARG_STR_LEN define (2048 by default).
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subRetval", s)) {
@@ -518,7 +543,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Gets the clipboard string
   //#!    sys.os.getClipboard();
-  //#!Gets the OS clipboard 256 chars max by default
+  //#!Gets the OS clipboard 256 chars max by default.
   //#!
   //#!Return: [str] clipboard_string
   if (sysFuncMatch(argS->callId, "getClipboard", s)) {
@@ -610,7 +635,15 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    sda_set_time((uint16_t) argS->arg[1].val_s, (uint8_t) argS->arg[3].val_s, svpSGlobal.weekday,(uint8_t) argS->arg[2].val_s, (uint8_t) argS->arg[4].val_s, (uint8_t) argS->arg[5].val_s, 0);
+    sda_set_time(
+      (uint16_t) argS->arg[1].val_s,
+      (uint8_t) argS->arg[3].val_s,
+      svpSGlobal.weekday,
+      (uint8_t) argS->arg[2].val_s,
+      (uint8_t) argS->arg[4].val_s,
+      (uint8_t) argS->arg[5].val_s,
+      0
+    );
     
     result->value.val_u = 0;
     result->type = SVS_TYPE_NUM;

@@ -5,6 +5,40 @@
  - [Callendar widget](sda_os_widgets.md)
  - [Text obfuscation](sda_os_crypto.md)
 
+### Basic Application structure
+
+    function init {
+      screen = sys.gui.addScreen();
+      sys.gui.addText(1, 1, 2, 6, "Hello, world!", screen);
+      sys.os.gui.setMainScr(screen);
+    }
+    
+    function update {
+      # empty in this example
+    }
+
+#### Required functions
+Each application must implement all required functions.
+##### Init function
+    init(call_arguments)
+Init is called once when the app is loaded.
+arg0 - arg2: call arguments passed from sys.os.subProcess
+
+##### Update function
+    function update
+Update function is called each update cycle, when the app
+is active and in the foreground.
+#### Optional functions
+
+##### Exit function
+    function exit
+
+##### Suspend function
+    function suspend
+
+##### Wakeup function
+    function wakeup
+
 #### SVP API Level history
 
 API level given by *sys.os.getVer* etc. works like this: 
@@ -117,25 +151,37 @@ Sets current process as singular.
 Return: None
 ##### Launch subprocess
     sys.os.subProcess([str]fileName, [str/ref] callback, [undef] arg0, [undef] arg1, [undef] arg2);
-Runs child process
+Runs child process with given arguments. 
+*fileName* must contain valid path to .svs file located in APPS directory.
+*callback* stores name of a function that will be called after child process exits.
+Subprocess will be launched after the current application returns from its *update* function.
+When strings are passed as arguments,
+their total size must not exceed APP_ARG_STR_LEN define (2048 by default).
 
 Return: None
 ##### Enable launching subprocess from cwd
     sys.os.subProcCWD([num] val);
 Sets if subprocesses are launched from cwd or from APPS folder.
 
-val: 0 - APPS folder, 1 - cwd
+val:
+ | Value: | Description            |
+ | ---    | ---                    |
+ |    0   | APPS folder (default)  |
+ |    1   | CWD                    |
 
 Return: None
-##### Disable caching
+##### Disable caching for launched subprocess
     sys.os.subProcNC();
 Disables caching for next call of sys.os.subProcess.
-Usefull when running modified content
+Usefull when running modified content and precaching on launch is enabled
+in settings.
 
 Return: None
 ##### Return data to parent process
     sys.os.subRetval([undef] arg0, [undef] arg1, [undef] arg2);
 Sets values that will be returned to parent process
+When strings are passed as arguments,
+their total size must not exceed APP_ARG_STR_LEN define (2048 by default).
 
 Return: None
 ##### Sets the clipboard string
@@ -145,7 +191,7 @@ Sets the OS clipboard 256 chars by default
 Return: [num] 1 - ok, 0 - string too long
 ##### Gets the clipboard string
     sys.os.getClipboard();
-Gets the OS clipboard 256 chars max by default
+Gets the OS clipboard 256 chars max by default.
 
 Return: [str] clipboard_string
 #### OS settings functions
