@@ -27,111 +27,39 @@ static int32_t alarmId;
 static int32_t alarmParam;
 static uint8_t alarmFlag;
 
-static uint8_t redrawDetect;
-
-// svs
-uint8_t  svs_wrap_setScr_flag;
-uint16_t svs_wrap_setScr_id;
 
 extern svsVM            svm;
 extern sdaSvmMetadata   svmMeta;
-extern uint8_t *        pscgErrorString;
 extern svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
 extern uint8_t          soft_error_flag;
 
 extern uint8_t callback_arise_flag;
 
-void svmGetGR2Settings() {
-  // load colors from system to app context
-  gr2_set_border_color(gr2_get_border_color(&sda_sys_con), &sda_app_con);
-  gr2_set_text_color(gr2_get_text_color(&sda_sys_con), &sda_app_con);
-  gr2_set_background_color(gr2_get_background_color(&sda_sys_con), &sda_app_con);
-  gr2_set_fill_color(gr2_get_fill_color(&sda_sys_con), &sda_app_con);
-  gr2_set_active_color(gr2_get_active_color(&sda_sys_con), &sda_app_con);
-}
 
-
-void sda_alarm_set_flag(int32_t id, int32_t param) {
+void svmAlarmSetFlag(int32_t id, int32_t param) {
   alarmId = id;
   alarmParam = param;
   alarmFlag = 1;
 }
 
-
-int32_t sda_alarm_get_id() {
+int32_t svmAlarmGetId() {
   return alarmId;
 }
 
-
-int32_t sda_alarm_get_param() {
+int32_t svmAlarmGetParam() {
   return alarmParam;
 }
 
-
-int8_t sda_alarm_get_flag() {
+int8_t svmAlarmGetFlag() {
   return alarmFlag;
 }
 
-
-void sda_alarm_clear_flag() {
+void sdaAlarmClearFlag() {
   alarmFlag = 0;
 }
 
-
-void svmSetMainScreen(uint16_t val) {
-  svs_wrap_setScr_id = val;
-  svs_wrap_setScr_flag = 1;
-  gr2_set_modified(val, &sda_app_con);
-}
-
-
-void sdaSetRedrawDetect(uint8_t val) {
-  redrawDetect = val;
-}
-
-
-uint8_t sdaGetRedrawDetect() {
-  return redrawDetect;
-}
-
-void svmAuthorize() {
-  svmMeta.authorized = 1;
-}
-
-void svmSetSuspendOnClose(uint8_t val) {
-  svmMeta.suspendOnClose = val;
-}
-
-uint8_t svmGetSuspendOnClose() {
-  return svmMeta.suspendOnClose;
-}
-
-uint8_t svmGetAuthorized() {
-  return svmMeta.authorized;
-}
-
-
-uint16_t svmGetPid() {
-  if (svmGetValid()) {
-    return svmMeta.pid;
-  } else {
-    return 0;
-  }
-}
-
-
-void svmSetLandscape(uint8_t val) {
-  svmMeta.landscape = val;
-}
-
-
-void svmSetDrawRoot(uint8_t * str) {
-  sda_strcp(str, svmMeta.drawRoot, sizeof(svmMeta.drawRoot));
-  svmMeta.useDrawRoot = 1;
-}
-
 // beep callback init & handler
-void svmSetBeepCallback(uint8_t * cb, uint32_t time) {
+void svmBeepSetCallback(uint8_t * cb, uint32_t time) {
  sda_strcp(cb, svmMeta.beepTimerCallback, sizeof(svmMeta.beepTimerCallback));
  svmMeta.beepTime = (svpSGlobal.uptimeMs - svmGetAppUptime()) + time;
 }
@@ -175,26 +103,6 @@ void svmOnTop() {
 
   svpSGlobal.systemXBtnVisible = 1;
   svpSGlobal.systemXBtnClick = 0;
-}
-
-
-void svmKillRunning() {
-  svm.handbrake = 1;
-}
-
-
-void svmSetError(uint8_t * str) {
-  pscgErrorString = str;
-}
-
-
-void svmSetLaunchCWDflag(uint8_t val) {
-  svmMeta.launchFromCWD = val;
-}
-
-
-uint64_t svmGetAppUptime() {
-  return svmMeta.loadUptime;
 }
 
 

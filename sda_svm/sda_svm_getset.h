@@ -38,6 +38,22 @@ uint8_t svmGetCryptoUnlock();
 uint16_t svmGetIfSingular(uint8_t * name);
 void     svmSetSingular(uint16_t pid);
 
+void svmKillRunning();
+void svmSetError(uint8_t * str);
+void svmSetLaunchCWDflag(uint8_t val);
+uint64_t svmGetAppUptime();
+
+void svmAuthorize();
+uint8_t svmGetAuthorized();
+
+void svmSetSuspendOnClose(uint8_t val);
+uint8_t svmGetSuspendOnClose();
+
+void sdaSetRedrawDetect(uint8_t val);
+uint8_t sdaGetRedrawDetect();
+
+int16_t svmGetId(uint16_t pid);
+
 // internal
 void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname);
 void svmInValidate(uint16_t pid);

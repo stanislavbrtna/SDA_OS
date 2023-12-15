@@ -22,10 +22,10 @@ SOFTWARE.
 
 #include "sda_svm_wake_suspend.h"
 
-extern svsVM          svm;
-extern sdaSvmMetadata svmMeta;
+extern svsVM            svm;
+extern sdaSvmMetadata   svmMeta;
 extern svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
-extern uint8_t soft_error_flag;
+extern uint8_t          soft_error_flag;
 
 
 uint16_t svmGetSuspendedPid(uint16_t id) { 
@@ -102,113 +102,93 @@ uint8_t svmSuspend() {
 // wakes up given pid, returns: 0 - ok, 1 - error
 // TODO: rewrite whis mess
 uint8_t svmWake(uint16_t pid) {
-  if(pid == svmMeta.pid && svmGetValid()) {
-    svmOnTop();
-
-    if (svmGetCryptoUnlock()) {
-      svp_crypto_unlock_nopass();
+  if(!(pid == svmMeta.pid && svmGetValid())) {
+    if (svmGetValid()) {
+      svmSuspend();
     }
 
-    if(functionExists(WAKEUP_FUNCTION, &svm)) { // execute the wakeup
-      commExec(WAKEUP_FUNCTION, &svm);
-      if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-        svp_errSoftPrint(&svm);
-        return 1;
-      }
-      if (svmCheckAndExit()) { // handle potential exit call
-        return 0;
-      }
+    int16_t id = svmGetId(pid);
+
+    if(id < 0) {
+      printf("svmWake: id not valid\n");
+      svmSavedProc[id].valid = 0;
+      return 1;
+    } 
+
+    if (svmLoadProcData(pid) == 0) {
+      printf("svmWake: error while loading app (1)\n");
+      svmSavedProc[id].valid = 0;
+      return 1;
     }
-    return 0;
+
+    sda_slot_set_valid(4);
+    svmSetValid(1);
   }
 
-  if (svmGetValid()) {
-    svmSuspend();
+  svmOnTop();
+
+  if (svmGetCryptoUnlock()) {
+    svp_crypto_unlock_nopass();
   }
 
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].pid == pid && svmSavedProc[x].valid == 1) {
-      if (svmLoadProcData(pid) == 0) {
-        printf("svmWake: error while loading app (1)\n");
-        svmSavedProc[x].valid = 0;
-        return 1;
-      }
-      sda_slot_set_valid(4);
-      svmSetValid(1);
-      svmOnTop();
-
-      if(functionExists(WAKEUP_FUNCTION, &svm)) {
-        commExec(WAKEUP_FUNCTION, &svm);
-        if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-          svp_errSoftPrint(&svm);
-          return 1;
-        }
-        if (svmCheckAndExit()) {
-          return 0;
-        }
-      }
+  if(functionExists(WAKEUP_FUNCTION, &svm)) {
+    commExec(WAKEUP_FUNCTION, &svm);
+    if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
+      svp_errSoftPrint(&svm);
+      return 1;
+    }
+    if (svmCheckAndExit()) {
       return 0;
     }
   }
-  printf("svmWake: error while loading app (2)\n");
-  return 1;
+    
+  return 0;
 }
 
 
 // wakes up given pid, fills the correct arg structure. returns: 0 - ok, 1 - error 
 uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmArgs) {
-  if(pid == svmMeta.pid && svmGetValid()) {
-    svmOnTop();
-
-    if (svmGetCryptoUnlock()) {
-      svp_crypto_unlock_nopass();
+  if(!(pid == svmMeta.pid && svmGetValid())) {
+    if (svmGetValid()) {
+      svmSuspend();
     }
 
-    svmRestoreArguments(argType, arg, svmArgs, &svm);
-    if(functionExists(WAKEUP_FUNCTION, &svm)) { // execute the wakeup
-      commExec(WAKEUP_FUNCTION, &svm);
-      svmClearArguments(&svm);
-      if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-        svp_errSoftPrint(&svm);
-        return 1;
-      }
-      if (svmCheckAndExit()) { // handle potential exit call
-        return 0;
-      }
+    int16_t id = svmGetId(pid);
+
+    if(id < 0) {
+      printf("svmWake: id not valid\n");
+      svmSavedProc[id].valid = 0;
+      return 1;
+    } 
+
+    if (svmLoadProcData(pid) == 0) {
+      printf("svmWake: error while loading app (1)\n");
+      svmSavedProc[id].valid = 0;
+      return 1;
     }
-    return 0;
+
+    sda_slot_set_valid(4);
+    svmSetValid(1);
   }
 
-  if (svmGetValid()) {
-    svmSuspend();
+  svmOnTop();
+
+  if (svmGetCryptoUnlock()) {
+    svp_crypto_unlock_nopass();
   }
 
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].pid == pid && svmSavedProc[x].valid == 1) {
-      if (svmLoadProcData(pid) == 0) {
-        printf("svmWake: error while loading app (1)\n");
-        svmSavedProc[x].valid = 0;
-        return 1;
-      }
-      sda_slot_set_valid(4);
-      svmSetValid(1);
-      svmOnTop();
-
-      svmRestoreArguments(argType, arg, svmArgs, &svm);
-      if(functionExists(WAKEUP_FUNCTION, &svm)) {
-        commExec(WAKEUP_FUNCTION, &svm);
-        svmClearArguments(&svm);
-        if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-          svp_errSoftPrint(&svm);
-          return 1;
-        }
-        if (svmCheckAndExit()) {
-          return 0;
-        }
-      }
+  svmRestoreArguments(argType, arg, svmArgs, &svm);
+  if(functionExists(WAKEUP_FUNCTION, &svm)) {
+    commExec(WAKEUP_FUNCTION, &svm);
+    if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
+      svp_errSoftPrint(&svm);
+      return 1;
+    }
+    if (svmCheckAndExit()) {
       return 0;
     }
   }
-  printf("svmWake: error while loading app (2)\n");
-  return 1;
+    
+  return 0;
 }
+

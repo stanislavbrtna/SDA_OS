@@ -60,7 +60,7 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     svp_beep_set_pf(argS->arg[1].val_u);
     svp_beep_set_t(argS->arg[2].val_u);
     svp_beep();
-    svmSetBeepCallback(s->stringField + argS->arg[3].val_str, argS->arg[2].val_u);
+    svmBeepSetCallback(s->stringField + argS->arg[3].val_str, argS->arg[2].val_u);
     return 1;
   }
 

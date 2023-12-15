@@ -339,7 +339,7 @@ static void sda_main_check_for_alarm() {
   int32_t param;
   if (sdaGetCurentAlarm(&id, &param, notifAppName, sizeof(notifAppName))) {
     svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
-    sda_alarm_set_flag(id, param);
+    svmAlarmSetFlag(id, param);
     svmLaunch(notifAppName, 0);
   }
 }

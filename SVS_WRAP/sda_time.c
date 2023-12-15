@@ -444,7 +444,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = sda_alarm_get_flag();
+    result->value.val_s = svmAlarmGetFlag();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -459,7 +459,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    sda_alarm_clear_flag();
+    sdaAlarmClearFlag();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -474,7 +474,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = sda_alarm_get_id();
+    result->value.val_s = svmAlarmGetId();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -489,7 +489,7 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = sda_alarm_get_param();
+    result->value.val_s = svmAlarmGetParam();
     result->type = SVS_TYPE_NUM;
     return 1;
   }

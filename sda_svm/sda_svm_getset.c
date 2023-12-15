@@ -22,12 +22,19 @@ SOFTWARE.
 
 #include "sda_svm_getset.h"
 
-extern uint8_t autocahceEnable;
-extern uint8_t nocacheLaunchFlag;
+static uint8_t redrawDetect;
+
+// svs
+uint8_t  svs_wrap_setScr_flag;
+uint16_t svs_wrap_setScr_id;
 
 extern svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
+extern sdaSvmMetadata   svmMeta;
+extern svsVM            svm;
 
-extern sdaSvmMetadata svmMeta;
+extern uint8_t *pscgErrorString;
+extern uint8_t  autocahceEnable;
+extern uint8_t  nocacheLaunchFlag;
 
 // sets default values for new svmMeta instance
 void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname) {
@@ -103,6 +110,18 @@ uint8_t svmGetCryptoUnlock() {
       return svmSavedProc[x].cryptoUnlocked;
     }
   }
+  return 0;
+}
+
+// return: process id, -1 if not valid
+int16_t svmGetId(uint16_t pid) {
+  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+    if (svmSavedProc[x].pid == pid && svmSavedProc[x].valid) {
+      return x;
+    }
+  }
+
+  return -1;
 }
 
 // Gets if there is currently valid, or suspended valid svm 
@@ -160,4 +179,77 @@ void svmInValidate(uint16_t pid) {
 #endif
     }
   }
+}
+
+void svmKillRunning() {
+  svm.handbrake = 1;
+}
+
+void svmSetError(uint8_t * str) {
+  pscgErrorString = str;
+}
+
+void svmSetLaunchCWDflag(uint8_t val) {
+  svmMeta.launchFromCWD = val;
+}
+
+uint64_t svmGetAppUptime() {
+  return svmMeta.loadUptime;
+}
+
+void svmAuthorize() {
+  svmMeta.authorized = 1;
+}
+
+uint8_t svmGetAuthorized() {
+  return svmMeta.authorized;
+}
+
+void svmSetSuspendOnClose(uint8_t val) {
+  svmMeta.suspendOnClose = val;
+}
+
+uint8_t svmGetSuspendOnClose() {
+  return svmMeta.suspendOnClose;
+}
+
+
+void sdaSetRedrawDetect(uint8_t val) {
+  redrawDetect = val;
+}
+
+uint8_t sdaGetRedrawDetect() {
+  return redrawDetect;
+}
+
+void svmGetGR2Settings() {
+  // load colors from system to app context
+  gr2_set_border_color(gr2_get_border_color(&sda_sys_con), &sda_app_con);
+  gr2_set_text_color(gr2_get_text_color(&sda_sys_con), &sda_app_con);
+  gr2_set_background_color(gr2_get_background_color(&sda_sys_con), &sda_app_con);
+  gr2_set_fill_color(gr2_get_fill_color(&sda_sys_con), &sda_app_con);
+  gr2_set_active_color(gr2_get_active_color(&sda_sys_con), &sda_app_con);
+}
+
+uint16_t svmGetPid() {
+  if (svmGetValid()) {
+    return svmMeta.pid;
+  } else {
+    return 0;
+  }
+}
+
+void svmSetLandscape(uint8_t val) {
+  svmMeta.landscape = val;
+}
+
+void svmSetMainScreen(uint16_t val) {
+  svs_wrap_setScr_id = val;
+  svs_wrap_setScr_flag = 1;
+  gr2_set_modified(val, &sda_app_con);
+}
+
+void svmSetDrawRoot(uint8_t * str) {
+  sda_strcp(str, svmMeta.drawRoot, sizeof(svmMeta.drawRoot));
+  svmMeta.useDrawRoot = 1;
 }

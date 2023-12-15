@@ -409,7 +409,7 @@ void svmCloseRunning() {
   sda_set_sleep_lock(0);
   svpSGlobal.kbdVisible = 0;
   sda_set_landscape(0);
-  sda_alarm_clear_flag();
+  sdaAlarmClearFlag();
   sda_files_close();
 
   if (svmMeta.parentPid != 0) {
@@ -498,7 +498,7 @@ void sdaSvmKillApp_handle() {
   svmInValidate(svmMeta.pid);
   sda_set_sleep_lock(0);
 
-  sda_alarm_clear_flag();
+  sdaAlarmClearFlag();
   sda_files_close();
 
   svp_crypto_lock();

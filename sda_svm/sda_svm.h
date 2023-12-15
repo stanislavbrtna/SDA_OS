@@ -148,11 +148,11 @@ currently running instance is waken up instead
 void svmUpdateCurrentWD();
 
 // notification flags
-void sda_alarm_set_flag(int32_t id, int32_t param);
-int32_t sda_alarm_get_id();
-int32_t sda_alarm_get_param();
-int8_t sda_alarm_get_flag();
-void sda_alarm_clear_flag();
+void    svmAlarmSetFlag(int32_t id, int32_t param);
+int32_t svmAlarmGetId();
+int32_t svmAlarmGetParam();
+int8_t  svmAlarmGetFlag();
+void    sdaAlarmClearFlag();
 
 // Pre-caching
 // Precaches given svs file, returns 0 on success 
@@ -191,7 +191,7 @@ void svmRemoveCachedProc(uint16_t pid);
 void svmRemoveCachedFile(uint16_t pid, uint8_t * tail);
 void svmInit();
 uint8_t svmUpdatePath(uint8_t *newFname, uint8_t *oldFname);
-void svmSetBeepCallback(uint8_t * cb, uint32_t time);
+void svmBeepSetCallback(uint8_t * cb, uint32_t time);
 uint8_t svmBeepHandler();
 
 #endif
