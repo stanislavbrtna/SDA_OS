@@ -186,7 +186,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
 #ifdef SVM_DBG_ENABLED
       printf("%s: suspending running app: %s \n",__FUNCTION__ , svmMeta.name);
 #endif
-    if(svmSuspend()) {
+    if(svmStoreRunning()) {
       return 0;
     }
   }
@@ -348,40 +348,6 @@ void svmCloseRunning() {
     return;
   }
 
-  // just suspend instead of closing
-  if(svmGetSuspendOnClose() && errCheck(&svm) == 0) {
-    if (svmMeta.parentPid != 0) {
-      svmSuspend();
-      svmLoadParent(errorOccured);
-      return;
-    } else {
-      svmExecSuspend();
-      gr2_text_deactivate(&sda_app_con);
-      svpSGlobal.systemXBtnClick = 0;
-      svpSGlobal.systemXBtnVisible = 0;
-      
-      if (getOverlayId() != 0) {
-        destroyOverlay();
-      }
-      sda_set_landscape(0);
-      
-      sda_keyboard_hide();
-
-      if(sda_get_prev_top_screen_slot() == 1
-          || sda_get_prev_top_screen_slot() == 2)
-      {
-        sda_slot_on_top(SDA_SLOT_HOMESCREEN);
-      } else {
-        sda_slot_on_top(SDA_SLOT_APPLIST);
-      }
-      
-      svp_switch_main_dir();
-      svp_chdir((uint8_t *)"APPS");
-      sda_set_sleep_lock(0);
-    }
-    return;
-  }
-
   if((errCheck(&svm) == 1) && (soft_error_flag == 0)) {
     svp_errSoftPrint(&svm);
     errorOccured = 1;
@@ -390,6 +356,12 @@ void svmCloseRunning() {
       destroyOverlay();
     }
   }
+
+  // just suspend instead of closing
+  if(svmGetSuspendOnClose() && errCheck(&svm) == 0) {
+    svmSuspend();
+    return;
+  }  
 
   if (sda_slot_get_valid(4) == 1) {
     if(functionExists((uint8_t *)"exit", &svm)) {
@@ -580,7 +552,12 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
       }
       svmOnTop();
       setRedrawFlag();
-    } 
+    }
+
+    if(svmGetSuspendFlag()) {
+      svmSuspend();
+      svmSetSuspendFlag(0);
+    }
     
     // Set new screen
     // This needs to be after all init calls

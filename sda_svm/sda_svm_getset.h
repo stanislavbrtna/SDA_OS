@@ -52,6 +52,9 @@ uint8_t svmGetSuspendOnClose();
 void sdaSetRedrawDetect(uint8_t val);
 uint8_t sdaGetRedrawDetect();
 
+void svmSetSuspendFlag(uint8_t val);
+uint8_t svmGetSuspendFlag();
+
 int16_t svmGetId(uint16_t pid);
 
 // internal

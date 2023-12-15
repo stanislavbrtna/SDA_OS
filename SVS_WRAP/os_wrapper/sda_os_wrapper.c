@@ -335,7 +335,21 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Quit program
+  //#!##### Suspend app
+  //#!    sys.os.suspend();
+  //#!Suspends (minimizes) currently running app.
+  //#!
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "suspend", s)) {
+
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    svmSetSuspendFlag(1);
+    return 1;
+  }
+
+  //#!##### Exit app
   //#!    sys.os.exit();
   //#!    sys.os.exit([undef] arg0, [undef] arg1, [undef] arg2); # optional return values
   //#!Stops program execution after exiting *update* function and performing *exit* function.

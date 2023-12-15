@@ -28,6 +28,8 @@ static uint8_t redrawDetect;
 uint8_t  svs_wrap_setScr_flag;
 uint16_t svs_wrap_setScr_id;
 
+static uint8_t suspend_flag;
+
 extern svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
 extern sdaSvmMetadata   svmMeta;
 extern svsVM            svm;
@@ -253,3 +255,12 @@ void svmSetDrawRoot(uint8_t * str) {
   sda_strcp(str, svmMeta.drawRoot, sizeof(svmMeta.drawRoot));
   svmMeta.useDrawRoot = 1;
 }
+
+void svmSetSuspendFlag(uint8_t val) {
+  suspend_flag = val;
+}
+
+uint8_t svmGetSuspendFlag() {
+  return suspend_flag;
+}
+

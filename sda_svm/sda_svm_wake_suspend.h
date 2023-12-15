@@ -35,7 +35,8 @@ uint8_t *svmGetSuspendedName(uint16_t id);
 // inits new entry in process table
 void svmSuspendInitPid(uint16_t pid, uint8_t * name);
 
-uint8_t svmSuspend();
+void svmSuspend();
+uint8_t svmStoreRunning();
 uint8_t svmWake(uint16_t id);
 // wakes app and performs wakeup function with given arguments
 uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmArgs);

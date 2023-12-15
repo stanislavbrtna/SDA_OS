@@ -82,8 +82,7 @@ uint8_t svmExecSuspend() {
   return 0;
 }
 
-uint8_t svmSuspend() {
-
+uint8_t svmStoreRunning() {
   uint8_t r = svmExecSuspend();
 
   if (r == 2) return 1; // error occured
@@ -99,12 +98,56 @@ uint8_t svmSuspend() {
   return 0;
 }
 
+
+void svmSuspend() {
+  if (svmMeta.parentPid != 0) {
+    uint8_t errorOccured = 0;
+    svmStoreRunning();
+
+    if((errCheck(&svm) == 1) && (soft_error_flag == 0)) {
+      svp_errSoftPrint(&svm);
+      errorOccured = 1;
+    } else {
+      if ((getOverlayId() != 0) && (soft_error_flag == 0)) {
+        destroyOverlay();
+      }
+    }
+
+    svmLoadParent(errorOccured);
+    return;
+  } else {
+    svmExecSuspend();
+    gr2_text_deactivate(&sda_app_con);
+    svpSGlobal.systemXBtnClick = 0;
+    svpSGlobal.systemXBtnVisible = 0;
+    
+    if (getOverlayId() != 0) {
+      destroyOverlay();
+    }
+    sda_set_landscape(0);
+    
+    sda_keyboard_hide();
+
+    if(sda_get_prev_top_screen_slot() == 1
+        || sda_get_prev_top_screen_slot() == 2)
+    {
+      sda_slot_on_top(SDA_SLOT_HOMESCREEN);
+    } else {
+      sda_slot_on_top(SDA_SLOT_APPLIST);
+    }
+    
+    svp_switch_main_dir();
+    svp_chdir((uint8_t *)"APPS");
+    sda_set_sleep_lock(0);
+  }
+}
+
 // wakes up given pid, returns: 0 - ok, 1 - error
 // TODO: rewrite whis mess
 uint8_t svmWake(uint16_t pid) {
   if(!(pid == svmMeta.pid && svmGetValid())) {
     if (svmGetValid()) {
-      svmSuspend();
+      svmStoreRunning();
     }
 
     int16_t id = svmGetId(pid);
@@ -150,7 +193,7 @@ uint8_t svmWake(uint16_t pid) {
 uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmArgs) {
   if(!(pid == svmMeta.pid && svmGetValid())) {
     if (svmGetValid()) {
-      svmSuspend();
+      svmStoreRunning();
     }
 
     int16_t id = svmGetId(pid);

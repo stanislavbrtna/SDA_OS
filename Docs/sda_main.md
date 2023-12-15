@@ -121,7 +121,12 @@ Return: [num] state
 Returns random number
 
 Return: [num]RandomValue
-##### Quit program
+##### Suspend app
+    sys.os.suspend();
+Suspends (minimizes) currently running app.
+
+Return: none
+##### Exit app
     sys.os.exit();
     sys.os.exit([undef] arg0, [undef] arg1, [undef] arg2); # optional return values
 Stops program execution after exiting *update* function and performing *exit* function.

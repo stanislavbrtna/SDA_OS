@@ -110,7 +110,7 @@ void svmSetSubProcRetval(
 
 // wake-suspend
 // suspend currently running app
-uint8_t svmSuspend();
+uint8_t svmStoreRunning();
 
 // wake app with given pid
 uint8_t svmWake(uint16_t pid);
