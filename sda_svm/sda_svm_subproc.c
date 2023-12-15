@@ -51,20 +51,31 @@ uint8_t svmRunPerformCall() {
   if (flag_svmCall != 1) {
     return 0;
   }
- 
+
+  // call is served, drop the flag
+  flag_svmCall = 0;
+
   svmStoreArguments(argBuff, svmCallArg, svmCallArgType, svmCallArgStr, &svm);
   // if there is an overlay, we destroy it before switching the context
   destroyOverlay();
 
+  // get if singular and running
+  uint16_t singularId = 0;
+  singularId = svmGetIfSingular(svmCallName);
+  if (singularId) {
+    // fill the args
+    svmWakeArgs(singularId, svmCallArgType, svmCallArg, svmCallArgStr);
+    return 1;
+  }
+
+  // otherwise launch
   if(svmLaunch(svmCallName, svmMeta.pid) == 0) {
-    flag_svmCall = 0;
     svmWake(parentPid);
     sda_show_error_message((uint8_t *)"svmRun: subprocess launch failed!");
     return 0;
   }
-  svmRestoreArguments(svmCallArgType, svmCallArg, svmCallArgStr, &svm);    
+  svmRestoreArguments(svmCallArgType, svmCallArg, svmCallArgStr, &svm);
   
-  flag_svmCall = 0;
   return 1;
 }
 
@@ -112,6 +123,15 @@ void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsV
   }
   s->commArgs.usedup = 3;
 }
+
+void svmClearArguments(svsVM *s) {
+  for(uint8_t z = 0; z < 3; z++) {
+    s->commArgs.argType[z + 1] = SVS_TYPE_UNDEF;
+    s->commArgs.arg[z + 1].val_u = 0;
+  }
+  s->commArgs.usedup = 0;
+}
+
 /*
  * Arguments: 3 possible arguments indexed 0 - 2
 */

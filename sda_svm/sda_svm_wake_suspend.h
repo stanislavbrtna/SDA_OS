@@ -37,6 +37,8 @@ void svmSuspendInitPid(uint16_t pid, uint8_t * name);
 
 uint8_t svmSuspend();
 uint8_t svmWake(uint16_t id);
+// wakes app and performs wakeup function with given arguments
+uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmArgs);
 
 // executes the suspend call
 uint8_t svmExecSuspend();

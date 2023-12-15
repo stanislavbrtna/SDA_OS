@@ -32,24 +32,22 @@ sdaSvmMetadata svmMeta;
 uint8_t        svmStrings[STRING_FIELD_L];
 
 static uint16_t nextPid;
-
-static uint8_t svmValid;
-static uint8_t svm_init;
+static uint8_t  svmValid;
 
 svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
 
 extern uint16_t svsLoadCounter;
-extern uint8_t soft_error_flag;
+extern uint8_t  soft_error_flag;
 
 extern gr2context sda_app_con;
 
-extern uint8_t svs_wrap_setScr_flag;
+extern uint8_t  svs_wrap_setScr_flag;
 extern uint16_t svs_wrap_setScr_id;
 
 static uint8_t slot_restore; // what appslot to restore after close
 
-static uint8_t autocahceEnable;
-static uint8_t nocacheLaunchFlag;
+uint8_t autocahceEnable;
+uint8_t nocacheLaunchFlag;
 
 // Globals:
 // main screen
@@ -58,37 +56,15 @@ uint16_t mainScr; //obrazovka top slotu / top-slot screen
 // pscg
 uint8_t * pscgErrorString;
 
-// static headers
-static void svmInValidate(uint16_t pid);
-static uint16_t GetIfSingular(uint8_t * name);
 
-
-void svmSetAutocahceEnable(uint8_t val) {
-  autocahceEnable = val;
+// few getters/setters
+void svmSetRestoreSlot(uint8_t slot) {
+  slot_restore = slot;
 }
-
-uint8_t svmGetAutocahceEnable() {
-  return autocahceEnable;
-}
-
-void svmSetNocacheFlag() {
-  nocacheLaunchFlag = 1;
-}
-
-uint8_t svmGetSavedProcValid(uint16_t proc_array_index) {
-  return svmSavedProc[proc_array_index].valid;
-}
-
-
-uint16_t svmGetSavedProcPid(uint16_t id) {
-  return svmSavedProc[id].pid;
-}
-
 
 void svmSetNextPid(uint16_t pid) {
   nextPid = pid;
 }
-
 
 uint16_t svmGetMainScreen() {
   return mainScr;
@@ -103,56 +79,6 @@ void svmSetValid(uint8_t val) {
   svmValid = val;
 }
 
-uint8_t * svmGetName() {
-  return svmMeta.name;
-}
-
-
-// Crypto lock/unlock 
-void svmSetCryptoUnlock(uint8_t unlock) {
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].pid == svmMeta.pid) {
-      svmSavedProc[x].cryptoUnlocked = unlock;
-    }
-  }
-}
-
-
-uint8_t svmGetCryptoUnlock() {
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].pid == svmMeta.pid) {
-      return svmSavedProc[x].cryptoUnlocked;
-    }
-  }
-}
-
-
-// Gets if there is currently valid, or suspended valid svm 
-uint8_t svmGetRunning() {
-  if (svmValid) {
-    return 1;
-  }
-
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].valid == 1) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
-uint8_t svmGetValidPid(uint16_t pid) {
-  if (svmMeta.pid == pid && svmValid){
-    return 1;
-  }
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].pid == pid) {
-      return svmSavedProc[x].valid;
-    }
-  }
-  return 0;
-}
-
 // SVS wrapper headers
 void pcBasicWrapInit();
 void svsGr2WrapInit();
@@ -165,7 +91,6 @@ void svmBootInit() {
   sda_files_wrapper_init();
   sda_svs_wrapper_init();
 }
-
 
 // app loading/closing
 // wrapper for svs loadApp, loads fname in svm
@@ -216,40 +141,6 @@ uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
 }
 
 
-void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname) {
-  svmMeta.pid = pid;
-  svmMeta.parentPid = parentPid;
-  
-  sda_strcp(fname, svmMeta.name, sizeof(svmMeta.name));
-  
-  for(uint16_t i = 0; i < SDA_FILES_OPEN_MAX; i++) {
-    svmMeta.openFileUsed[i] = 0;
-    sda_strcp((uint8_t *)"", svmMeta.openFileName[i], sizeof(svmMeta.openFileName[i]));
-  }
-  
-  sda_strcp((uint8_t *)"", svmMeta.openConfName, sizeof(svmMeta.openConfName));
-  sda_strcp((uint8_t *)"", svmMeta.openCsvName, sizeof(svmMeta.openCsvName));
-  sda_strcp((uint8_t *)"DATA", svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
-  sda_strcp((uint8_t *)"DATA", svmMeta.drawRoot, sizeof(svmMeta.drawRoot));
-  svmMeta.openConfUsed    = 0;
-  svmMeta.openCsvUsed     = 0;
-  svmMeta.loadUptime      = svpSGlobal.uptimeMs;
-  svmMeta.landscape       = 0;
-  svmMeta.lcdOffButtons   = 0;
-  svmMeta.launchFromCWD   = 0;
-  svmMeta.beepTime        = 0;
-  svmMeta.authorized      = 0;
-  svmMeta.useDrawRoot     = 0;
-  svmMeta.suspendOnClose  = 0;
-  svmMeta.suspendExecuted = 0;
-
-  for (uint16_t i = 0; i < 3; i++) {
-    svmMeta.svmCallRetval[i].val_u = 0;
-    svmMeta.svmCallRetvalType[i]   = SVS_TYPE_UNDEF;
-  }
-}
-
-
 // launch app
 uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   uint8_t cacheBuffer[256];
@@ -263,7 +154,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
 #endif
 
   uint16_t singularId = 0;
-  singularId = GetIfSingular(fname);
+  singularId = svmGetIfSingular(fname);
   if (singularId) {
 #ifdef SVM_DBG_ENABLED
       printf("%s: waking singular...\n",__FUNCTION__);
@@ -362,7 +253,6 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
       }
     }
   }
-  svm_init = 0; //TODO: is this needed?
 
   // set metadata
   svmLaunchSetDefMetadata(nextPid, parentPid, fname);
@@ -396,6 +286,60 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   return 1;
 }
 
+void svmLoadParent(uint8_t errorOccured) {
+  uint8_t  argBuff[2048];
+  varType  svmCallRetval[3];
+  uint8_t  svmCallRetvalType[3];
+  uint8_t* svmCallRetvalStr[3];
+
+  svmStoreArguments(argBuff, svmMeta.svmCallRetval, svmMeta.svmCallRetvalType, svmMeta.svmCallRetvalStr, &svm);
+
+  for (uint32_t i = 0; i < 3; i++) {
+    svmCallRetval[i]     = svmMeta.svmCallRetval[i];
+    svmCallRetvalType[i] = svmMeta.svmCallRetvalType[i];
+    svmCallRetvalStr[i]  = svmMeta.svmCallRetvalStr[i];
+  }
+
+  // load parent
+  if (svmGetValidPid(svmMeta.parentPid)) {
+    if (svmLoadProcData(svmMeta.parentPid) == 0) {
+      printf("svmCloseRunning: Loading parent app failed!\n");
+      svmValid = 0;
+      sda_slot_set_invalid(SDA_SLOT_SVM);
+      sda_slot_on_top(SDA_SLOT_APPLIST);
+      svp_switch_main_dir();
+      svp_chdir((uint8_t *)"APPS");
+      return;
+    }
+  } else {
+    svmValid = 0;
+    sda_slot_set_invalid(SDA_SLOT_SVM);
+    sda_slot_on_top(SDA_SLOT_APPLIST);
+    printf("svmCloseRunning: Parent is not valid.\n");
+    svp_switch_main_dir();
+    svp_chdir((uint8_t *)"APPS");
+    return;
+  }
+
+  // Launch callback
+  if(functionExists(svmGetCallback(), &svm)) {
+    svmRestoreArguments(svmCallRetvalType, svmCallRetval, svmCallRetvalStr, &svm);
+    if(!errorOccured) {
+      commExec(svmGetCallback(), &svm);
+    } else {
+      printf("%s: Error occured in child process, callback won't be launched!\n", __FUNCTION__);
+    }
+  } else {
+    if (!svp_strcmp(svmGetCallback(), "")) {
+      printf("%s: Callback \"%s\" does not exist!\n", __FUNCTION__, svmGetCallback());
+    }
+  }
+
+  svmOnTop();
+  setRedrawFlag();
+}
+
+
 // gracefully closes running svm (app)
 void svmCloseRunning() {
   uint8_t errorOccured = 0;
@@ -405,28 +349,36 @@ void svmCloseRunning() {
   }
 
   // just suspend instead of closing
-  if(svmGetSuspendOnClose()) {
-    gr2_text_deactivate(&sda_app_con);
-    svpSGlobal.systemXBtnClick = 0;
-    svpSGlobal.systemXBtnVisible = 0;
-    
-    if (getOverlayId() != 0) {
-      destroyOverlay();
-    }
-    sda_set_landscape(0);
-    
-    sda_keyboard_hide();
-    if(sda_get_prev_top_screen_slot() == 1
-        || sda_get_prev_top_screen_slot() == 2)
-    {
-      sda_slot_on_top(SDA_SLOT_HOMESCREEN);
+  if(svmGetSuspendOnClose() && errCheck(&svm) == 0) {
+    if (svmMeta.parentPid != 0) {
+      svmSuspend();
+      svmLoadParent(errorOccured);
+      return;
     } else {
-      sda_slot_on_top(SDA_SLOT_APPLIST);
+      svmExecSuspend();
+      gr2_text_deactivate(&sda_app_con);
+      svpSGlobal.systemXBtnClick = 0;
+      svpSGlobal.systemXBtnVisible = 0;
+      
+      if (getOverlayId() != 0) {
+        destroyOverlay();
+      }
+      sda_set_landscape(0);
+      
+      sda_keyboard_hide();
+
+      if(sda_get_prev_top_screen_slot() == 1
+          || sda_get_prev_top_screen_slot() == 2)
+      {
+        sda_slot_on_top(SDA_SLOT_HOMESCREEN);
+      } else {
+        sda_slot_on_top(SDA_SLOT_APPLIST);
+      }
+      
+      svp_switch_main_dir();
+      svp_chdir((uint8_t *)"APPS");
+      sda_set_sleep_lock(0);
     }
-    
-    svp_switch_main_dir();
-    svp_chdir((uint8_t *)"APPS");
-    sda_set_sleep_lock(0);
     return;
   }
 
@@ -461,56 +413,7 @@ void svmCloseRunning() {
   sda_files_close();
 
   if (svmMeta.parentPid != 0) {
-    uint8_t  argBuff[2048];
-    varType  svmCallRetval[3];
-    uint8_t  svmCallRetvalType[3];
-    uint8_t* svmCallRetvalStr[3];
-
-    svmStoreArguments(argBuff, svmMeta.svmCallRetval, svmMeta.svmCallRetvalType, svmMeta.svmCallRetvalStr, &svm);
-
-    for (uint32_t i = 0; i < 3; i++) {
-      svmCallRetval[i]     = svmMeta.svmCallRetval[i];
-      svmCallRetvalType[i] = svmMeta.svmCallRetvalType[i];
-      svmCallRetvalStr[i]  = svmMeta.svmCallRetvalStr[i];
-    }
-
-    // load parent
-    if (svmGetValidPid(svmMeta.parentPid)) {
-      if (svmLoadProcData(svmMeta.parentPid) == 0) {
-        printf("svmCloseRunning: Loading parent app failed!\n");
-        svmValid = 0;
-        sda_slot_set_invalid(SDA_SLOT_SVM);
-        sda_slot_on_top(SDA_SLOT_APPLIST);
-        svp_switch_main_dir();
-        svp_chdir((uint8_t *)"APPS");
-        return;
-      }
-    } else {
-      svmValid = 0;
-      sda_slot_set_invalid(SDA_SLOT_SVM);
-      sda_slot_on_top(SDA_SLOT_APPLIST);
-      printf("svmCloseRunning: Parent is not valid.\n");
-      svp_switch_main_dir();
-      svp_chdir((uint8_t *)"APPS");
-      return;
-    }
-
-    // Launch callback
-    if(functionExists(svmGetCallback(), &svm)) {
-      svmRestoreArguments(svmCallRetvalType, svmCallRetval, svmCallRetvalStr, &svm);
-      if(!errorOccured) {
-        commExec(svmGetCallback(), &svm);
-      } else {
-        printf("%s: Error occured in child process, callback won't be launched!\n", __FUNCTION__);
-      }
-    } else {
-      if (!svp_strcmp(svmGetCallback(), "")) {
-        printf("%s: Callback \"%s\" does not exist!\n", __FUNCTION__, svmGetCallback());
-      }
-    }
-
-    svmOnTop();
-    setRedrawFlag();
+    svmLoadParent(errorOccured);
     return;
   }
 
@@ -529,11 +432,6 @@ void svmCloseRunning() {
 
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
-}
-
-
-void svmSetRestoreSlot(uint8_t slot) {
-  slot_restore = slot;
 }
 
 
@@ -561,27 +459,6 @@ void svmCloseAll() {
 }
 
 
-static uint16_t GetIfSingular(uint8_t * name) {
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].valid == 1) {
-      if (strCmp(svmSavedProc[x].name, name) && svmSavedProc[x].singular) {
-        return svmSavedProc[x].pid;
-      }
-    }
-  }
-  return 0;
-}
-
-
-void svmSetSingular(uint16_t pid) {
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].valid == 1 && svmSavedProc[x].pid == pid) {
-      svmSavedProc[x].singular = 1;
-    }
-  }
-}
-
-
 // closes app with given id
 void svmClose(uint16_t id) {
   uint16_t prevApp = 0;
@@ -601,19 +478,6 @@ void svmClose(uint16_t id) {
   
   if (prevApp) {
     svmWake(prevApp);
-  }
-}
-
-
-static void svmInValidate(uint16_t pid) {
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].pid == pid && svmSavedProc[x].valid == 1) {
-      svmSavedProc[x].valid = 0;
-      svmRemoveCachedProc(pid);
-#ifdef SVM_DBG_ENABLED
-      printf("svmInValidate: removing cached proc x:%u id:%u\n", x, id);
-#endif
-    }
   }
 }
 
@@ -658,9 +522,10 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
   }
 
   //svs init call
-  if (svm_init == 0) {
+  if (svmMeta.initExecuted == 0) {
     commExec((uint8_t *)"init", &svm);
-    svm_init = 1;
+    svmClearArguments(&svm);
+    svmMeta.initExecuted = 1;
     return 0;
   }
 
@@ -708,8 +573,13 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
     // Check and perform call
     if(svmRunPerformCall()) {
       // init call here with args
-      commExec((uint8_t *)"init", &svm);
-      svm_init = 1; 
+      if(svmMeta.initExecuted == 0) {
+        commExec((uint8_t *)"init", &svm);
+        svmClearArguments(&svm);
+        svmMeta.initExecuted = 1;
+      }
+      svmOnTop();
+      setRedrawFlag();
     } 
     
     // Set new screen

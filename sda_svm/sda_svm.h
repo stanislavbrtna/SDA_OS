@@ -25,6 +25,7 @@ SOFTWARE.
 #include "../SDA_OS.h"
 
 #include "sda_svm_timers.h" 
+#include "sda_svm_getset.h"
 
 #define SUSPEND_FUNCTION (uint8_t *)"suspend"
 #define WAKEUP_FUNCTION (uint8_t *)"wakeup"
@@ -176,6 +177,8 @@ void svmSetRestoreSlot(uint8_t slot);
 // multiprocess internal functions
 void svmSaveProcData();
 uint8_t svmLoadProcData(uint16_t pid);
+
+uint16_t svmGetIfSingular(uint8_t * name);
 
 uint8_t svmCheckAndExit();
 

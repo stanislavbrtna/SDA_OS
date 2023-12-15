@@ -99,7 +99,8 @@ uint8_t svmSuspend() {
   return 0;
 }
 
-// wakes up given pid, returns: 0 - ok, 1 - error 
+// wakes up given pid, returns: 0 - ok, 1 - error
+// TODO: rewrite whis mess
 uint8_t svmWake(uint16_t pid) {
   if(pid == svmMeta.pid && svmGetValid()) {
     svmOnTop();
@@ -138,6 +139,65 @@ uint8_t svmWake(uint16_t pid) {
 
       if(functionExists(WAKEUP_FUNCTION, &svm)) {
         commExec(WAKEUP_FUNCTION, &svm);
+        if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
+          svp_errSoftPrint(&svm);
+          return 1;
+        }
+        if (svmCheckAndExit()) {
+          return 0;
+        }
+      }
+      return 0;
+    }
+  }
+  printf("svmWake: error while loading app (2)\n");
+  return 1;
+}
+
+
+// wakes up given pid, fills the correct arg structure. returns: 0 - ok, 1 - error 
+uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmArgs) {
+  if(pid == svmMeta.pid && svmGetValid()) {
+    svmOnTop();
+
+    if (svmGetCryptoUnlock()) {
+      svp_crypto_unlock_nopass();
+    }
+
+    svmRestoreArguments(argType, arg, svmArgs, &svm);
+    if(functionExists(WAKEUP_FUNCTION, &svm)) { // execute the wakeup
+      commExec(WAKEUP_FUNCTION, &svm);
+      svmClearArguments(&svm);
+      if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
+        svp_errSoftPrint(&svm);
+        return 1;
+      }
+      if (svmCheckAndExit()) { // handle potential exit call
+        return 0;
+      }
+    }
+    return 0;
+  }
+
+  if (svmGetValid()) {
+    svmSuspend();
+  }
+
+  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+    if (svmSavedProc[x].pid == pid && svmSavedProc[x].valid == 1) {
+      if (svmLoadProcData(pid) == 0) {
+        printf("svmWake: error while loading app (1)\n");
+        svmSavedProc[x].valid = 0;
+        return 1;
+      }
+      sda_slot_set_valid(4);
+      svmSetValid(1);
+      svmOnTop();
+
+      svmRestoreArguments(argType, arg, svmArgs, &svm);
+      if(functionExists(WAKEUP_FUNCTION, &svm)) {
+        commExec(WAKEUP_FUNCTION, &svm);
+        svmClearArguments(&svm);
         if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
           svp_errSoftPrint(&svm);
           return 1;

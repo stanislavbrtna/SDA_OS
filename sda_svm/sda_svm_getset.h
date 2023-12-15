@@ -20,36 +20,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SVM_SUBPROC_H
-#define SVM_SUBPROC_H
+#ifndef SDA_SVM_GETSET_H
+#define SDA_SVM_GETSET_H
 
 #include "sda_svm.h"
-#include "sda_svm_misc.h"
 
-uint8_t * svmGetCallback();
-uint8_t svmRunPerformCall();
+void svmSetNocacheFlag();
+uint8_t   svmGetRunning();
+uint8_t * svmGetName();
 
-// Set argument from out of SVM
-void svmSetArgumentNum(uint8_t id, int32_t val);
-void svmSetArgumentStr(uint8_t id, uint8_t* val);
-void svmSetArgumentFlt(uint8_t id, float val);
+void    svmSetAutocahceEnable(uint8_t val);
+uint8_t svmGetAutocahceEnable();
 
-void svmCallSubProc(
-    uint8_t *name,
-    uint8_t *callback,
-    varType arg0, uint8_t type0,
-    varType arg1, uint8_t type1,
-    varType arg2, uint8_t type2
-  );
-void svmSetSubProcRetval(varType arg0, uint8_t type0, varType arg1, uint8_t type1, varType arg2, uint8_t type2);
-void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **svmArgs, svsVM *s);
-void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsVM *s);
-void svmClearArguments(svsVM *s);
+void    svmSetCryptoUnlock(uint8_t unlock);
+uint8_t svmGetCryptoUnlock();
 
-void svmSaveProcData();
-uint8_t svmLoadProcData(uint16_t id);
+uint16_t svmGetIfSingular(uint8_t * name);
+void     svmSetSingular(uint16_t pid);
 
-uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t size);
-void sdaSvmSaver(uint16_t id, uint8_t * tail, void *target, uint32_t size);
+// internal
+void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname);
+void svmInValidate(uint16_t pid);
+uint8_t svmGetValidPid(uint16_t pid);
+
+uint8_t  svmGetSavedProcValid(uint16_t proc_array_index);
+uint16_t svmGetSavedProcPid(uint16_t id);
+
 
 #endif
