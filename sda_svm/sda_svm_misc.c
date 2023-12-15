@@ -228,7 +228,7 @@ uint8_t svmRegisterUartCallback(uint8_t* callback, uint8_t val) {
 }
 
 
-void svmHandleUartCallbacks() {
+uint8_t svmHandleUartCallbacks() {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmGetSavedProcValid(x) == 1) {
       if (svmSavedProc[x].uartCallbackEnabled && svmSavedProc[x].uartCallbackEnabled == sda_serial_get_rdy()) {
@@ -299,7 +299,7 @@ void svmHandleUartCallbacks() {
       }
     }
   }
-  return;
+  return 0;
 }
 
 

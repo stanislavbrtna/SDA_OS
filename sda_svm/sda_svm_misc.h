@@ -31,7 +31,7 @@ void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsV
 void svmSetDrawRoot(uint8_t * str);
 
 uint8_t svmRegisterUartCallback(uint8_t* callback, uint8_t val);
-void    svmHandleUartCallbacks();
+uint8_t svmHandleUartCallbacks();
 
 void    svmSetSuspendOnClose(uint8_t val);
 uint8_t svmGetSuspendOnClose();
