@@ -356,12 +356,12 @@ void svmCloseRunning() {
       destroyOverlay();
     }
   }
-
+  
   // just suspend instead of closing
-  if(svmGetSuspendOnClose() && errCheck(&svm) == 0) {
+  if(svmGetSuspendOnClose() && (errCheck(&svm) == 0 && soft_error_flag == 0)) {
     svmSuspend();
     return;
-  }  
+  }
 
   if (sda_slot_get_valid(4) == 1) {
     if(functionExists((uint8_t *)"exit", &svm)) {
