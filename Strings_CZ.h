@@ -78,6 +78,9 @@
 #define OVRL_GRANT_PERMISSIONS        (uint8_t *)"Povolit této aplikaci měnit nastavení systému?"
 #define OVRL_ENTER_PASSWORD           (uint8_t *)"Zadejte heslo:"
 #define OVRL_SETUP_PASSWORD           (uint8_t *)"Nastavit"
+#define OVRL_COPY_COPY                (uint8_t *)"Kopírovat"
+#define OVRL_COPY_CUT                 (uint8_t *)"Vyjmout"
+#define OVRL_COPY_PASTE               (uint8_t *)"Vložit"
 
 #define ASCR_CARD_ERROR               (uint8_t *)"Chyba Karty"
 #define ASCR_FILE_ERROR               (uint8_t *)"Chyba Souboru"

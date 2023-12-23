@@ -50,10 +50,25 @@ void init_screen() {
   uint8_t rel = gr2_get_relative_init(sda_current_con);
 
   gr2_set_relative_init(1, sda_current_con);
-  bCopy = gr2_add_button(0, 0, 3, 1, (uint8_t *)"Copy", scr, sda_current_con);
-  bCut = gr2_add_button(3, 0, 2, 1, (uint8_t *)"Cut", scr, sda_current_con);
-  bPaste = gr2_add_button(5, 0, 3, 1, (uint8_t *)"Paste", scr, sda_current_con);
+  
+#ifdef LANG_CZ
+  bCopy = gr2_add_button(0, 0, 3, 1, OVRL_COPY_COPY , scr, sda_current_con);
+  bCut = gr2_add_button(3, 0, 3, 1, OVRL_COPY_CUT, scr, sda_current_con);
+  bPaste = gr2_add_button(6, 0, 2, 1, OVRL_COPY_PASTE, scr, sda_current_con);
+#endif  
+
+#ifdef LANG_EN
+  bCopy = gr2_add_button(0, 0, 3, 1, OVRL_COPY_COPY , scr, sda_current_con);
+  bCut = gr2_add_button(3, 0, 2, 1, OVRL_COPY_CUT, scr, sda_current_con);
+  bPaste = gr2_add_button(5, 0, 3, 1, OVRL_COPY_PASTE, scr, sda_current_con);
+#endif
+
   bClose = gr2_add_button(8, 0, 1, 1, (uint8_t *)"X", scr, sda_current_con);
+
+  gr2_text_set_align(bCopy, GR2_ALIGN_CENTER, sda_current_con);
+  gr2_text_set_align(bCut, GR2_ALIGN_CENTER, sda_current_con);
+  gr2_text_set_align(bPaste, GR2_ALIGN_CENTER, sda_current_con);
+  gr2_text_set_align(bClose, GR2_ALIGN_CENTER, sda_current_con);
 
   if(svpSGlobal.clipboard[0] == 0) {
     gr2_set_grayout(bPaste, 1, sda_current_con);

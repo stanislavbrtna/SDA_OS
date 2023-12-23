@@ -78,6 +78,9 @@
 #define SCR_KEY_ERROR_MSG                             (uint8_t*)"Given password doesn\'t match the device encryption key."
 #define OVRL_SEC_NOT_SET_UP                           (uint8_t*)"Not configured!"
 #define OVRL_SETUP_PASSWORD                           (uint8_t*)"Set password"
+#define OVRL_COPY_COPY                                (uint8_t *)"Copy"
+#define OVRL_COPY_CUT                                 (uint8_t *)"Cut"
+#define OVRL_COPY_PASTE                               (uint8_t *)"Paste"
 
 #define ASCR_CARD_ERROR                               (uint8_t*)"Card error!"
 #define ASCR_FILE_ERROR                               (uint8_t*)"File error!"
