@@ -117,6 +117,7 @@ uint16_t time_overlay_init() {
 
 void time_overlay_destructor() {
   tov_done = 2; // set done to cancel
+  tov_id = 0xFFFF;
   gr2_clear_screen_ev(tov_screen, sda_current_con);
   gr2_destroy(tov_screen, sda_current_con);
   setRedrawFlag();

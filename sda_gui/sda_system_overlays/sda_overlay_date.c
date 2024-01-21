@@ -171,6 +171,7 @@ uint16_t date_overlay_init(uint16_t yr, uint8_t mn, uint8_t dy) {
 
 void date_overlay_destructor() {
   date_done = 2;
+  date_id = 0xFFFF;
   gr2_destroy(date_screen, sda_current_con);
   setRedrawFlag();
   overlayDestructorDone();
@@ -186,7 +187,6 @@ void date_overlay_update(uint16_t ovId) {
   if((date_done == 1) || (date_done == 2)) {
     return;
   }
-
   date_select_widget_update(&date_widget);
 
   if (gr2_get_event(date_ok, sda_current_con) == EV_RELEASED) {
