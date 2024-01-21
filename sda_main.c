@@ -44,6 +44,9 @@ uint8_t mainDir[258]; // name of main directory
 // battery overlay handling
 volatile uint8_t systemBattClick;
 
+// time overlay handling
+volatile uint8_t systemDateClick;
+
 // variables used in main loop
 uint8_t oldsec;
 
@@ -206,6 +209,10 @@ uint8_t sda_main_loop() {
     batt_overlay_handle(0);
   }
 
+  if(sda_dc_overlay_shown()) {
+    sda_dc_overlay_handle(0);
+  }
+
   if (soft_error_flag == 1) {
     sda_error_overlay_handle();
   }
@@ -329,6 +336,16 @@ static void sda_main_handle_soft_buttons() {
     }
     
     svpSGlobal.systemPwrLongPress = 0;
+  }
+
+  if (systemDateClick == 1) {
+    systemDateClick = 0;
+
+    if(sda_dc_overlay_shown() == 0) {
+      sda_dc_overlay_init();
+    } else {
+      destroyOverlay();
+    }
   }
 }
 

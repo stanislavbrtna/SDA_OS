@@ -56,6 +56,15 @@ uint16_t date_overlay_get_ok(uint16_t ovId);
 void date_overlay_clear_ok(uint16_t ovId);
 void date_overlay_destructor();
 
+void sda_date_fmt(
+    uint8_t *str,
+    uint8_t month_as_num,
+    uint8_t *sep1,
+    uint8_t *sep2,
+    uint8_t order, // d-m-y y-m-d
+    uint8_t write_year
+  );
+
 // error overlay
 void sda_error_overlay_destructor();
 void svp_errSoftPrint(svsVM *s);
@@ -79,5 +88,7 @@ void sda_show_auth_overlay_init();
 void sda_auth_overlay_handle();
 
 #include "sda_clipboard_overlay.h"
+
+#include "sda_date_copy_overlay.h"
 
 #endif

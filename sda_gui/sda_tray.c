@@ -25,6 +25,7 @@ SOFTWARE.
 volatile uint8_t irq_redraw;
 volatile uint8_t irq_redraw_block;
 extern volatile uint8_t systemBattClick;
+extern volatile uint8_t systemDateClick;
 static uint8_t alarm_string[3];
 uint16_t trayBackgroundColor;
 
@@ -65,36 +66,6 @@ void irq_redraw_block_disable() {
 }
 
 
-static void tray_time(int16_t x1, int16_t y1, uint16_t w) {
-  static uint8_t redraw;
-  static uint8_t time_string[6];
-  static uint8_t oldmin;
-  static uint8_t oldhour;
-  uint8_t curr_font;
-
-  if((redraw == 0) || (irq_redraw)) {
-    time_string[0] = svpSGlobal.hour / 10 + 48;
-    time_string[1] = svpSGlobal.hour % 10 + 48;
-    time_string[2] = ':';
-    time_string[3] = svpSGlobal.min / 10 + 48;
-    time_string[4] = svpSGlobal.min % 10 + 48;
-    time_string[5] = 0;
-
-    oldmin = svpSGlobal.min;
-    oldhour = svpSGlobal.hour;
-    LCD_FillRect(x1 - 1, y1, x1 + w, 31, trayBackgroundColor);
-    curr_font = LCD_Get_Font_Size();
-    LCD_Set_Sys_Font(18);
-    LCD_DrawText_ext(x1, y1 + 8, gr2_get_text_color(&sda_sys_con), time_string);
-    LCD_Set_Sys_Font(curr_font);
-    redraw = 1;
-  }
-
-  if((oldmin != svpSGlobal.min) || (oldhour != svpSGlobal.hour)) {
-    redraw = 0;
-  }
-}
-
 static gr2EventType tray_clicked(
   uint16_t x1,
   uint16_t y1,
@@ -126,6 +97,41 @@ static gr2EventType tray_clicked(
   }
 
   return EV_NONE;
+}
+
+
+static void tray_time(int16_t x1, int16_t y1, uint16_t w) {
+  static uint8_t redraw;
+  static uint8_t time_string[6];
+  static uint8_t oldmin;
+  static uint8_t oldhour;
+  uint8_t curr_font;
+
+  if((redraw == 0) || (irq_redraw)) {
+    time_string[0] = svpSGlobal.hour / 10 + 48;
+    time_string[1] = svpSGlobal.hour % 10 + 48;
+    time_string[2] = ':';
+    time_string[3] = svpSGlobal.min / 10 + 48;
+    time_string[4] = svpSGlobal.min % 10 + 48;
+    time_string[5] = 0;
+
+    oldmin = svpSGlobal.min;
+    oldhour = svpSGlobal.hour;
+    LCD_FillRect(x1 - 1, y1, x1 + w, 31, trayBackgroundColor);
+    curr_font = LCD_Get_Font_Size();
+    LCD_Set_Sys_Font(18);
+    LCD_DrawText_ext(x1, y1 + 8, gr2_get_text_color(&sda_sys_con), time_string);
+    LCD_Set_Sys_Font(curr_font);
+    redraw = 1;
+  }
+
+  if (tray_clicked(x1 - 1, y1, x1 + w, y1 + 31) == EV_RELEASED) {
+    systemDateClick = 1;
+  }
+
+  if((oldmin != svpSGlobal.min) || (oldhour != svpSGlobal.hour)) {
+    redraw = 0;
+  }
 }
 
 

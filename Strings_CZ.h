@@ -81,6 +81,7 @@
 #define OVRL_COPY_COPY                (uint8_t *)"Kopírovat"
 #define OVRL_COPY_CUT                 (uint8_t *)"Vyjmout"
 #define OVRL_COPY_PASTE               (uint8_t *)"Vložit"
+#define OVRL_DC_FMT                   (uint8_t *)"Fmt"
 
 #define ASCR_CARD_ERROR               (uint8_t *)"Chyba Karty"
 #define ASCR_FILE_ERROR               (uint8_t *)"Chyba Souboru"

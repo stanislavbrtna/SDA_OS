@@ -84,30 +84,55 @@ void set_year_string(uint8_t * str, uint16_t year) {
 }
 
 
-void svp_write_date_string(
+void sda_date_fmt(
     uint8_t *str,
     uint8_t month_as_num,
+    uint8_t *sep1,
+    uint8_t *sep2,
+    uint8_t order, // d-m-y y-m-d
     uint8_t write_year
   ) {
   uint8_t year_str[6];
 
   str[0] = 0;
 
-  sda_str_add(str, (uint8_t *)date_days_strs[svpSGlobal.day]);
+  if (order == 0) {
+    sda_str_add(str, (uint8_t *)date_days_strs[svpSGlobal.day]);
 
-  sda_str_add(str, (uint8_t *)". ");
+    sda_str_add(str, sep1);
+    sda_str_add(str, sep2);
 
-  if (month_as_num) {
-    sda_str_add(str, (uint8_t *)date_days_strs[svpSGlobal.month]);
-    sda_str_add(str, (uint8_t *)". ");
+    if (month_as_num) {
+      sda_str_add(str, (uint8_t *)date_days_strs[svpSGlobal.month]);
+      sda_str_add(str, sep1);
+      sda_str_add(str, sep2);
+    } else {
+      sda_str_add(str, (uint8_t *)date_month_names[svpSGlobal.month]);
+      sda_str_add(str, sep2);
+    }
+
+    if(write_year) {
+      set_year_string(year_str, svpSGlobal.year);
+      sda_str_add(str, year_str);
+    }
   } else {
-    sda_str_add(str, (uint8_t *)date_month_names[svpSGlobal.month]);
-    sda_str_add(str, (uint8_t *)" ");
-  }
+    if(write_year) {
+      set_year_string(year_str, svpSGlobal.year);
+      sda_str_add(str, year_str);
+      sda_str_add(str, sep1);
+      sda_str_add(str, sep2);
+    }
 
-  if(write_year) {
-    set_year_string(year_str, svpSGlobal.year);
-    sda_str_add(str, year_str);
+    if (month_as_num) {
+      sda_str_add(str, (uint8_t *)date_days_strs[svpSGlobal.month]);
+      sda_str_add(str, sep1);
+      sda_str_add(str, sep2);
+    } else {
+      sda_str_add(str, (uint8_t *)date_month_names[svpSGlobal.month]);
+      sda_str_add(str, sep2);
+    }
+
+    sda_str_add(str, (uint8_t *)date_days_strs[svpSGlobal.day]);
   }
 }
 

@@ -81,6 +81,7 @@
 #define OVRL_COPY_COPY                                (uint8_t *)"Copy"
 #define OVRL_COPY_CUT                                 (uint8_t *)"Cut"
 #define OVRL_COPY_PASTE                               (uint8_t *)"Paste"
+#define OVRL_DC_FMT                                   (uint8_t *)"Fmt"
 
 #define ASCR_CARD_ERROR                               (uint8_t*)"Card error!"
 #define ASCR_FILE_ERROR                               (uint8_t*)"File error!"

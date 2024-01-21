@@ -167,7 +167,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 
     // date refresh
     if ((svpSGlobal.day != olddate) || (svpSGlobal.dateUpdated)) {
-      svp_write_date_string(date_string, 0, 1);
+      sda_date_fmt(date_string, 0, ".", " ", 0, 1);
       gr2_set_str(date, date_string, &sda_sys_con);
       gr2_set_modified(date, &sda_sys_con);
       olddate = svpSGlobal.day;
