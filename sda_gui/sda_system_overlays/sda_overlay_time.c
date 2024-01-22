@@ -136,7 +136,6 @@ void time_overlay_update(uint16_t ovId) {
   }
 
   if (gr2_get_event(tov_ok, sda_current_con) == EV_RELEASED) {
-    destroyOverlay();
     tov_done = 1;
     return;
   }
@@ -302,6 +301,7 @@ uint16_t time_overlay_get_ok(uint16_t ovId) {
   if (tov_id != ovId) {
     return 0;
   }
+
   if (tov_done == 1) {
     return 1;
   } else {
@@ -314,6 +314,8 @@ void time_overlay_clear_ok(uint16_t ovId) {
   if (tov_id != ovId) {
     return;
   }
+
+  destroyOverlay();
   tov_done = 0;
   tov_id = 0xFFFF;
 }

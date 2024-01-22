@@ -215,7 +215,6 @@ void date_overlay_update(uint16_t ovId) {
   date_select_widget_update(&date_widget);
 
   if (gr2_get_event(date_ok, sda_current_con) == EV_RELEASED) {
-    destroyOverlay();
     date_done = 1;
     return;
   }
@@ -362,6 +361,7 @@ void date_overlay_clear_ok(uint16_t ovId) {
   if (date_id != ovId) {
     return;
   }
+  destroyOverlay();
   date_done = 0;
   date_id = 0xFFFF;
 }
