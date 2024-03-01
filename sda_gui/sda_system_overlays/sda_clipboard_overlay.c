@@ -52,10 +52,10 @@ void init_screen() {
   gr2_set_relative_init(1, sda_current_con);
   
 #ifdef LANG_CZ
-  bCopy = gr2_add_button(0, 0, 3, 1, OVRL_COPY_COPY , scr, sda_current_con);
+  bCopy = gr2_add_button(0, 0, 3, 1, OVRL_COPY_COPY, scr, sda_current_con);
   bCut = gr2_add_button(3, 0, 3, 1, OVRL_COPY_CUT, scr, sda_current_con);
   bPaste = gr2_add_button(6, 0, 2, 1, OVRL_COPY_PASTE, scr, sda_current_con);
-#endif  
+#endif
 
 #ifdef LANG_EN
   bCopy = gr2_add_button(0, 0, 3, 1, OVRL_COPY_COPY , scr, sda_current_con);
