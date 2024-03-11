@@ -329,7 +329,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Serial expansion recieve
+  //#!##### Serial expansion receive
   //#!    sys.com.uartRcv([num]timeout);
   //#!Gets string (max 512 bytes) from currently initialized serial port.
   //#!If nothing is sent during timeout (in ms), empty string is returned.
@@ -354,7 +354,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Serial expansion set spped
+  //#!##### Serial expansion set speed
   //#!    sys.com.uartSetBd([num] bd);
   //#!Sets baud rate of the uart expansion port
   //#!
@@ -372,7 +372,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!#### Serial recieve in non-blocking mode
+  //#!#### Serial receive in non-blocking mode
   //#!For more flexible serial interface operations
 
   //#!##### Serial expansion receive
@@ -421,7 +421,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    if (sda_serial_get_str(c)){
+    if (sda_serial_get_str(c)) {
       c[512] = 0;
       result->value.val_u = strNew(c, s);
     } else {
