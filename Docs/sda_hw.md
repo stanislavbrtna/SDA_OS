@@ -244,18 +244,18 @@ Sends previously stored queue to the initialized serial port.
 Max 32 bytes.
 
 Return: None
-##### Serial expansion recieve
+##### Serial expansion receive
     sys.com.uartRcv([num]timeout);
 Gets string (max 512 bytes) from currently initialized serial port.
 If nothing is sent during timeout (in ms), empty string is returned.
 
 Return: [str] data
-##### Serial expansion set spped
+##### Serial expansion set speed
     sys.com.uartSetBd([num] bd);
 Sets baud rate of the uart expansion port
 
 Return: none
-#### Serial recieve in non-blocking mode
+#### Serial receive in non-blocking mode
 For more flexible serial interface operations
 ##### Serial expansion receive
     sys.com.uartRcvIT();
