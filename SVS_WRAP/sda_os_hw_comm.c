@@ -62,7 +62,7 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Clears transmit buffer.
   //#!
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "sqClr", s)) {
+  if (sysFuncMatch(argS->callId, "qClr", s)) {
 
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 0, s)) {
