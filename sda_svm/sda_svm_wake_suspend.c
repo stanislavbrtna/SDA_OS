@@ -206,7 +206,6 @@ uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmA
 
     if(id < 0) {
       printf("svmWake: id not valid\n");
-      svmSavedProc[id].valid = 0;
       return 1;
     } 
 
@@ -218,8 +217,6 @@ uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmA
     svmMeta.parentPid = parent;
     sda_slot_set_valid(4);
     svmSetValid(1);
-
-    return 0;
   }
 
   svmOnTop();
@@ -240,7 +237,7 @@ uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmA
     }
     svmClearArguments(&svm);
   }
-    
+
   return 0;
 }
 
