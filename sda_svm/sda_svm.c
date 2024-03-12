@@ -303,7 +303,7 @@ void svmLoadParent(uint8_t errorOccured) {
   // load parent
   if (svmGetValidPid(svmMeta.parentPid)) {
     if (svmLoadProcData(svmMeta.parentPid) == 0) {
-      printf("svmCloseRunning: Loading parent app failed!\n");
+      printf("svmCloseRunning: Loading parent app failed! (pid: %u)\n", svmMeta.parentPid);
       svmValid = 0;
       sda_slot_set_invalid(SDA_SLOT_SVM);
       sda_slot_on_top(SDA_SLOT_APPLIST);
@@ -315,7 +315,7 @@ void svmLoadParent(uint8_t errorOccured) {
     svmValid = 0;
     sda_slot_set_invalid(SDA_SLOT_SVM);
     sda_slot_on_top(SDA_SLOT_APPLIST);
-    printf("svmCloseRunning: Parent is not valid.\n");
+    printf("svmCloseRunning: Parent is not valid. (%u)\n", svmMeta.parentPid);
     svp_switch_main_dir();
     svp_chdir((uint8_t *)"APPS");
     return;

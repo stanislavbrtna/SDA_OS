@@ -64,6 +64,7 @@ uint8_t svmRunPerformCall() {
   singularId = svmGetIfSingular(svmCallName);
   if (singularId) {
     // fill the args
+    //printf("svmRunPerformCall id:%u calling:%u\n", svmMeta.pid, singularId);
     svmWakeArgs(singularId, svmCallArgType, svmCallArg, svmCallArgStr);
     return 1;
   }

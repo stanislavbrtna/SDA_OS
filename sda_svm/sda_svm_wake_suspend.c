@@ -113,7 +113,11 @@ void svmSuspend() {
       }
     }
 
-    svmLoadParent(errorOccured);
+    if (svmMeta.parentPid != 0) {
+      svmLoadParent(errorOccured);
+    }
+
+    //svmLoadParent(errorOccured);
     return;
   } else {
     svmExecSuspend();
@@ -191,6 +195,8 @@ uint8_t svmWake(uint16_t pid) {
 
 // wakes up given pid, fills the correct arg structure. returns: 0 - ok, 1 - error 
 uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmArgs) {
+  uint16_t parent = 0;
+  parent = svmMeta.pid;
   if(!(pid == svmMeta.pid && svmGetValid())) {
     if (svmGetValid()) {
       svmStoreRunning();
@@ -209,9 +215,11 @@ uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmA
       svmSavedProc[id].valid = 0;
       return 1;
     }
-
+    svmMeta.parentPid = parent;
     sda_slot_set_valid(4);
     svmSetValid(1);
+
+    return 0;
   }
 
   svmOnTop();
@@ -219,7 +227,7 @@ uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmA
   if (svmGetCryptoUnlock()) {
     svp_crypto_unlock_nopass();
   }
-
+  
   svmRestoreArguments(argType, arg, svmArgs, &svm);
   if(functionExists(WAKEUP_FUNCTION, &svm)) {
     commExec(WAKEUP_FUNCTION, &svm);
@@ -230,6 +238,7 @@ uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmA
     if (svmCheckAndExit()) {
       return 0;
     }
+    svmClearArguments(&svm);
   }
     
   return 0;
