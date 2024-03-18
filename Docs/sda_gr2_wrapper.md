@@ -210,6 +210,11 @@ Return: None
 Sets size of slider in pixels.
 
 Return: None
+##### Set rounded
+    sys.gui.setRounded([num]Id, [num]rounded);
+Sets element rounded parameter.
+
+Return: None
 #### Element property: String parameter
 ##### Set String
     sys.gui.getStr([num]Id);
@@ -233,6 +238,12 @@ Return: [num] Id if something is selected, otherwise 0
 Sets aplication gr2 context to relative init mode.
 In relative init mode the x2 parameter is used as element width
 and the y2 as element height.
+
+Return: None
+##### Set rounded init
+    sys.gui.setRndInit([num]val);
+Sets aplication gr2 context rounded init mode.
+In rounded init mode all elements are initialized as rounded type.
 
 Return: None
 ##### Set elemnent size and position

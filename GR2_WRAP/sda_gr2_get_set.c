@@ -385,6 +385,24 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Set rounded
+  //#!    sys.gui.setRounded([num]Id, [num]rounded);
+  //#!Sets element rounded parameter.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setRounded", s)) {
+    argType[1] = 0; //id
+    argType[2] = 0; //val
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    gr2_set_rounded(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    return 1;
+  }
+
+
   //#!#### Element property: String parameter
   //#!##### Set String
   //#!    sys.gui.getStr([num]Id);
@@ -461,6 +479,27 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
 
     gr2_set_relative_init(argS->arg[1].val_s, &sda_app_con);
     result->type = 0;
+    return 1;
+  }
+
+  //#!##### Set rounded init
+  //#!    sys.gui.setRndInit([num]val);
+  //#!Sets aplication gr2 context rounded init mode.
+  //#!In rounded init mode all elements are initialized as rounded type.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setRndInit", s)) {
+    argType[1] = 0; // val
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    if(argS->arg[1].val_s == 0){
+      sda_app_con.rounded_init = 0;
+    }else{
+      sda_app_con.rounded_init = 1;
+    }
+    
     return 1;
   }
 
