@@ -132,14 +132,9 @@ void svmSuspend() {
     
     sda_keyboard_hide();
 
-    if(sda_get_prev_top_screen_slot() == 1
-        || sda_get_prev_top_screen_slot() == 2)
-    {
-      sda_slot_on_top(SDA_SLOT_HOMESCREEN);
-    } else {
-      sda_slot_on_top(SDA_SLOT_APPLIST);
-    }
-    
+    //printf("Prev top slot: %u\n", sda_get_prev_top_screen_slot());
+
+    sda_slot_on_top(SDA_SLOT_APPLIST);
     svp_switch_main_dir();
     svp_chdir((uint8_t *)"APPS");
     sda_set_sleep_lock(0);

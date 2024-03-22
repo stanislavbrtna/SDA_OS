@@ -158,6 +158,7 @@ typedef struct {
   varType  svmCallRetval[3];
   uint8_t* svmCallRetvalStr[3];
   uint8_t  svmCallRetvalType[3];
+  uint8_t* svmCallback[NAME_LENGTH];
   uint8_t  suspendOnClose;
   uint8_t  uartCallback[NAME_LENGTH];
   uint8_t  initExecuted;

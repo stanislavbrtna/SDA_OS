@@ -64,8 +64,9 @@ uint8_t svmRunPerformCall() {
   singularId = svmGetIfSingular(svmCallName);
   if (singularId) {
     // fill the args
-    //printf("svmRunPerformCall id:%u calling:%u\n", svmMeta.pid, singularId);
+    //printf("svmRunPerformCall Process:%s (id:%u) calling:%u\n", svmMeta.name, svmMeta.pid, singularId);
     svmWakeArgs(singularId, svmCallArgType, svmCallArg, svmCallArgStr);
+    sda_strcp(svmCallback, svmMeta.svmCallback, sizeof(svmCallback));
     return 1;
   }
 
@@ -76,6 +77,8 @@ uint8_t svmRunPerformCall() {
     return 0;
   }
   svmRestoreArguments(svmCallArgType, svmCallArg, svmCallArgStr, &svm);
+  // Restore callback
+  sda_strcp(svmCallback, svmMeta.svmCallback, sizeof(svmCallback));
   
   return 1;
 }
