@@ -41,7 +41,7 @@ void svmCloseRunning() {
   // clear the close flag
   svpSGlobal.systemXBtnClick = 0;
 
-  if (sda_slot_get_valid(4) == 0 || svmGetValid() == 0) {
+  if (sda_slot_get_valid(SDA_SLOT_SVM) == 0 || svmGetValid() == 0) {
     return;
   }
 
@@ -60,9 +60,9 @@ void svmCloseRunning() {
     return;
   }
 
-  if (sda_slot_get_valid(4) == 1) {
-    if(functionExists((uint8_t *)"exit", &svm)) {
-      commExec((uint8_t *)"exit", &svm);
+  if (sda_slot_get_valid(SDA_SLOT_SVM) == 1) {
+    if(functionExists(SVM_EXIT_FUNCTION, &svm)) {
+      commExec(SVM_EXIT_FUNCTION, &svm);
       if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
         svp_errSoftPrint(&svm);
       }

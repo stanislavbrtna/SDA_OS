@@ -32,6 +32,7 @@ SOFTWARE.
 
 #define SUSPEND_FUNCTION (uint8_t *)"suspend"
 #define WAKEUP_FUNCTION (uint8_t *)"wakeup"
+#define SVM_EXIT_FUNCTION (uint8_t *)"exit"
 
 // *****************************************************************************
 //                                 standard API

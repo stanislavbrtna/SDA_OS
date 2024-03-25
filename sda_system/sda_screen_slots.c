@@ -22,8 +22,8 @@ SOFTWARE.
 
 #include "sda_screen_slots.h"
 
-uint16_t slotScreen[APP_SLOT_MAX];
-gr2context * slotScreenContext[APP_SLOT_MAX];
+uint16_t    slotScreen[APP_SLOT_MAX];
+gr2context *slotScreenContext[APP_SLOT_MAX];
 
 uint16_t slotOnTop[APP_SLOT_MAX];
 uint16_t slotValid[APP_SLOT_MAX];
@@ -79,14 +79,18 @@ void sda_slot_on_top(uint8_t slot) {
   for (x = 0; x < APP_SLOT_MAX; x++) {
     slotOnTop[x] = 0;
   }
+
+  if (slotOnTop[slot] == 0) {
+    prevTopSlot = slot;
+  }
+
   slotOnTop[slot] = 1;
+  
   if ((mainScr != slotScreen[slot]) || (sda_current_con != slotScreenContext[slot])) {
     mainScr = slotScreen[slot];
     sda_current_con = slotScreenContext[slot];
     setRedrawFlag();
   }
-
-  prevTopSlot = slot;
 }
 
 

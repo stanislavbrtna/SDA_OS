@@ -163,7 +163,7 @@ uint8_t svmWake(uint16_t pid) {
       return 1;
     }
 
-    sda_slot_set_valid(4);
+    sda_slot_set_valid(SDA_SLOT_SVM);
     svmSetValid(1);
   }
 
@@ -210,7 +210,7 @@ uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmA
       return 1;
     }
     svmMeta.parentPid = parent;
-    sda_slot_set_valid(4);
+    sda_slot_set_valid(SDA_SLOT_SVM);
     svmSetValid(1);
   }
 
