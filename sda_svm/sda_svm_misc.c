@@ -23,10 +23,6 @@ SOFTWARE.
 #include "sda_svm.h"
 #include "sda_svm_misc.h"
 #include "sda_svm_cache.h"
-static int32_t alarmId;
-static int32_t alarmParam;
-static uint8_t alarmFlag;
-
 
 extern svsVM            svm;
 extern sdaSvmMetadata   svmMeta;
@@ -35,28 +31,6 @@ extern uint8_t          soft_error_flag;
 
 extern uint8_t callback_arise_flag;
 
-
-void svmAlarmSetFlag(int32_t id, int32_t param) {
-  alarmId = id;
-  alarmParam = param;
-  alarmFlag = 1;
-}
-
-int32_t svmAlarmGetId() {
-  return alarmId;
-}
-
-int32_t svmAlarmGetParam() {
-  return alarmParam;
-}
-
-int8_t svmAlarmGetFlag() {
-  return alarmFlag;
-}
-
-void sdaAlarmClearFlag() {
-  alarmFlag = 0;
-}
 
 // beep callback init & handler
 void svmBeepSetCallback(uint8_t * cb, uint32_t time) {

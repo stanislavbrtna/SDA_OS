@@ -28,6 +28,7 @@ SOFTWARE.
 #include "sda_svm_getset.h"
 #include "sda_svm_misc.h"
 #include "sda_svm_wake_suspend.h"
+#include "sda_svm_close.h"
 
 #define SUSPEND_FUNCTION (uint8_t *)"suspend"
 #define WAKEUP_FUNCTION (uint8_t *)"wakeup"

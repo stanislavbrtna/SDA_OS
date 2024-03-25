@@ -37,14 +37,11 @@ static uint8_t  svmValid;
 svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
 
 extern uint16_t svsLoadCounter;
-extern uint8_t  soft_error_flag;
 
 extern gr2context sda_app_con;
 
 extern uint8_t  svs_wrap_setScr_flag;
 extern uint16_t svs_wrap_setScr_id;
-
-static uint8_t slot_restore; // what appslot to restore after close
 
 uint8_t autocahceEnable;
 uint8_t nocacheLaunchFlag;
@@ -58,10 +55,6 @@ uint8_t * pscgErrorString;
 
 
 // few getters/setters
-void svmSetRestoreSlot(uint8_t slot) {
-  slot_restore = slot;
-}
-
 void svmSetNextPid(uint16_t pid) {
   nextPid = pid;
 }
@@ -343,151 +336,7 @@ void svmLoadParent(uint8_t errorOccured) {
   setRedrawFlag();
 }
 
-
-// gracefully closes running svm (app)
-void svmCloseRunning() {
-  uint8_t errorOccured = 0;
-  // printf("SVM Close running called...\n");
-  // clear the close flag
-  svpSGlobal.systemXBtnClick = 0;
-
-  if (sda_slot_get_valid(4) == 0 || svmValid == 0) {
-    return;
-  }
-
-  if((errCheck(&svm) == 1) && (soft_error_flag == 0)) {
-    svp_errSoftPrint(&svm);
-    errorOccured = 1;
-  } else {
-    if ((getOverlayId() != 0) && (soft_error_flag == 0)) {
-      destroyOverlay();
-    }
-  }
-  
-  // just suspend instead of closing
-  if(svmGetSuspendOnClose() && (errCheck(&svm) == 0 && soft_error_flag == 0)) {
-    svmSuspend();
-    return;
-  }
-
-  if (sda_slot_get_valid(4) == 1) {
-    if(functionExists((uint8_t *)"exit", &svm)) {
-      commExec((uint8_t *)"exit", &svm);
-      if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
-        svp_errSoftPrint(&svm);
-      }
-    }
-  }
-
-  if (svmGetCryptoUnlock()) {
-    svp_crypto_lock();
-  }
-
-  SVScloseCache(&svm);
-  svmInValidate(svmMeta.pid);
-  sda_set_sleep_lock(0);
-  svpSGlobal.kbdVisible = 0;
-  sda_set_landscape(0);
-  sdaAlarmClearFlag();
-  sda_files_close();
-
-  if (svmMeta.parentPid != 0) {
-    svmLoadParent(errorOccured);
-    return;
-  }
-
-  gr2_text_deactivate(&sda_app_con);
-  svpSGlobal.systemXBtnVisible = 0;
-  svmValid = 0;
-  if (sda_slot_get_screen(SDA_SLOT_SVM) != 0) {
-    gr2_destroy(sda_slot_get_screen(SDA_SLOT_SVM), &sda_app_con);
-  }
-  sda_slot_set_invalid(SDA_SLOT_SVM);
-
-  // TODO: restore right slot.. previous app perhaps...
-  if (slot_restore == 0) {
-    sda_slot_on_top(SDA_SLOT_APPLIST);
-  }
-
-  svp_switch_main_dir();
-  svp_chdir((uint8_t *)"APPS");
-}
-
-
-void svmCloseAll() {
-  svmSetRestoreSlot(sda_get_top_slot());
-
-  for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
-    if (svmSavedProc[x].valid == 1) {
-      svmClose(svmSavedProc[x].pid);
-    }
-  }
-
-  if (sda_serial_is_enabled()) {
-    sda_serial_disable();
-  }
-
-  if (slot_restore != 0) {
-    if (sda_slot_get_valid(slot_restore)) {
-      sda_slot_on_top(slot_restore);
-    } else {
-      sda_slot_on_top(SDA_SLOT_HOMESCREEN);
-    }
-    slot_restore = 0;
-  }
-}
-
-
-// closes app with given id
-void svmClose(uint16_t id) {
-  uint16_t prevApp = 0;
-
-  if (svmMeta.pid != id && sda_get_top_slot() == 4) {
-    prevApp = svmMeta.pid;
-  }
-
-  if (svmMeta.pid != id) {
-    svmWake(id);
-  }
-
-  // here we close even the unclosable apps
-  svmSetSuspendOnClose(0);
-
-  svmCloseRunning();
-  
-  if (prevApp) {
-    svmWake(prevApp);
-  }
-}
-
-
-void sdaSvmKillApp_handle() {
-  gr2_text_deactivate(&sda_app_con);
-  svpSGlobal.systemXBtnClick = 0;
-  svpSGlobal.systemXBtnVisible = 0;
-  svmValid = 0;
-  svpSGlobal.kbdVisible = 0;
-  svpSGlobal.touchType = EV_NONE;
-  svpSGlobal.touchValid = 0;
-  if (sda_slot_get_screen(SDA_SLOT_SVM) != 0) {
-    gr2_destroy(sda_slot_get_screen(SDA_SLOT_SVM), &sda_app_con);
-  }
-  sda_slot_set_invalid(SDA_SLOT_SVM);
-
-  svmInValidate(svmMeta.pid);
-  sda_set_sleep_lock(0);
-
-  sdaAlarmClearFlag();
-  sda_files_close();
-
-  svp_crypto_lock();
-  gr2_cleanup(&sda_app_con); // performs cleanup of pscg elements
-  sda_slot_on_top(SDA_SLOT_APPLIST);
-  svp_switch_main_dir();
-  svp_chdir((uint8_t *)"APPS");
-  sda_set_sleep_lock(0);
-}
-
+void sdaSvmKillApp_handle();
 
 uint16_t svmRun(uint8_t init, uint8_t top) {
 
@@ -576,4 +425,32 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
 
   }
   return 0;
+}
+
+
+void sdaSvmKillApp_handle() {
+  gr2_text_deactivate(&sda_app_con);
+  svpSGlobal.systemXBtnClick = 0;
+  svpSGlobal.systemXBtnVisible = 0;
+  svmValid = 0;
+  svpSGlobal.kbdVisible = 0;
+  svpSGlobal.touchType = EV_NONE;
+  svpSGlobal.touchValid = 0;
+  if (sda_slot_get_screen(SDA_SLOT_SVM) != 0) {
+    gr2_destroy(sda_slot_get_screen(SDA_SLOT_SVM), &sda_app_con);
+  }
+  sda_slot_set_invalid(SDA_SLOT_SVM);
+
+  svmInValidate(svmMeta.pid);
+  sda_set_sleep_lock(0);
+
+  sdaAlarmClearFlag();
+  sda_files_close();
+
+  svp_crypto_lock();
+  gr2_cleanup(&sda_app_con); // performs cleanup of pscg elements
+  sda_slot_on_top(SDA_SLOT_APPLIST);
+  svp_switch_main_dir();
+  svp_chdir((uint8_t *)"APPS");
+  sda_set_sleep_lock(0);
 }
