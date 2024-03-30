@@ -36,6 +36,19 @@ Return: None
 Fills circle
 
 Return: None
+##### Draw portion of a circle
+    sys.ds.drawCPart([num] x1, [num] y1, [num] radius, [num] part, [num]col);
+Draws part of a circle
+
+Parts:
+| 0 | 1 |
+| 2 | 3 |
+Return: None
+##### Fill portion of a circle
+    sys.ds.fillCPart([num] x1, [num] y1, [num] radius, [num] part, [num]col);
+Fills a part of a circle
+
+Return: None
 ##### Draw line
     sys.ds.drawLine([num] x1, [num] y1, [num] x2, [num] y2, [num]col);
 Draws line

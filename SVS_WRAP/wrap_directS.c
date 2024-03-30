@@ -249,6 +249,75 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
     return 1;
   }
 
+  
+  //#!##### Draw portion of a circle
+  //#!    sys.ds.drawCPart([num] x1, [num] y1, [num] radius, [num] part, [num]col);
+  //#!Draws part of a circle
+  //#!
+  //#!Parts:
+  //#!| 0 | 1 |
+  //#!| 2 | 3 |
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "drawCPart", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
+    argType[5] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 5, s)) {
+      return 0;
+    }
+
+    if (getOverlayId() != 0) {
+      return 1;
+    }
+
+    IRQ_BLOCK
+    LCD_DrawCirclePart(
+        x1 + argS->arg[1].val_s,
+        y1 + argS->arg[2].val_s,
+        argS->arg[3].val_s,
+        argS->arg[4].val_s,
+        argS->arg[5].val_u
+    );
+    IRQ_ENABLE
+    return 1;
+  }
+
+
+  //#!##### Fill portion of a circle
+  //#!    sys.ds.fillCPart([num] x1, [num] y1, [num] radius, [num] part, [num]col);
+  //#!Fills a part of a circle
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "fillCPart", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
+    argType[5] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 5, s)) {
+      return 0;
+    }
+
+    if (getOverlayId() != 0) {
+      return 1;
+    }
+
+    IRQ_BLOCK
+    LCD_FillCirclePart(
+        x1 + argS->arg[1].val_s,
+        y1 + argS->arg[2].val_s,
+        argS->arg[3].val_s,
+        argS->arg[4].val_s,
+        argS->arg[5].val_u
+    );
+    IRQ_ENABLE
+    return 1;
+  }
+
   //#!##### Draw line
   //#!    sys.ds.drawLine([num] x1, [num] y1, [num] x2, [num] y2, [num]col);
   //#!Draws line
