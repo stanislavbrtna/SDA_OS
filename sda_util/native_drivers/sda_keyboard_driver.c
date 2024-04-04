@@ -73,6 +73,39 @@ uint8_t sda_keyboard_driver_update() {
 void decode(uint8_t *buff) {
   uint16_t id   = 0;
   uint8_t  type = 0;
+  uint8_t  c[3];
+  uint8_t  spec = 0;
 
-  printf("Keyboard driver testing: %s\n", buff);
+  c[0] = 0;
+  c[1] = 0;
+  c[2] = 0;
+
+  if(buff[0] != "$") return;
+
+  if(buff[1] != "P") type = TYPE_PRESSED;
+  if(buff[1] != "H") type = TYPE_HOLD;
+  if(buff[1] != "R") type = TYPE_RELEASED;
+
+  id = (buff[2] - '0') * 10 + (buff[3] - '0');
+
+  if(buff[5] == '!') {
+    c[0] = buff[4];
+  } else if (buff[6] == '!') {
+    c[0] = buff[4];
+    c[1] = buff[5];
+  } else {
+    spec = 1;
+  }
+
+  if (spec == 0 && type == TYPE_PRESSED) {
+    sda_str_add(svpSGlobal.kbdKeyStr, c);
+  }
+
+  // manage shifts
+
+
+
+  // push to the keyboard string
+
+  printf("Keyboard driver testing: %s, id: %u, type: %u, c: %s\n", buff, id, type, c);
 }
