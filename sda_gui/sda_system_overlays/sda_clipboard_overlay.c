@@ -65,6 +65,11 @@ void init_screen() {
 
   bClose = gr2_add_button(8, 0, 1, 1, (uint8_t *)"X", scr, sda_current_con);
 
+  gr2_set_rounded(bCut, 0, sda_current_con);
+  gr2_set_rounded(bCopy, 0, sda_current_con);
+  gr2_set_rounded(bPaste, 0, sda_current_con);
+  gr2_set_rounded(bClose, 0, sda_current_con);
+
   gr2_text_set_align(bCopy, GR2_ALIGN_CENTER, sda_current_con);
   gr2_text_set_align(bCut, GR2_ALIGN_CENTER, sda_current_con);
   gr2_text_set_align(bPaste, GR2_ALIGN_CENTER, sda_current_con);
