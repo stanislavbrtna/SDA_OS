@@ -105,6 +105,60 @@ void decode(uint8_t *buff) {
     //sda_str_add(svpSGlobal.kbdKeyStr, c);
     sda_strcp(c, svpSGlobal.kbdKeyStr, sizeof(svpSGlobal.kbdKeyStr));
     svpSGlobal.kbdFlag = 1;
+    return;
+  }
+
+  // special chars
+  if (id == 27 && type == TYPE_PRESSED) { // bksp
+    sda_strcp("\b", svpSGlobal.kbdKeyStr, sizeof(svpSGlobal.kbdKeyStr));
+    svpSGlobal.kbdFlag = 1;
+    return;
+  }
+
+  if (id == 14 && type == TYPE_PRESSED) { // del
+    sda_strcp("\bd", svpSGlobal.kbdKeyStr, sizeof(svpSGlobal.kbdKeyStr));
+    svpSGlobal.kbdFlag = 1;
+    return;
+  }
+
+  if (id == 52 && type == TYPE_PRESSED) { //ent
+
+    sda_strcp("\n", svpSGlobal.kbdKeyStr, sizeof(svpSGlobal.kbdKeyStr));
+    svpSGlobal.kbdFlag = 1;
+
+    svpSGlobal.keyEv[BUTTON_A] = EV_PRESSED;
+    return;
+  }
+  
+  if (id == 28 && type == TYPE_PRESSED) { // tab
+    sda_strcp("  ", svpSGlobal.kbdKeyStr, sizeof(svpSGlobal.kbdKeyStr));
+    svpSGlobal.kbdFlag = 1;
+    return;
+  }
+  
+  if (id == 0 && type == TYPE_PRESSED) { // esc
+    svpSGlobal.keyEv[BUTTON_A] = EV_RELEASED;
+    return;
+  }
+
+  if (id == 79 && type == TYPE_PRESSED) { // right
+    svpSGlobal.keyEv[BUTTON_RIGHT] = EV_PRESSED;
+    return;
+  }
+
+  if (id == 77 && type == TYPE_PRESSED) { // left
+    svpSGlobal.keyEv[BUTTON_LEFT] = EV_PRESSED;
+    return;
+  }
+
+  if (id == 65 && type == TYPE_PRESSED) { // up
+    svpSGlobal.keyEv[BUTTON_UP] = EV_PRESSED;
+    return;
+  }
+
+  if (id == 78 && type == TYPE_PRESSED) { // Down
+    svpSGlobal.keyEv[BUTTON_DOWN] = EV_PRESSED;
+    return;
   }
 
   // manage shifts
