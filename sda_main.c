@@ -250,6 +250,9 @@ uint8_t sda_main_loop() {
   sda_power_management_handler();
   sda_handle_battery_status();
 
+  // Misc drivers
+  sda_keyboard_driver_update();
+
   // cleaning input flags
   timeUpdateFlag = 0;
   sdaSetRedrawDetect(0);

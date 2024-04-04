@@ -33,6 +33,8 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
   static uint16_t bMemInfo;
   static uint16_t bSvmInfo;
   static uint16_t bCClean;
+
+  static uint16_t bKbd;
   
   uint16_t optDbgScr;
 
@@ -46,6 +48,8 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
     dbgAutocahceEnable = gr2_add_checkbox(1, 4, 9, 1, (uint8_t *)"Precache App on launch", optDbgScr, &sda_sys_con);
 
     bCClean = gr2_add_button(1, 6, 6, 1, (uint8_t *)"Clean cached Apps", optDbgScr, &sda_sys_con);
+
+    bKbd = gr2_add_checkbox(1, 5, 9, 1, (uint8_t *)"Native keyboard driver", optDbgScr, &sda_sys_con);
 
     bMemInfo = gr2_add_button(1, 8, 6, 1, (uint8_t *)"Print memory info", optDbgScr, &sda_sys_con);
     bSvmInfo = gr2_add_button(1, 9, 6, 1, (uint8_t *)"Print SVSvm info", optDbgScr, &sda_sys_con);
@@ -63,6 +67,7 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
   if (init == 2) {
     gr2_set_value(dbgUartEnable, (int32_t)sda_usb_get_enable_for_dbg(), &sda_sys_con);
     gr2_set_value(dbgAutocahceEnable, (uint8_t)svmGetAutocahceEnable(), &sda_sys_con);
+    gr2_set_value(bKbd, sda_keyboard_driver_enabled(), &sda_sys_con);
     gr2_set_grayout(bCClean, svmGetRunning(), &sda_sys_con); 
 
     return optDbgBack;
@@ -78,6 +83,11 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
   if (gr2_clicked(dbgAutocahceEnable, &sda_sys_con)) {
     svmSetAutocahceEnable((uint8_t)gr2_get_value(dbgAutocahceEnable, &sda_sys_con));
     sda_store_dbg_options();
+    init = 2;
+  }
+
+  if (gr2_clicked(bKbd, &sda_sys_con)) {
+    sda_keyboard_driver_set(gr2_get_value(bKbd, &sda_sys_con));
     init = 2;
   }
 

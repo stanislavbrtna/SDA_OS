@@ -50,6 +50,8 @@ typedef enum {CLICKED_NONE, CLICKED_SHORT, CLICKED_LONG} clickType;
 
 typedef enum {DEVICE_LOCKED, DEVICE_UNLOCKED} sdaDeviceLockType;
 
+typedef enum {ON_SCREEN_KEYBOARD, OTHER} sdaInputMethodType;
+
 typedef struct {
   //touch
   volatile uint8_t   touchValid;
@@ -113,6 +115,8 @@ typedef struct {
   volatile int32_t   systemXBtnTime;
   volatile clickType systemOptClick;
   volatile uint8_t   systemPwrLongPress;
+
+  sdaInputMethodType inputMethod;
 
   volatile uint8_t breakP16Draw;
 

@@ -234,7 +234,9 @@ void sda_main_process_touch() {
       );
 
       if (scr_touch_retval == 2) { // retval 2 means open the keyboard
-        sda_keyboard_show();
+        if (svpSGlobal.inputMethod == ON_SCREEN_KEYBOARD) {
+          sda_keyboard_show();
+        }
       }
     }
   } else {
