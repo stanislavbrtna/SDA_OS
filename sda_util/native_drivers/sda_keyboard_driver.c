@@ -50,6 +50,8 @@ uint8_t sda_keyboard_driver_init() {
 
   // enable receive
   sda_serial_recieve_init();
+
+  return 0;
 }
 
 
@@ -80,32 +82,32 @@ void decode(uint8_t *buff) {
   c[1] = 0;
   c[2] = 0;
 
-  if(buff[0] != "$") return;
+  if(buff[0] != '$') return;
 
-  if(buff[1] != "P") type = TYPE_PRESSED;
-  if(buff[1] != "H") type = TYPE_HOLD;
-  if(buff[1] != "R") type = TYPE_RELEASED;
+  if(buff[1] == 'P') type = TYPE_PRESSED;
+  if(buff[1] == 'H') type = TYPE_HOLD;
+  if(buff[1] == 'R') type = TYPE_RELEASED;
 
   id = (buff[2] - '0') * 10 + (buff[3] - '0');
 
-  if(buff[5] == '!') {
-    c[0] = buff[4];
-  } else if (buff[6] == '!') {
-    c[0] = buff[4];
-    c[1] = buff[5];
+  if(buff[4] != '$') return;
+
+  if(buff[6] == '!') {
+    c[0] = buff[5];
+  } else if (buff[7] == '!') {
+    c[0] = buff[5];
+    c[1] = buff[6];
   } else {
     spec = 1;
   }
 
   if (spec == 0 && type == TYPE_PRESSED) {
-    sda_str_add(svpSGlobal.kbdKeyStr, c);
+    //sda_str_add(svpSGlobal.kbdKeyStr, c);
+    sda_strcp(c, svpSGlobal.kbdKeyStr, sizeof(svpSGlobal.kbdKeyStr));
+    svpSGlobal.kbdFlag = 1;
   }
 
   // manage shifts
 
-
-
-  // push to the keyboard string
-
-  printf("Keyboard driver testing: %s, id: %u, type: %u, c: %s\n", buff, id, type, c);
+  printf("Keyboard driver testing: %s, id: %u, type: %u, spec: %u, c: %s\n", buff, id, type, spec, c);
 }
