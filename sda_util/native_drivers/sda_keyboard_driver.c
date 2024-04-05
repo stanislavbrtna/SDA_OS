@@ -72,6 +72,12 @@ uint8_t sda_keyboard_driver_update() {
 #define TYPE_HOLD     2
 #define TYPE_RELEASED 3
 
+void ev_handler(uint8_t button, uint8_t kbd_ev) {
+  if (kbd_ev == TYPE_PRESSED)  svpSGlobal.keyEv[button] = EV_PRESSED;
+  if (kbd_ev == TYPE_HOLD)     svpSGlobal.keyEv[button] = EV_HOLD;
+  if (kbd_ev == TYPE_RELEASED) svpSGlobal.keyEv[button] = EV_RELEASED;
+}
+
 void decode(uint8_t *buff) {
   uint16_t id   = 0;
   uint8_t  type = 0;
@@ -101,8 +107,15 @@ void decode(uint8_t *buff) {
     spec = 1;
   }
 
+  //printf("Kbd dbg: id: %s -end\n", buff);
+
+  if(id > 80) {
+    printf("Kbd Error: failed to decode: %s -end\n", buff);
+    return;
+  }
+
+  // normal characters
   if (spec == 0 && type == TYPE_PRESSED) {
-    //sda_str_add(svpSGlobal.kbdKeyStr, c);
     sda_strcp(c, svpSGlobal.kbdKeyStr, sizeof(svpSGlobal.kbdKeyStr));
     svpSGlobal.kbdFlag = 1;
     return;
@@ -121,12 +134,16 @@ void decode(uint8_t *buff) {
     return;
   }
 
-  if (id == 52 && type == TYPE_PRESSED) { //ent
+  if (id == 52) { //ent
+    if (type == TYPE_PRESSED) {
+      svpSGlobal.keyEv[BUTTON_A] = EV_PRESSED;
+      sda_strcp("\n", svpSGlobal.kbdKeyStr, sizeof(svpSGlobal.kbdKeyStr));
+      svpSGlobal.kbdFlag = 1;
+    }
 
-    sda_strcp("\n", svpSGlobal.kbdKeyStr, sizeof(svpSGlobal.kbdKeyStr));
-    svpSGlobal.kbdFlag = 1;
+    if (type == TYPE_HOLD)     svpSGlobal.keyEv[BUTTON_B] = EV_HOLD;
+    if (type == TYPE_RELEASED) svpSGlobal.keyEv[BUTTON_B] = EV_RELEASED;
 
-    svpSGlobal.keyEv[BUTTON_A] = EV_PRESSED;
     return;
   }
   
@@ -136,32 +153,32 @@ void decode(uint8_t *buff) {
     return;
   }
   
-  if (id == 0 && type == TYPE_PRESSED) { // esc
-    svpSGlobal.keyEv[BUTTON_A] = EV_RELEASED;
+  if (id == 0) { // esc
+    ev_handler(BUTTON_A, type);
     return;
   }
 
-  if (id == 79 && type == TYPE_PRESSED) { // right
-    svpSGlobal.keyEv[BUTTON_RIGHT] = EV_PRESSED;
+  if (id == 79) { // right
+    ev_handler(BUTTON_RIGHT, type);
     return;
   }
 
-  if (id == 77 && type == TYPE_PRESSED) { // left
-    svpSGlobal.keyEv[BUTTON_LEFT] = EV_PRESSED;
+  if (id == 77) { // left
+    ev_handler(BUTTON_LEFT, type);
     return;
   }
 
-  if (id == 65 && type == TYPE_PRESSED) { // up
-    svpSGlobal.keyEv[BUTTON_UP] = EV_PRESSED;
+  if (id == 65) { // up
+    ev_handler(BUTTON_UP, type);
     return;
   }
 
-  if (id == 78 && type == TYPE_PRESSED) { // Down
-    svpSGlobal.keyEv[BUTTON_DOWN] = EV_PRESSED;
+  if (id == 78) { // Down
+    ev_handler(BUTTON_DOWN, type);
     return;
   }
 
   // manage shifts
 
-  printf("Keyboard driver testing: %s, id: %u, type: %u, spec: %u, c: %s\n", buff, id, type, spec, c);
+
 }
