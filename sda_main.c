@@ -88,6 +88,7 @@ static void sda_main_init() {
       svpSGlobal.year
     );
 
+  sda_resource_lock_init();
   led_set_pattern(LED_ALARM);
   LCD_Set_Sys_Font(18);
   svp_setMounted(1); // because SD or FS is already mounted

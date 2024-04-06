@@ -446,6 +446,8 @@ void sdaSvmKillApp_handle() {
 
   sdaAlarmClearFlag();
   sda_files_close();
+  sda_resource_free_pid(svmMeta.pid);
+  sda_set_landscape(0);
 
   svp_crypto_lock();
   gr2_cleanup(&sda_app_con); // performs cleanup of pscg elements

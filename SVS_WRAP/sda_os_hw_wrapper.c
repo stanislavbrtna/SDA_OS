@@ -22,6 +22,8 @@ SOFTWARE.
 
 #include "sda_wrapper.h"
 
+extern sdaSvmMetadata svmMeta;
+
 static uint8_t wrap_lcdOffButtons;
 
 void wrap_set_lcdOffButtons(uint8_t val) {
@@ -31,6 +33,15 @@ void wrap_set_lcdOffButtons(uint8_t val) {
 uint8_t wrap_get_lcdOffButtons() {
   return wrap_lcdOffButtons;
 }
+
+uint8_t wrap_get_resource(sdaResource res) {
+  if (sda_resource_get_lock(res, svmMeta.pid) == SDA_LOCK_UNLOCKED) {
+    return 1;
+  }
+  sda_show_error_message((uint8_t*)"Trying to access locked resource!");
+  return 0;
+}
+
 
 uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   uint8_t argType[11];
@@ -177,6 +188,66 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!#### Resource claiming
+  //#!
+  //#!System resources:
+  //#!| Resource define | Description                  |
+  //#!| ---             | ---                          |
+  //#!| EXT_EXP_PORT    | External expansion connector |
+  //#!| INT_EXP_PORT    | Internal expansion connector |
+  //#!
+  //#!Locks area automatically freed on app close.
+  //#!
+
+  //#!##### Claim hardware resource
+  //#!    sys.hw.claim([num]Resource);
+  //#!Claims given hardware resouce for currently running app.
+  //#!
+  //#!Return: [num] 1 - error, 0 - ok
+  if (sysFuncMatch(argS->callId, "claim", s)) {
+    argType[1] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = (int32_t) sda_resource_claim((sdaResource) argS->arg[1].val_s, svmMeta.pid);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+  
+  //#!##### Free hardware resource
+  //#!    sys.hw.free([num]Resource);
+  //#!Frees given hardware resouce.
+  //#!Return: [num] 1 - error, 0 - ok
+  if (sysFuncMatch(argS->callId, "free", s)) {
+    argType[1] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = (int32_t) sda_resource_free((sdaResource) argS->arg[1].val_s, svmMeta.pid);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get hardware resource state
+  //#!    sys.hw.getLock([num]Resource);
+  //#!Frees given hardware resouce.
+  //#!Return: [num] 1 - locked, 0 - free
+  if (sysFuncMatch(argS->callId, "getLock", s)) {
+    argType[1] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = (int32_t) sda_resource_get_lock((sdaResource) argS->arg[1].val_s, svmMeta.pid);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!#### Internal expansion port
   //#!
   //#!Internal expansion connector pinout:
@@ -196,7 +267,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!
 
   //#!##### Define direction of pins on the internal expansion
-  //#!    sys.iPinDef([num]Pin, [num]type, [num]pullUp);
+  //#!    sys.hw.iPinDef([num]Pin, [num]type, [num]pullUp);
   //#!Sets direction of internal expansion pins.
   //#!Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
   //#!Pin number is number of pin on the connector, can be read from schematics.
@@ -207,17 +278,18 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     argType[2] = SVS_TYPE_NUM;
     argType[3] = SVS_TYPE_NUM;
 
-
     if(sysExecTypeCheck(argS, argType, 3, s)) {
       return 0;
     }
+
+    if(wrap_get_resource(INTERNAL_EXPANSION_PORT) == 0) return 1;
 
     sda_internal_pin_def((uint8_t) argS->arg[1].val_s, (uint8_t) argS->arg[2].val_s, (uint8_t) argS->arg[3].val_s);
     return 1;
   }
 
   //#!##### Set state of pins on the internal expansion
-  //#!    sys.iPinSet([num]Pin, [num]val);
+  //#!    sys.hw.iPinSet([num]Pin, [num]val);
   //#!Sets state of internal expansion pin.
   //#!Value 1 sets the pin high, value 0 sets it low.
   //#!Pin number is number of pin on the connector, can be read from schematics.
@@ -231,12 +303,14 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
+    if(wrap_get_resource(INTERNAL_EXPANSION_PORT) == 0) return 1;
+
     sda_internal_pin_set((uint8_t) argS->arg[1].val_s, (uint8_t) argS->arg[2].val_s);
     return 1;
   }
 
   //#!##### Get state of pins on the internal expansion
-  //#!    sys.iPinGet([num]Pin, [num]val);
+  //#!    sys.hw.iPinGet([num]Pin, [num]val);
   //#!Gets state of internal expansion pin.
   //#!Pin number is number of pin on the connector, can be read from schematics.
   //#!
@@ -247,6 +321,8 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
+
+    if(wrap_get_resource(INTERNAL_EXPANSION_PORT) == 0) return 1;
 
     result->value.val_u = sda_internal_pin_get((uint8_t) argS->arg[1].val_s);
     result->type = SVS_TYPE_NUM;
@@ -270,7 +346,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!
 
   //#!##### Define direction of pins on the expansion
-  //#!    sys.ePinDef([num]Pin, [num]type, [num]pullUp);
+  //#!    sys.hw.ePinDef([num]Pin, [num]type, [num]pullUp);
   //#!Sets direction of external expansion pins.
   //#!Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
   //#!Pin number is number of pin on the connector, can be read from schematics.
@@ -285,12 +361,14 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
+    if(wrap_get_resource(EXTERNAL_EXPANSION_PORT) == 0) return 1;
+
     sda_external_pin_def((uint8_t) argS->arg[1].val_s, (uint8_t) argS->arg[2].val_s, (uint8_t) argS->arg[3].val_s);
     return 1;
   }
 
   //#!##### Set state of pins on the expansion
-  //#!    sys.ePinSet([num]Pin, [num]val);
+  //#!    sys.hw.ePinSet([num]Pin, [num]val);
   //#!Sets state of external expansion pin.
   //#!Value 1 sets the pin high, value 0 sets it low.
   //#!Pin number is number of pin on the connector, can be read from schematics.
@@ -304,12 +382,14 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
+    if(wrap_get_resource(EXTERNAL_EXPANSION_PORT) == 0) return 1;
+
     sda_external_pin_set((uint8_t) argS->arg[1].val_s, (uint8_t) argS->arg[2].val_s);
     return 1;
   }
 
   //#!##### Get state of pins on the expansion
-  //#!    sys.ePinGet([num]Pin, [num]val);
+  //#!    sys.hw.ePinGet([num]Pin, [num]val);
   //#!Gets state of external expansion pin.
   //#!Pin number is number of pin on the connector, can be read from schematics.
   //#!
@@ -320,13 +400,16 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
+
+    if(wrap_get_resource(EXTERNAL_EXPANSION_PORT) == 0) return 1;
+
     result->value.val_u = sda_external_pin_get((uint8_t) argS->arg[1].val_s);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
 
   //#!##### Get ADC readout
-  //#!    sys.eADCRead();
+  //#!    sys.hw.eADCRead();
   //#!Gets state of external expansion pin.
   //#!Pin number is number of pin on the connector, can be read from schematics.
   //#!
@@ -335,6 +418,9 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
+
+    if(wrap_get_resource(EXTERNAL_EXPANSION_PORT) == 0) return 1;
+
     result->value.val_f = sda_external_ADC_get();
     result->type = SVS_TYPE_FLT;
     return 1;

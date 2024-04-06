@@ -22,7 +22,12 @@ SOFTWARE.
 
 #include "sda_keyboard_driver.h"
 
-static enabled;
+static uint8_t enabled;
+
+
+void sda_extensions_detect() {
+
+}
 
 void decode(uint8_t *buff);
 uint8_t sda_keyboard_driver_init();

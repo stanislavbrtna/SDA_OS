@@ -57,6 +57,29 @@ Return: None
 Gets state of usb port. Useful for determining if the SDA is connected to PC.
 
 Return: 1 when powered from usb, otherwise 0
+#### Resource claiming
+
+System resources:
+| Resource define | Description                  |
+| ---             | ---                          |
+| EXT_EXP_PORT    | External expansion connector |
+| INT_EXP_PORT    | Internal expansion connector |
+
+Locks area automatically freed on app close.
+
+##### Claim hardware resource
+    sys.hw.claim([num]Resource);
+Claims given hardware resouce for currently running app.
+
+Return: [num] 1 - error, 0 - ok
+##### Free hardware resource
+    sys.hw.free([num]Resource);
+Frees given hardware resouce.
+Return: [num] 1 - error, 0 - ok
+##### Get hardware resource state
+    sys.hw.getLock([num]Resource);
+Frees given hardware resouce.
+Return: [num] 1 - locked, 0 - free
 #### Internal expansion port
 
 Internal expansion connector pinout:
@@ -75,21 +98,21 @@ Internal expansion connector pinout:
 Dot marks the pin no. 1
 
 ##### Define direction of pins on the internal expansion
-    sys.iPinDef([num]Pin, [num]type, [num]pullUp);
+    sys.hw.iPinDef([num]Pin, [num]type, [num]pullUp);
 Sets direction of internal expansion pins.
 Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
 Pin number is number of pin on the connector, can be read from schematics.
 
 Return: None
 ##### Set state of pins on the internal expansion
-    sys.iPinSet([num]Pin, [num]val);
+    sys.hw.iPinSet([num]Pin, [num]val);
 Sets state of internal expansion pin.
 Value 1 sets the pin high, value 0 sets it low.
 Pin number is number of pin on the connector, can be read from schematics.
 
 Return: None
 ##### Get state of pins on the internal expansion
-    sys.iPinGet([num]Pin, [num]val);
+    sys.hw.iPinGet([num]Pin, [num]val);
 Gets state of internal expansion pin.
 Pin number is number of pin on the connector, can be read from schematics.
 
@@ -110,27 +133,27 @@ External expansion connector pinout:
 Pin no. 1 is the one closest ot the charging LED
 
 ##### Define direction of pins on the expansion
-    sys.ePinDef([num]Pin, [num]type, [num]pullUp);
+    sys.hw.ePinDef([num]Pin, [num]type, [num]pullUp);
 Sets direction of external expansion pins.
 Uses defines: PIN_IN, PIN_OUT, PIN_ALT, PIN_NOPULL, PIN_PULLUP, PIN_PULDOWN
 Pin number is number of pin on the connector, can be read from schematics.
 
 Return: None
 ##### Set state of pins on the expansion
-    sys.ePinSet([num]Pin, [num]val);
+    sys.hw.ePinSet([num]Pin, [num]val);
 Sets state of external expansion pin.
 Value 1 sets the pin high, value 0 sets it low.
 Pin number is number of pin on the connector, can be read from schematics.
 
 Return: None
 ##### Get state of pins on the expansion
-    sys.ePinGet([num]Pin, [num]val);
+    sys.hw.ePinGet([num]Pin, [num]val);
 Gets state of external expansion pin.
 Pin number is number of pin on the connector, can be read from schematics.
 
 Return: 1 if the pin is high, 0 if it is low.
 ##### Get ADC readout
-    sys.eADCRead();
+    sys.hw.eADCRead();
 Gets state of external expansion pin.
 Pin number is number of pin on the connector, can be read from schematics.
 
