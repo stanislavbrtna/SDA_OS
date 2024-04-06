@@ -69,7 +69,11 @@ uint16_t svmGetMainScreen();
 void sdaSetRedrawDetect(uint8_t val);
 uint8_t sdaGetRedrawDetect();
 
-// set error
+
+// throw svs error in currently running svm
+void svmThrowError(uint8_t* str);
+
+// set error string (from GR2 context...)
 void svmSetError(uint8_t * str);
 
 // cwd for launching child app

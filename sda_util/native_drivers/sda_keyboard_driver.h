@@ -30,4 +30,6 @@ void sda_keyboard_driver_set(uint8_t en);
 uint8_t sda_keyboard_driver_update();
 uint8_t sda_keyboard_driver_enabled();
 
+void sda_extensions_detect(); 
+
 #endif

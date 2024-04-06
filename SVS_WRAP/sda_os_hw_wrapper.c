@@ -34,15 +34,6 @@ uint8_t wrap_get_lcdOffButtons() {
   return wrap_lcdOffButtons;
 }
 
-uint8_t wrap_get_resource(sdaResource res) {
-  if (sda_resource_get_lock(res, svmMeta.pid) == SDA_LOCK_UNLOCKED) {
-    return 1;
-  }
-  sda_show_error_message((uint8_t*)"Trying to access locked resource!");
-  return 0;
-}
-
-
 uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   uint8_t argType[11];
 

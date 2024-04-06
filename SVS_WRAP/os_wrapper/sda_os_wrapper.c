@@ -100,31 +100,33 @@ uint8_t sda_overlay_color_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 
 
 svsConstType svsWrapConsts[] = {
-  {"SVP_LANG_CZ", 0},
-  {"SVP_LANG_ENG", 1},
-  {"LED_ON", 1},
-  {"LED_OFF", 0},
-  {"LED_BLINK", 2},
+  {"SVP_LANG_CZ",    0},
+  {"SVP_LANG_ENG",   1},
+  {"LED_ON",         1},
+  {"LED_OFF",        0},
+  {"LED_BLINK",      2},
   {"LED_SHORTBLINK", 3},
-  {"LED_ALARM", 4},
+  {"LED_ALARM",      4},
 
-  {"BTN_A", BUTTON_A},
-  {"BTN_LEFT", BUTTON_LEFT},
-  {"BTN_UP", BUTTON_UP},
-  {"BTN_DOWN", BUTTON_DOWN},
+  {"BTN_A",     BUTTON_A},
+  {"BTN_LEFT",  BUTTON_LEFT},
+  {"BTN_UP",    BUTTON_UP},
+  {"BTN_DOWN",  BUTTON_DOWN},
   {"BTN_RIGHT", BUTTON_RIGHT},
-  {"BTN_B", BUTTON_B},
+  {"BTN_B",     BUTTON_B},
 
-  {"PIN_IN", SDA_BASE_PIN_IN},
+  {"PIN_IN",  SDA_BASE_PIN_IN},
   {"PIN_OUT", SDA_BASE_PIN_OUT},
   {"PIN_ALT", SDA_BASE_PIN_ALT},
 
-  {"PIN_NOPULL", SDA_BASE_PIN_NOPULL},
+  {"PIN_NOPULL",   SDA_BASE_PIN_NOPULL},
   {"PIN_PULLDOWN", SDA_BASE_PIN_PULLDOWN},
-  {"PIN_PULLUP", SDA_BASE_PIN_PULLUP},
+  {"PIN_PULLUP",   SDA_BASE_PIN_PULLUP},
 
   {"EXT_EXP_PORT", EXTERNAL_EXPANSION_PORT},
   {"INT_EXP_PORT", INTERNAL_EXPANSION_PORT},
+  {"SERIAL_PORT",  SERIAL_PORT},
+  {"USB_PORT",     USB_PORT},
 
   {"end", 0}
 };

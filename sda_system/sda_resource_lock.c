@@ -87,7 +87,7 @@ sdaLockState sda_resource_get_lock(sdaResource res, uint16_t pid) {
     return SDA_LOCK_UNLOCKED;
   }
   
-  if (sda_resource_locks[res] == SDA_LOCK_LOCKED && sda_resource_pids[res] == pid) {
+  if (sda_resource_locks[res] == SDA_LOCK_LOCKED && sda_resource_pids[res] == pid && pid != 0) {
     return SDA_LOCK_UNLOCKED;
   }
 

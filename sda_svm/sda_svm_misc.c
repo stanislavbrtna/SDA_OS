@@ -65,6 +65,11 @@ void svmInit() {
   svmSetNextPid(1);
 }
 
+void svmThrowError(uint8_t* str) {
+  if (svmGetValid()) {
+    errSoft(str, &svm);
+  }
+}
 
 void svmOnTop() {
   sda_slot_on_top(SDA_SLOT_SVM);

@@ -20,25 +20,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SDA_RESOURCE_LOCK_H
-#define SDA_RESOURCE_LOCK_H
+#include "sda_wrapper.h"
 
-#include "../SDA_OS.h"
+extern sdaSvmMetadata svmMeta;
 
-#define SDA_RESOURCES_MAX 5
 
-typedef enum {
-  EXTERNAL_EXPANSION_PORT = 1,
-  INTERNAL_EXPANSION_PORT = 2,
-  SERIAL_PORT = 3,
-  USB_PORT = 4
-} sdaResource;
-
-void sda_resource_lock_init();
-
-uint8_t sda_resource_claim(sdaResource res, uint16_t pid);
-uint8_t sda_resource_free(sdaResource res, uint16_t pid);
-void sda_resource_free_pid(uint16_t pid);
-sdaLockState sda_resource_get_lock(sdaResource res, uint16_t pid);
-
-#endif
+uint8_t wrap_get_resource(sdaResource res) {
+  if (sda_resource_get_lock(res, svmMeta.pid) == SDA_LOCK_UNLOCKED) {
+    return 1;
+  }
+  //sda_show_error_message();
+  svmThrowError((uint8_t*)"Trying to access locked resource!");
+  return 0;
+}

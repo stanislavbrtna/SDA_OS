@@ -84,6 +84,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     int32_t i = 0;
     uint8_t * c;
 
+    if(wrap_get_resource(USB_PORT) == 0) return 1;
+
     c = s->stringField + argS->arg[1].val_str;
 
     argType[1] = SVS_TYPE_STR;
@@ -119,6 +121,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
+    if(wrap_get_resource(USB_PORT) == 0) return 1;
+
     if (serialLen != 0) {
       sda_usb_serial_transmit(serialQueue, serialLen);
     }
@@ -136,6 +140,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
+
+    if(wrap_get_resource(USB_PORT) == 0) return 1;
 
     sda_usb_serial_init_bd((uint32_t) argS->arg[1].val_s);
 
@@ -159,6 +165,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
+    if(wrap_get_resource(USB_PORT) == 0) return 1;
+
     if (sda_usb_serial_recieve(c, sizeof(c), argS->arg[1].val_s)){
       c[511] = 0;
       result->value.val_u = strNew(c, s);
@@ -181,6 +189,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
+    if(wrap_get_resource(USB_PORT) == 0) return 1;
+
     result->value.val_s = sda_usb_serial_recieve_init();
     result->type = SVS_TYPE_NUM;
     return 1;
@@ -196,6 +206,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
+
+    if(wrap_get_resource(USB_PORT) == 0) return 1;
 
     result->value.val_s = sda_usb_serial_get_rdy();
     result->type = SVS_TYPE_NUM;
@@ -215,6 +227,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
+
+    if(wrap_get_resource(USB_PORT) == 0) return 1;
 
     if (sda_usb_serial_get_str(usb_c)){
       usb_c[512] = 0;
@@ -236,6 +250,9 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
+
+    if(wrap_get_resource(USB_PORT) == 0) return 1;
+
     usb_len = sda_usb_serial_get_str(usb_c);
 
     result->value.val_s = usb_len;
@@ -253,6 +270,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
+    
+    if(wrap_get_resource(USB_PORT) == 0) return 1;
 
     if (argS->arg[1].val_s < usb_len) {
       result->value.val_s = usb_c[argS->arg[1].val_s];
@@ -288,6 +307,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     int32_t i = 0;
     uint8_t * c;
 
+    if(wrap_get_resource(SERIAL_PORT) == 0) return 1;
+
     c = s->stringField + argS->arg[1].val_str;
 
     argType[1] = SVS_TYPE_STR;
@@ -322,6 +343,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
+    if(wrap_get_resource(SERIAL_PORT) == 0) return 1;
+
     if (serialLen != 0) {
       sda_serial_transmit(serialQueue, serialLen);
     }
@@ -342,6 +365,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
+
+    if(wrap_get_resource(SERIAL_PORT) == 0) return 1;
 
     if (sda_serial_recieve(c, sizeof(c), argS->arg[1].val_s)){
       c[511] = 0;
@@ -365,6 +390,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
+    if(wrap_get_resource(SERIAL_PORT) == 0) return 1;
+
     sda_serial_init_bd((uint32_t) argS->arg[1].val_s);
 
     result->value.val_s = 0;
@@ -385,6 +412,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
+    if(wrap_get_resource(SERIAL_PORT) == 0) return 1;
+
     result->value.val_s = sda_serial_recieve_init();
     result->type = SVS_TYPE_NUM;
     return 1;
@@ -400,6 +429,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
+
+    if(wrap_get_resource(SERIAL_PORT) == 0) return 1;
 
     result->value.val_s = sda_serial_get_rdy();
     result->type = SVS_TYPE_NUM;
@@ -421,6 +452,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
+    if(wrap_get_resource(SERIAL_PORT) == 0) return 1;
+
     if (sda_serial_get_str(c)) {
       c[512] = 0;
       result->value.val_u = strNew(c, s);
@@ -441,6 +474,9 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
+
+    if(wrap_get_resource(SERIAL_PORT) == 0) return 1;
+
     len = sda_serial_get_str(c);
     
     result->value.val_s = len;
@@ -459,6 +495,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     
+    if(wrap_get_resource(SERIAL_PORT) == 0) return 1;
+
     if (argS->arg[1].val_s < len) {
       result->value.val_s = c[argS->arg[1].val_s];
     } else {
@@ -483,6 +521,8 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 2, s)) {
       return 0;
     }
+
+    if(wrap_get_resource(SERIAL_PORT) == 0) return 1;
 
     result->value.val_s = svmRegisterUartCallback(s->stringField + argS->arg[1].val_str, argS->arg[2].val_u);
     result->type = SVS_TYPE_NUM;

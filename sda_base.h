@@ -30,11 +30,11 @@ File description:
 uint32_t svp_random();
 
 //time&alarm functions
-void set_sda_counter(uint16_t val);
+void     set_sda_counter(uint16_t val);
 uint16_t get_sda_counter();
 
-uint8_t sda_get_time_update_flag();
-void sda_set_time_update_flag();
+uint8_t  sda_get_time_update_flag();
+void     sda_set_time_update_flag();
 uint16_t sda_get_uptime();
 
 // [HW] beeper
@@ -66,47 +66,49 @@ void sda_serial_enable();
 void sda_serial_disable();
 
 uint8_t sda_serial_recieve(uint8_t *str, uint32_t len, uint32_t timeout);
-void sda_serial_transmit(uint8_t *str, uint32_t len);
+void    sda_serial_transmit(uint8_t *str, uint32_t len);
 uint8_t sda_serial_is_enabled();
 
-uint8_t sda_serial_recieve_init();
-uint8_t sda_serial_get_rdy();
+uint8_t  sda_serial_recieve_init();
+uint8_t  sda_serial_get_rdy();
 uint16_t sda_serial_get_str(uint8_t *str);
 
+uint8_t  sda_serial_get_spec();
+
 // [HW] Expansion
-void sda_internal_pin_def(uint8_t pinNum, uint8_t pinType, uint8_t pull);
-void sda_internal_pin_set(uint8_t pinNum, uint8_t val);
+void    sda_internal_pin_def(uint8_t pinNum, uint8_t pinType, uint8_t pull);
+void    sda_internal_pin_set(uint8_t pinNum, uint8_t val);
 uint8_t sda_internal_pin_get(uint8_t pinNum);
-void sda_external_pin_def(uint8_t pinNum, uint8_t pinType, uint8_t pull);
-void sda_external_pin_set(uint8_t pinNum, uint8_t val);
+void    sda_external_pin_def(uint8_t pinNum, uint8_t pinType, uint8_t pull);
+void    sda_external_pin_set(uint8_t pinNum, uint8_t val);
 uint8_t sda_external_pin_get(uint8_t pinNum);
-float sda_external_ADC_get();
+float   sda_external_ADC_get();
 
 // [HW] Debug serial port
 uint8_t sda_dbg_serial_is_enabled();
-void sda_dbg_serial_disable();
-void sda_dbg_serial_enable();
+void    sda_dbg_serial_disable();
+void    sda_dbg_serial_enable();
 
 // [HW] USB serial port
-uint8_t sda_usb_serial_is_enabled();
-void sda_usb_serial_disable();
-void sda_usb_serial_enable();
-void sda_usb_serial_init_bd(uint32_t bd);
-uint8_t sda_usb_serial_recieve(uint8_t *str, uint32_t len, uint32_t timeout);
-void sda_usb_serial_transmit(uint8_t *str, uint32_t len);
-uint8_t sda_usb_serial_recieve_init();
-uint8_t sda_usb_serial_get_rdy();
+uint8_t  sda_usb_serial_is_enabled();
+void     sda_usb_serial_disable();
+void     sda_usb_serial_enable();
+void     sda_usb_serial_init_bd(uint32_t bd);
+uint8_t  sda_usb_serial_recieve(uint8_t *str, uint32_t len, uint32_t timeout);
+void     sda_usb_serial_transmit(uint8_t *str, uint32_t len);
+uint8_t  sda_usb_serial_recieve_init();
+uint8_t  sda_usb_serial_get_rdy();
 uint16_t sda_usb_serial_get_str(uint8_t *str);
-void sda_usb_enable_for_dbg(uint8_t val);
-uint8_t sda_usb_get_enable_for_dbg();
+void     sda_usb_enable_for_dbg(uint8_t val);
+uint8_t  sda_usb_get_enable_for_dbg();
 
 // [HW] System
-void svp_set_calibration_data(touchCalibDataStruct input);
+void    svp_set_calibration_data(touchCalibDataStruct input);
 uint8_t svp_getLcdCalibrationFlag();
 uint8_t sda_card_inserted();
 
 // [HW] RTC Backup registers
-void rtc_write_password(uint8_t *pwd);
+void    rtc_write_password(uint8_t *pwd);
 uint8_t rtc_read_password(uint8_t *pwd);
 
 #endif

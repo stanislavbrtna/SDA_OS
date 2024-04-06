@@ -26,7 +26,59 @@ static uint8_t enabled;
 
 
 void sda_extensions_detect() {
+  static uint8_t lock_pre;
+  static uint8_t init;
+  uint8_t lock;
+  if (sda_resource_get_lock(EXTERNAL_EXPANSION_PORT, 0) == SDA_LOCK_UNLOCKED
+      && sda_resource_get_lock(SERIAL_PORT, 0) == SDA_LOCK_UNLOCKED
+  ){
+    lock = 0;
+  } else {
+    lock = 1;
+  }
 
+  if ((lock == 0 && lock_pre == 1) || init == 0) {
+    init = 1;
+
+    // init serial
+
+    // set pins
+    sda_external_pin_def(5, SDA_BASE_PIN_ALT, SDA_BASE_PIN_NOPULL);
+    sda_external_pin_def(6, SDA_BASE_PIN_ALT, SDA_BASE_PIN_NOPULL);
+
+    // enable receive
+    sda_serial_recieve_init();
+  }
+
+  if (lock == 0) {
+    // listen to spec char
+    if (sda_serial_get_spec()) {
+      uint8_t buff[256];
+      
+      sda_serial_get_str(buff);
+
+      //sda_strcp("neconeco\nsda_id:KBD001\n", buff, sizeof(buff));
+
+      // compare 
+      uint16_t i = 0;
+      while(buff[i] != ':') {
+        i++;
+        if (i > 255) break;
+        if (buff[i] == 0) break;
+      }
+      i++;
+      buff[i + 6] = 0;
+
+      //printf("testy test: %s\n", buff + i);
+
+      if(svp_strcmp(buff + i, "KBD001")) {
+        printf("Keyboard addon detected!");
+        sda_keyboard_driver_set(1);
+      }
+    }
+  }
+
+  lock_pre = lock;
 }
 
 void decode(uint8_t *buff);
@@ -37,8 +89,14 @@ void sda_keyboard_driver_set(uint8_t en) {
   if(en) {
     svpSGlobal.inputMethod = OTHER;
     sda_keyboard_driver_init();
+    sda_tray_kbd_enable(1);
+    sda_resource_claim(EXTERNAL_EXPANSION_PORT, 0);
+    sda_resource_claim(SERIAL_PORT, 0);
   } else {
     svpSGlobal.inputMethod = ON_SCREEN_KEYBOARD;
+    sda_tray_kbd_enable(0);
+    sda_resource_free(EXTERNAL_EXPANSION_PORT, 0);
+    sda_resource_free(SERIAL_PORT, 0);
   }
   
 }

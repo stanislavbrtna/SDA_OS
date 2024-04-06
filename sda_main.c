@@ -251,6 +251,8 @@ uint8_t sda_main_loop() {
   sda_power_management_handler();
   sda_handle_battery_status();
 
+  sda_extensions_detect();
+
   // Misc drivers
   sda_keyboard_driver_update();
 

@@ -29,6 +29,8 @@ extern volatile uint8_t systemDateClick;
 static uint8_t alarm_string[3];
 uint16_t trayBackgroundColor;
 
+static uint8_t kbd_tray_en;
+
 
 static void tray_time(int16_t x1, int16_t y1, uint16_t w);
 static void tray_alarm(int16_t x1, int16_t y1, int16_t w);
@@ -52,6 +54,12 @@ void sda_tray_alarm_enable() {
 void sda_tray_alarm_disable() {
   alarm_string[0] = ' ';
   alarm_string[1] = 0;
+  svp_set_irq_redraw();
+}
+
+
+void sda_tray_kbd_enable(uint8_t val) {
+  kbd_tray_en = val;
   svp_set_irq_redraw();
 }
 
@@ -146,6 +154,24 @@ static void tray_alarm(int16_t x1, int16_t y1, int16_t w) {
     LCD_Set_Sys_Font(18);
     LCD_DrawText_ext(x1, y1 + 8, gr2_get_text_color(&sda_sys_con), alarm_string);
     LCD_Set_Sys_Font(curr_font);
+    redraw = 1;
+  }
+}
+
+
+static void tray_keyboard(int16_t x1, int16_t y1, int16_t w) {
+  static uint8_t redraw;
+
+  uint8_t curr_font;
+
+  if((redraw == 0) || (irq_redraw)) {
+    LCD_FillRect(x1 - 1, y1, x1 + w, 31, trayBackgroundColor);
+    if (kbd_tray_en == 1) {
+      curr_font = LCD_Get_Font_Size();
+      LCD_Set_Sys_Font(18);
+      LCD_DrawText_ext(x1, y1 + 8, gr2_get_text_color(&sda_sys_con), "K");
+      LCD_Set_Sys_Font(curr_font);
+    }
     redraw = 1;
   }
 }
@@ -377,6 +403,8 @@ uint8_t svp_tray() {
     LCD_FillRect(PM_TOPBAR_X1, PM_TOPBAR_Y1, PM_TOPBAR_X2, PM_TOPBAR_Y2, trayBackgroundColor);
     init = 1;
   }
+
+  tray_keyboard(PM_TOPBAR_X2 - 175 - 32, 0, 32);
 
   tray_alarm(PM_TOPBAR_X2 - 175, 0, 32);
 
