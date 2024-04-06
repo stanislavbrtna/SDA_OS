@@ -110,6 +110,8 @@ uint8_t sda_keyboard_driver_init() {
   // set pins
   sda_external_pin_def(5, SDA_BASE_PIN_ALT, SDA_BASE_PIN_NOPULL);
   sda_external_pin_def(6, SDA_BASE_PIN_ALT, SDA_BASE_PIN_NOPULL);
+  // detect pin
+  sda_external_pin_def(4, SDA_BASE_PIN_IN, SDA_BASE_PIN_PULLDOWN);
 
   // enable receive
   sda_serial_recieve_init();
@@ -126,6 +128,10 @@ uint8_t sda_keyboard_driver_update() {
     sda_serial_get_str(buff);
     decode(buff);
   }
+
+  if(sda_external_pin_get(4) == 0) {
+    sda_keyboard_driver_set(0);
+  } 
 
   return 0;
 }
