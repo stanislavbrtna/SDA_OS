@@ -114,7 +114,7 @@ void svmCloseAll() {
     }
   }
 
-  if (sda_serial_is_enabled()) {
+  if (sda_serial_is_enabled() && sda_resource_get_lock(SERIAL_PORT, 0) == SDA_LOCK_UNLOCKED) {
     sda_serial_disable();
   }
 
