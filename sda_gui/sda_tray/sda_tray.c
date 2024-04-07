@@ -231,7 +231,7 @@ uint8_t svp_tray() {
 
   icons_left_x += sda_tray_battery(PM_TOPBAR_X2 - icons_left_x, 0, 49);
 
-  icons_left_x += sda_tray_time(PM_TOPBAR_X2 - icons_left_x, 0, 48);
+  icons_left_x += sda_tray_time(PM_TOPBAR_X2 - icons_left_x, 0, 50);
 
   icons_left_x += tray_alarm(PM_TOPBAR_X2 - icons_left_x, 0, 20);
 
