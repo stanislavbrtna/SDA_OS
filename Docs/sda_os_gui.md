@@ -61,3 +61,14 @@ Gets the orientation of the display.
 1 - Landscape
 0 - Portrait
 Return: [num]val 
+#### Notification area icons
+##### Set notification area icon
+    sys.os.gui.setNotif([str] path_to_sic, [str] callback);
+Sets the notification area icon.
+
+Return: [num] id (1 - 3), 0 - Error, probably no empty icon spot
+##### Free notification area icon
+    sys.os.gui.freeNotif([num] id);
+Removes notification icon with given id.
+
+Return: [num] 1 - ok, 0 - Error

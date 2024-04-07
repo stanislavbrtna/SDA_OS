@@ -42,6 +42,7 @@ void draw_icon(int16_t x2, int16_t y1, uint8_t * icon);
 void sda_custom_icon_init() {
   for(uint16_t i = 0; i < SDA_CUSTOM_ICONS; i++) {
     icons[i].valid = 0;
+    icons[i].pid = 0;
   }
 }
 
@@ -78,12 +79,28 @@ uint8_t sda_custom_icon_set(uint8_t *img, uint16_t pid, uint8_t* cb) {
   return valid_spot;
 }
 
+
 void sda_custom_icon_release_spot(uint8_t spot) {
   if(spot >= SDA_CUSTOM_ICONS || spot == 0) {
     printf("%s: Spot out of range!\n", __FUNCTION__);
     return;
   }
   icons[spot - 1].valid = 0;
+  svp_set_irq_redraw();
+}
+
+uint8_t sda_custom_icon_release_spot_pid(uint8_t spot, uint16_t pid) {
+  if(spot >= SDA_CUSTOM_ICONS || spot == 0) {
+    printf("%s: Spot out of range!\n", __FUNCTION__);
+    return 1;
+  }
+  if (icons[spot - 1].pid != pid) {
+    printf("%s: Icon not owned by given pid!\n", __FUNCTION__);
+    return 1;
+  }
+  icons[spot - 1].valid = 0;
+  svp_set_irq_redraw();
+  return 0;
 }
 
 
@@ -94,9 +111,9 @@ void sda_custom_icon_release_pid(uint16_t pid) {
   for(uint16_t i = 0; i < SDA_CUSTOM_ICONS; i++) {
     if (icons[i].valid == 1 && icons[i].pid == pid) {
       icons[i].valid = 0;
-      return;
     }
   }
+  svp_set_irq_redraw();
 }
 
 
@@ -104,22 +121,28 @@ int16_t sda_custom_icon_handle(int16_t x2, int16_t y1, int16_t w) {
   static uint8_t redraw;
 
   int16_t x1 = x2 - w;
+  int16_t icon_pos = 0;
 
   if((redraw == 0) || (irq_redraw)) {
     redraw = 1;
 
     LCD_FillRect(x1, y1, x2, 32, trayBackgroundColor);
-    int16_t icon_pos = 0;
-
+    
     for(uint16_t i = 0; i < SDA_CUSTOM_ICONS; i++) {
       if (icons[i].valid) {
         draw_icon(x2 - 32*icon_pos, y1, icons[i].image);
-        
-        if (sda_tray_clicked(x2 -32 - 32*icon_pos, y1, x2 - 32*icon_pos, y1 + 31) == EV_RELEASED) {
-          icons[i].event = EV_RELEASED;
-        }
         icon_pos++;
       }
+    }
+  }
+
+  icon_pos = 0;
+  for(uint16_t i = 0; i < SDA_CUSTOM_ICONS; i++) {
+    if (icons[i].valid) {
+      if (sda_tray_clicked(x2 - 32*icon_pos, y1, x2 + 32 - 32*icon_pos, y1 + 31) == EV_RELEASED) {
+        icons[i].event = EV_RELEASED;
+      }
+      icon_pos++;
     }
   }
 
@@ -147,6 +170,17 @@ void draw_icon(int16_t x2, int16_t y1, uint8_t * icon) {
     if (bit_n == 8) {
       bit_n = 0;
       icon_pos++;
+    }
+  }
+}
+
+void sda_custom_icon_handle_svm_events() {
+  for(uint16_t i = 0; i < SDA_CUSTOM_ICONS; i++) {
+    if (icons[i].valid == 1 && icons[i].event == EV_RELEASED && icons[i].pid != 0) {
+      svmHandleNotifIconCallback(icons[i].pid, icons[i].callback);
+      icons[i].event = EV_NONE;
+      // return and let the update loop handle stuff
+      return;
     }
   }
 }

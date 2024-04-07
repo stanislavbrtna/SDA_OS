@@ -189,6 +189,72 @@ uint8_t svmHandleUartCallbacks() {
   return 0;
 }
 
+//TODO: perhaps move this functionality in a function, its used in multiple places
+uint8_t svmHandleNotifIconCallback(uint16_t pid, uint8_t * callback) {
+  if (pid == svmMeta.pid) {
+    //execute
+    commExec(callback, &svm);
+    if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
+      svp_errSoftPrint(&svm);
+      return 1;
+    }
+    if (svmCheckAndExit()) { // handle potential exit call
+      return 0;
+    }
+
+    if (callback_arise_flag == 1) {
+      svmOnTop();
+      callback_arise_flag = 0;
+    }
+  } else {
+    uint16_t prev_pid;
+    if (svmGetValid()) {
+      prev_pid = svmMeta.pid;
+    } else {
+      prev_pid = 0;
+    }
+          
+    //wakeup
+    if(svmWake(pid)) {
+      // error occured during wakeup
+      // wake the previous and exit
+      if (prev_pid) {
+        svmWake(prev_pid);
+        svmOnTop();
+        setRedrawFlag();
+      } else {
+        // TODO: fix all of this slot mess
+        svp_switch_main_dir();
+        svp_chdir((uint8_t *)"APPS");
+        sda_slot_on_top(SDA_SLOT_APPLIST);
+      }
+      
+      return 0;
+    }
+
+    //execute
+    commExec(callback, &svm);
+    if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
+      svp_errSoftPrint(&svm);
+      return 1;
+    }
+
+    // handle potential exit call
+    if (svmCheckAndExit()) {
+      return 0;
+    }
+
+    //go back
+    if (callback_arise_flag == 0) {
+      svmWake(prev_pid);
+      return 0;
+    }
+    callback_arise_flag = 0;
+    svmOnTop();
+    setRedrawFlag();
+  }
+}
+    
 
 // get current wd relative to main dir
 void svmUpdateCurrentWD() {

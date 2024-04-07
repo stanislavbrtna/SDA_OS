@@ -202,6 +202,28 @@ uint8_t svm_text_handler(varRetVal *result, argStruct *argS, svsVM *s) {
 }
 
 
+uint16_t load_sic(uint8_t * fname,uint8_t * callback) {
+  svp_file fil;
+  uint8_t icon[128];
+  uint8_t c = 0;
+  uint16_t i = 0;
+
+  if (svp_fexists(fname)) {
+    
+    svp_fopen_rw(&fil, fname);
+    while (!svp_feof(&fil) && i < 128) {
+      icon[i] = svp_fread_u8(&fil);
+      i++;
+    }
+    svp_fclose(&fil);
+
+    return sda_custom_icon_set(icon, svmGetPid(), callback);
+  }
+
+  return 0;
+}
+
+
 uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   uint8_t argType[11];
 
@@ -434,6 +456,43 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     result->value.val_u = svpSGlobal.lcdLandscape;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!#### Notification area icons
+
+  //#!##### Set notification area icon
+  //#!    sys.os.gui.setNotif([str] path_to_sic, [str] callback);
+  //#!Sets the notification area icon.
+  //#!
+  //#!Return: [num] id (1 - 3), 0 - Error, probably no empty icon spot
+  if (sysFuncMatch(argS->callId, "setNotif", s)) {
+    argType[1] = SVS_TYPE_STR; // notification icon
+    argType[2] = SVS_TYPE_STR; // callback
+
+    if(sysExecTypeCheck(argS, argType, 2, s)){
+      return 0;
+    }
+
+    result->value.val_u = load_sic(s->stringField + argS->arg[1].val_str, s->stringField + argS->arg[2].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Free notification area icon
+  //#!    sys.os.gui.freeNotif([num] id);
+  //#!Removes notification icon with given id.
+  //#!
+  //#!Return: [num] 1 - ok, 0 - Error
+  if (sysFuncMatch(argS->callId, "freeNotif", s)) {
+    argType[1] = SVS_TYPE_NUM; // notification icon id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    result->value.val_u = (uint32_t)(1 - sda_custom_icon_release_spot_pid(argS->arg[1].val_u, svmGetPid()));
     result->type = SVS_TYPE_NUM;
     return 1;
   }

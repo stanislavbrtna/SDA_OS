@@ -33,4 +33,8 @@ int16_t sda_custom_icon_handle(int16_t x2, int16_t y1, int16_t w);
 void sda_custom_icon_release_spot(uint8_t spot);
 void sda_custom_icon_release_pid(uint16_t pid);
 
+uint8_t sda_custom_icon_release_spot_pid(uint8_t spot, uint16_t pid);
+
+void sda_custom_icon_handle_svm_events();
+
 #endif

@@ -81,6 +81,7 @@ void svmCloseRunning() {
   sdaAlarmClearFlag();
   sda_files_close();
   sda_resource_free_pid(svmMeta.pid);
+  sda_custom_icon_release_pid(svmMeta.pid);
 
   if (svmMeta.parentPid != 0) {
     svmLoadParent(errorOccured);

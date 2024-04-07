@@ -44,6 +44,8 @@ uint8_t svmHandleUartCallbacks();
 void    svmSetSuspendOnClose(uint8_t val);
 uint8_t svmGetSuspendOnClose();
 
+uint8_t svmHandleNotifIconCallback(uint16_t pid, uint8_t * callback);
+
 // internal svm stuff
 void svmInit();
 uint8_t svmCheckAndExit();
