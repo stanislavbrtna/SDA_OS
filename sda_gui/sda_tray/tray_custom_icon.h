@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2018 Stanislav Brtna
+Copyright (c) 2024 Stanislav Brtna
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,20 +20,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SDA_TRAY_H
-#define SDA_TRAY_H
-#include "../SDA_OS.h"
+#ifndef SDA_CUSTOM_ICON_H
+#define SDA_CUSTOM_ICON_H
 
-void svp_set_irq_redraw();
+#include "sda_tray.h"
 
-uint8_t svp_tray();
-uint8_t svp_irq();
+void sda_custom_icon_init();
 
-void sda_tray_alarm_enable();
-void sda_tray_alarm_disable();
+uint8_t sda_custom_icon_set(uint8_t *img, uint16_t pid, uint8_t* cb);
+int16_t sda_custom_icon_handle(int16_t x2, int16_t y1, int16_t w);
 
-void irq_redraw_block_enable();
-void irq_redraw_block_disable();
+void sda_custom_icon_release_spot(uint8_t spot);
+void sda_custom_icon_release_pid(uint16_t pid);
 
-void sda_tray_kbd_enable(uint8_t val);
 #endif

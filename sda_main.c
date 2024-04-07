@@ -131,6 +131,7 @@ static void sda_main_init() {
   // initialize screens: home, apps and options
   sda_slot_init(SDA_SLOT_HOMESCREEN, svp_homeScreen(1, 0), &sda_sys_con, 1, 1);
   sda_homescreen_configure();
+  sda_custom_icon_init();
 
   sda_slot_init(SDA_SLOT_APPLIST, svp_appScreen(1, 0), &sda_sys_con, 1, 0);
   sda_slot_init(SDA_SLOT_SETTINGS, svp_optScreen(1, 0), &sda_sys_con, 1, 0);
