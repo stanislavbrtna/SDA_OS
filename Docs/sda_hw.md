@@ -60,10 +60,12 @@ Return: 1 when powered from usb, otherwise 0
 #### Resource claiming
 
 System resources:
-| Resource define | Description                  |
-| ---             | ---                          |
-| EXT_EXP_PORT    | External expansion connector |
-| INT_EXP_PORT    | Internal expansion connector |
+| Resource define | Description                   |
+| ---             | ---                           |
+| EXT_EXP_PORT    | External expansion connector  |
+| INT_EXP_PORT    | Internal expansion connector  |
+| USB_PORT        | USB port (ftdi serial)        |
+| SERIAL_PORT     | internal/external serial port |
 
 Locks area automatically freed on app close.
 
