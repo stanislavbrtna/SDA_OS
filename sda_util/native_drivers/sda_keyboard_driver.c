@@ -103,6 +103,9 @@ uint8_t sda_keyboard_driver_init();
 
 void sda_keyboard_driver_set(uint8_t en) {
   static uint8_t ico_id;
+
+  if (en == enabled) return;
+
   enabled = en;
   if(en) {
     svpSGlobal.inputMethod = OTHER;
