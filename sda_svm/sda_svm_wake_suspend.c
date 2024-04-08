@@ -22,10 +22,10 @@ SOFTWARE.
 
 #include "sda_svm_wake_suspend.h"
 
-extern svsVM            svm;
-extern sdaSvmMetadata   svmMeta;
-extern svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
-extern uint8_t          soft_error_flag;
+extern svsVM             svm;
+extern sdaSvmMetadata    svmMeta;
+extern svmSavedProcType  svmSavedProc[MAX_OF_SAVED_PROC];
+extern uint8_t           soft_error_flag;
 
 
 uint16_t svmGetSuspendedPid(uint16_t id) { 

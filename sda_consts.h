@@ -114,4 +114,7 @@ File description:
 #define SDA_SLOT_SETTINGS   2
 #define SDA_SLOT_SVM        4
 
+#define SDA_RESOURCES_MAX 5
+
+
 #endif

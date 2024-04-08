@@ -25,15 +25,6 @@ SOFTWARE.
 
 #include "../SDA_OS.h"
 
-#define SDA_RESOURCES_MAX 5
-
-typedef enum {
-  EXTERNAL_EXPANSION_PORT = 1,
-  INTERNAL_EXPANSION_PORT = 2,
-  SERIAL_PORT = 3,
-  USB_PORT = 4
-} sdaResource;
-
 void sda_resource_lock_init();
 
 uint8_t sda_resource_claim(sdaResource res, uint16_t pid);

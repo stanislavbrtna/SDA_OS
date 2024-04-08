@@ -284,7 +284,7 @@ void svmLoadParent(uint8_t errorOccured) {
   varType  svmCallRetval[3];
   uint8_t  svmCallRetvalType[3];
   uint8_t* svmCallRetvalStr[3];
-  uint8_t* callback[NAME_LENGTH];
+  uint8_t  callback[NAME_LENGTH];
 
   svmStoreArguments(argBuff, svmMeta.svmCallRetval, svmMeta.svmCallRetvalType, svmMeta.svmCallRetvalStr, &svm);
 
@@ -327,7 +327,7 @@ void svmLoadParent(uint8_t errorOccured) {
       printf("%s: Error occured in child process, callback won't be launched!\n", __FUNCTION__);
     }
   } else {
-    if (!svp_strcmp(callback, "")) {
+    if (!svp_strcmp(callback, (uint8_t *)"")) {
       printf("%s: Callback \"%s\" does not exist!\n", __FUNCTION__, callback);
     }
   }

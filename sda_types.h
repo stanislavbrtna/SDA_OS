@@ -162,7 +162,7 @@ typedef struct {
   varType  svmCallRetval[3];
   uint8_t* svmCallRetvalStr[3];
   uint8_t  svmCallRetvalType[3];
-  uint8_t* svmCallback[NAME_LENGTH];
+  uint8_t  svmCallback[NAME_LENGTH];
   uint8_t  suspendOnClose;
   uint8_t  uartCallback[NAME_LENGTH];
   uint8_t  initExecuted;
@@ -190,5 +190,13 @@ typedef struct {
   void (*overlay_destructor) ();
   uint8_t destructor_set;
 } sdaOverlayType;
+
+
+typedef enum {
+  EXTERNAL_EXPANSION_PORT = 1,
+  INTERNAL_EXPANSION_PORT = 2,
+  SERIAL_PORT = 3,
+  USB_PORT = 4
+} sdaResource;
 
 #endif

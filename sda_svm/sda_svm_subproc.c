@@ -39,7 +39,7 @@ extern gr2Element *sda_app_gr2_elements;
 extern gr2Screen  *sda_app_gr2_screens;
 extern gr2context sda_app_con;
 
-uint8_t * svmGetCallback() {
+uint8_t *svmGetCallback() {
     return svmCallback;
 }
 
@@ -66,7 +66,7 @@ uint8_t svmRunPerformCall() {
     // fill the args
     //printf("svmRunPerformCall Process:%s (id:%u) calling:%u\n", svmMeta.name, svmMeta.pid, singularId);
     svmWakeArgs(singularId, svmCallArgType, svmCallArg, svmCallArgStr);
-    sda_strcp(svmCallback, svmMeta.svmCallback, sizeof(svmCallback));
+    sda_strcp(svmCallback, svmMeta.svmCallback, NAME_LENGTH);
     return 1;
   }
 
@@ -78,7 +78,7 @@ uint8_t svmRunPerformCall() {
   }
   svmRestoreArguments(svmCallArgType, svmCallArg, svmCallArgStr, &svm);
   // Restore callback
-  sda_strcp(svmCallback, svmMeta.svmCallback, sizeof(svmCallback));
+  sda_strcp(svmCallback, svmMeta.svmCallback, NAME_LENGTH);
   
   return 1;
 }

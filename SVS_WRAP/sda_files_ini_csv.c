@@ -137,7 +137,7 @@ uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     result->value.val_s = 0;
 
     if (!csv_open) {
-      printf((uint8_t *)"sys.fs.csv.close: WARN: No CSV file openned!\n", s);
+      printf((uint8_t *)"sys.fs.csv.close: WARN: No CSV file openned!\n");
       return 1;
     }
 

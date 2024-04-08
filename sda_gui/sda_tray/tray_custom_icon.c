@@ -31,7 +31,7 @@ typedef struct {
   uint8_t      image[128];
   gr2EventType event;
   uint16_t     pid;
-  uint8_t*     callback[NAME_LENGTH];
+  uint8_t      callback[NAME_LENGTH];
   uint8_t      valid;
 } sdaTrayIcon;
 
@@ -70,7 +70,7 @@ uint8_t sda_custom_icon_set(uint8_t *img, uint16_t pid, uint8_t* cb) {
   icons[valid_spot - 1].pid = pid;
   icons[valid_spot - 1].event = EV_NONE;
 
-  sda_strcp(cb, icons[valid_spot - 1].callback, NAME_LENGTH + 1);
+  sda_strcp(cb, icons[valid_spot - 1].callback, NAME_LENGTH);
 
   icons[valid_spot - 1].valid = 1;
   svp_set_irq_redraw();

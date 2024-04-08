@@ -35,4 +35,6 @@ uint16_t sx_get_touch_y();
 void sda_svs_wrapper_init();
 void svsDirectSWrapInit();
 
+uint8_t wrap_get_resource(sdaResource res);
+
 #endif
