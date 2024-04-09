@@ -113,12 +113,17 @@ void sda_homescreen_configure() {
   svp_chdir(dirbuf);
 }
 
+static uint16_t devLockBtn;
+
+void sda_homescreen_lock_en() {
+  gr2_set_grayout(devLockBtn, 0, &sda_sys_con);
+}
 
 // homescreen handler
 uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 
   static uint16_t appsBtn;
-  static uint16_t optBtn;
+  //static uint16_t optBtn;
   static uint16_t lockBtn;
   static uint16_t oldtime;
   static uint8_t olddate;
@@ -133,8 +138,9 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     tSubheading = gr2_add_text(1, 3, 9, 4,(uint8_t *)"", screen, &sda_sys_con);
     time = gr2_add_text(3, 4, 12, 6,(uint8_t *)"??:??", screen, &sda_sys_con);
     date = gr2_add_text(3, 6, 12, 7,(uint8_t *)"?. ?. 20??", screen, &sda_sys_con);
-    appsBtn = gr2_add_icon(2, 10, 4, 13,(uint8_t *)"", (uint8_t *)"Icons/apps.p16", screen, &sda_sys_con);
-    optBtn = gr2_add_icon(6, 10, 8, 13,(uint8_t *)"", (uint8_t *)"Icons/options.p16", screen, &sda_sys_con);
+    appsBtn = gr2_add_icon(4, 10, 6, 13,(uint8_t *)"", (uint8_t *)"Icons/apps.p16", screen, &sda_sys_con);
+    //optBtn = gr2_add_icon(6, 10, 8, 13,(uint8_t *)"", (uint8_t *)"Icons/options.p16", screen, &sda_sys_con);
+    devLockBtn = gr2_add_icon(0, 13, 1, 14, "", (uint8_t *)"Icons/lock.p16", screen, &sda_sys_con);
     lockBtn = gr2_add_icon(4, 10, 6, 13,(uint8_t *)"", (uint8_t *)"Icons/lock.p16", screen, &sda_sys_con);
     gr2_set_visible(lockBtn, 0, &sda_sys_con);
     gr2_text_set_size(tHeading, 70, &sda_sys_con);
@@ -145,6 +151,12 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
       gr2_set_str(screen,(uint8_t *)"background.p16", &sda_sys_con);
     }
 
+    if (svp_crypto_get_if_set_up() == 0) {
+      gr2_set_grayout(devLockBtn, 1, &sda_sys_con);
+    }
+
+    gr2_set_ghost(devLockBtn, 1, &sda_sys_con);
+    
     oldLock = DEVICE_UNLOCKED;
     return screen;
   }
@@ -178,11 +190,13 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     if (svpSGlobal.sdaDeviceLock != oldLock) {
       if (svpSGlobal.sdaDeviceLock == DEVICE_LOCKED) {
         gr2_set_visible(lockBtn, 1, &sda_sys_con);
-        gr2_set_visible(optBtn, 0, &sda_sys_con);
+        gr2_set_visible(devLockBtn, 0, &sda_sys_con);
+        //gr2_set_visible(optBtn, 0, &sda_sys_con);
         gr2_set_visible(appsBtn, 0, &sda_sys_con);
       } else {
         gr2_set_visible(lockBtn, 0, &sda_sys_con);
-        gr2_set_visible(optBtn, 1, &sda_sys_con);
+        //gr2_set_visible(optBtn, 1, &sda_sys_con);
+        gr2_set_visible(devLockBtn, 1, &sda_sys_con);
         gr2_set_visible(appsBtn, 1, &sda_sys_con);
       }
       oldLock = svpSGlobal.sdaDeviceLock;
@@ -212,11 +226,16 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     }
     gr2_set_event(appsBtn, EV_NONE, &sda_sys_con);
 
-    if (gr2_get_event(optBtn, &sda_sys_con) == EV_RELEASED) {
+    if (gr2_get_event(devLockBtn, &sda_sys_con) == EV_RELEASED) {
+      sda_set_device_lock(1);
+    }
+    gr2_set_event(devLockBtn, EV_NONE, &sda_sys_con);
+
+    /*if (gr2_get_event(optBtn, &sda_sys_con) == EV_RELEASED) {
       gr2_ki_unselect(screen, &sda_sys_con);
       sda_slot_on_top(SDA_SLOT_SETTINGS);
     }
-    gr2_set_event(optBtn, EV_NONE, &sda_sys_con);
+    gr2_set_event(optBtn, EV_NONE, &sda_sys_con);*/
 
     sda_screen_button_handler(screen, 0, &sda_sys_con);
   }

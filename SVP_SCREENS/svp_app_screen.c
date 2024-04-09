@@ -275,6 +275,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
   static uint16_t textLabel;
   static uint16_t btnBack;
   static uint16_t btnSwitch;
+  static uint16_t btnSettings;
   static uint8_t  labelbuff[APP_NAME_LEN+1];
   static uint8_t  appActivePrev;
   static uint8_t  inScrReloaded;
@@ -301,9 +302,12 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
 
     gr2_set_screen(inScreen, appScreen, &sda_sys_con);
 
-    textLabel = gr2_add_text(2, 0, 10, 2, ASCR_APPLICATIONS, appScreen, &sda_sys_con);
+    textLabel = gr2_add_text(0, 0, 6, 2, ASCR_APPLICATIONS, appScreen, &sda_sys_con);
     btnBack = gr2_add_button(0, 0, 2, 2, (uint8_t *)"<-", appScreen, &sda_sys_con);
     btnSwitch = gr2_add_button(2, 25, 8, 27, ASCR_RUNNING_APP, appScreen, &sda_sys_con);
+    btnSettings = gr2_add_button(6, 0, 10, 2, (uint8_t *)"Nastavení", appScreen, &sda_sys_con);
+    gr2_set_ghost(btnSettings, 1, &sda_sys_con);
+    gr2_text_set_align(btnSettings, GR2_ALIGN_CENTER, &sda_sys_con);
 
     gr2_text_set_align(btnSwitch, GR2_ALIGN_CENTER, &sda_sys_con);
     gr2_set_visible(btnBack, 0, &sda_sys_con);
@@ -336,6 +340,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
         add_to_stack(selectedObject);
         sda_strcp(selectedObjectStr, labelbuff, sizeof(labelbuff));
         gr2_set_str(textLabel, labelbuff, &sda_sys_con);
+        gr2_set_x1(textLabel, 2, &sda_sys_con);
         sda_strcp(selectedObjectStr, folderStackStr[folder_stack_max], sizeof(folderStackStr));
 
         gr2_set_visible(btnBack, 1, &sda_sys_con);
@@ -373,13 +378,20 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
       sda_strcp(folderStackStr[folder_stack_max], labelbuff, sizeof(labelbuff));
 
       gr2_set_str(textLabel, labelbuff, &sda_sys_con);
+      gr2_set_x1(textLabel, 2, &sda_sys_con);
 
       if (folder_stack_max == 1) {
         gr2_set_visible(btnBack, 0, &sda_sys_con);
         gr2_set_str(textLabel, ASCR_APPLICATIONS, &sda_sys_con);
+        gr2_set_x1(textLabel, 0, &sda_sys_con);
       }
     }
     gr2_set_event(btnBack, EV_NONE, &sda_sys_con);
+
+    if (gr2_get_event(btnSettings, &sda_sys_con) == EV_RELEASED) {
+      sda_slot_on_top(SDA_SLOT_SETTINGS);
+      gr2_set_event(btnSettings, EV_NONE, &sda_sys_con);
+    }
 
     if (appActive){
       if (gr2_get_event(btnSwitch, &sda_sys_con) == EV_RELEASED) {

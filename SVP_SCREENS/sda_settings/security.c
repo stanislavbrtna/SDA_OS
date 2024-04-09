@@ -124,9 +124,8 @@ uint16_t sda_settings_security_screen(uint8_t init) {
   }
 
   if (gr2_clicked(optSecuLock, &sda_sys_con)) {
-    svpSGlobal.sdaDeviceLock = DEVICE_LOCKED;
     sda_slot_on_top(SDA_SLOT_HOMESCREEN);
-    rtc_write_locked(1);
+    sda_set_device_lock(1);
   }
 
   if (gr2_clicked(optSecuOk, &sda_sys_con) && svp_strcmp(optSecuNewStr, "") == 0) {
@@ -163,6 +162,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
         gr2_set_visible(resetBtn, 1, &sda_sys_con);
       }
       svp_crypto_lock();
+      sda_homescreen_lock_en();
     }
     optSecuNewStr[0] = 0;
     optSecuOldStr[0] = 0;
