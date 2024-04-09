@@ -52,5 +52,6 @@ uint8_t svp_touch_keyboard(
 
 // keyboard input handler for C
 uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id);
+uint8_t sda_kbd_input_ret_detect(uint8_t * str, uint16_t len);
 
 #endif

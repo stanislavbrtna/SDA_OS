@@ -53,7 +53,9 @@ void sda_set_time_update_flag() {
 
 
 void sda_keyboard_show() {
-  svpSGlobal.kbdKeyStr[0] = 0;
+  if (svpSGlobal.kbdVisible == 0) {
+    svpSGlobal.kbdKeyStr[0] = 0;
+  }
   svpSGlobal.kbdVisible = 1;
 }
 

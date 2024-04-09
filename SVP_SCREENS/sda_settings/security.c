@@ -107,7 +107,15 @@ uint16_t sda_settings_security_screen(uint8_t init) {
 
   svp_input_handler(optSecuNewStr, 32, optSecuNew);
 
+  if(sda_kbd_input_ret_detect(optSecuNewStr, 32)) {
+    gr2_set_event(optSecuOk, EV_RELEASED, &sda_sys_con);
+  }
+
   svp_input_handler(optSecuOldStr, 32, optSecuOld);
+
+  if(sda_kbd_input_ret_detect(optSecuOldStr, 32)) {
+    gr2_activate_text(optSecuNew, &sda_sys_con);
+  }
 
   if (gr2_clicked(optSecuNewBtn, &sda_sys_con)) {
     gr2_text_set_pwd(optSecuNew, 1 - gr2_text_get_pwd(optSecuNew, &sda_sys_con), &sda_sys_con);

@@ -110,3 +110,23 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
     }
     return 0;
 }
+
+
+uint8_t sda_kbd_input_ret_detect(uint8_t * str, uint16_t len) {
+  uint16_t x = 0;
+
+  // string lenght
+  while(str[x] != 0) {
+    x++;
+    if (x == len) {
+      return 0;
+    }
+  }
+
+  if (x == 0) return 0;
+
+  if (str[x - 1] == '\n') {
+    str[x - 1] = 0;
+    return 1;
+  }
+}

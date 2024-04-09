@@ -113,6 +113,10 @@ void password_overlay_update(uint16_t ovId) {
   
   svp_input_handler(passInputStr, 32, passInput);
 
+  if(sda_kbd_input_ret_detect(passInputStr, 32) == 1) {
+    gr2_set_event(okButton, EV_RELEASED, &sda_sys_con);
+  }
+
   if (gr2_clicked(passButton, &sda_sys_con)) {
     gr2_text_set_pwd(passInput, 1 - gr2_text_get_pwd(passInput, &sda_sys_con), &sda_sys_con);
   }
