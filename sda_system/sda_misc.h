@@ -69,4 +69,6 @@ void sda_set_init_struct_defaults();
 
 void sda_precache();
 
+void sda_set_device_lock(uint8_t locked);
+
 #endif

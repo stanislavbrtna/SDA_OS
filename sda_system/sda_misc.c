@@ -323,3 +323,14 @@ void sda_set_init_struct_defaults() {
 
   svpSGlobal.breakP16Draw = 0;
 }
+
+
+void sda_set_device_lock(uint8_t locked) {
+  if (locked) {
+    svpSGlobal.sdaDeviceLock = DEVICE_LOCKED;
+    rtc_write_locked(1);
+  } else {
+    svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
+    rtc_write_locked(0);
+  }
+}
