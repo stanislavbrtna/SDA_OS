@@ -279,62 +279,6 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   return 1;
 }
 
-void svmLoadParent(uint8_t errorOccured) {
-  uint8_t  argBuff[2048];
-  varType  svmCallRetval[3];
-  uint8_t  svmCallRetvalType[3];
-  uint8_t* svmCallRetvalStr[3];
-  uint8_t  callback[NAME_LENGTH];
-
-  svmStoreArguments(argBuff, svmMeta.svmCallRetval, svmMeta.svmCallRetvalType, svmMeta.svmCallRetvalStr, &svm);
-
-  sda_strcp(svmMeta.svmCallback, callback, NAME_LENGTH);
-
-  for (uint32_t i = 0; i < 3; i++) {
-    svmCallRetval[i]     = svmMeta.svmCallRetval[i];
-    svmCallRetvalType[i] = svmMeta.svmCallRetvalType[i];
-    svmCallRetvalStr[i]  = svmMeta.svmCallRetvalStr[i];
-  }
-
-  // load parent
-  if (svmGetValidPid(svmMeta.parentPid)) {
-    if (svmLoadProcData(svmMeta.parentPid) == 0) {
-      printf("svmCloseRunning: Loading parent app failed! (pid: %u)\n", svmMeta.parentPid);
-      svmValid = 0;
-      sda_slot_set_invalid(SDA_SLOT_SVM);
-      sda_slot_on_top(SDA_SLOT_APPLIST);
-      svp_switch_main_dir();
-      svp_chdir((uint8_t *)"APPS");
-      return;
-    }
-  } else {
-    svmValid = 0;
-    sda_slot_set_invalid(SDA_SLOT_SVM);
-    sda_slot_on_top(SDA_SLOT_APPLIST);
-    printf("svmCloseRunning: Parent is not valid. (%u)\n", svmMeta.parentPid);
-    svp_switch_main_dir();
-    svp_chdir((uint8_t *)"APPS");
-    return;
-  }
-
-  // Launch callback
-  //printf("Parent loaded, executing callback: %s\n", callback);
-  if(functionExists(callback, &svm)) {
-    svmRestoreArguments(svmCallRetvalType, svmCallRetval, svmCallRetvalStr, &svm);
-    if(!errorOccured) {
-      commExec(callback, &svm);
-    } else {
-      printf("%s: Error occured in child process, callback won't be launched!\n", __FUNCTION__);
-    }
-  } else {
-    if (!svp_strcmp(callback, (uint8_t *)"")) {
-      printf("%s: Callback \"%s\" does not exist!\n", __FUNCTION__, callback);
-    }
-  }
-
-  svmOnTop();
-  setRedrawFlag();
-}
 
 void sdaSvmKillApp_handle();
 

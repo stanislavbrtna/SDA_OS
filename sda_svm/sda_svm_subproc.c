@@ -192,6 +192,68 @@ void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **
   }
 }
 
+
+uint8_t svmLoadParent(uint8_t errorOccured) {
+  uint8_t  argBuff[2048];
+  varType  svmCallRetval[3];
+  uint8_t  svmCallRetvalType[3];
+  uint8_t* svmCallRetvalStr[3];
+  uint8_t  callback[NAME_LENGTH];
+
+  svmStoreArguments(argBuff, svmMeta.svmCallRetval, svmMeta.svmCallRetvalType, svmMeta.svmCallRetvalStr, &svm);
+
+  sda_strcp(svmMeta.svmCallback, callback, NAME_LENGTH);
+
+  for (uint32_t i = 0; i < 3; i++) {
+    svmCallRetval[i]     = svmMeta.svmCallRetval[i];
+    svmCallRetvalType[i] = svmMeta.svmCallRetvalType[i];
+    svmCallRetvalStr[i]  = svmMeta.svmCallRetvalStr[i];
+  }
+
+  // load parent
+  if (svmGetValidPid(svmMeta.parentPid)) {
+    if (svmLoadProcData(svmMeta.parentPid) == 0) {
+      printf("%s: Loading parent app failed! (pid: %u)\n",__FUNCTION__, svmMeta.parentPid);
+      svmSetValid(0);
+      sda_slot_set_invalid(SDA_SLOT_SVM);
+      sda_slot_on_top(SDA_SLOT_APPLIST);
+      svp_switch_main_dir();
+      svp_chdir((uint8_t *)"APPS");
+      return 1;
+    }
+  } else {
+    //svmSetValid(0);
+    //sda_slot_set_invalid(SDA_SLOT_SVM);
+    
+    sda_slot_on_top(SDA_SLOT_APPLIST);
+    printf("%s: Parent is not valid. (%u)\n",__FUNCTION__, svmMeta.parentPid);
+    svp_switch_main_dir();
+    svp_chdir((uint8_t *)"APPS");
+    return 1;
+  }
+
+  // Launch callback
+  //printf("Parent loaded, executing callback: %s\n", callback);
+  if(functionExists(callback, &svm)) {
+    svmRestoreArguments(svmCallRetvalType, svmCallRetval, svmCallRetvalStr, &svm);
+    if(!errorOccured) {
+      commExec(callback, &svm);
+    } else {
+      printf("%s: Error occured in child process, callback won't be launched!\n", __FUNCTION__);
+    }
+  } else {
+    if (!svp_strcmp(callback, (uint8_t *)"")) {
+      printf("%s: Callback \"%s\" does not exist!\n", __FUNCTION__, callback);
+    }
+  }
+
+  svmOnTop();
+  setRedrawFlag();
+
+  return 0;
+}
+
+
 void svmSaveProcData() {
 #ifdef SVM_DBG_ENABLED
   printf("svmSaveProcData: saving: id: %u\n", svmMeta.id);

@@ -84,8 +84,11 @@ void svmCloseRunning() {
   sda_custom_icon_release_pid(svmMeta.pid);
 
   if (svmMeta.parentPid != 0) {
-    svmLoadParent(errorOccured);
-    return;
+    if (svmLoadParent(errorOccured) == 0) {
+      // return from exit, continue executing parent app
+      return;
+    }
+    // else: parent failed to load, continue with exit...
   }
 
   gr2_text_deactivate(&sda_app_con);

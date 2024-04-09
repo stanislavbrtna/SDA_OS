@@ -102,7 +102,15 @@ uint8_t svmStoreRunning() {
 void svmSuspend() {
   if (svmMeta.parentPid != 0) {
     uint8_t errorOccured = 0;
+    
+    // zero pid before saving
+    uint16_t parentPid = svmMeta.parentPid;
+    svmMeta.parentPid = 0;
+    // save
     svmStoreRunning();
+
+    // reload pid, so load parent works as expected
+    svmMeta.parentPid = parentPid;
 
     if((errCheck(&svm) == 1) && (soft_error_flag == 0)) {
       svp_errSoftPrint(&svm);
@@ -117,7 +125,6 @@ void svmSuspend() {
       svmLoadParent(errorOccured);
     }
 
-    //svmLoadParent(errorOccured);
     return;
   } else {
     svmExecSuspend();

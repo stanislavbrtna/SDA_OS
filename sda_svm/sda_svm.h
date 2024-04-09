@@ -185,7 +185,7 @@ void svmSetRestoreSlot(uint8_t slot);
 // multiprocess internal functions
 void svmSaveProcData();
 uint8_t svmLoadProcData(uint16_t pid);
-void svmLoadParent(uint8_t errorOccured);
+uint8_t svmLoadParent(uint8_t errorOccured);
 
 uint16_t svmGetIfSingular(uint8_t * name);
 
