@@ -237,6 +237,7 @@ void sda_main_process_touch() {
         if (svpSGlobal.inputMethod == ON_SCREEN_KEYBOARD) {
           sda_keyboard_show();
         }
+        svpSGlobal.kbdKeyStr[0] = 0;
       }
     }
   } else {
