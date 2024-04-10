@@ -24,6 +24,7 @@ SOFTWARE.
 #define SDA_SYSTEM_OVERLAYS_H
 
 #include "../../SDA_OS.h"
+#include "sda_quick_launch.h"
 
 void sda_system_overlays_handler();
 
