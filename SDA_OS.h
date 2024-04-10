@@ -59,6 +59,7 @@ SOFTWARE.
 #include "sda_util/sda_images.h"
 #include "sda_util/native_drivers/sda_keyboard_driver.h"
 #include "sda_gui/sda_overlays_api.h"
+#include "sda_gui/sda_system_overlays/sda_system_overlays.h"
 #include "sda_system/sda_misc.h"
 #include "sda_svm/sda_svm.h"
 #include "sda_system/sda_alarms.h"
