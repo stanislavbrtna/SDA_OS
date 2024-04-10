@@ -207,21 +207,7 @@ uint8_t sda_main_loop() {
   sda_main_redraw();
 
   // System overlays are updated before screens
-  if (sda_batt_overlay_shown()) {
-    batt_overlay_handle(0);
-  }
-
-  if(sda_dc_overlay_shown()) {
-    sda_dc_overlay_handle(0);
-  }
-
-  if (soft_error_flag == 1) {
-    sda_error_overlay_handle();
-  }
-
-  taskSwitcherUpdate();
-  sda_auth_overlay_handle();
-  sda_clipboard_overlay_update();
+  sda_system_overlays_handler();
 
   // updating screens
   if (sda_slot_get_valid(SDA_SLOT_HOMESCREEN)) {

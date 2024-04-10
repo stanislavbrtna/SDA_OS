@@ -22,9 +22,8 @@ SOFTWARE.
 
 #include "sda_system_overlays.h"
 
-// power options overlay
 uint16_t dc_overlay;
-uint8_t dc_overlay_flag;
+uint8_t  dc_overlay_flag;
 
 void sda_dc_overlay_destructor();
 

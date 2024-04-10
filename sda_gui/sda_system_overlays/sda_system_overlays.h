@@ -25,6 +25,8 @@ SOFTWARE.
 
 #include "../../SDA_OS.h"
 
+void sda_system_overlays_handler();
+
 // time selector overlay
 uint16_t time_overlay_init(); //ret: overlay id
 void time_overlay_set_time(uint16_t ovId, uint16_t hour, uint16_t min);
