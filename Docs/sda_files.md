@@ -251,7 +251,7 @@ Checks if key exists in conf file
 Return: [num] 1 if key exists.
 ##### Read key
     sys.fs.conf.read([str]key);
-Reads key from config file as a string, 128 chars max.
+Reads key from config file as a string, 1024 chars max.
 
 Return: [str]Value
 ##### Read Key as int
@@ -269,3 +269,8 @@ Return: None
 Removes given key.
 
 Return: None
+##### Get if key value matche
+    sys.fs.conf.valMatch([str]key, [str]value);
+Returns 1 if value matches portion of a value in a given key.
+
+Return: [num] isMatch (0 - no match, 1 - match, -1 - key not found)

@@ -391,3 +391,40 @@ void sda_conf_key_write_i32(sda_conf *fc, uint8_t* key, int32_t val) {
   sda_int_to_str(i, val, sizeof(i));
   sda_conf_key_write(fc, key, i);
 }
+
+
+uint8_t sda_conf_key_contains(sda_conf *fc, uint8_t* key, uint8_t* value) {
+  uint32_t x = 0;
+  uint32_t startPosition = 0;
+
+  CHECK_VALID_PRINT_ERROR_RETURN_ZERO;
+
+  if (sda_conf_key_exists(fc, key)) {
+    startPosition = svp_ftell(&(fc->fil));
+    sda_conf_skip_key(fc);
+    while (!svp_feof(&(fc->fil))) {
+      uint8_t c = svp_fread_u8(&(fc->fil));
+      if (value[x] == c) {
+        x++;
+      } else {
+        if (x != 0) {
+          x = 0;
+        }
+      }
+
+      if (value[x] == 0) {
+        svp_fseek(&(fc->fil), startPosition);
+        return 1;
+      }
+
+      if ((c == SDA_ENDLINE) || svp_feof(&(fc->fil))) {
+        break;
+      }
+    }
+    svp_fseek(&(fc->fil), startPosition);
+    return 0;
+  }
+
+  return 2;
+}
+

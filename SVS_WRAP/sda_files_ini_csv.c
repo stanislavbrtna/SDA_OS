@@ -336,11 +336,11 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Read key
   //#!    sys.fs.conf.read([str]key);
-  //#!Reads key from config file as a string, 128 chars max.
+  //#!Reads key from config file as a string, 1024 chars max.
   //#!
   //#!Return: [str]Value
   if (sysFuncMatch(argS->callId, "read", s)) {
-    uint8_t buff[512];
+    uint8_t buff[1024];
     argType[1] = SVS_TYPE_STR;
     if(sysExecTypeCheck(argS, argType, 1, s)){
       return 0;
@@ -352,8 +352,8 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     // TODO: Make loading in stream mode, with checking free string mem
-    sda_conf_key_read(&conFile, s->stringField+argS->arg[1].val_str, buff, 512);
-    buff[511] = 0;
+    sda_conf_key_read(&conFile, s->stringField+argS->arg[1].val_str, buff, sizeof(buff));
+    buff[sizeof(buff) - 1] = 0;
     result->value.val_u = strNew(buff, s);
     result->type = SVS_TYPE_STR;
     return 1;
@@ -419,6 +419,30 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     sda_conf_key_remove(&conFile, s->stringField + argS->arg[1].val_str);
+    return 1;
+  }
+
+  //#!##### Get if key value matche
+  //#!    sys.fs.conf.valMatch([str]key, [str]value);
+  //#!Returns 1 if value matches portion of a value in a given key.
+  //#!
+  //#!Return: [num] isMatch (0 - no match, 1 - match, -1 - key not found)
+  if (sysFuncMatch(argS->callId, "valMatch", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 2, s)){
+      return 0;
+    }
+
+    if (!conf_open) {
+      errSoft((uint8_t *)"Conf file not openned!", s);
+      return 0;
+    }
+    uint8_t r = sda_conf_key_contains(&conFile, s->stringField + argS->arg[1].val_str, s->stringField + argS->arg[2].val_str);
+    if (r == 0) result->value.val_s = 0;
+    if (r == 1) result->value.val_s = 1;
+    if (r == 2) result->value.val_s = -1;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
