@@ -270,7 +270,8 @@ Removes given key.
 
 Return: None
 ##### Get if key value matche
-    sys.fs.conf.valMatch([str]key, [str]value);
+    sys.fs.conf.valMatch([str]key, [str]value, [num]caseSensitive);
 Returns 1 if value matches portion of a value in a given key.
+Case sensitive switch switches if the thing is case sensitive...
 
 Return: [num] isMatch (0 - no match, 1 - match, -1 - key not found)

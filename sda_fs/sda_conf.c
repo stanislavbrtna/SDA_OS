@@ -393,7 +393,16 @@ void sda_conf_key_write_i32(sda_conf *fc, uint8_t* key, int32_t val) {
 }
 
 
-uint8_t sda_conf_key_contains(sda_conf *fc, uint8_t* key, uint8_t* value) {
+static uint8_t conf_lower(uint8_t c) {
+  if (c >= 'A' && c <= 'Z') {
+    return c + 32;
+  } else {
+    return c;
+  }
+}
+
+
+uint8_t sda_conf_key_contains(sda_conf *fc, uint8_t* key, uint8_t* value, uint8_t case_sensitive) {
   uint32_t x = 0;
   uint32_t startPosition = 0;
 
@@ -404,7 +413,15 @@ uint8_t sda_conf_key_contains(sda_conf *fc, uint8_t* key, uint8_t* value) {
     sda_conf_skip_key(fc);
     while (!svp_feof(&(fc->fil))) {
       uint8_t c = svp_fread_u8(&(fc->fil));
-      if (value[x] == c) {
+      uint8_t cmp = 0;
+
+      if (case_sensitive == 1) {
+        cmp = value[x] == c;
+      } else {
+        cmp = conf_lower(value[x]) == conf_lower(c);
+      }
+
+      if (cmp) {
         x++;
       } else {
         if (x != 0) {

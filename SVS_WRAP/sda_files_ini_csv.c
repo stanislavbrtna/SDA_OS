@@ -423,14 +423,16 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get if key value matche
-  //#!    sys.fs.conf.valMatch([str]key, [str]value);
+  //#!    sys.fs.conf.valMatch([str]key, [str]value, [num]caseSensitive);
   //#!Returns 1 if value matches portion of a value in a given key.
+  //#!Case sensitive switch switches if the thing is case sensitive...
   //#!
   //#!Return: [num] isMatch (0 - no match, 1 - match, -1 - key not found)
   if (sysFuncMatch(argS->callId, "valMatch", s)) {
     argType[1] = SVS_TYPE_STR;
     argType[2] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 2, s)){
+    argType[3] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 3, s)){
       return 0;
     }
 
@@ -438,7 +440,14 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       errSoft((uint8_t *)"Conf file not openned!", s);
       return 0;
     }
-    uint8_t r = sda_conf_key_contains(&conFile, s->stringField + argS->arg[1].val_str, s->stringField + argS->arg[2].val_str);
+
+    uint8_t r = sda_conf_key_contains(
+      &conFile,
+      s->stringField + argS->arg[1].val_str,
+      s->stringField + argS->arg[2].val_str,
+      (uint8_t)argS->arg[3].val_s
+    );
+
     if (r == 0) result->value.val_s = 0;
     if (r == 1) result->value.val_s = 1;
     if (r == 2) result->value.val_s = -1;

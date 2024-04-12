@@ -46,5 +46,6 @@ void sda_conf_key_write_i32(sda_conf *fc, uint8_t* key, int32_t val);
 
 void sda_conf_key_remove(sda_conf *fc, uint8_t* key);
 
-uint8_t sda_conf_key_contains(sda_conf *fc, uint8_t* key, uint8_t* value);
+uint8_t sda_conf_key_contains(sda_conf *fc, uint8_t* key, uint8_t* value, uint8_t case_sensitive);
+
 #endif
