@@ -22,6 +22,18 @@ Element given as back_btn_id will be linked with back button,
 otherwise back button will bring the user on the SDA_OS main screen.
 
 Return: None
+##### Selects element for keyboard control
+    sys.os.gui.btnSelect([num]element_id);
+Selects elemenet for keypad control.
+If the desired element is on a sub-screen of an button controlled screen,
+then the sub-screen must be also selected.
+
+Return: None
+##### Clear button control for a screen
+    sys.os.gui.btnClear([num]screen_id);
+Clears keypad input for entire screen.
+
+Return: None
 #### Text field handling
 ##### Handle text input
     sys.os.gui.handleText([num]id, [str]text);

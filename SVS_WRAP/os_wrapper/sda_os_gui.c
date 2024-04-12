@@ -303,6 +303,36 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Selects element for keyboard control
+  //#!    sys.os.gui.btnSelect([num]element_id);
+  //#!Selects elemenet for keypad control.
+  //#!If the desired element is on a sub-screen of an button controlled screen,
+  //#!then the sub-screen must be also selected.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "btnSelect", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+      gr2_ki_select((uint16_t) argS->arg[1].val_s, &sda_app_con);
+    return 1;
+  }
+
+  //#!##### Clear button control for a screen
+  //#!    sys.os.gui.btnClear([num]screen_id);
+  //#!Clears keypad input for entire screen.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "btnClear", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+      gr2_ki_unselect((uint16_t) argS->arg[1].val_s, &sda_app_con);
+    return 1;
+  }
+
   //#!#### Text field handling
 
   //#!##### Handle text input
