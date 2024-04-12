@@ -328,9 +328,9 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
     if(functionExists((uint8_t *)"update", &svm)) {
       commExec((uint8_t *)"update", &svm);
     } else {
-      svmCloseRunning();
-      printf("No update function found.\n");
+      printf("%s: No update function found. (%s pid: %u)\n", __FUNCTION__, svmMeta.name, svmMeta.pid);
       sda_show_error_message((uint8_t *)"No update function found.\n");
+      svmCloseRunning();
       return 0;
     }
     sdaSetRedrawDetect(0);

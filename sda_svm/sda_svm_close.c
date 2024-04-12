@@ -84,10 +84,12 @@ void svmCloseRunning() {
   sda_custom_icon_release_pid(svmMeta.pid);
 
   if (svmMeta.parentPid != 0) {
+    //printf("waking up parent from close!\n");
     if (svmLoadParent(errorOccured) == 0) {
       // return from exit, continue executing parent app
       return;
     }
+    //printf("close: parent failed to wake\n");
     // else: parent failed to load, continue with exit...
   }
 
