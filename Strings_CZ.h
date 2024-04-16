@@ -28,6 +28,7 @@
 #define SCR_SET_DEFAULTS              (uint8_t *)"Nastavit výchozí"
 #define SCR_NOTIFICATIONS             (uint8_t *)"Nastavení zvuku:"
 #define SCR_SOUND_OFF                 (uint8_t *)"Ztlumit zvuk"
+#define SCR_SYSTEM_OPTIONS            (uint8_t *)"Nastavení systému:"
 #define SCR_SECURITY_SCREEN           (uint8_t *)"Nastavení zabezpečení:"
 #define SCR_OLD_PASSWORD              (uint8_t *)"Původní heslo:"
 #define SCR_NEW_PASSWORD              (uint8_t *)"Nové heslo:"

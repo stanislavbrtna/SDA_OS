@@ -32,10 +32,11 @@ extern uint16_t mainScr;
 
 uint16_t svp_homeScreen(uint8_t init, uint8_t top);
 uint16_t svp_appScreen(uint8_t init, uint8_t top);
-uint16_t svp_optScreen(uint8_t init, uint8_t top);
+uint16_t sda_settings_gui(uint8_t init, uint8_t top);
 
 void sda_homescreen_configure();
 
+void sda_settings_open();
 void sda_settings_open_security();
 
 void taskSwitcherOpen();

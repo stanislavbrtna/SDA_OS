@@ -64,7 +64,6 @@ uint16_t sda_settings_info_screen(uint8_t init) {
   static uint16_t infoUptimeL;
   static uint16_t infoUptimePWR;
   static uint8_t infoBattPercentPrev;
-  static uint16_t optInfoBack;
   static uint16_t internalScr;
   static uint16_t slider;
   uint16_t optInfoScr;
@@ -72,6 +71,8 @@ uint16_t sda_settings_info_screen(uint8_t init) {
   if (init == 1) {
     optInfoScr = gr2_add_screen(&sda_sys_con);
     internalScr = gr2_add_screen(&sda_sys_con);
+
+    gr2_set_yscroll(optInfoScr, 16, &sda_sys_con);
 
     gr2_set_param(gr2_add_image(1, 1, 8, 4, (uint8_t *)"Icons/logo.p16", optInfoScr, &sda_sys_con), 1, &sda_sys_con);
     gr2_add_text(1, 4, 10, 5, SCR_OS_VERSION" "SDA_OS_VERSION, optInfoScr, &sda_sys_con);
@@ -99,19 +100,12 @@ uint16_t sda_settings_info_screen(uint8_t init) {
     gr2_add_text(0, 8, 10, 9,(uint8_t *)"SVS version: "SVS_VERSION, internalScr, &sda_sys_con);
     gr2_add_text(0, 9, 10, 12,(uint8_t *)"Compiled:\n"__DATE__" "__TIME__"\n(c) Standa", internalScr, &sda_sys_con);
 
-    optInfoBack = gr2_add_button(1, 12, 4, 13, SCR_BACK, optInfoScr, &sda_sys_con);
-    gr2_text_set_align(optInfoBack, GR2_ALIGN_CENTER, &sda_sys_con);
     return optInfoScr;
   }
 
   if (init == 2) {
     gr2_set_value(slider,0, &sda_sys_con);
-    return optInfoBack;
-  }
-
-  if (gr2_clicked(optInfoBack, &sda_sys_con)) {
-    mainScr = slotScreen[2];
-    setRedrawFlag();
+    return 0;
   }
 
   if (infoBattPercentPrev != svpSGlobal.battPercentage) {

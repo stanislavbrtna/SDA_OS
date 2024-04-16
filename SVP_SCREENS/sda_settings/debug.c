@@ -29,7 +29,6 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
 
   static uint16_t dbgUartEnable;
   static uint16_t dbgAutocahceEnable;
-  static uint16_t optDbgBack;
   static uint16_t bMemInfo;
   static uint16_t bSvmInfo;
   static uint16_t bCClean;
@@ -41,22 +40,20 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
   if (init == 1) {
     // notifiacations screen
     optDbgScr = gr2_add_screen(&sda_sys_con);
+
+    gr2_set_yscroll(optDbgScr, 16, &sda_sys_con);
+
     gr2_set_relative_init(1, &sda_sys_con);
-    gr2_add_text(1, 1, 9, 1, (uint8_t *)"Debug", optDbgScr, &sda_sys_con);
-    dbgUartEnable = gr2_add_checkbox(1, 3, 9, 1, (uint8_t *)"Use USB port for debug", optDbgScr, &sda_sys_con);
+    dbgUartEnable = gr2_add_checkbox(1, 1, 9, 1, (uint8_t *)"Use USB port for debug", optDbgScr, &sda_sys_con);
+    dbgAutocahceEnable = gr2_add_checkbox(1, 2, 9, 1, (uint8_t *)"Precache App on launch", optDbgScr, &sda_sys_con);
+    bKbd = gr2_add_checkbox(1, 3, 9, 1, (uint8_t *)"Native keyboard driver", optDbgScr, &sda_sys_con);
 
-    dbgAutocahceEnable = gr2_add_checkbox(1, 4, 9, 1, (uint8_t *)"Precache App on launch", optDbgScr, &sda_sys_con);
+    bCClean = gr2_add_button(1, 4, 6, 1, (uint8_t *)"Clean cached Apps", optDbgScr, &sda_sys_con);
 
-    bCClean = gr2_add_button(1, 6, 6, 1, (uint8_t *)"Clean cached Apps", optDbgScr, &sda_sys_con);
-
-    bKbd = gr2_add_checkbox(1, 5, 9, 1, (uint8_t *)"Native keyboard driver", optDbgScr, &sda_sys_con);
-
-    bMemInfo = gr2_add_button(1, 8, 6, 1, (uint8_t *)"Print memory info", optDbgScr, &sda_sys_con);
-    bSvmInfo = gr2_add_button(1, 9, 6, 1, (uint8_t *)"Print SVSvm info", optDbgScr, &sda_sys_con);
-
-    optDbgBack = gr2_add_button(1, 11, 3, 1, SCR_BACK, optDbgScr, &sda_sys_con);
     
-    gr2_text_set_align(optDbgBack, GR2_ALIGN_CENTER, &sda_sys_con);
+
+    bMemInfo = gr2_add_button(1, 6, 6, 1, (uint8_t *)"Print memory info", optDbgScr, &sda_sys_con);
+    bSvmInfo = gr2_add_button(1, 7, 6, 1, (uint8_t *)"Print SVSvm info", optDbgScr, &sda_sys_con);
 
     sda_settings_debug_screen(2); // reload options
 
@@ -70,7 +67,7 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
     gr2_set_value(bKbd, sda_keyboard_driver_enabled(), &sda_sys_con);
     gr2_set_grayout(bCClean, svmGetRunning(), &sda_sys_con); 
 
-    return optDbgBack;
+    return 0;
   }
 
 
@@ -108,11 +105,6 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
 
   if (gr2_clicked(bCClean, &sda_sys_con)) {
     svmRemovePrecache();
-  }
-
-  if (gr2_clicked(optDbgBack, &sda_sys_con)) {
-    mainScr = slotScreen[2];
-    setRedrawFlag();
   }
 
   return 0;

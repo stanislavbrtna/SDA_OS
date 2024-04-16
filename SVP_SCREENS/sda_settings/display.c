@@ -26,13 +26,11 @@ static uint8_t graphic_is_stored;
 static uint16_t optLcdScr;
 
 uint16_t sda_settings_display_screen(uint8_t init) {
-  static uint16_t optLcdBack;
   static uint16_t optLcdCol;
   static uint16_t optLcdNum;
   static uint16_t optLcdIncr;
   static uint16_t optLcdDecr;
   static uint8_t optLcdMins[2];
-  static uint16_t optLcdStore;
   static uint16_t optLcdCalib;
   static uint16_t optLcdBacklight;
   static uint16_t optColScr;
@@ -43,51 +41,41 @@ uint16_t sda_settings_display_screen(uint8_t init) {
     optLcdScr = gr2_add_screen(&sda_sys_con);
 
     optLcdMins[0] = svpSGlobal.lcdShutdownTime + 48;
-    gr2_add_text(1, 1, 10, 2, SCR_DISPLAY_SETTINGS_SCREEN, optLcdScr, &sda_sys_con);
+
+    gr2_set_yscroll(optLcdScr, 32 + 16, &sda_sys_con); // TODO: fix screen layout in a better way that this
 
     optLcdCol = gr2_add_button(1, 2, 9, 3, SCR_COLOR_SETTINGS, optLcdScr, &sda_sys_con);
     optLcdCalib = gr2_add_button(1, 3, 9, 4, SCR_LCD_CALIB, optLcdScr, &sda_sys_con);
     svp_settings_set_spacing(optLcdCol);
     svp_settings_set_spacing(optLcdCalib);
 
-    gr2_add_text(1, 4, 8, 5, SCR_DISPLAY_SHDN_TIME, optLcdScr, &sda_sys_con);
-    optLcdNum = gr2_add_text(4, 5, 5, 6, optLcdMins, optLcdScr, &sda_sys_con);
-    gr2_add_text(5, 5, 7, 6, (uint8_t *)"min", optLcdScr, &sda_sys_con);
+    gr2_add_text(1, 5, 8, 6, SCR_DISPLAY_SHDN_TIME, optLcdScr, &sda_sys_con);
+    optLcdNum = gr2_add_text(4, 6, 5, 7, optLcdMins, optLcdScr, &sda_sys_con);
+    gr2_add_text(5, 6, 7, 7, (uint8_t *)"min", optLcdScr, &sda_sys_con);
 
-    optLcdDecr = gr2_add_button(1, 5, 3, 6, (uint8_t *)"-", optLcdScr, &sda_sys_con);
+    optLcdDecr = gr2_add_button(1, 6, 3, 7, (uint8_t *)"-", optLcdScr, &sda_sys_con);
 
-    optLcdIncr = gr2_add_button(7, 5, 9, 6, (uint8_t *)"+", optLcdScr, &sda_sys_con);
+    optLcdIncr = gr2_add_button(7, 6, 9, 7, (uint8_t *)"+", optLcdScr, &sda_sys_con);
     gr2_text_set_align(optLcdDecr, GR2_ALIGN_CENTER, &sda_sys_con);
     gr2_text_set_align(optLcdIncr, GR2_ALIGN_CENTER, &sda_sys_con);
 
-    gr2_add_text(1, 6, 10, 7, SCR_BACKLIGHT, optLcdScr, &sda_sys_con);
+    gr2_add_text(1, 8, 10, 9, SCR_BACKLIGHT, optLcdScr, &sda_sys_con);
 
-    optLcdBacklight = gr2_add_slider_h(1, 7, 9, 8, 255 - MIN_BACKLIGHT_VALUE, svpSGlobal.lcdBacklight, optLcdScr, &sda_sys_con);
-
-    optLcdBack = gr2_add_button(1, 10, 4, 11, SCR_BACK, optLcdScr, &sda_sys_con);
-    optLcdStore = gr2_add_button(6, 10, 9, 11, SCR_STORE, optLcdScr, &sda_sys_con);
-
-    gr2_text_set_align(optLcdBack, GR2_ALIGN_CENTER, &sda_sys_con);
-    gr2_text_set_align(optLcdStore, GR2_ALIGN_CENTER, &sda_sys_con);
+    optLcdBacklight = gr2_add_slider_h(1, 9, 9, 10, 255 - MIN_BACKLIGHT_VALUE, svpSGlobal.lcdBacklight, optLcdScr, &sda_sys_con);
 
     return optLcdScr;
   }
 
   if (init == 2) {
     gr2_set_value(optLcdBacklight, svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE, &sda_sys_con);
-    return optLcdBack;
+    return 0;
   }
 
-  if (gr2_clicked(optLcdBack, &sda_sys_con)) {
-    mainScr = slotScreen[2];
-    setRedrawFlag();
-  }
 
   if (gr2_clicked(optLcdCol, &sda_sys_con)) {
-    mainScr = optColScr;
     graphic_is_stored = 0;
     sda_settings_color_screen(2);
-    setRedrawFlag();
+    sda_settings_stack_add(optColScr, SCR_COLOR_SETTINGS_SCREEN);
   }
 
   if (gr2_clicked(optLcdCalib, &sda_sys_con)) {
@@ -109,6 +97,7 @@ uint16_t sda_settings_display_screen(uint8_t init) {
       svpSGlobal.lcdShutdownTime--;
       optLcdMins[0] = svpSGlobal.lcdShutdownTime + 48;
       gr2_set_modified(optLcdNum, &sda_sys_con);
+      sda_store_sleep_time();
     }
   }
 
@@ -117,6 +106,7 @@ uint16_t sda_settings_display_screen(uint8_t init) {
       svpSGlobal.lcdShutdownTime++;
       optLcdMins[0] = svpSGlobal.lcdShutdownTime + 48;
       gr2_set_modified(optLcdNum, &sda_sys_con);
+      sda_store_sleep_time();
     }
   }
 
@@ -135,9 +125,6 @@ uint16_t sda_settings_display_screen(uint8_t init) {
     gr2_set_value(optLcdBacklight, svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE, &sda_sys_con);
   }
 
-  if (gr2_clicked(optLcdStore, &sda_sys_con)) {
-    sda_store_sleep_time();
-  }
   return 0;
 }
 
@@ -157,7 +144,7 @@ uint16_t sda_settings_color_screen(uint8_t init) {
   static uint16_t ficolOvrId;
   static uint16_t actcolOvrId;
 
-  static uint16_t optColBack;
+  static uint16_t optColCancel;
 
   static uint16_t border_color_bkp;
   static uint16_t text_color_bkp;
@@ -171,7 +158,8 @@ uint16_t sda_settings_color_screen(uint8_t init) {
     //color screen
     optColScr = gr2_add_screen(&sda_sys_con);
 
-    gr2_add_text(1, 1, 10, 2, SCR_COLOR_SETTINGS_SCREEN, optColScr, &sda_sys_con);
+    gr2_set_yscroll(optColScr, 32 + 16, &sda_sys_con);
+   
     b_border = gr2_add_cbutton(2, 2, 8, 3, SCR_BORDER_COLOR, optColScr, &sda_sys_con);
     gr2_text_set_align(b_border, GR2_ALIGN_CENTER, &sda_sys_con);
     gr2_set_value(b_border,gr2_get_border_color(&sda_sys_con), &sda_sys_con);
@@ -196,27 +184,31 @@ uint16_t sda_settings_color_screen(uint8_t init) {
     gr2_text_set_align(b_def, GR2_ALIGN_CENTER, &sda_sys_con);
 
     b_store = gr2_add_button(6, 10, 9, 11, SCR_STORE, optColScr, &sda_sys_con);
-    optColBack = gr2_add_button(1, 10, 4, 11, SCR_BACK, optColScr, &sda_sys_con);
+    optColCancel = gr2_add_button(1, 10, 4, 11, OVRL_CANCEL, optColScr, &sda_sys_con);
+
+    gr2_set_visible(optColCancel, 0, &sda_sys_con);
 
     gr2_text_set_align(b_store, GR2_ALIGN_CENTER, &sda_sys_con);
-    gr2_text_set_align(optColBack, GR2_ALIGN_CENTER, &sda_sys_con);
+    gr2_text_set_align(optColCancel, GR2_ALIGN_CENTER, &sda_sys_con);
 
     return optColScr;
   }
 
   if (init == 2) {
-    // store for possible back out of settings
-    border_color_bkp = gr2_get_border_color(&sda_sys_con);
-    text_color_bkp = gr2_get_text_color(&sda_sys_con);
-    background_color_bkp = gr2_get_background_color(&sda_sys_con);
-    fill_color_bkp = gr2_get_fill_color(&sda_sys_con);
-    active_color_bkp = gr2_get_active_color(&sda_sys_con);
-    // reload the color input values
-    gr2_set_value(b_border, gr2_get_border_color(&sda_sys_con), &sda_sys_con);
-    gr2_set_value(b_text, gr2_get_text_color(&sda_sys_con), &sda_sys_con);
-    gr2_set_value(b_back, gr2_get_background_color(&sda_sys_con), &sda_sys_con);
-    gr2_set_value(b_fill, gr2_get_fill_color(&sda_sys_con), &sda_sys_con);
-    gr2_set_value(b_active, gr2_get_active_color(&sda_sys_con), &sda_sys_con);
+    if (gr2_get_visible(optColCancel, &sda_sys_con) == 0) {
+      // store for possible back out of settings
+      border_color_bkp = gr2_get_border_color(&sda_sys_con);
+      text_color_bkp = gr2_get_text_color(&sda_sys_con);
+      background_color_bkp = gr2_get_background_color(&sda_sys_con);
+      fill_color_bkp = gr2_get_fill_color(&sda_sys_con);
+      active_color_bkp = gr2_get_active_color(&sda_sys_con);
+      // reload the color input values
+      gr2_set_value(b_border, gr2_get_border_color(&sda_sys_con), &sda_sys_con);
+      gr2_set_value(b_text, gr2_get_text_color(&sda_sys_con), &sda_sys_con);
+      gr2_set_value(b_back, gr2_get_background_color(&sda_sys_con), &sda_sys_con);
+      gr2_set_value(b_fill, gr2_get_fill_color(&sda_sys_con), &sda_sys_con);
+      gr2_set_value(b_active, gr2_get_active_color(&sda_sys_con), &sda_sys_con);
+    }
   }
 
   // border color
@@ -245,6 +237,7 @@ uint16_t sda_settings_color_screen(uint8_t init) {
       gr2_set_text_color(color_overlay_get_color(txcolOvrId), &sda_sys_con);
       color_overlay_clear_ok(txcolOvrId);
       gr2_set_value(b_text, gr2_get_text_color(&sda_sys_con), &sda_sys_con);
+      gr2_set_visible(optColCancel, 1, &sda_sys_con);
   }
 
   //background
@@ -259,6 +252,7 @@ uint16_t sda_settings_color_screen(uint8_t init) {
       gr2_set_background_color(color_overlay_get_color(bgcolOvrId), &sda_sys_con);
       color_overlay_clear_ok(bgcolOvrId);
       gr2_set_value(b_back, gr2_get_background_color(&sda_sys_con), &sda_sys_con);
+      gr2_set_visible(optColCancel, 1, &sda_sys_con);
   }
 
   //fill
@@ -273,6 +267,7 @@ uint16_t sda_settings_color_screen(uint8_t init) {
       gr2_set_fill_color(color_overlay_get_color(ficolOvrId), &sda_sys_con);
       color_overlay_clear_ok(ficolOvrId);
       gr2_set_value(b_fill, gr2_get_fill_color(&sda_sys_con), &sda_sys_con);
+      gr2_set_visible(optColCancel, 1, &sda_sys_con);
   }
 
   //active
@@ -287,16 +282,19 @@ uint16_t sda_settings_color_screen(uint8_t init) {
       gr2_set_active_color(color_overlay_get_color(actcolOvrId), &sda_sys_con);
       color_overlay_clear_ok(actcolOvrId);
       gr2_set_value(b_active,gr2_get_active_color(&sda_sys_con), &sda_sys_con);
+      gr2_set_visible(optColCancel, 1, &sda_sys_con);
   }
 
   //store button
   if (gr2_clicked(b_store, &sda_sys_con)) {
     sda_store_config_gui(0);
+    gr2_set_visible(optColCancel, 0, &sda_sys_con);
     graphic_is_stored = 1;
   }
 
   //def button
   if (gr2_clicked(b_def, &sda_sys_con)) {
+    gr2_set_visible(optColCancel, 0, &sda_sys_con);
     sda_store_config_gui(1);
     sda_load_config();
     gr2_set_value(b_border,gr2_get_border_color(&sda_sys_con), &sda_sys_con);
@@ -307,15 +305,22 @@ uint16_t sda_settings_color_screen(uint8_t init) {
     setRedrawFlag();
   }
 
-  if (gr2_clicked(optColBack, &sda_sys_con)) {
+  if (gr2_clicked(optColCancel, &sda_sys_con)) {
     if (!graphic_is_stored) {
       gr2_set_border_color(border_color_bkp, &sda_sys_con);
       gr2_set_text_color(text_color_bkp, &sda_sys_con);
       gr2_set_background_color(background_color_bkp, &sda_sys_con);
       gr2_set_fill_color(fill_color_bkp, &sda_sys_con);
       gr2_set_active_color(active_color_bkp, &sda_sys_con);
+      
+      gr2_set_value(b_border, gr2_get_border_color(&sda_sys_con), &sda_sys_con);
+      gr2_set_value(b_text, gr2_get_text_color(&sda_sys_con), &sda_sys_con);
+      gr2_set_value(b_back, gr2_get_background_color(&sda_sys_con), &sda_sys_con);
+      gr2_set_value(b_fill, gr2_get_fill_color(&sda_sys_con), &sda_sys_con);
+      gr2_set_value(b_active, gr2_get_active_color(&sda_sys_con), &sda_sys_con);
+
+      gr2_set_visible(optColCancel, 0, &sda_sys_con);
     }
-    mainScr = optLcdScr;
     setRedrawFlag();
   }
   return 0;

@@ -23,7 +23,6 @@ SOFTWARE.
 #include "settings.h"
 
 uint16_t sda_settings_security_screen(uint8_t init) {
-  static uint16_t optSecuBack;
   static uint16_t optSecuOld;
   static uint16_t optSecuNew;
 
@@ -43,7 +42,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
   if (init == 1) {
     optSecuScr = gr2_add_screen(&sda_sys_con);
 
-    gr2_add_text(1, 1, 10, 2, SCR_SECURITY_SCREEN, optSecuScr, &sda_sys_con);
+    gr2_set_yscroll(optSecuScr, 64 + 16, &sda_sys_con);
 
     gr2_add_text(1, 3, 10, 4, SCR_OLD_PASSWORD, optSecuScr, &sda_sys_con);
     optSecuOld = gr2_add_text(1, 4, 8, 5, (uint8_t *)"", optSecuScr, &sda_sys_con);
@@ -73,9 +72,6 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     gr2_text_set_pwd(optSecuNew, 1, &sda_sys_con);
     gr2_text_set_pwd(optSecuOld, 1, &sda_sys_con);
 
-    optSecuBack = gr2_add_button(1, 12, 4, 13, SCR_BACK, optSecuScr, &sda_sys_con);
-
-    gr2_text_set_align(optSecuBack, GR2_ALIGN_CENTER, &sda_sys_con);
     gr2_text_set_align(optSecuOk, GR2_ALIGN_CENTER, &sda_sys_con);
 
     return optSecuScr;
@@ -96,13 +92,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
       gr2_set_grayout(optSecuLock, 0, &sda_sys_con);
     }
 
-    return optSecuBack;
-  }
-
-  if (gr2_clicked(optSecuBack, &sda_sys_con)) {
-    mainScr = slotScreen[2];
-    sda_keyboard_hide();
-    setRedrawFlag();
+    return 0;
   }
 
   svp_input_handler(optSecuNewStr, 32, optSecuNew);

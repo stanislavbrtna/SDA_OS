@@ -28,6 +28,7 @@
 #define SCR_SET_DEFAULTS                              (uint8_t*)"Set default"
 #define SCR_NOTIFICATIONS                             (uint8_t*)"Sound settings:"
 #define SCR_SOUND_OFF                                 (uint8_t*)"Sound OFF"
+#define SCR_SYSTEM_OPTIONS                            (uint8_t*)"System options:"
 #define SCR_SECURITY_SCREEN                           (uint8_t*)"Security settings:"
 #define SCR_OLD_PASSWORD                              (uint8_t*)"Old password::"
 #define SCR_NEW_PASSWORD                              (uint8_t*)"New password:"

@@ -134,7 +134,7 @@ static void sda_main_init() {
   sda_custom_icon_init();
 
   sda_slot_init(SDA_SLOT_APPLIST, svp_appScreen(1, 0), &sda_sys_con, 1, 0);
-  sda_slot_init(SDA_SLOT_SETTINGS, svp_optScreen(1, 0), &sda_sys_con, 1, 0);
+  sda_slot_init(SDA_SLOT_SETTINGS, sda_settings_gui(1, 0), &sda_sys_con, 1, 0);
   svmRun(1, 0);
   sda_slot_init(SDA_SLOT_SVM, 0, &sda_app_con, 0, 0);
 
@@ -219,7 +219,7 @@ uint8_t sda_main_loop() {
   }
 
   if (sda_slot_get_valid(SDA_SLOT_SETTINGS)) {
-    svp_optScreen(0, sda_if_slot_on_top(SDA_SLOT_SETTINGS));
+    sda_settings_gui(0, sda_if_slot_on_top(SDA_SLOT_SETTINGS));
   }
 
   if (sda_slot_get_valid(SDA_SLOT_SVM)) {

@@ -28,7 +28,7 @@ uint16_t sda_settings_time_screen(uint8_t init) {
   //nastavení data a času
   static uint16_t optTimeBtn;
   static uint16_t optDateBtn;
-  static uint16_t optTimBack;
+
 
   static uint16_t timeOvrId;
   static uint16_t dateOvrId;
@@ -36,17 +36,12 @@ uint16_t sda_settings_time_screen(uint8_t init) {
   if (init == 1) {
 
     optTimeScr = gr2_add_screen(&sda_sys_con);
-    gr2_add_text(1, 1, 10, 2, SCR_SET_TIME_SCR, optTimeScr, &sda_sys_con);
-    optTimeBtn = gr2_add_button(2, 2, 7, 3, SCR_SET_TIME, optTimeScr, &sda_sys_con);
-    optDateBtn = gr2_add_button(2, 3, 7, 4, SCR_SET_DATE, optTimeScr, &sda_sys_con);
-    optTimBack = gr2_add_button(1, 6, 4, 7, SCR_BACK, optTimeScr, &sda_sys_con);
-    gr2_text_set_align(optTimBack, GR2_ALIGN_CENTER, &sda_sys_con);
-
+    
+    gr2_set_yscroll(optTimeScr, 16, &sda_sys_con);
+    optTimeBtn = gr2_add_button(2, 1, 7, 2, SCR_SET_TIME, optTimeScr, &sda_sys_con);
+    optDateBtn = gr2_add_button(2, 2, 7, 3, SCR_SET_DATE, optTimeScr, &sda_sys_con);
+    
     return optTimeScr;
-  }
-
-  if (init == 2) {
-    return optTimBack;
   }
 
   if (gr2_clicked(optTimeBtn, &sda_sys_con)) {
@@ -82,9 +77,5 @@ uint16_t sda_settings_time_screen(uint8_t init) {
     dateOvrId = 0;
   }
 
-  if (gr2_clicked(optTimBack, &sda_sys_con)) {
-    mainScr = slotScreen[2];
-    setRedrawFlag();
-  }
   return 0;
 }

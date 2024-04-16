@@ -392,7 +392,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
     gr2_set_event(btnBack, EV_NONE, &sda_sys_con);
 
     if (gr2_get_event(btnSettings, &sda_sys_con) == EV_RELEASED) {
-      sda_slot_on_top(SDA_SLOT_SETTINGS);
+      sda_settings_open();
       gr2_set_event(btnSettings, EV_NONE, &sda_sys_con);
     }
 

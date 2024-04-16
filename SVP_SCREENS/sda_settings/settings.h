@@ -37,4 +37,6 @@ uint16_t sda_settings_security_screen(uint8_t init);
 
 void svp_settings_set_spacing(uint16_t id);
 
+void sda_settings_stack_add(uint16_t scr, uint8_t * label);
+
 #endif
