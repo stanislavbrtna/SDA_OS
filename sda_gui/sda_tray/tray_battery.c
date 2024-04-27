@@ -36,6 +36,13 @@ int16_t sda_tray_battery(int16_t x2, int16_t y1, int16_t w) {
 
   uint8_t curr_font;
 
+  if ((oldbatt != svpSGlobal.battPercentage) || (oldBattState != svpSGlobal.pwrType)) {
+    redraw = 0;
+    oldbatt = svpSGlobal.battPercentage;
+    oldBattState = svpSGlobal.pwrType;
+    irq_redraw = 1;
+  }
+
   if((redraw == 0) || (irq_redraw)) {
     // constructing battery string
     uint16_t n = 0;
@@ -55,9 +62,6 @@ int16_t sda_tray_battery(int16_t x2, int16_t y1, int16_t w) {
     n++;
     batt_string[n] = 0;
     n++;
-
-    oldbatt = svpSGlobal.battPercentage;
-    oldBattState = svpSGlobal.pwrType;
 
     // unknown value
     if(svpSGlobal.battPercentage == 101) {
@@ -102,9 +106,6 @@ int16_t sda_tray_battery(int16_t x2, int16_t y1, int16_t w) {
     systemBattClick = 1;
   }
 
-  if ((oldbatt != svpSGlobal.battPercentage) || (oldBattState != svpSGlobal.pwrType)) {
-    redraw = 0;
-  }
-
+  
   return w;
 }
