@@ -97,7 +97,7 @@ uint8_t svmCheckAndExit() {
 uint8_t svmRegisterUartCallback(uint8_t* callback, uint8_t val) {
   // check stored proc for empty callback
   for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
-    if (svmSavedProc[i].uartCallbackEnabled == 1 && svmSavedProc[i].valid) {
+    if (svmSavedProc[i].uartCallbackEnabled && svmSavedProc[i].valid) {
       return 1;
     }
   }
@@ -117,7 +117,7 @@ uint8_t svmRegisterUartCallback(uint8_t* callback, uint8_t val) {
 
 uint8_t svmGetUartCallbackActive() {
   for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
-    if (svmSavedProc[i].uartCallbackEnabled == 1 && svmSavedProc[i].valid) {
+    if (svmSavedProc[i].uartCallbackEnabled && svmSavedProc[i].valid) {
       return 1;
     }
   }
@@ -309,4 +309,13 @@ uint8_t svmUpdatePath(uint8_t *newFname, uint8_t *oldFname) {
 #endif
   // APPS string not in path...
   return 1;
+}
+
+void svmProcInfo() {
+  printf("ProcInfo:\n name, pid (id), crypto, singular, uartCB\n");
+  for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
+    if (svmSavedProc[i].valid) {
+       printf("%s, %u (%u), c:%u, s:%u, u:%u\n", svmSavedProc[i].name, svmSavedProc[i].pid, i, svmSavedProc[i].cryptoUnlocked, svmSavedProc[i].singular, svmSavedProc[i].uartCallbackEnabled);
+    }
+  }
 }

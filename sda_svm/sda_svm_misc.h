@@ -47,6 +47,8 @@ uint8_t svmGetSuspendOnClose();
 
 uint8_t svmHandleNotifIconCallback(uint16_t pid, uint8_t * callback);
 
+void svmProcInfo();
+
 // internal svm stuff
 void svmInit();
 uint8_t svmCheckAndExit();

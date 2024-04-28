@@ -64,6 +64,7 @@ void sda_lcd_on_handler() {
   sleepTimer = 0;
 }
 
+//#define POWER_MODE_DEBUG
 
 uint64_t sda_lcd_off_handler() {
   if ((wrap_get_lcdOffButtons() == 1 && slotOnTop[SDA_SLOT_SVM] && slotValid[SDA_SLOT_SVM]) // active app has enabled buttons
@@ -72,12 +73,21 @@ uint64_t sda_lcd_off_handler() {
      )
   {
     svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_LOW;
+#ifdef POWER_MODE_DEBUG
+    printf("SDA Power mode: LOW\n");
+#endif
     return 100; // time for the led to blink is returned
   } else if (sdaGetActiveAlarm() == 1) {
     svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_NORMAL;
+#ifdef POWER_MODE_DEBUG
+    printf("SDA Power mode: NORMAL\n");
+#endif
     return 300;
   }
   svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_DEEP;
+#ifdef POWER_MODE_DEBUG
+    printf("SDA Power mode: DEEP\n");
+#endif
   return 500;
 }
 
