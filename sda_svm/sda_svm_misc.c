@@ -115,6 +115,16 @@ uint8_t svmRegisterUartCallback(uint8_t* callback, uint8_t val) {
 }
 
 
+uint8_t svmGetUartCallbackActive() {
+  for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
+    if (svmSavedProc[i].uartCallbackEnabled == 1 && svmSavedProc[i].valid) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+
 uint8_t svmHandleUartCallbacks() {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmGetSavedProcValid(x) == 1) {

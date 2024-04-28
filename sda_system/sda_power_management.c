@@ -66,7 +66,11 @@ void sda_lcd_on_handler() {
 
 
 uint64_t sda_lcd_off_handler() {
-  if ((wrap_get_lcdOffButtons() == 1 && slotOnTop[4] && slotValid[4]) || sdaSvmIsTimerSet()) {
+  if ((wrap_get_lcdOffButtons() == 1 && slotOnTop[SDA_SLOT_SVM] && slotValid[SDA_SLOT_SVM]) // active app has enabled buttons
+      || sdaSvmIsTimerSet() // timer is enabled
+      || svmGetUartCallbackActive() // active uart callback
+     )
+  {
     svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_LOW;
     return 100; // time for the led to blink is returned
   } else if (sdaGetActiveAlarm() == 1) {

@@ -40,6 +40,7 @@ uint8_t svmBeepHandler();
 
 uint8_t svmRegisterUartCallback(uint8_t* callback, uint8_t val);
 uint8_t svmHandleUartCallbacks();
+uint8_t svmGetUartCallbackActive();
 
 void    svmSetSuspendOnClose(uint8_t val);
 uint8_t svmGetSuspendOnClose();
