@@ -130,6 +130,10 @@ uint8_t svmHandleUartCallbacks() {
         if (svmGetSavedProcPid(x) == svmMeta.pid) {
           //execute
           commExec(svmMeta.uartCallback, &svm);
+          // suspend flag was not reset on store,
+          // because process was not yet stored, this is stupid and affects all callbacks...
+          // TODO: fix this
+          svmMeta.suspendExecuted = 0;
           if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
             svp_errSoftPrint(&svm);
             return 1;
