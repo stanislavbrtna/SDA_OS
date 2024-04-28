@@ -98,14 +98,14 @@ includung the name of the app.
 
 Return: [str] Path
 #### Keyboard
-##### Hide keyboard
-    sys.os.hideKbd();
-Hides system keyboard.
-
-Return: None
 ##### Show keyboard
     sys.os.showKbd();
 Shows system keyboard
+
+Return: None
+##### Hide keyboard
+    sys.os.hideKbd();
+Hides system keyboard.
 
 Return: None
 ##### Get Keyboard state

@@ -202,7 +202,7 @@ uint8_t svm_text_handler(varRetVal *result, argStruct *argS, svsVM *s) {
 }
 
 
-uint16_t load_sic(uint8_t * fname,uint8_t * callback) {
+uint16_t sda_load_sic(uint8_t * fname,uint8_t * callback) {
   svp_file fil;
   uint8_t icon[128];
   uint8_t c = 0;
@@ -218,6 +218,8 @@ uint16_t load_sic(uint8_t * fname,uint8_t * callback) {
     svp_fclose(&fil);
 
     return sda_custom_icon_set(icon, svmGetPid(), callback);
+  } else {
+    printf("%s: File does not exist!: %s\n", __FUNCTION__, fname);
   }
 
   return 0;
@@ -261,6 +263,8 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set root for redraw
   //#!    sys.os.gui.setRoot([num]in_apps, [str]dir);
   //#!Sets custom root directory for the redraw function.
+  //#!All paths for icons and other images pased to gui functions will
+  //#!use this folder as a root.
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setRoot", s)) {
@@ -289,8 +293,8 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Handle keypad input of a screen
   //#!    sys.os.gui.btnCtrl([num]screen_id, [num]back_btn_id);
   //#!Allows control of a given screen via buttons.
-  //#!Element given as back_btn_id will be linked with back button,
-  //#!otherwise back button will bring the user on the SDA_OS main screen.
+  //#!Element given as back_btn_id will be linked with back button.
+  //#!When 0 is passed instead of id, back button will bring the user on the SDA_OS main screen.
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "btnCtrl", s)) {
@@ -391,6 +395,13 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   if (sysFuncMatch(argS->callId, "pasteClipboard", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)){
       return 0;
+    }
+
+    if(sda_app_con.textActive == 0) {
+      printf("Warning: sys.os.gui.pasteClipboard(): no active text field!\n");
+      result->value.val_u = 0;
+      result->type = SVS_TYPE_NUM;
+      return 1;
     }
 
     svpSGlobal.newStringIdFlag = sda_app_con.textActiveId;
@@ -494,7 +505,8 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Set notification area icon
   //#!    sys.os.gui.setNotif([str] path_to_sic, [str] callback);
-  //#!Sets the notification area icon.
+  //#!Sets the notification area icon. Path is dependent on actual CWD.
+  //#!
   //#!
   //#!Return: [num] id (1 - 3), 0 - Error, probably no empty icon spot
   if (sysFuncMatch(argS->callId, "setNotif", s)) {
@@ -505,7 +517,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_u = load_sic(s->stringField + argS->arg[1].val_str, s->stringField + argS->arg[2].val_str);
+    result->value.val_u = sda_load_sic(s->stringField + argS->arg[1].val_str, s->stringField + argS->arg[2].val_str);
     result->type = SVS_TYPE_NUM;
     return 1;
   }

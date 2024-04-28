@@ -13,13 +13,15 @@ Return: [num]id
 ##### Set root for redraw
     sys.os.gui.setRoot([num]in_apps, [str]dir);
 Sets custom root directory for the redraw function.
+All paths for icons and other images pased to gui functions will
+use this folder as a root.
 
 Return: None
 ##### Handle keypad input of a screen
     sys.os.gui.btnCtrl([num]screen_id, [num]back_btn_id);
 Allows control of a given screen via buttons.
-Element given as back_btn_id will be linked with back button,
-otherwise back button will bring the user on the SDA_OS main screen.
+Element given as back_btn_id will be linked with back button.
+When 0 is passed instead of id, back button will bring the user on the SDA_OS main screen.
 
 Return: None
 ##### Selects element for keyboard control
@@ -76,7 +78,8 @@ Return: [num]val
 #### Notification area icons
 ##### Set notification area icon
     sys.os.gui.setNotif([str] path_to_sic, [str] callback);
-Sets the notification area icon.
+Sets the notification area icon. Path is dependent on actual cwd.
+
 
 Return: [num] id (1 - 3), 0 - Error, probably no empty icon spot
 ##### Free notification area icon

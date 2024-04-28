@@ -281,19 +281,6 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!#### Keyboard
 
-  //#!##### Hide keyboard
-  //#!    sys.os.hideKbd();
-  //#!Hides system keyboard.
-  //#!
-  //#!Return: None
-  if (sysFuncMatch(argS->callId, "hideKbd", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    sda_keyboard_hide();
-    return 1;
-  }
-
   //#!##### Show keyboard
   //#!    sys.os.showKbd();
   //#!Shows system keyboard
@@ -304,6 +291,19 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     sda_keyboard_show();
+    return 1;
+  }
+
+  //#!##### Hide keyboard
+  //#!    sys.os.hideKbd();
+  //#!Hides system keyboard.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "hideKbd", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    sda_keyboard_hide();
     return 1;
   }
 

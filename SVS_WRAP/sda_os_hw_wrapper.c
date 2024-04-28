@@ -303,7 +303,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get state of pins on the internal expansion
-  //#!    sys.hw.iPinGet([num]Pin, [num]val);
+  //#!    sys.hw.iPinGet([num]Pin);
   //#!Gets state of internal expansion pin.
   //#!Pin number is number of pin on the connector, can be read from schematics.
   //#!
@@ -382,7 +382,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get state of pins on the expansion
-  //#!    sys.hw.ePinGet([num]Pin, [num]val);
+  //#!    sys.hw.ePinGet([num]Pin);
   //#!Gets state of external expansion pin.
   //#!Pin number is number of pin on the connector, can be read from schematics.
   //#!
@@ -428,7 +428,7 @@ uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
 
   //#!#### Buttons
   //#!##### Get button event
-  //#!    sys.hw.btn.getEvent([num] btn)
+  //#!    sys.hw.btn.getEvent([num]btn);
   //#!Return last button event. 
   //#!
   //#!Return: [num] event define (EV_NONE, EV_PRESSED, EV_HOLD, EV_RELEASED)
@@ -471,7 +471,7 @@ uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   }
 
   //#!##### Clears button events
-  //#!    sys.hw.btn.clrEvent([num]btn)
+  //#!    sys.hw.btn.clrEvent([num]btn);
   //#!Sets button event to EV_NONE
   //#!
   //#!Return: None
@@ -493,7 +493,7 @@ uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   }
 
   //#!##### Enable button events with LCD off
-  //#!    sys.hw.btn.stdbyEn([num]val)
+  //#!    sys.hw.btn.stdbyEn([num]val);
   //#!Enables button readout with LCD off.
   //#!When this is enabled, SDA won't go in deep sleep.
   //#!

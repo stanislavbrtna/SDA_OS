@@ -74,6 +74,7 @@ void svp_switch_main_dir() {
 void setRedrawFlag() {
   svp_set_irq_redraw();
   svpSGlobal.systemRedraw = 1;
+  sdaSetRedrawDetect(1);
 }
 
 
