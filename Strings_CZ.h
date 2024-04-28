@@ -2,6 +2,7 @@
 #define STRINGS_CZ_H
 
 #define SCR_SETTINGS                  (uint8_t *)"Nastavení:"
+#define ASCR_SETTINGS_BTN             (uint8_t *)"Nastavení"
 #define SCR_SET_DATE_TIME             (uint8_t *)"Datum a čas"
 #define SCR_SET_DISPLAY               (uint8_t *)"Displej"
 #define SCR_SETTINGS_SND              (uint8_t *)"Zvuk"
