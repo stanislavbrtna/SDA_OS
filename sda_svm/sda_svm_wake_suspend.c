@@ -190,6 +190,8 @@ uint8_t svmWake(uint16_t pid) {
       return 0;
     }
   }
+  // reset suspend executed flag
+  svmMeta.suspendExecuted = 0;
     
   return 0;
 }
