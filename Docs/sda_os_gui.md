@@ -78,7 +78,7 @@ Return: [num]val
 #### Notification area icons
 ##### Set notification area icon
     sys.os.gui.setNotif([str] path_to_sic, [str] callback);
-Sets the notification area icon. Path is dependent on actual cwd.
+Sets the notification area icon. Path is dependent on actual CWD.
 
 
 Return: [num] id (1 - 3), 0 - Error, probably no empty icon spot

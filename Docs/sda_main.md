@@ -20,7 +20,7 @@
 #### Required functions
 Each application must implement all required functions.
 ##### Init function
-    init(call_arguments)
+    function init {}
 Init is called once when the app is loaded.
 arg0 - arg2: call arguments passed from sys.os.subProcess
 
@@ -29,15 +29,21 @@ arg0 - arg2: call arguments passed from sys.os.subProcess
 Update function is called each update cycle, when the app
 is active and in the foreground.
 #### Optional functions
+User might also implement optional functions. OS will call these functions under circumstanctes defined below.
 
 ##### Exit function
-    function exit
+    function exit {}
+Exit function is called upon exiting the app.  
 
 ##### Suspend function
-    function suspend
+    function suspend {}
+Suspend function is called when the app is suspended.
 
 ##### Wakeup function
-    function wakeup
+    function wakeup {}
+Wakeup is called when the app is woken from suspend state.
+If the application process was set as a singular, and the app was woken from sys.os.subProcess call,
+init arguments are passed to the wakeup function.
 
 #### SVP API Level history
 
