@@ -94,24 +94,21 @@ uint8_t svmCheckAndExit() {
 }
 
 // registers serial receive callback for current app, returns 0 when ok
+// callback == 0 - no callback
+// callback == 1 - callback on every character
+// callback == 2 - callback on end of line character
 uint8_t svmRegisterUartCallback(uint8_t* callback, uint8_t val) {
-  // check stored proc for empty callback
-  for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
-    if (svmSavedProc[i].uartCallbackEnabled && svmSavedProc[i].valid) {
-      return 1;
-    }
-  }
-
   // register callback
   for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
-    if (svmSavedProc[i].pid == svmGetPid()) {
+    if (svmSavedProc[i].pid == svmGetPid() && svmSavedProc[i].valid) {
       svmSavedProc[i].uartCallbackEnabled = val;
       // set callback name
       sda_strcp(callback, svmMeta.uartCallback, NAME_LENGTH);
+      return 0;
     }
   }
 
-  return 0;
+  return 1;
 }
 
 
