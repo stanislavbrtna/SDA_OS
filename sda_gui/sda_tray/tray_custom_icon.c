@@ -89,6 +89,7 @@ void sda_custom_icon_release_spot(uint8_t spot) {
   svp_set_irq_redraw();
 }
 
+
 uint8_t sda_custom_icon_release_spot_pid(uint8_t spot, uint16_t pid) {
   if(spot >= SDA_CUSTOM_ICONS || spot == 0) {
     printf("%s: Spot out of range!\n", __FUNCTION__);
@@ -173,6 +174,7 @@ void draw_icon(int16_t x2, int16_t y1, uint8_t * icon) {
     }
   }
 }
+
 
 void sda_custom_icon_handle_svm_events() {
   for(uint16_t i = 0; i < SDA_CUSTOM_ICONS; i++) {
