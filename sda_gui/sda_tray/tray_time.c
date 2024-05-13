@@ -52,6 +52,7 @@ int16_t sda_tray_time(int16_t x2, int16_t y1, uint16_t w) {
     LCD_DrawText_ext(x1 + 2, y1 + 8, gr2_get_text_color(&sda_sys_con), time_string);
     LCD_Set_Sys_Font(curr_font);
     redraw = 1;
+    irq_redraw = 1;
   }
 
   if (sda_tray_clicked(x1 - 1, y1, x1 + w, y1 + 31) == EV_RELEASED) {

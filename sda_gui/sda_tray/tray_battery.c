@@ -43,48 +43,51 @@ int16_t sda_tray_battery(int16_t x2, int16_t y1, int16_t w) {
     irq_redraw = 1;
   }
 
+  // constructing battery string
+  uint16_t n = 0;
+  if (0 != svpSGlobal.battPercentage / 100) {
+    batt_string[n] = svpSGlobal.battPercentage / 100 + 48;
+    n++;
+  }
+
+  if (0 != svpSGlobal.battPercentage / 10) {
+    batt_string[n] = (svpSGlobal.battPercentage / 10) % 10 + 48;
+    n++;
+  }
+
+  batt_string[n] = svpSGlobal.battPercentage % 10 + 48;
+  n++;
+  batt_string[n] = '%';
+  n++;
+  batt_string[n] = 0;
+  n++;
+
+  // unknown value
+  if(svpSGlobal.battPercentage == 101) {
+    batt_string[0] = ' ';
+    batt_string[1] = ' ';
+    batt_string[2] = '?';
+    batt_string[3] = '%';
+    batt_string[4] = 0;
+  }
+
+  if (svpSGlobal.pwrType == POWER_USB) {
+    w = LCD_Text_Get_Width(IRQ_BATT_CHRG, 0) + 10;
+    x1 = x2 - w;
+  } else {
+    w = LCD_Text_Get_Width(batt_string, 0) + 10;
+    x1 = x2 - w;
+  }
+
   if((redraw == 0) || (irq_redraw)) {
-    // constructing battery string
-    uint16_t n = 0;
-    if (0 != svpSGlobal.battPercentage / 100) {
-      batt_string[n] = svpSGlobal.battPercentage / 100 + 48;
-      n++;
-    }
-
-    if (0 != svpSGlobal.battPercentage / 10) {
-      batt_string[n] = (svpSGlobal.battPercentage / 10) % 10 + 48;
-      n++;
-    }
-
-    batt_string[n] = svpSGlobal.battPercentage % 10 + 48;
-    n++;
-    batt_string[n] = '%';
-    n++;
-    batt_string[n] = 0;
-    n++;
-
-    // unknown value
-    if(svpSGlobal.battPercentage == 101) {
-      batt_string[0] = ' ';
-      batt_string[1] = ' ';
-      batt_string[2] = '?';
-      batt_string[3] = '%';
-      batt_string[4] = 0;
-    }
-
     LCD_FillRect(x2 - 75, y1 + 8, x2, 31, trayBackgroundColor);
     
     curr_font = LCD_Get_Font_Size();
     LCD_Set_Sys_Font(18);
 
     if (svpSGlobal.pwrType == POWER_USB) {
-      w = LCD_Text_Get_Width(IRQ_BATT_CHRG, 0) + 10;
-      x1 = x2 - w;
       LCD_DrawText_ext(x1 + 7, y1 + 8, gr2_get_text_color(&sda_sys_con), IRQ_BATT_CHRG);
     } else {
-      w = LCD_Text_Get_Width(batt_string, 0) + 10;
-      x1 = x2 - w;
-      LCD_Text_Get_Width(batt_string, 0);
       LCD_DrawText_ext(x1 + 7, y1 + 8, gr2_get_text_color(&sda_sys_con), batt_string);
     }
 
@@ -106,6 +109,5 @@ int16_t sda_tray_battery(int16_t x2, int16_t y1, int16_t w) {
     systemBattClick = 1;
   }
 
-  
   return w;
 }

@@ -263,8 +263,7 @@ uint8_t svp_tray() {
 
 uint8_t svp_irq() {
   svp_tray();
-  if (irq_redraw) {
-    irq_redraw = 0;
-  }
+  // clear redraw
+  irq_redraw = 0;
   return 0;
 }
