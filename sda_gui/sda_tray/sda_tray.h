@@ -39,8 +39,6 @@ void sda_tray_alarm_disable();
 void irq_redraw_block_enable();
 void irq_redraw_block_disable();
 
-void sda_tray_kbd_enable(uint8_t val);
-
 // internal functions
 
 gr2EventType sda_tray_clicked(

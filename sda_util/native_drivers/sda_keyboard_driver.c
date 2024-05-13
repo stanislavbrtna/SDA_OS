@@ -117,7 +117,6 @@ void sda_keyboard_driver_set(uint8_t en) {
 
   } else {
     svpSGlobal.inputMethod = ON_SCREEN_KEYBOARD;
-    sda_tray_kbd_enable(0);
     sda_resource_free(EXTERNAL_EXPANSION_PORT, 0);
     sda_resource_free(SERIAL_PORT, 0);
 
