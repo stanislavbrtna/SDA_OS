@@ -176,10 +176,15 @@ uint8_t svmWake(uint16_t pid) {
 
   svmOnTop();
 
+  // unlock
   if (svmGetCryptoUnlock()) {
     svp_crypto_unlock_nopass();
   }
 
+  // reset suspend executed flag
+  svmMeta.suspendExecuted = 0;
+
+  // exec wakeup
   if(functionExists(WAKEUP_FUNCTION, &svm)) {
     commExec(WAKEUP_FUNCTION, &svm);
     if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
@@ -190,8 +195,6 @@ uint8_t svmWake(uint16_t pid) {
       return 0;
     }
   }
-  // reset suspend executed flag
-  svmMeta.suspendExecuted = 0;
     
   return 0;
 }

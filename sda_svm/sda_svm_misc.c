@@ -215,6 +215,7 @@ uint8_t svmHandleNotifIconCallback(uint16_t pid, uint8_t * callback) {
 
     if (callback_arise_flag == 1) {
       svmOnTop();
+      svmMeta.suspendExecuted = 0;
       callback_arise_flag = 0;
     }
   } else {
@@ -260,10 +261,14 @@ uint8_t svmHandleNotifIconCallback(uint16_t pid, uint8_t * callback) {
       svmWake(prev_pid);
       return 0;
     }
+
     callback_arise_flag = 0;
+    svmMeta.suspendExecuted = 0;
     svmOnTop();
     setRedrawFlag();
   }
+
+  return 0;
 }
     
 
