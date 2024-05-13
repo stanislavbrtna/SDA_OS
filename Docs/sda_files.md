@@ -82,10 +82,20 @@ Return: [num] 1 - ok, 0 - fail
 ##### Change working directory
     sys.fs.chDir([str] pathInData);
 Changes working directory.
-call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA directory
-call sys.fs.chDir(1); to get to the APPS directory
+call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA context
+call sys.fs.chDir(1); to get to the APPS context
 
 Return: 1 - ok, 0 - fail
+##### Get current working directory
+    sys.fs.getCWD();
+Returns current working directory
+
+Return: [str]path
+##### Get current working context
+    sys.fs.getCWC();
+Returns current working context
+
+Return: [num]context 0 - DATA, 1 - APPS
 
 #### File copy
 

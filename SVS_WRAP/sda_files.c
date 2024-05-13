@@ -540,8 +540,8 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Change working directory
   //#!    sys.fs.chDir([str] pathInData);
   //#!Changes working directory.
-  //#!call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA directory
-  //#!call sys.fs.chDir(1); to get to the APPS directory
+  //#!call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA context
+  //#!call sys.fs.chDir(1); to get to the APPS context
   //#!
   //#!Return: 1 - ok, 0 - fail
   if (sysFuncMatch(argS->callId, "chDir", s)) {
@@ -579,6 +579,58 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
     errSoft((uint8_t *)"sysExecTypeCheck: Wrong type or count of arguments for sys function fChDir()!", s);
     return 0;
+  }
+
+  //#!##### Get current working directory
+  //#!    sys.fs.getCWD();
+  //#!Returns current working directory
+  //#!
+  //#!Return: [str]path
+  if (sysFuncMatch(argS->callId, "getCWD", s)) {
+
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    uint8_t cwd_buff[256];
+    svp_getcwd(cwd_buff, sizeof(cwd_buff));
+    
+    if (sda_str_find(cwd_buff, "APPS")) {
+      result->value.val_str = strNew((uint8_t *)cwd_buff + sda_str_find(cwd_buff, "APPS") + 4, s);
+    }
+
+    if (sda_str_find(cwd_buff, "DATA")) {
+      result->value.val_str = strNew((uint8_t *)cwd_buff + sda_str_find(cwd_buff, "DATA") + 4, s);
+    }
+
+    result->type = SVS_TYPE_STR;
+
+    return 1;
+  }
+
+  //#!##### Get current working context
+  //#!    sys.fs.getCWC();
+  //#!Returns current working context
+  //#!
+  //#!Return: [num]context 0 - DATA, 1 - APPS
+  if (sysFuncMatch(argS->callId, "getCWC", s)) {
+
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    uint8_t cwd_buff[256];
+    svp_getcwd(cwd_buff, sizeof(cwd_buff));
+    
+    if (sda_str_find(cwd_buff, "APPS")) {
+      result->value.val_u = 1;
+    }
+
+    if (sda_str_find(cwd_buff, "DATA")) {
+      result->value.val_u = 0;
+    }
+
+    result->type = SVS_TYPE_NUM;
+
+    return 1;
   }
 
   //#!

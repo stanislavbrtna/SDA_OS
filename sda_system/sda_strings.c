@@ -202,3 +202,25 @@ uint16_t sda_str_insert(uint8_t *index1, uint8_t *index2, uint8_t *buff, uint16_
   index1[x] = buff[x];
   return 1;
 }
+
+
+uint32_t sda_str_find(uint8_t* str, uint8_t* pattern) {
+  uint32_t i_str = 0;
+  uint32_t i_pattern = 0;
+
+  while (str[i_str] != 0) {
+    if (str[i_str] == pattern[i_pattern]) {
+      i_pattern++;
+
+      if (pattern[i_pattern] == 0) {
+        return i_str - i_pattern + 1;
+      }
+    } else {
+      i_pattern = 0;
+    }
+
+    i_str++;
+  }
+
+  return 0;
+}
