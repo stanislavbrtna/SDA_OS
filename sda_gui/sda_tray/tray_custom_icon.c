@@ -37,7 +37,6 @@ typedef struct {
 
 sdaTrayIcon icons[SDA_CUSTOM_ICONS];
 
-void draw_icon(int16_t x2, int16_t y1, uint8_t * icon);
 
 void sda_custom_icon_init() {
   for(uint16_t i = 0; i < SDA_CUSTOM_ICONS; i++) {
@@ -131,7 +130,7 @@ int16_t sda_custom_icon_handle(int16_t x2, int16_t y1, int16_t w) {
     
     for(uint16_t i = 0; i < SDA_CUSTOM_ICONS; i++) {
       if (icons[i].valid) {
-        draw_icon(x2 - 32*icon_pos, y1, icons[i].image);
+        sda_draw_sic(x2 - 32*icon_pos, y1, icons[i].image);
         icon_pos++;
       }
     }
@@ -151,7 +150,7 @@ int16_t sda_custom_icon_handle(int16_t x2, int16_t y1, int16_t w) {
 }
 
 
-void draw_icon(int16_t x2, int16_t y1, uint8_t * icon) {
+void sda_draw_sic(int16_t x2, int16_t y1, uint8_t * icon) {
   int16_t x1 = x2 - 32;
   
   // using canvas
