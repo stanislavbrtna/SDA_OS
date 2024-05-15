@@ -323,6 +323,22 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Selects element for keyboard control
+  //#!    sys.os.gui.btnGetSel([num]screen_id);
+  //#!Gets selected element in current screen (or its sub-screens)
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "btnGetSel", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    result->value.val_s = gr2_ki_get_selected((uint16_t) argS->arg[1].val_s, &sda_app_con); 
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Clear button control for a screen
   //#!    sys.os.gui.btnClear([num]screen_id);
   //#!Clears keypad input for entire screen.

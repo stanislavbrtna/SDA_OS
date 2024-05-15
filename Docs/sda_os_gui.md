@@ -31,6 +31,11 @@ If the desired element is on a sub-screen of an button controlled screen,
 then the sub-screen must be also selected.
 
 Return: None
+##### Selects element for keyboard control
+    sys.os.gui.btnGetSel([num]screen_id);
+Gets selected element in current screen (or its sub-screens)
+
+Return: None
 ##### Clear button control for a screen
     sys.os.gui.btnClear([num]screen_id);
 Clears keypad input for entire screen.
