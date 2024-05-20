@@ -22,6 +22,7 @@ SOFTWARE.
 
 #include "sda_os_wrapper.h"
 
+uint8_t svm_text_handler(varRetVal *result, argStruct *argS, svsVM *s);
 
 uint16_t sda_load_sic(uint8_t * fname,uint8_t * callback) {
   svp_file fil;
