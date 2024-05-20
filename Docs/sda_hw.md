@@ -156,8 +156,10 @@ Pin number is number of pin on the connector, can be read from schematics.
 Return: 1 if the pin is high, 0 if it is low.
 ##### Get ADC readout
     sys.hw.eADCRead();
-Gets state of external expansion pin.
-Pin number is number of pin on the connector, can be read from schematics.
+Gets the voltage from pin 2 of the external expansion port.
+This function re-initializes the pin 2 to set it in the ADC
+mode. If you use this pin for anything else after, you need to 
+re-init it with *sys.hw.ePinDef*.
 
 Return: [float] measured voltage in volts.
 #### Buttons
