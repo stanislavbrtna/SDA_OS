@@ -61,6 +61,7 @@ uint8_t sdaSvmHandleTimers() {
         //printf("triggered!\n");
         svmSavedProcTimer[x] = 0; // reset
         if (svmGetSavedProcPid(x) == svmMeta.pid) {
+          svmMeta.suspendExecuted = 0;
           //execute
           commExec(svmSavedProcTimerCallback[x], &svm);
           if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
@@ -100,6 +101,7 @@ uint8_t sdaSvmHandleTimers() {
             
             return 0;
           }
+          svmMeta.suspendExecuted = 0;
 
           //execute
           commExec(svmSavedProcTimerCallback[x], &svm);
