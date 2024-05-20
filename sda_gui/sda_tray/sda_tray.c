@@ -29,11 +29,6 @@ uint16_t trayBackgroundColor;
 static uint8_t kbd_tray_en;
 static uint8_t alarm_en;
 
-static void tray_battery(int16_t x1, int16_t y1, int16_t w);
-static uint8_t tray_close(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t reset);
-static uint8_t tray_home(int16_t x1, int16_t y1, int16_t x2, int16_t y2);
-
-
 uint8_t alarm_icon[] = {
   0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,
   0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,
@@ -126,7 +121,9 @@ gr2EventType sda_tray_clicked(
           (touch_origin_y > y1) &&
           (touch_origin_y < y2)
         ) {
-        return svpSGlobal.touchType;
+        gr2EventType ev = svpSGlobal.touchType;
+        svpSGlobal.touchType = EV_NONE;
+        return ev;
         }
     }
   }
