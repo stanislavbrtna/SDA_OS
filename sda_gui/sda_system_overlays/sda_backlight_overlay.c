@@ -120,8 +120,7 @@ void batt_overlay_handle(uint8_t init) {
   gr2_set_event(backlightOk, EV_NONE, &sda_sys_con);
 
   if (gr2_get_event(soundEnable, &sda_sys_con) == EV_RELEASED) {
-    svpSGlobal.mute = gr2_get_value(soundEnable, &sda_sys_con);
-    sda_store_mute_config();
+    sda_set_mute((uint8_t)gr2_get_value(soundEnable, &sda_sys_con));
   }
   gr2_set_event(soundEnable, EV_NONE, &sda_sys_con);
 

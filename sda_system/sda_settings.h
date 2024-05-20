@@ -31,4 +31,6 @@ void sda_store_calibration();
 void sda_store_mute_config();
 void sda_store_dbg_options();
 
+void sda_set_mute(uint8_t mute);
+
 #endif

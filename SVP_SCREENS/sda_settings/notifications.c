@@ -34,9 +34,6 @@ uint16_t sda_settings_notif_screen(uint8_t init) {
     optSoundMute = gr2_add_checkbox(1, 1, 7, 2, SCR_SOUND_OFF, optNotifyScr, &sda_sys_con);
 
     gr2_set_yscroll(optNotifyScr, 16, &sda_sys_con);
-
-    //pscg_add_text(1, 4, 10, 5, SCR_LED_NOTIFICATIONS, optNotifyScr);
-
     gr2_set_value(optSoundMute, svpSGlobal.mute, &sda_sys_con);
 
     return optNotifyScr;
@@ -52,9 +49,7 @@ uint16_t sda_settings_notif_screen(uint8_t init) {
   }
 
   if (gr2_clicked(optSoundMute, &sda_sys_con)) {
-    svpSGlobal.mute = 1 - svpSGlobal.mute;
-    gr2_set_value(optSoundMute, svpSGlobal.mute, &sda_sys_con);
-    sda_store_mute_config();
+    sda_set_mute((uint8_t) gr2_get_value(optSoundMute, &sda_sys_con));
   }
 
   return 0;

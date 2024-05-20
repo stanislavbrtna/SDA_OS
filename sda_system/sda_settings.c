@@ -171,6 +171,12 @@ void sda_store_dbg_options() {
 }
 
 
+void sda_set_mute(uint8_t mute) {
+  svpSGlobal.mute = mute;
+  svp_set_irq_redraw();
+  sda_store_mute_config();
+}
+
 void sda_store_mute_config() {
   sda_conf conffile;
   uint8_t dirbuf[258];
