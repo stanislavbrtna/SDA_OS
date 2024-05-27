@@ -27,6 +27,7 @@ SOFTWARE.
 #include "sda_quick_launch.h"
 
 void sda_system_overlays_handler();
+uint8_t sda_os_overlay_visible();
 
 // time selector overlay
 uint16_t time_overlay_init(); //ret: overlay id
@@ -89,8 +90,10 @@ void password_overlay_clear_ok(uint16_t ovId);
 // auth overlay
 void sda_show_auth_overlay_init();
 void sda_auth_overlay_handle();
+uint8_t sda_auth_overlay_visible();
 
 #include "sda_clipboard_overlay.h"
+uint8_t sda_clipboard_overlay_visible();
 
 #include "sda_date_copy_overlay.h"
 

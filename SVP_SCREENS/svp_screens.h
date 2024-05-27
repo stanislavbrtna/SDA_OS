@@ -41,6 +41,7 @@ void sda_settings_open_security();
 
 void taskSwitcherOpen();
 void taskSwitcherUpdate();
+uint8_t taskSwitcherVisible();
 
 void sda_homescreen_lock_en();
 

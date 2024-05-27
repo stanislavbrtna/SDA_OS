@@ -111,7 +111,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
     x2 = argS->arg[3].val_s;
     y2 = argS->arg[4].val_s;
 
-    if (getOverlayId() != 0){
+    if (sda_os_overlay_visible()){
       return 1;
     }
 
@@ -141,7 +141,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       return 0;
     }
 
-    if (getOverlayId() != 0){
+    if (sda_os_overlay_visible()){
       return 1;
     }
 
@@ -173,7 +173,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       return 0;
     }
 
-    if (getOverlayId() != 0){
+    if (sda_os_overlay_visible()){
       return 1;
     }
 
@@ -204,7 +204,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       return 0;
     }
 
-    if (getOverlayId() != 0) {
+    if (sda_os_overlay_visible()) {
       return 1;
     }
 
@@ -234,7 +234,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       return 0;
     }
 
-    if (getOverlayId() != 0) {
+    if (sda_os_overlay_visible()) {
       return 1;
     }
 
@@ -269,7 +269,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       return 0;
     }
 
-    if (getOverlayId() != 0) {
+    if (sda_os_overlay_visible()) {
       return 1;
     }
 
@@ -302,7 +302,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       return 0;
     }
 
-    if (getOverlayId() != 0) {
+    if (sda_os_overlay_visible()) {
       return 1;
     }
 
@@ -334,7 +334,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       return 0;
     }
 
-    if (getOverlayId() != 0) {
+    if (sda_os_overlay_visible()) {
       return 1;
     }
 
@@ -365,7 +365,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       return 0;
     }
 
-    if (getOverlayId() != 0) {
+    if (sda_os_overlay_visible()) {
       return 1;
     }
 
@@ -433,7 +433,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 
   //#!##### Fill area with color
   //#!    sys.ds.clearArea([num]col);
-  //#!Clears draw area with goven color
+  //#!Clears draw area with given color
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "clearArea", s)) {
@@ -443,12 +443,12 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       return 0;
     }
 
-    if (getOverlayId() != 0) {
+    if (sda_os_overlay_visible()) {
       return 1;
     }
 
     IRQ_BLOCK
-    LCD_FillRect(x1 , y1, x2, y2, argS->arg[1].val_u);
+    LCD_FillRect(x1, y1, x2, y2, argS->arg[1].val_u);
     IRQ_ENABLE
     return 1;
   }
@@ -482,7 +482,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       return 0;
     }
 
-    if (getOverlayId() != 0) {
+    if (sda_os_overlay_visible()) {
       return 1;
     }
 
@@ -548,7 +548,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       return 0;
     }
 
-    if (getOverlayId() != 0) {
+    if (sda_os_overlay_visible()) {
       return 1;
     }
 

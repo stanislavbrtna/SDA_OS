@@ -235,3 +235,7 @@ void taskSwitcherUpdate() {
 
   sda_screen_button_handler(task_switcher, ok, &sda_sys_con);
 }
+
+uint8_t taskSwitcherVisible() {
+  return valid;
+}

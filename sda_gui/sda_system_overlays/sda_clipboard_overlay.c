@@ -208,3 +208,12 @@ uint16_t sda_clipboard_overlay_update() {
 
   return 0;
 }
+
+
+uint8_t sda_clipboard_overlay_visible() {
+  if ((ov_id != getOverlayId() || getOverlayId() == 0) && target_id == 0)  {
+    return 0;
+  }
+
+  return 1;
+}

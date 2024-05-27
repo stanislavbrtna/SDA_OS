@@ -99,3 +99,11 @@ void sda_auth_overlay_handle() {
 
   sda_screen_button_handler(auth_overlay_scr, auth_overlay_ok, &sda_sys_con);
 }
+
+uint8_t sda_auth_overlay_visible() {
+  if (auth_overlay != getOverlayId() || getOverlayId() == 0) {
+    return 0;
+  }
+
+  return 1;
+}

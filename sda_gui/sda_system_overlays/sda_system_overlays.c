@@ -45,3 +45,20 @@ void sda_system_overlays_handler() {
   sda_auth_overlay_handle();
   sda_clipboard_overlay_update();
 }
+
+uint8_t sda_os_overlay_visible() {
+  if(sda_batt_overlay_shown())
+    return 1;
+  if(sda_dc_overlay_shown())
+    return 1;
+  if(sda_ql_overlay_shown())
+    return 1;
+  if(soft_error_flag == 1)
+    return 1;
+  if(taskSwitcherVisible())
+    return 1;
+  if(sda_clipboard_overlay_visible())
+    return 1;
+
+  return 0;
+}
