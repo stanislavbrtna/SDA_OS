@@ -270,6 +270,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
 
   // reset main screen
   mainScr = 0;
+  slotScreen[4] = 0;
   
   // show the close button
   svpSGlobal.systemXBtnVisible = 1;
@@ -284,6 +285,8 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
 
 
 void sdaSvmKillApp_handle();
+void svmHandleScreenChange();
+
 
 uint16_t svmRun(uint8_t init, uint8_t top) {
 
@@ -296,11 +299,12 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
     return 0;
   }
 
-  //svs init call
+  // run the init function
   if (svmMeta.initExecuted == 0) {
     commExec((uint8_t *)"init", &svm);
     svmClearArguments(&svm);
     svmMeta.initExecuted = 1;
+    svmHandleScreenChange();
     return 0;
   }
 
@@ -362,14 +366,7 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
       svmSetSuspendFlag(0);
     }
     
-    // Set new screen
-    // This needs to be after all init calls
-    if (svs_wrap_setScr_flag == 1) {
-      svs_wrap_setScr_flag = 0;
-      mainScr = svs_wrap_setScr_id;
-      slotScreen[4] = svs_wrap_setScr_id;
-    }
-
+    svmHandleScreenChange();
   }
   return 0;
 }
@@ -404,4 +401,13 @@ void sdaSvmKillApp_handle() {
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
   sda_set_sleep_lock(0);
+}
+
+
+void svmHandleScreenChange() {
+  if (svs_wrap_setScr_flag == 1) {
+    svs_wrap_setScr_flag = 0;
+    mainScr = svs_wrap_setScr_id;
+    slotScreen[4] = svs_wrap_setScr_id;
+  }
 }
