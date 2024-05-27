@@ -90,28 +90,18 @@ void sda_main_redraw() {
     SDA_LCD_H - 160 * svpSGlobal.kbdVisible - 160 * svpSGlobal.lcdLandscape
   );
   if (overlayScr == 0) {
-    if (svpSGlobal.systemRedraw == 1) {
+    if (mainScr != 0) {
       gr2_draw_screen(
         0,
         32,
         319 + 160 * svpSGlobal.lcdLandscape,
         479 - 160 * svpSGlobal.kbdVisible - 160 * svpSGlobal.lcdLandscape,
         mainScr,
-        1,
-        sda_current_con
-      );
-      svpSGlobal.systemRedraw = 0;
-    } else {
-      gr2_draw_screen(
-        0,
-        32,
-        319 + 160 * svpSGlobal.lcdLandscape,
-        479 - 160 * svpSGlobal.kbdVisible - 160*svpSGlobal.lcdLandscape,
-        mainScr,
-        0,
+        svpSGlobal.systemRedraw,
         sda_current_con
       );
     }
+    svpSGlobal.systemRedraw = 0;
   } else {
     if (svpSGlobal.systemRedraw == 1) {
       if (mainScr != 0) {

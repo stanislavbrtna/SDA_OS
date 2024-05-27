@@ -267,6 +267,9 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   // validate the app slot
   sda_slot_set_valid(SDA_SLOT_SVM);
   sda_slot_on_top(SDA_SLOT_SVM);
+
+  // reset main screen
+  mainScr = 0;
   
   // show the close button
   svpSGlobal.systemXBtnVisible = 1;
