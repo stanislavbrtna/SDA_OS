@@ -83,6 +83,11 @@ uint8_t sdaSvmHandleTimers() {
           } else {
             prev_pid = 0;
           }
+
+          uint16_t top_prev_pid = 0;
+          if(sda_get_top_slot() == SDA_SLOT_SVM) {
+            top_prev_pid = prev_pid;
+          }
           
           //wakeup
           if(svmWake(svmGetSavedProcPid(x))) {
@@ -102,6 +107,7 @@ uint8_t sdaSvmHandleTimers() {
             return 0;
           }
           svmMeta.suspendExecuted = 0;
+          svmMeta.prevPid = top_prev_pid;
 
           //execute
           commExec(svmSavedProcTimerCallback[x], &svm);

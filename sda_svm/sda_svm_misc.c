@@ -154,6 +154,11 @@ uint8_t svmHandleUartCallbacks() {
           } else {
             prev_pid = 0;
           }
+
+          uint16_t top_prev_pid = 0;
+          if(sda_get_top_slot() == SDA_SLOT_SVM) {
+            top_prev_pid = prev_pid;
+          }
           
           //wakeup
           if(svmWake(svmGetSavedProcPid(x))) {
@@ -172,6 +177,8 @@ uint8_t svmHandleUartCallbacks() {
             
             return 0;
           }
+
+          svmMeta.prevPid = top_prev_pid;
 
           //execute
           commExec(svmMeta.uartCallback, &svm);
@@ -225,6 +232,11 @@ uint8_t svmHandleNotifIconCallback(uint16_t pid, uint8_t * callback) {
     } else {
       prev_pid = 0;
     }
+
+    uint16_t top_prev_pid = 0;
+    if(sda_get_top_slot() == SDA_SLOT_SVM) {
+      top_prev_pid = prev_pid;
+    }
           
     //wakeup
     if(svmWake(pid)) {
@@ -243,6 +255,8 @@ uint8_t svmHandleNotifIconCallback(uint16_t pid, uint8_t * callback) {
       
       return 0;
     }
+
+    svmMeta.prevPid = top_prev_pid;
 
     //execute
     commExec(callback, &svm);

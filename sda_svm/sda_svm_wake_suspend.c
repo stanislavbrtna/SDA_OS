@@ -82,6 +82,7 @@ uint8_t svmExecSuspend() {
   return 0;
 }
 
+
 uint8_t svmStoreRunning() {
   uint8_t r = svmExecSuspend();
 
@@ -140,6 +141,11 @@ void svmSuspend() {
     sda_keyboard_hide();
 
     //printf("Prev top slot: %u\n", sda_get_prev_top_screen_slot());
+
+    if (svmMeta.prevPid != 0) {
+      svmLoadPrevious();
+      return;
+    }
 
     sda_slot_on_top(SDA_SLOT_APPLIST);
     svp_switch_main_dir();

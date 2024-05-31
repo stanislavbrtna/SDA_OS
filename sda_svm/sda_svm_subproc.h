@@ -52,4 +52,6 @@ uint8_t svmLoadProcData(uint16_t id);
 uint8_t sdaSvmLoader(uint16_t id, uint8_t * tail, void *target, uint32_t size);
 void sdaSvmSaver(uint16_t id, uint8_t * tail, void *target, uint32_t size);
 
+uint8_t svmLoadPrevious();
+
 #endif

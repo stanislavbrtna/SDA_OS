@@ -140,6 +140,7 @@ typedef struct {
 typedef struct {
   uint16_t pid;
   uint16_t parentPid;
+  uint16_t prevPid;
   uint8_t  name[APP_NAME_LEN];
   uint8_t  currentWorkDir[APP_NAME_LEN];
   uint8_t  landscape;
