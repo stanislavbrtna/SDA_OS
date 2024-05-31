@@ -127,7 +127,7 @@ uint8_t svmHandleUartCallbacks() {
     if (svmGetSavedProcValid(x) == 1) {
       if (svmSavedProc[x].uartCallbackEnabled
           && sda_serial_get_rdy() > 0
-          && svmSavedProc[x].uartCallbackEnabled >= sda_serial_get_rdy()
+          && svmSavedProc[x].uartCallbackEnabled <= sda_serial_get_rdy()
       ) {
         // App is already on top
         if (svmGetSavedProcPid(x) == svmMeta.pid) {
