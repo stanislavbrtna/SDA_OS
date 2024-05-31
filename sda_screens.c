@@ -52,9 +52,6 @@ void sda_main_redraw() {
   // lock tick for redraw
   tick_lock = SDA_LOCK_LOCKED;
   LCD_setDrawArea(0, 0, SDA_LCD_W + 160 * svpSGlobal.lcdLandscape, SDA_LCD_H - 160 * svpSGlobal.lcdLandscape);
-  if (svpSGlobal.systemRedraw == 1 || kbdRedraw) {
-    sdaSetRedrawDetect(1);
-  }
 
   if ((svpSGlobal.kbdVisible == 1 && kbdVisibleOld == 0)
       || (svpSGlobal.systemRedraw && svpSGlobal.kbdVisible == 1)
@@ -82,6 +79,10 @@ void sda_main_redraw() {
   }
 
   kbdVisibleOld = svpSGlobal.kbdVisible;
+
+  if (svpSGlobal.systemRedraw == 1 || kbdRedraw) {
+    sdaSetRedrawDetect(1);
+  }
 
   LCD_setDrawArea(
     0,

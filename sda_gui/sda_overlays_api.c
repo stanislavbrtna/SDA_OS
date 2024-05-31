@@ -59,6 +59,7 @@ uint16_t setOverlayScreen(uint16_t val, gr2context * c) {
   overlayScr = val;
   overlayCont = c;
   setOverlayDefault();
+  svpSGlobal.systemRedraw = 1;
   return ov_id;
 }
 
