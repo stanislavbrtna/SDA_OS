@@ -30,10 +30,11 @@ SOFTWARE.
 #include "sda_svm_wake_suspend.h"
 #include "sda_svm_close.h"
 #include "sda_svm_gr2_glue.h"
+#include "sda_svm_callbacks.h"
 
-#define SUSPEND_FUNCTION (uint8_t *)"suspend"
-#define WAKEUP_FUNCTION (uint8_t *)"wakeup"
-#define SVM_EXIT_FUNCTION (uint8_t *)"exit"
+#define SVM_SUSPEND_FUNCTION (uint8_t *)"suspend"
+#define SVM_WAKEUP_FUNCTION  (uint8_t *)"wakeup"
+#define SVM_EXIT_FUNCTION    (uint8_t *)"exit"
 
 // *****************************************************************************
 //                                 standard API

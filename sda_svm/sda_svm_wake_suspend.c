@@ -68,8 +68,8 @@ uint8_t svmExecSuspend() {
   }
   svmMeta.suspendExecuted = 1;
 
-  if(functionExists(SUSPEND_FUNCTION, &svm)) {
-    commExec(SUSPEND_FUNCTION, &svm);
+  if(functionExists(SVM_SUSPEND_FUNCTION, &svm)) {
+    commExec(SVM_SUSPEND_FUNCTION, &svm);
     if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
       svp_errSoftPrint(&svm);
       return 2;
@@ -191,8 +191,8 @@ uint8_t svmWake(uint16_t pid) {
   svmMeta.suspendExecuted = 0;
 
   // exec wakeup
-  if(functionExists(WAKEUP_FUNCTION, &svm)) {
-    commExec(WAKEUP_FUNCTION, &svm);
+  if(functionExists(SVM_WAKEUP_FUNCTION, &svm)) {
+    commExec(SVM_WAKEUP_FUNCTION, &svm);
     if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
       svp_errSoftPrint(&svm);
       return 1;
@@ -239,8 +239,8 @@ uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmA
   }
   
   svmRestoreArguments(argType, arg, svmArgs, &svm);
-  if(functionExists(WAKEUP_FUNCTION, &svm)) {
-    commExec(WAKEUP_FUNCTION, &svm);
+  if(functionExists(SVM_WAKEUP_FUNCTION, &svm)) {
+    commExec(SVM_WAKEUP_FUNCTION, &svm);
     if((errCheck(&svm) != 0) && (soft_error_flag == 0)) {
       svp_errSoftPrint(&svm);
       return 1;

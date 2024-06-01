@@ -20,34 +20,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SDA_SVM_MISC
-#define SDA_SVM_MISC
+#ifndef SDA_SVM_CALLBACKS_H
+#define SDA_SVM_CALLBACKS_H
+
 #include "sda_svm.h"
-#include "sda_svm_subproc.h"
 
-void svmSetDrawRoot(uint8_t * str);
-void svmOnTop();
+uint8_t svmRegisterUartCallback(uint8_t* callback, uint8_t val);
+uint8_t svmHandleUartCallbacks();
+uint8_t svmGetUartCallbackActive();
 
-void    svmAlarmSetFlag(int32_t id, int32_t param);
-int8_t  svmAlarmGetFlag();
-void    sdaAlarmClearFlag();
-
-int32_t svmAlarmGetId();
-int32_t svmAlarmGetParam();
-
-void    svmBeepSetCallback(uint8_t * cb, uint32_t time);
-uint8_t svmBeepHandler();
-
-void    svmSetSuspendOnClose(uint8_t val);
-uint8_t svmGetSuspendOnClose();
-
-void svmProcInfo();
-
-// internal svm stuff
-void svmInit();
-uint8_t svmCheckAndExit();
-
-void svmStoreArguments(uint8_t *buff, varType *arg, uint8_t* argType, uint8_t **svmArgs, svsVM *s);
-void svmRestoreArguments(uint8_t* argType, varType *arg, uint8_t **svmArgs, svsVM *s);
+uint8_t svmGenericCallback(uint16_t pid, uint8_t *callback);
 
 #endif

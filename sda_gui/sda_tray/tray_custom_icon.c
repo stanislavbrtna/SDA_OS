@@ -178,7 +178,7 @@ void sda_draw_sic(int16_t x2, int16_t y1, uint8_t * icon) {
 void sda_custom_icon_handle_svm_events() {
   for(uint16_t i = 0; i < SDA_CUSTOM_ICONS; i++) {
     if (icons[i].valid == 1 && icons[i].event == EV_RELEASED && icons[i].pid != 0) {
-      svmHandleNotifIconCallback(icons[i].pid, icons[i].callback);
+      svmGenericCallback(icons[i].pid, icons[i].callback);
       icons[i].event = EV_NONE;
       // return and let the update loop handle stuff
       return;
