@@ -143,6 +143,7 @@ void svmSuspend() {
     //printf("Prev top slot: %u\n", sda_get_prev_top_screen_slot());
 
     if (svmMeta.prevPid != 0) {
+      svmStoreRunning(); // store currently running app...
       svmLoadPrevious();
       return;
     }
