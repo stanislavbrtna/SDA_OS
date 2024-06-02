@@ -120,6 +120,31 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Set LCD state
+  //#!    sys.hw.setLcdState([num]lcd_state);
+  //#!Sets the LCD state, 0 - off, 1 - on.
+  //#!In off state, the device will enter sleep mode.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setLcdState", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (argS->arg[1].val_s == 0) {
+      svp_set_lcd_state(LCD_OFF);
+    }
+
+    if (argS->arg[1].val_s == 1) {
+      svp_set_lcd_state(LCD_ON);
+    }
+
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Set notification led pattern
   //#!    sys.hw.setLed([num]led_type);
   //#!Sets notification led to a given pattern, uses:

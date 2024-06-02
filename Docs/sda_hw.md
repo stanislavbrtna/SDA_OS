@@ -45,6 +45,12 @@ Return: None
 Gets state of lcd.
 
 Return: 1 if lcd is on, otherwise 0
+##### Set LCD state
+    sys.hw.setLcdState([num]lcd_state);
+Sets the LCD state, 0 - off, 1 - on.
+In off state, the device will enter sleep mode.
+
+Return: None
 ##### Set notification led pattern
     sys.hw.setLed([num]led_type);
 Sets notification led to a given pattern, uses:
