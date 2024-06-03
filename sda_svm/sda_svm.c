@@ -45,11 +45,7 @@ extern uint16_t svs_wrap_setScr_id;
 
 uint8_t autocahceEnable;
 uint8_t nocacheLaunchFlag;
-
-// Globals:
-// main screen
-uint16_t mainScr; //obrazovka top slotu / top-slot screen
-
+ 
 // pscg
 uint8_t * pscgErrorString;
 
@@ -60,7 +56,7 @@ void svmSetNextPid(uint16_t pid) {
 }
 
 uint16_t svmGetMainScreen() {
-  return mainScr;
+  return svmMeta.screen;
 }
 
 // gets if current SVM is valid
@@ -269,8 +265,8 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   sda_slot_on_top(SDA_SLOT_SVM);
 
   // reset main screen
-  mainScr = 0;
-  slotScreen[4] = 0;
+  svmMeta.screen = 0;
+  sda_slot_set_screen(SDA_SLOT_SVM, svmMeta.screen);
   
   // show the close button
   svpSGlobal.systemXBtnVisible = 1;
@@ -407,7 +403,6 @@ void sdaSvmKillApp_handle() {
 void svmHandleScreenChange() {
   if (svs_wrap_setScr_flag == 1) {
     svs_wrap_setScr_flag = 0;
-    mainScr = svs_wrap_setScr_id;
-    slotScreen[4] = svs_wrap_setScr_id;
+    sda_slot_set_screen(SDA_SLOT_SVM, svmMeta.screen);
   }
 }

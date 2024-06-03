@@ -30,12 +30,23 @@ uint16_t slotValid[APP_SLOT_MAX];
 
 uint8_t prevTopSlot;
 
+uint16_t mainScr; // top-slot screen
+
 
 void sda_slot_init(uint8_t slot, uint16_t screen, gr2context *context, uint16_t valid, uint16_t top) {
   slotScreen[slot] = screen;
   slotScreenContext[slot] = context;
   slotValid[slot] = valid;
   slotOnTop[slot] = top;
+}
+
+
+void sda_slot_set_screen(uint8_t slot, uint16_t screen) {
+  slotScreen[slot] = screen;
+  if(sda_if_slot_on_top(slot)) {
+    mainScr = screen;
+    setRedrawFlag();
+  }
 }
 
 

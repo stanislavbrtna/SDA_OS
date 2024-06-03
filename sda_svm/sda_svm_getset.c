@@ -26,7 +26,6 @@ static uint8_t redrawDetect;
 
 // svs
 uint8_t  svs_wrap_setScr_flag;
-uint16_t svs_wrap_setScr_id;
 
 static uint8_t suspend_flag;
 
@@ -246,7 +245,7 @@ void svmSetLandscape(uint8_t val) {
 }
 
 void svmSetMainScreen(uint16_t val) {
-  svs_wrap_setScr_id = val;
+  svmMeta.screen = val;
   svs_wrap_setScr_flag = 1;
   gr2_set_modified(val, &sda_app_con);
 }

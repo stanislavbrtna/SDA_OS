@@ -5,6 +5,8 @@
 
 void sda_slot_init(uint8_t slot, uint16_t screen, gr2context *context, uint16_t valid, uint16_t top);
 
+void sda_slot_set_screen(uint8_t slot, uint16_t screen);
+
 uint8_t sda_if_slot_on_top(uint8_t slot);
 uint8_t sda_get_prev_top_screen_slot();
 

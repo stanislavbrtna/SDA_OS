@@ -305,7 +305,6 @@ void svmSaveProcData() {
   svmMeta.lcdOffButtons = wrap_get_lcdOffButtons();
 
   sda_files_close();
-  svmMeta.screen = slotScreen[4];
 
 #ifdef SVM_DBG_ENABLED
   printf("svmSaveProcData: cache files\n");
@@ -400,8 +399,7 @@ uint8_t svmLoadProcData(uint16_t pid) {
 
   svp_chdir(svmMeta.currentWorkDir);
 
-  slotScreen[4] = svmMeta.screen;
-  mainScr = slotScreen[4];
+  sda_slot_set_screen(SDA_SLOT_SVM, svmMeta.screen);
   return 1;
 }
 

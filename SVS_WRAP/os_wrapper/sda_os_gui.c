@@ -55,7 +55,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Set main application screen
   //#!    sys.os.gui.setMainScr([num]id);
-  //#!Sets main screen to screen with given id
+  //#!Sets main screen to screen with given id.
   //#!When you wish to display overlay only, set this to 0.
   //#!
   //#!Return: None
@@ -64,7 +64,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)){
       return 0;
     }
-     svmSetMainScreen((uint16_t) argS->arg[1].val_s );
+    svmSetMainScreen((uint16_t) argS->arg[1].val_s);
     return 1;
   }
 
