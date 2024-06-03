@@ -168,6 +168,7 @@ typedef struct {
   uint8_t  uartCallback[NAME_LENGTH];
   uint8_t  initExecuted;
   uint8_t  suspendExecuted;
+  uint8_t  kbdVisible;
 } sdaSvmMetadata;
 
 typedef struct {

@@ -280,7 +280,7 @@ static void sda_main_handle_soft_buttons() {
   // handler for that big S! button
   if ((svpSGlobal.systemOptClick == CLICKED_SHORT)) {
     if(sda_get_top_slot() == 4 && svmGetValid()) {
-      svmExecSuspend();
+      svmHandleHomeButton();
     }
     
     if(sda_get_prev_top_screen_slot() != 0) {

@@ -83,6 +83,12 @@ uint8_t svmExecSuspend() {
 }
 
 
+void svmHandleHomeButton() {
+  svmMeta.kbdVisible = svpSGlobal.kbdVisible;
+  svmExecSuspend();
+}
+
+
 uint8_t svmStoreRunning() {
   uint8_t r = svmExecSuspend();
 
@@ -94,6 +100,9 @@ uint8_t svmStoreRunning() {
   }
   // reset the flag
   svmMeta.suspendExecuted = 0;
+  if(sda_get_top_slot() == SDA_SLOT_SVM) {
+    svmMeta.kbdVisible = svpSGlobal.kbdVisible;
+  }
   
   svmSaveProcData();
   return 0;
@@ -136,17 +145,15 @@ void svmSuspend() {
     if (getOverlayId() != 0) {
       destroyOverlay();
     }
-    sda_set_landscape(0);
-    
-    sda_keyboard_hide();
-
-    //printf("Prev top slot: %u\n", sda_get_prev_top_screen_slot());
 
     if (svmMeta.prevPid != 0) {
       svmStoreRunning(); // store currently running app...
       svmLoadPrevious();
       return;
     }
+
+    sda_set_landscape(0);
+    sda_keyboard_hide();
 
     sda_slot_on_top(SDA_SLOT_APPLIST);
     svp_switch_main_dir();
@@ -176,7 +183,6 @@ uint8_t svmWake(uint16_t pid) {
       svmSavedProc[id].valid = 0;
       return 1;
     }
-
     sda_slot_set_valid(SDA_SLOT_SVM);
     svmSetValid(1);
   }
@@ -190,6 +196,7 @@ uint8_t svmWake(uint16_t pid) {
 
   // reset suspend executed flag
   svmMeta.suspendExecuted = 0;
+  svpSGlobal.kbdVisible = svmMeta.kbdVisible;
 
   // exec wakeup
   if(functionExists(SVM_WAKEUP_FUNCTION, &svm)) {

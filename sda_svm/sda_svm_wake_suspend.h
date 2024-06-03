@@ -44,4 +44,6 @@ uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmA
 // executes the suspend call
 uint8_t svmExecSuspend();
 
+void svmHandleHomeButton();
+
 #endif

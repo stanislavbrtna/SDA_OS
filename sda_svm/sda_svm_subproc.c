@@ -301,7 +301,6 @@ void svmSaveProcData() {
     svmMeta.openCsvUsed = 1;
   }
 
-  //printf("storing workdir: %s\n", svmMeta.currentWorkDir);
   svmMeta.lcdOffButtons = wrap_get_lcdOffButtons();
 
   sda_files_close();
@@ -400,6 +399,8 @@ uint8_t svmLoadProcData(uint16_t pid) {
   svp_chdir(svmMeta.currentWorkDir);
 
   sda_slot_set_screen(SDA_SLOT_SVM, svmMeta.screen);
+
+  svpSGlobal.kbdVisible = svmMeta.kbdVisible;
   return 1;
 }
 
