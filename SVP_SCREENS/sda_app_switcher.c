@@ -201,7 +201,7 @@ void taskSwitcherUpdate() {
     }
 
     if (gr2_get_event(appButtonsClose[x], &sda_sys_con) == EV_RELEASED) {
-      svmClose(appPid[x]);
+      svmClose(appPid[x], 1);
       int32_t prevScroll = gr2_get_value(scrollbar, &sda_sys_con);
       destroyOverlay();
       taskSwitcherOpen();

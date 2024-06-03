@@ -27,7 +27,7 @@ SOFTWARE.
 
 void svmSetRestoreSlot(uint8_t slot);
 void svmCloseRunning(); // gracefully closes running svm (app)
-void svmClose(uint16_t id);
+void svmClose(uint16_t pid, uint8_t force_unclosable);
 void svmCloseAll();
 
 #endif

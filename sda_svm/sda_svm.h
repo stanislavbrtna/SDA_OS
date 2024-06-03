@@ -124,7 +124,7 @@ uint8_t svmStoreRunning();
 uint8_t svmWake(uint16_t pid);
 
 // close app with given pid
-void svmClose(uint16_t pid);
+void svmClose(uint16_t pid, uint8_t force_unclosable);
 
 // Closes all apps, running or suspended
 void svmCloseAll();

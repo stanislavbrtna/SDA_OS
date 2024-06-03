@@ -116,7 +116,7 @@ void svmCloseAll() {
 
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProc[x].valid == 1) {
-      svmClose(svmSavedProc[x].pid);
+      svmClose(svmSavedProc[x].pid, 0);
     }
   }
 
@@ -136,7 +136,7 @@ void svmCloseAll() {
 
 
 // closes app with given id
-void svmClose(uint16_t id) {
+void svmClose(uint16_t id, uint8_t force_unclosable) {
   uint16_t prevApp = 0;
 
   if (svmMeta.pid != id && sda_get_top_slot() == 4) {
@@ -147,8 +147,10 @@ void svmClose(uint16_t id) {
     svmWake(id);
   }
 
-  // here we close even the unclosable apps
-  svmSetSuspendOnClose(0);
+  if (force_unclosable) {
+    // here we close even the unclosable apps
+    svmSetSuspendOnClose(0);
+  }
 
   svmCloseRunning();
   

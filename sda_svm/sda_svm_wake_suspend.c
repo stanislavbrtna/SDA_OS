@@ -138,7 +138,6 @@ void svmSuspend() {
     return;
   } else {
     svmExecSuspend();
-    gr2_text_deactivate(&sda_app_con);
     svpSGlobal.systemXBtnClick = 0;
     svpSGlobal.systemXBtnVisible = 0;
     
