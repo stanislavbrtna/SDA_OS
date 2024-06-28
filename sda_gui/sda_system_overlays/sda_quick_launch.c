@@ -109,12 +109,6 @@ void sda_ql_load_icons() {
 
 
 void sda_ql_overlay_handle(uint8_t init) {
-  static uint16_t dateTxt;
-  static uint16_t copyBtn;
-  static uint16_t fmtBtn;
-  static uint8_t  dateBuff[128];
-
-  static uint8_t  format;
 
   if (init == 1) {
     ql_overlay = gr2_add_screen(&sda_sys_con);
@@ -142,11 +136,12 @@ void sda_ql_overlay_handle(uint8_t init) {
     gr2_set_event(qlIcons[i].id, EV_NONE, &sda_sys_con);
   }
 
-
-  if(svpSGlobal.lcdState == LCD_OFF) {
+  // destroy overlay on screen off or back button released events
+  if(svpSGlobal.lcdState == LCD_OFF || sda_wrap_get_button(BUTTON_A) == EV_RELEASED) {
     ql_overlay_flag = 0;
     setRedrawFlag();
     destroyOverlay();
+    sda_wrap_clear_button(BUTTON_A);
     return;
   }
 
