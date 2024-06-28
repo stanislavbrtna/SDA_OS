@@ -120,7 +120,7 @@ uint8_t svmGenericCallback(uint16_t pid, uint8_t *callback) {
         // TODO: fix all of this slot mess
         svp_switch_main_dir();
         svp_chdir((uint8_t *)"APPS");
-        sda_slot_on_top(SDA_SLOT_APPLIST);
+        sda_prev_slot_on_top(SDA_SLOT_HOMESCREEN);
       }
       
       return 0;

@@ -154,7 +154,7 @@ void svmSuspend() {
     sda_set_landscape(0);
     sda_keyboard_hide();
 
-    sda_slot_on_top(SDA_SLOT_APPLIST);
+    sda_prev_slot_on_top(SDA_SLOT_APPLIST);
     svp_switch_main_dir();
     svp_chdir((uint8_t *)"APPS");
     sda_set_sleep_lock(0);

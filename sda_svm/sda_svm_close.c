@@ -28,12 +28,6 @@ extern svmSavedProcType svmSavedProc[MAX_OF_SAVED_PROC];
 
 extern uint8_t  soft_error_flag;
 
-static uint8_t slot_restore; // what appslot to restore after close
-
-void svmSetRestoreSlot(uint8_t slot) {
-  slot_restore = slot;
-}
-
 // gracefully closes running svm (app)
 void svmCloseRunning() {
   uint8_t errorOccured = 0;
@@ -101,18 +95,14 @@ void svmCloseRunning() {
   }
   sda_slot_set_invalid(SDA_SLOT_SVM);
 
-  // TODO: restore right slot.. previous app perhaps...
-  if (slot_restore == 0) {
-    sda_slot_on_top(SDA_SLOT_APPLIST);
-  }
-
+  sda_prev_slot_on_top(SDA_SLOT_HOMESCREEN);
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
 }
 
 
 void svmCloseAll() {
-  svmSetRestoreSlot(sda_get_top_slot());
+  uint8_t slot = sda_get_top_slot();
 
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProc[x].valid == 1) {
@@ -124,14 +114,7 @@ void svmCloseAll() {
     sda_serial_disable();
   }
 
-  if (slot_restore != 0) {
-    if (sda_slot_get_valid(slot_restore)) {
-      sda_slot_on_top(slot_restore);
-    } else {
-      sda_slot_on_top(SDA_SLOT_HOMESCREEN);
-    }
-    slot_restore = 0;
-  }
+  sda_slot_on_top(slot);
 }
 
 
@@ -139,7 +122,7 @@ void svmCloseAll() {
 void svmClose(uint16_t id, uint8_t force_unclosable) {
   uint16_t prevApp = 0;
 
-  if (svmMeta.pid != id && sda_get_top_slot() == 4) {
+  if (svmMeta.pid != id && sda_get_top_slot() == SDA_SLOT_SVM) {
     prevApp = svmMeta.pid;
   }
 

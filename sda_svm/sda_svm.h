@@ -182,7 +182,6 @@ void svmRemovePrecache();
 
 uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode);
 void svmGetGR2Settings();
-void svmSetRestoreSlot(uint8_t slot);
 
 // multiprocess internal functions
 void svmSaveProcData();

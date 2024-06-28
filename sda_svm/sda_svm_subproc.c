@@ -217,16 +217,13 @@ uint8_t svmLoadParent(uint8_t errorOccured) {
       printf("%s: Loading parent app failed! (pid: %u)\n",__FUNCTION__, pid);
       svmSetValid(0);
       sda_slot_set_invalid(SDA_SLOT_SVM);
-      sda_slot_on_top(SDA_SLOT_APPLIST);
+      sda_prev_slot_on_top(SDA_SLOT_APPLIST);
       svp_switch_main_dir();
       svp_chdir((uint8_t *)"APPS");
       return 1;
     }
-  } else {
-    //svmSetValid(0);
-    //sda_slot_set_invalid(SDA_SLOT_SVM);
-    
-    sda_slot_on_top(SDA_SLOT_APPLIST);
+  } else {   
+    sda_prev_slot_on_top(SDA_SLOT_APPLIST);
     printf("%s: Parent is not valid. (%u)\n",__FUNCTION__, pid);
     svp_switch_main_dir();
     svp_chdir((uint8_t *)"APPS");
@@ -264,13 +261,13 @@ uint8_t svmLoadPrevious() {
       printf("%s: Loading previous app failed! (pid: %u)\n",__FUNCTION__, pid);
       svmSetValid(0);
       sda_slot_set_invalid(SDA_SLOT_SVM);
-      sda_slot_on_top(SDA_SLOT_APPLIST);
+      sda_prev_slot_on_top(SDA_SLOT_APPLIST);
       svp_switch_main_dir();
       svp_chdir((uint8_t *)"APPS");
       return 1;
     }
   } else {
-    sda_slot_on_top(SDA_SLOT_APPLIST);
+    sda_prev_slot_on_top(SDA_SLOT_APPLIST);
     printf("%s: Previous spp is not valid. (%u)\n",__FUNCTION__, pid);
     svp_switch_main_dir();
     svp_chdir((uint8_t *)"APPS");

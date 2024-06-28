@@ -67,7 +67,7 @@ void sda_lcd_on_handler() {
 //#define POWER_MODE_DEBUG
 
 uint64_t sda_lcd_off_handler() {
-  if ((wrap_get_lcdOffButtons() == 1 && slotOnTop[SDA_SLOT_SVM] && slotValid[SDA_SLOT_SVM]) // active app has enabled buttons
+  if ((wrap_get_lcdOffButtons() == 1 && sda_if_slot_on_top(SDA_SLOT_SVM)) // active app has enabled buttons
       || sdaSvmIsTimerSet() // timer is enabled
       || svmGetUartCallbackActive() // active uart callback
      )

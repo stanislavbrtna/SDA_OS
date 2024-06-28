@@ -16,5 +16,6 @@ uint16_t sda_slot_get_valid(uint16_t slot);
 uint16_t sda_slot_get_screen(uint8_t slot);
 void sda_slot_on_top(uint8_t slot);
 uint8_t sda_get_top_slot();
+void sda_prev_slot_on_top(uint8_t def);
 
 #endif

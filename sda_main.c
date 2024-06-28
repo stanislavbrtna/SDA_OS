@@ -279,11 +279,11 @@ static void sda_main_handle_soft_buttons() {
   // top bar button handlers
   // handler for that big S! button
   if ((svpSGlobal.systemOptClick == CLICKED_SHORT)) {
-    if(sda_get_top_slot() == 4 && svmGetValid()) {
+    if(sda_get_top_slot() == SDA_SLOT_SVM && svmGetValid()) {
       svmHandleHomeButton();
     }
     
-    if(sda_get_prev_top_screen_slot() != 0) {
+    if(sda_get_top_slot() != SDA_SLOT_HOMESCREEN) {
 
       svpSGlobal.systemXBtnClick = 0;
       svpSGlobal.systemXBtnVisible = 0;
@@ -294,12 +294,11 @@ static void sda_main_handle_soft_buttons() {
       }
       sda_set_landscape(0);
       sda_keyboard_hide();
-      if(sda_get_prev_top_screen_slot() == 1
-         || sda_get_prev_top_screen_slot() == 2)
-      {
+      
+      if(sda_get_top_slot() == SDA_SLOT_APPLIST) {
         sda_slot_on_top(SDA_SLOT_HOMESCREEN);
       } else {
-        sda_slot_on_top(SDA_SLOT_APPLIST);
+        sda_prev_slot_on_top(SDA_SLOT_HOMESCREEN);
       }
       
       svp_chdir(mainDir);
