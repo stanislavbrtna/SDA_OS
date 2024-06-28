@@ -76,7 +76,7 @@ Gets height of a string, when drawn with current font.
 Return: [num] height (px)
 ##### Fill area with color
     sys.ds.clearArea([num]col);
-Clears draw area with goven color
+Clears draw area with given color
 
 Return: None
 #### P16 image tools
