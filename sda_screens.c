@@ -30,11 +30,12 @@ uint16_t overlayX2;
 uint16_t overlayY1;
 uint16_t overlayY2;
 uint16_t ov_id; // current overlay id
-
+uint8_t  overlayRedrawFlag;
 
 uint8_t kbdRedraw;
 psvcKbdLayout kbdLayout;
 uint8_t kbdVisibleOld;
+
 
 extern sdaSvmMetadata svmMeta;
 
@@ -104,18 +105,25 @@ void sda_main_redraw() {
     }
     svpSGlobal.systemRedraw = 0;
   } else {
-    if (svpSGlobal.systemRedraw == 1) {
+
+    // workaround for clipboard overlay, redraws parent screen after cb overlay exits
+    if (overlayRedrawFlag) {
       if (mainScr != 0) {
         gr2_draw_screen(
           0,
           32,
           319 + 160 * svpSGlobal.lcdLandscape,
-          479 - 160 * svpSGlobal.kbdVisible - 160*svpSGlobal.lcdLandscape,
+          479 - 160 * svpSGlobal.kbdVisible - 160 * svpSGlobal.lcdLandscape,
           mainScr,
           1,
           sda_current_con
         );
       }
+      overlayRedrawFlag = 0;
+    }
+
+    // draw shadow when modified
+    if(overlayCont->pscgElements[overlayScr].modified || svpSGlobal.systemRedraw == 1) {
       sda_draw_overlay_shadow(
             overlayX1,
             overlayY1,
@@ -123,29 +131,19 @@ void sda_main_redraw() {
             overlayY2,
             overlayCont
       );
-      gr2_draw_screen(
+    }
+
+    gr2_draw_screen(
             overlayX1,
             overlayY1,
             overlayX2,
             overlayY2,
             overlayScr,
-            1,
+            svpSGlobal.systemRedraw,
             overlayCont
-      );
-      LCD_DrawRectangle(overlayX1 - 1 , overlayY1 - 1, overlayX2 + 1, overlayY2 + 1, sda_current_con->border_color);
-      svpSGlobal.systemRedraw = 0;
-    }
-    if(overlayCont->pscgElements[overlayScr].modified) {
-      sda_draw_overlay_shadow(
-            overlayX1,
-            overlayY1,
-            overlayX2,
-            overlayY2,
-            overlayCont
-      );
-    }
+    );
+    svpSGlobal.systemRedraw = 0;
     LCD_DrawRectangle(overlayX1 - 1 , overlayY1 - 1, overlayX2 + 1, overlayY2 + 1, sda_current_con->border_color);
-    gr2_draw_screen(overlayX1, overlayY1, overlayX2, overlayY2, overlayScr, 0, overlayCont);
   }
   gr2_draw_end(sda_current_con);
   

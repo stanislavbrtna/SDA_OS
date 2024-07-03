@@ -31,6 +31,7 @@ static uint16_t scr, ov_id;
 static uint16_t target_id;
 
 extern svsVM    svm;
+extern uint8_t  overlayRedrawFlag;
 
 sdaOverlayType prevOv;
 uint8_t restore;
@@ -134,6 +135,7 @@ void handle_clipboard_exit() {
   target_id = 0;
   ov_id = 0;
   setRedrawFlag();
+  overlayRedrawFlag = 1;
 }
 
 
