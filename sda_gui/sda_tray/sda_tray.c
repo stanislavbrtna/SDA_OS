@@ -254,6 +254,8 @@ uint8_t svp_tray() {
 
   icons_left_x += tray_alarm_and_mute(PM_TOPBAR_X2 - icons_left_x, 0);
 
+  icons_left_x += 5;
+
   icons_left_x += sda_custom_icon_handle(PM_TOPBAR_X2 - icons_left_x, 0, 128);
 
   // redraw spills with home&close

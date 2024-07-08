@@ -46,10 +46,13 @@ int16_t sda_tray_time(int16_t x2, int16_t y1, uint16_t w) {
 
     oldmin = svpSGlobal.min;
     oldhour = svpSGlobal.hour;
-    LCD_FillRect(x1 - 1 - 32, y1, x1 + w, 31, trayBackgroundColor);
+    
     curr_font = LCD_Get_Font_Size();
     LCD_Set_Sys_Font(18);
-    LCD_DrawText_ext(x1 + 2, y1 + 8, gr2_get_text_color(&sda_sys_con), time_string);
+    w = LCD_Text_Get_Width(time_string, 0);
+    x1 = x2 - w;
+    LCD_FillRect(x1 - 1 - 32, y1, x2, 31, trayBackgroundColor);
+    LCD_DrawText_ext(x1, y1 + 8, gr2_get_text_color(&sda_sys_con), time_string);
     LCD_Set_Sys_Font(curr_font);
     redraw = 1;
     irq_redraw = 1;
