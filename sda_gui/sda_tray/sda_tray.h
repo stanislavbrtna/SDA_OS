@@ -28,6 +28,8 @@ SOFTWARE.
 #define OPT_HOLD_CNT_MAX 12
 #define OPT_HOLD_CNT_BEGIN 5
 
+#define SDA_TRAY_RADIUS 4
+
 void svp_set_irq_redraw();
 
 uint8_t svp_tray();
@@ -47,6 +49,8 @@ gr2EventType sda_tray_clicked(
   uint16_t x2,
   uint16_t y2
 );
+
+void tray_draw_tab(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t active);
 
 int16_t sda_tray_time(int16_t x1, int16_t y1, uint16_t w);
 int16_t sda_tray_battery(int16_t x1, int16_t y1, int16_t w);

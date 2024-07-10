@@ -24,6 +24,14 @@ SOFTWARE.
 
 extern volatile uint8_t irq_redraw;
 
+
+static void draw_home_button(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t active) {
+  tray_draw_tab(x1, y1, x2, y2, active);
+
+  uint8_t curr_font = LCD_Get_Font_Size();
+  LCD_DrawText_ext(x1 + 20, y1 + 2, gr2_get_text_color(&sda_sys_con), (uint8_t *)"S!");
+}
+
 int16_t sda_tray_home(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
   static uint8_t init;
   static uint8_t clickOld;
@@ -35,40 +43,38 @@ int16_t sda_tray_home(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
   LCD_Set_Sys_Font(32);
 
   if((irq_redraw) || (init == 0) || ((svpSGlobal.systemOptClick == CLICKED_NONE) && clickOld == 1 && click == 0)) {
-    LCD_FillRect(x1, y1, x2, y2, gr2_get_fill_color(&sda_sys_con));
-    LCD_DrawRectangle(x1, y1, x2, y2, gr2_get_border_color(&sda_sys_con));
-    LCD_DrawText_ext(x1 + 10, y1 + 2, gr2_get_text_color(&sda_sys_con), (uint8_t *)"S!");
+    draw_home_button(x1, y1, x2, y2, 0);
     init = 1;
   }
 
   if (sda_tray_clicked(x1, y1, x2, y2)) {
     if (clickOld == 0) {
-      LCD_FillRect(x1, y1, x2, y2, gr2_get_active_color(&sda_sys_con));
-      LCD_DrawRectangle(x1, y1, x2, y2, gr2_get_border_color(&sda_sys_con));
-      LCD_DrawText_ext(x1 + 10, y1 + 2, gr2_get_text_color(&sda_sys_con), (uint8_t *)"S!");
+      draw_home_button(x1, y1, x2, y2, 1);
     }
 
     if (holdCounter > OPT_HOLD_CNT_BEGIN && holdCounter <= OPT_HOLD_CNT_MAX) {
+      
       LCD_FillRect(
-        x1 + 1,
-        y1 + 1,
-        x1 - 1 + ((x2 - x1) / (OPT_HOLD_CNT_MAX - OPT_HOLD_CNT_BEGIN)) * (holdCounter - OPT_HOLD_CNT_BEGIN),
-        y2 - 1,
+        x1 + 2,
+        y1 + 2,
+        x1 - 2 + ((x2 - x1) / (OPT_HOLD_CNT_MAX - OPT_HOLD_CNT_BEGIN)) * (holdCounter - OPT_HOLD_CNT_BEGIN),
+        y2 - 2,
         gr2_get_active_color(&sda_sys_con)
       );
+
       LCD_FillRect(
-        x1 + 1 + ((x2 - x1) / (OPT_HOLD_CNT_MAX - OPT_HOLD_CNT_BEGIN)) * (holdCounter - OPT_HOLD_CNT_BEGIN),
-        y1 + 1,
-        x2 - 1,
-        y2 - 1,
+        x1 + 2 + ((x2 - x1) / (OPT_HOLD_CNT_MAX - OPT_HOLD_CNT_BEGIN)) * (holdCounter - OPT_HOLD_CNT_BEGIN),
+        y1 + 2,
+        x2 - 2,
+        y2 - 2,
         gr2_get_fill_color(&sda_sys_con)
       );
 
       if (holdCounter == OPT_HOLD_CNT_MAX) {
-        LCD_FillRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1, gr2_get_active_color(&sda_sys_con));
+        LCD_FillRect(x1 + 2, y1 + 2, x2 - 2, y2 - 2, gr2_get_active_color(&sda_sys_con));
       }
 
-      LCD_DrawText_ext(x1 + 10, y1 + 2, gr2_get_text_color(&sda_sys_con), (uint8_t *)"S!");
+      LCD_DrawText_ext(x1 + 20, y1 + 2, gr2_get_text_color(&sda_sys_con), (uint8_t *)"S!");
     }
 
     click = 1;

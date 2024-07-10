@@ -96,6 +96,40 @@ void irq_redraw_block_disable() {
 }
 
 
+void tray_draw_tab(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t active) {
+  uint16_t col;
+  
+  if (active) {
+    col = gr2_get_active_color(&sda_sys_con);
+  } else {
+    col = gr2_get_fill_color(&sda_sys_con);
+  }
+
+  LCD_FillRect(x1 + SDA_TRAY_RADIUS, y1, x2 - SDA_TRAY_RADIUS, y1 + SDA_TRAY_RADIUS, col);
+  LCD_FillRect(x1, y1 + SDA_TRAY_RADIUS, x2, y2, col);
+
+  LCD_FillCirclePart(x1 + SDA_TRAY_RADIUS, y1 + SDA_TRAY_RADIUS, SDA_TRAY_RADIUS, 0, col);
+  LCD_FillCirclePart(x2 - SDA_TRAY_RADIUS, y1 + SDA_TRAY_RADIUS, SDA_TRAY_RADIUS, 1, col);
+  
+  // Background
+  col = gr2_get_border_color(&sda_sys_con);
+
+  LCD_FillRect(x1 + SDA_TRAY_RADIUS, y1, x2 - SDA_TRAY_RADIUS, y1 + 1, col);
+
+  LCD_FillRect(x1, y2 - 1, x2, y2, col);
+
+  // Framing
+  LCD_FillRect(x1, y1 + SDA_TRAY_RADIUS, x1 + 1, y2, col);
+  LCD_FillRect(x2 - 1, y1 + SDA_TRAY_RADIUS, x2, y2, col);
+
+  LCD_DrawCirclePart(x1 + SDA_TRAY_RADIUS, y1 + SDA_TRAY_RADIUS, SDA_TRAY_RADIUS, 0, col);
+  LCD_DrawCirclePart(x1 + SDA_TRAY_RADIUS, y1 + SDA_TRAY_RADIUS + 1, SDA_TRAY_RADIUS, 0, col);
+
+  LCD_DrawCirclePart(x2 - SDA_TRAY_RADIUS, y1 + SDA_TRAY_RADIUS, SDA_TRAY_RADIUS, 1, col);
+  LCD_DrawCirclePart(x2 - SDA_TRAY_RADIUS, y1 + SDA_TRAY_RADIUS + 1, SDA_TRAY_RADIUS, 1, col);
+}
+
+
 gr2EventType sda_tray_clicked(
   uint16_t x1,
   uint16_t y1,
@@ -179,8 +213,8 @@ static uint8_t tray_close(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_
   }
 
   if((init == 0) || (reset == 1) || (irq_redraw)) {
-    LCD_FillRect(x1, y1, x2, y2, gr2_get_fill_color(&sda_sys_con));
-    LCD_DrawRectangle(x1, y1, x2, y2, gr2_get_border_color(&sda_sys_con));
+    tray_draw_tab(x1, y1, x2, y2, 0);
+
     LCD_FillRect(x1 + 6, y1 + 14, x2 - 6, y2 - 14, gr2_get_text_color(&sda_sys_con));
     init = 1;
   }
@@ -188,8 +222,8 @@ static uint8_t tray_close(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_
   touch_event = sda_tray_clicked(x1, y1, x2, y2);
 
   if (touch_event == EV_PRESSED) {
-    LCD_FillRect(x1, y1, x2, y2, gr2_get_active_color(&sda_sys_con));
-    LCD_DrawRectangle(x1, y1, x2, y2, gr2_get_border_color(&sda_sys_con));
+    tray_draw_tab(x1, y1, x2, y2, 1);
+
     LCD_FillRect(x1 + 6, y1 + 14, x2 - 6, y2 - 14, gr2_get_text_color(&sda_sys_con));
     selected = 1;
     if (svpSGlobal.systemXBtnTime == 0) {
@@ -227,7 +261,7 @@ uint8_t svp_tray() {
   }
 
   if (irq_redraw_block == 1) {
-    tray_close(PM_TOPBAR_X2 - 32, 0, PM_TOPBAR_X2, 31, 2);
+    tray_close(PM_TOPBAR_X2 - 32, PM_TOPBAR_Y1, PM_TOPBAR_X2, 31, 2);
     return 0;
   }
 
@@ -259,12 +293,12 @@ uint8_t svp_tray() {
   icons_left_x += sda_custom_icon_handle(PM_TOPBAR_X2 - icons_left_x, 0, 128);
 
   // redraw spills with home&close
-  sda_tray_home(PM_TOPBAR_X1, PM_TOPBAR_Y1, 48, 31);
+  sda_tray_home(PM_TOPBAR_X1, PM_TOPBAR_Y1, 64, 31);
 
 
   // From left: Close button
   if(svpSGlobal.systemXBtnVisible == 1) {
-    tray_close(PM_TOPBAR_X2 - 32, 0, PM_TOPBAR_X2, 31, 1 - XbtnVisibleOld);
+    tray_close(PM_TOPBAR_X2 - 32, PM_TOPBAR_Y1, PM_TOPBAR_X2, 31, 1 - XbtnVisibleOld);
   }
 
   if((XbtnVisibleOld == 1) && (svpSGlobal.systemXBtnVisible == 0)) {
