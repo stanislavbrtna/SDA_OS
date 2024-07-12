@@ -293,8 +293,7 @@ uint8_t svp_tray() {
   icons_left_x += sda_custom_icon_handle(PM_TOPBAR_X2 - icons_left_x, 0, 128);
 
   // redraw spills with home&close
-  sda_tray_home(PM_TOPBAR_X1, PM_TOPBAR_Y1, 64, 31);
-
+  sda_tray_home(PM_TOPBAR_X1, PM_TOPBAR_Y1, 63, 31);
 
   // From left: Close button
   if(svpSGlobal.systemXBtnVisible == 1) {
