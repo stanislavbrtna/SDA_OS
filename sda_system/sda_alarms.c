@@ -52,7 +52,7 @@ uint8_t sdaGetActiveAlarm() {
 
 static void sdaReloadAlarmIcon() {
   if (currentAlarmTime != 0) {
-    if (currentAlarmTime - svpSGlobal.timestamp < 24*60*60) {
+    if (currentAlarmTime - svpSGlobal.timestamp <= 24*60*60) {
       sda_tray_alarm_enable();
       return;
     }
@@ -254,8 +254,8 @@ void sdaReloadAlarms() {
   sda_str_add(keybuff, numbuff);
   sda_conf_key_read(&conffile, keybuff, currentAlarmAppName, APP_NAME_LEN);
 
-  currentAlarmTime = alarmTime;
-  currentAlarmId = alarmId;
+  currentAlarmTime  = alarmTime;
+  currentAlarmId    = alarmId;
   currentAlarmParam = alarmParam;
 
   sda_conf_close(&conffile);
