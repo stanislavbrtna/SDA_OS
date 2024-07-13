@@ -172,8 +172,7 @@ uint8_t svmWake(uint16_t pid) {
     int16_t id = svmGetId(pid);
 
     if(id < 0) {
-      printf("svmWake: id not valid\n");
-      svmSavedProc[id].valid = 0;
+      printf("svmWake: Given pid doesn't match any running app.\n");
       return 1;
     } 
 
