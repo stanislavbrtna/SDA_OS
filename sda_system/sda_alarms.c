@@ -374,6 +374,11 @@ uint8_t sdaGetCurentAlarm(int32_t * id, int32_t * param, uint8_t * appNameBuffer
     sdaReloadAlarms();
     return 1;
   }
+
+  if (currentAlarmTime != 0) {
+    sdaReloadAlarmIcon();
+  }
+  
   return 0;
 }
 
