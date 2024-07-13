@@ -42,7 +42,6 @@ static uint16_t settingsPrev;
 static uint16_t settingsStack[5];
 static uint8_t  *settingsStackStr[5];
 
-static uint16_t globBack;
 static uint16_t optSecuScr;
 
 
@@ -95,7 +94,7 @@ uint16_t sda_settings_gui(uint8_t init, uint8_t top) {
     if (gr2_clicked(btnBack, &sda_sys_con)) {
       if (settingsPrev == 1) {
         sda_slot_on_top(SDA_SLOT_APPLIST);
-        return;
+        return 0;
       }
       settingsPrev--;
       gr2_set_value(settingsFrame, settingsStack[settingsPrev], &sda_sys_con);

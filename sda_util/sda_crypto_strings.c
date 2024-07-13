@@ -77,7 +77,6 @@ uint8_t sda_encrypt_string(uint8_t * source, uint8_t * dest, uint32_t len) {
 
 uint8_t sda_decrypt_string(uint8_t * source, uint8_t * dest, uint32_t len) {
   uint8_t raw_byte;
-  uint8_t decr_char;
 
   if (svp_crypto_get_lock() == 0) {
     return 1;

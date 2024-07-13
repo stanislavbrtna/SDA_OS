@@ -27,8 +27,6 @@ extern volatile uint8_t irq_redraw;
 
 static void draw_home_button(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t active) {
   tray_draw_tab(x1, y1, x2, y2, active);
-
-  uint8_t curr_font = LCD_Get_Font_Size();
   LCD_DrawText_ext(x1 + 20, y1 + 2, gr2_get_text_color(&sda_sys_con), (uint8_t *)"S!");
 }
 

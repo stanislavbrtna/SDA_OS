@@ -26,7 +26,6 @@ volatile uint8_t irq_redraw;
 volatile uint8_t irq_redraw_block;
 uint16_t trayBackgroundColor;
 
-static uint8_t kbd_tray_en;
 static uint8_t alarm_en;
 
 uint8_t alarm_icon[] = {
