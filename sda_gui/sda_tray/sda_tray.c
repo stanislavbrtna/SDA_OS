@@ -74,12 +74,14 @@ void svp_set_irq_redraw() {
 
 
 void sda_tray_alarm_enable() {
+  if(alarm_en == 1) return;
   alarm_en = 1;
   svp_set_irq_redraw();
 }
 
 
 void sda_tray_alarm_disable() {
+  if(alarm_en == 0) return;
   alarm_en = 0;
   svp_set_irq_redraw();
 }
