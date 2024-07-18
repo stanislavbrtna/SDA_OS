@@ -150,6 +150,9 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 
     if (svp_fexists((uint8_t *)"APPS/background.p16")) {
       gr2_set_str(screen,(uint8_t *)"background.p16", &sda_sys_con);
+    } else {
+      // set default bg as empty
+      gr2_set_str(screen,(uint8_t *)"", &sda_sys_con);
     }
 
     if (svp_crypto_get_if_set_up() == 0) {
@@ -159,6 +162,9 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     gr2_set_ghost(btnLock, 1, &sda_sys_con);
     
     oldLock = DEVICE_UNLOCKED;
+
+    sda_homescreen_configure();
+
     return screen;
   }
 
