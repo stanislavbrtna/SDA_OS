@@ -144,11 +144,11 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Selects element for keyboard control
+  //#!##### Gets element selected by keyboard control
   //#!    sys.os.gui.btnGetSel([num]screen_id);
   //#!Gets selected element in current screen (or its sub-screens)
   //#!
-  //#!Return: None
+  //#!Return: [num] element_id
   if (sysFuncMatch(argS->callId, "btnGetSel", s)) {
     argType[1] = SVS_TYPE_NUM;
     if(sysExecTypeCheck(argS, argType, 1, s)){
