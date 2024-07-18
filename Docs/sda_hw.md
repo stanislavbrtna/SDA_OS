@@ -169,11 +169,16 @@ re-init it with *sys.hw.ePinDef*.
 
 Return: [float] measured voltage in volts.
 #### Buttons
+
+Functions for handling hw buttons.
+Button defines: BTN_A, BTN_LEFT, BTN_UP, BTN_DOWN, BTN_RIGHT, BTN_B
+Events are the same as in handling GUI: EV_NONE, EV_PRESSED, EV_HOLD, EV_RELEASED
+
 ##### Get button event
     sys.hw.btn.getEvent([num]btn);
 Return last button event. 
 
-Return: [num] event define (EV_NONE, EV_PRESSED, EV_HOLD, EV_RELEASED)
+Return: [num] event
 ##### Clears button events
     sys.hw.btn.clrEvent([num]btn);
 Sets button event to EV_NONE
@@ -182,7 +187,9 @@ Return: None
 ##### Enable button events with LCD off
     sys.hw.btn.stdbyEn([num]val);
 Enables button readout with LCD off.
-When this is enabled, SDA won't go in deep sleep.
+Val: 1 - enabled, 0 - disabled
+When this is enabled, SDA won't go in deep sleep,
+and button presses will be handled immediately.
 
 Return: None
 ### Communication

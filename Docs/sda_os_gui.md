@@ -1,7 +1,7 @@
 #### Gui
 ##### Set main application screen
     sys.os.gui.setMainScr([num]id);
-Sets main screen to screen with given id
+Sets main screen to screen with given id.
 When you wish to display overlay only, set this to 0.
 
 Return: None

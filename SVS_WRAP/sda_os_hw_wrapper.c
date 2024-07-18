@@ -454,11 +454,16 @@ uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   uint8_t argType[11];
 
   //#!#### Buttons
+  //#!
+  //#!Functions for handling hw buttons.
+  //#!Button defines: BTN_A, BTN_LEFT, BTN_UP, BTN_DOWN, BTN_RIGHT, BTN_B
+  //#!Events are the same as in handling GUI: EV_NONE, EV_PRESSED, EV_HOLD, EV_RELEASED
+  //#!
   //#!##### Get button event
   //#!    sys.hw.btn.getEvent([num]btn);
   //#!Return last button event. 
   //#!
-  //#!Return: [num] event define (EV_NONE, EV_PRESSED, EV_HOLD, EV_RELEASED)
+  //#!Return: [num] event
   if (sysFuncMatch(argS->callId, "getEvent", s)) {
     gr2EventType ev;
     argType[1] = SVS_TYPE_NUM;
@@ -522,7 +527,9 @@ uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   //#!##### Enable button events with LCD off
   //#!    sys.hw.btn.stdbyEn([num]val);
   //#!Enables button readout with LCD off.
-  //#!When this is enabled, SDA won't go in deep sleep.
+  //#!Val: 1 - enabled, 0 - disabled
+  //#!When this is enabled, SDA won't go in deep sleep,
+  //#!and button presses will be handled immediately.
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "stdbyEn", s)) {
