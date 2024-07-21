@@ -145,7 +145,7 @@ void svmSuspend() {
       destroyOverlay();
     }
 
-    if (svmMeta.prevPid != 0) {
+    if (svmMeta.prevPid != 0 && svmGetValidPid(svmMeta.prevPid)) {
       svmStoreRunning(); // store currently running app...
       svmLoadPrevious();
       return;

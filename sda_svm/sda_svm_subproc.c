@@ -267,10 +267,12 @@ uint8_t svmLoadPrevious() {
       return 1;
     }
   } else {
-    sda_prev_slot_on_top(SDA_SLOT_APPLIST);
-    printf("%s: Previous spp is not valid. (%u)\n",__FUNCTION__, pid);
+    svmKillRunning();
+    sda_slot_set_invalid(SDA_SLOT_SVM);
+    printf("%s: Previous spp is not valid. (pid: %u)\n",__FUNCTION__, pid);
     svp_switch_main_dir();
     svp_chdir((uint8_t *)"APPS");
+    sda_prev_slot_on_top(SDA_SLOT_APPLIST);
     return 1;
   }
 
