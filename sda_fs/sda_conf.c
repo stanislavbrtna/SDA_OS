@@ -55,7 +55,7 @@ uint16_t sda_strlen_ext(uint8_t *str, uint8_t escaping) {
   uint16_t len = 0;
 
   while(str[x] != 0) {
-    if ((str[x] == '#') && (escaping == 1)) {
+    if (((str[x] == '#') || (str[x] == '\n')) && (escaping == 1)) {
       len++;
     }
     x++;
@@ -166,9 +166,10 @@ uint8_t sda_conf_key_read(sda_conf *fc, uint8_t* key, uint8_t* ret_buff, uint16_
         if (fc->escaping == 1) {
           if (ret_buff[x] == '#') {
             ret_buff[x + 1] = svp_fread_u8(&(fc->fil));
-            if (ret_buff[x + 1] != '#') {
+            if (ret_buff[x + 1] != '#' && ret_buff[x + 1] == ' ') {
               ret_buff[x] = '\n';
               x++;
+              continue;
             }
           }
         }
@@ -201,6 +202,7 @@ void sda_conf_write_str(sda_conf *fc, uint8_t * val_buff) {
     if (fc->escaping == 1) {
       if (val_buff[x] == '\n') {
         svp_fwrite_u8(&(fc->fil), '#');
+        svp_fwrite_u8(&(fc->fil), ' ');
       } else if (val_buff[x] == '#') {
         svp_fwrite_u8(&(fc->fil), '#');
         svp_fwrite_u8(&(fc->fil), '#');
