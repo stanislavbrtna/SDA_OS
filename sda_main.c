@@ -42,8 +42,9 @@ void sda_main_init();
 
 // static headers
 static void sda_main_handle_soft_buttons();
-static void sda_main_run_autoexec();
 static void sda_main_check_for_alarm();
+
+void sda_main_run_autoexec();
 
 
 void test_code() {
@@ -72,6 +73,7 @@ uint8_t sda_main_loop() {
     init = 1;
     sda_main_init();
     test_code();
+    return 0; // return before continuing
   } else if (init == 1) {
     sda_main_run_autoexec();
 
