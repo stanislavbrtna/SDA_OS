@@ -1,11 +1,11 @@
 #include "svp_crypto.h"
 
-uint8_t svp_crypto_key[KEY_LEN_MAX];
-uint8_t svp_crypto_password[PASS_LEN_MAX];
-uint8_t svp_crypto_unlocked;
-uint8_t svp_crypto_set_up;
+static uint8_t svp_crypto_key[KEY_LEN_MAX];
+static uint8_t svp_crypto_password[PASS_LEN_MAX];
+static uint8_t svp_crypto_unlocked;
+static uint8_t svp_crypto_set_up;
 
-uint8_t svp_successfull_unlock;
+static uint8_t svp_successfull_unlock;
 
 
 void svp_crypto_init() {
