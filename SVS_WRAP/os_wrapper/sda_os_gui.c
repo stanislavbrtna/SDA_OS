@@ -284,7 +284,8 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     gr2_set_param(
       sda_app_con.textActiveId,
       gr2_get_param(sda_app_con.textActiveId, &sda_app_con) + sda_strlen(svpSGlobal.clipboard),
-      &sda_app_con),
+      &sda_app_con
+    );
     
     result->value.val_u = 0;
     result->type = SVS_TYPE_NUM;
