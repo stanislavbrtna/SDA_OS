@@ -200,6 +200,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
     uint8_t arg2_used = 0;
     uint8_t modified  = 0;
+    uint16_t len = 0;
 
     if (argS->usedup == 2) {
       if(sysExecTypeCheck(argS, argType, 2, s)) {
@@ -210,7 +211,8 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       if(sysExecTypeCheck(argS, argType, 1, s)) {
         return 0;
       }
-
+      //TODO: do this string magic somewhat better, or in different place
+      len = s->stringFieldLen;
       argS->argType[2]     = SVS_TYPE_STR;
       argS->arg[2].val_str = strNew(gr2_get_str(argS->arg[1].val_s, &sda_app_con), s);
     }
@@ -222,8 +224,12 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       gr2_set_str(argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, &sda_app_con);
     }
 
-    if (arg2_used == 0 && modified) {
-      gr2_set_str(argS->arg[1].val_s, s->stringField + result->value.val_str, &sda_app_con);
+    if (arg2_used == 0) {
+      if (modified) {
+        gr2_set_str(argS->arg[1].val_s, s->stringField + result->value.val_str, &sda_app_con);
+      } else {
+        s->stringFieldLen = len;
+      }
     }
 
     return 1;
