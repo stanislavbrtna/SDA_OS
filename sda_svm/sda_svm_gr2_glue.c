@@ -71,12 +71,12 @@ uint8_t svm_text_handler(varRetVal *result, argStruct *argS, svsVM *s) {
 
   // text not active
   if (!gr2_get_value(argS->arg[1].val_s, &sda_app_con)) {
-    return 1;
+    return 0;
   }
 
   if(gr2_cursor_handler(argS->arg[1].val_s, svpSGlobal.uptimeMs, &sda_app_con)) {
     sda_clipboard_overlay_init(argS->arg[1].val_s);
-    return 1;
+    return 0;
   }
 
   if (svpSGlobal.newStringIdFlag == argS->arg[1].val_s) {
@@ -198,5 +198,5 @@ uint8_t svm_text_handler(varRetVal *result, argStruct *argS, svsVM *s) {
     }
   }
 
-  return 1;
+  return 0;
 }

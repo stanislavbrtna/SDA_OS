@@ -44,9 +44,22 @@ Return: None
 #### Text field handling
 ##### Handle text input
     sys.os.gui.handleText([num]id, [str]text);
+    sys.os.gui.handleText([num]id);
 Handles text input fields. Id is field id. Text is default text value.
 
 Return: [str] New modified text value
+
+Usage:
+    string_val = sys.os.gui.handleText([num]id, string_val);
+This is usefull if you are using string_val in every loop, handleText
+will keep the variable and the string in sync.
+
+Alternative usage:
+    sys.os.gui.handleText([num]id);
+This will handle the text field and text value can be retrieved
+with *sys.gui.getString*.
+Note: the text value is still stored in SVS string memory.
+
 ##### Set keyboard string
     sys.os.gui.setKbdStr([str] string);
 Sets the current keyboard string (max 63 chars)

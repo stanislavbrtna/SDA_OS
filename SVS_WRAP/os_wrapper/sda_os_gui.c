@@ -178,22 +178,52 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Handle text input
   //#!    sys.os.gui.handleText([num]id, [str]text);
+  //#!    sys.os.gui.handleText([num]id);
   //#!Handles text input fields. Id is field id. Text is default text value.
   //#!
   //#!Return: [str] New modified text value
+  //#!
+  //#!Usage:
+  //#!    string_val = sys.os.gui.handleText([num]id, string_val);
+  //#!This is usefull if you are using string_val in every loop, handleText
+  //#!will keep the variable and the string in sync.
+  //#!
+  //#!Alternative usage:
+  //#!    sys.os.gui.handleText([num]id);
+  //#!This will handle the text field and text value can be retrieved
+  //#!with *sys.gui.getString*.
+  //#!Note: the text value is still stored in SVS string memory.
+  //#!
   if (sysFuncMatch(argS->callId, "handleText", s)) {
     argType[1] = SVS_TYPE_NUM; //id
     argType[2] = SVS_TYPE_STR; //textval
 
-    if(sysExecTypeCheck(argS, argType, 2, s)) {
-      return 0;
+    uint8_t arg2_used = 0;
+    uint8_t modified  = 0;
+
+    if (argS->usedup == 2) {
+      if(sysExecTypeCheck(argS, argType, 2, s)) {
+        return 0;
+      }
+      arg2_used = 1;
+    } else {
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+
+      argS->argType[2]     = SVS_TYPE_STR;
+      argS->arg[2].val_str = strNew(gr2_get_str(argS->arg[1].val_s, &sda_app_con), s);
+    }
+    
+    modified = svm_text_handler(result, argS, s);
+
+    // when string differs from the argument, the argument string is set again
+    if (arg2_used && gr2_get_str(argS->arg[1].val_s, &sda_app_con) != (uint8_t *) ((uint32_t)s->stringField + (uint32_t)argS->arg[2].val_str)) {
+      gr2_set_str(argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, &sda_app_con);
     }
 
-    svm_text_handler(result, argS, s);
-    
-    // when string differs from the param, the parameter string is set again
-    if (gr2_get_str(argS->arg[1].val_s, &sda_app_con) != (uint8_t *) ((uint32_t)s->stringField + (uint32_t)argS->arg[2].val_str)) {
-      gr2_set_str(argS->arg[1].val_s, s->stringField + argS->arg[2].val_str, &sda_app_con);
+    if (arg2_used == 0 && modified) {
+      gr2_set_str(argS->arg[1].val_s, s->stringField + result->value.val_str, &sda_app_con);
     }
 
     return 1;
