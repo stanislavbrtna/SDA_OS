@@ -310,12 +310,9 @@ void sda_set_init_struct_defaults() {
 
   // 101 is non-valid init value, displays questionmark
   svpSGlobal.battPercentage = 101;
-  svpSGlobal.battString[0] = ' ';
-  svpSGlobal.battString[1] = ' ';
-  svpSGlobal.battString[2] = ' ';
-  svpSGlobal.battString[3] = '?';
-  svpSGlobal.battString[4] = 'V';
-  svpSGlobal.battString[5] = 0;
+  svpSGlobal.battString[0] = '?';
+  svpSGlobal.battString[1] = 'V';
+  svpSGlobal.battString[2] = 0;
 
   svpSGlobal.pwrType = POWER_BATT;
   svpSGlobal.powerMode = SDA_PWR_MODE_NORMAL;
