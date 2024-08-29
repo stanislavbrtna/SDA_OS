@@ -336,25 +336,42 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Read key
   //#!    sys.fs.conf.read([str]key);
-  //#!Reads key from config file as a string, 1024 chars max.
+  //#!    sys.fs.conf.read([str]key, [str]default);
+  //#!Reads key from config file as a string, 1024 chars max,
+  //#!when no default value is provided and the key doesn't exist,
+  //#!empty string is returnded.
   //#!
   //#!Return: [str]Value
   if (sysFuncMatch(argS->callId, "read", s)) {
     uint8_t buff[1024];
+    uint8_t defaultProvided = 0;
     argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)){
-      return 0;
+    argType[2] = SVS_TYPE_STR;
+    if (argS->usedup == 1) {
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+    } else {
+      if(sysExecTypeCheck(argS, argType, 2, s)) {
+        return 0;
+      }
+      defaultProvided = 1;
     }
-
+    
     if (!conf_open) {
       errSoft((uint8_t *)"Conf file not openned!", s);
       return 0;
     }
 
     // TODO: Make loading in stream mode, with checking free string mem
-    sda_conf_key_read(&conFile, s->stringField+argS->arg[1].val_str, buff, sizeof(buff));
-    buff[sizeof(buff) - 1] = 0;
-    result->value.val_u = strNew(buff, s);
+    if (sda_conf_key_read(&conFile, s->stringField+argS->arg[1].val_str, buff, sizeof(buff)) || defaultProvided == 0) {
+      buff[sizeof(buff) - 1] = 0;
+      result->value.val_u = strNew(buff, s);
+      result->type = SVS_TYPE_STR;
+      return 1;
+    }
+
+    result->value.val_u = argS->arg[2].val_str;
     result->type = SVS_TYPE_STR;
     return 1;
   }

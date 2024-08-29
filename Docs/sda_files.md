@@ -261,7 +261,10 @@ Checks if key exists in conf file
 Return: [num] 1 if key exists.
 ##### Read key
     sys.fs.conf.read([str]key);
-Reads key from config file as a string, 1024 chars max.
+    sys.fs.conf.read([str]key, [str]default);
+Reads key from config file as a string, 1024 chars max,
+when no default value is provided and the key doesn't exist,
+empty string is returnded.
 
 Return: [str]Value
 ##### Read Key as int
