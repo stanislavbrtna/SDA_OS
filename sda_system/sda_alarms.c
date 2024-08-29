@@ -391,7 +391,7 @@ uint8_t removeAlarm(int32_t id, uint8_t * appName) {
   sda_conf conffile;
 
   if (id == 0) {
-    //printf("Note: Notification delete: zero id!");
+    printf("Warning: removeAlarm: zero id!\n");
     return 0;
   }
 
