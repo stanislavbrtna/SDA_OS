@@ -77,10 +77,10 @@ uint16_t sda_settings_info_screen(uint8_t init) {
     gr2_set_param(gr2_add_image(1, 1, 8, 4, (uint8_t *)"Icons/logo.p16", optInfoScr, &sda_sys_con), 1, &sda_sys_con);
     gr2_add_text(1, 4, 10, 5, SCR_OS_VERSION" "SDA_OS_VERSION, optInfoScr, &sda_sys_con);
 
-    slider = gr2_add_slider_v(8, 5, 9, 11, 170, 0, optInfoScr, &sda_sys_con);
+    slider = gr2_add_slider_v(8, 5, 9, 12, 150, 0, optInfoScr, &sda_sys_con);
 
     gr2_set_screen(internalScr, optInfoScr, &sda_sys_con);
-    gr2_set_x1y1x2y2(internalScr, 1, 5, 8, 11, &sda_sys_con);
+    gr2_set_x1y1x2y2(internalScr, 1, 5, 8, 12, &sda_sys_con);
 
     gr2_add_text(0, 0, 7, 1, SCR_BATT_VOLTAGE, internalScr, &sda_sys_con);
     infoBattStr = gr2_add_text(0, 1, 10, 2, svpSGlobal.battString, internalScr, &sda_sys_con);
