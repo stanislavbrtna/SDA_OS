@@ -261,7 +261,12 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = (int32_t) sda_resource_get_lock((sdaResource) argS->arg[1].val_s, svmMeta.pid);
+    result->value.val_s = 0;
+
+    if (sda_resource_get_lock((sdaResource) argS->arg[1].val_s, svmMeta.pid) == SDA_LOCK_LOCKED) {
+      result->value.val_s = 1;
+    }
+    
     result->type = SVS_TYPE_NUM;
     return 1;
   }
