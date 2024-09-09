@@ -154,7 +154,7 @@ void sda_draw_sic(int16_t x2, int16_t y1, uint8_t * icon) {
   int16_t x1 = x2 - 32;
   
   // using canvas
-  LCD_canvas_set(x1, y1 + 1, x2 - 1, y1 + 33);
+  LCD_canvas_set(x1, y1 + 1, x2, y1 + 33);
   LCD_canvas_zero();
 
   uint8_t  bit_n = 0;

@@ -278,18 +278,21 @@ uint8_t sda_draw_p16(int16_t x, int16_t y, uint8_t *filename) {
 
   LCD_getDrawArea(&area);
   LCD_setSubDrawArea(x, y, x + header.imageWidth, y + header.imageHeight);
-  LCD_canvas_set(x, y, x + header.imageWidth - 1, y + header.imageHeight - 1);
+  LCD_canvas_set(x, y, x + header.imageWidth, y + header.imageHeight);
 
   imageState.init = 0;
 
   uint16_t color;
-  for(uint32_t n = 0; n < header.imageWidth*header.imageHeight ; n++) {
+  for(uint32_t n = 0; n < header.imageWidth*header.imageHeight; n++) {
     color = p16_get_pixel(&fp, &header, &imageState);
 
     color = p16_get_pmc_alpha_color(color);   
 
     LCD_canvas_putcol(color);
-    if (svpSGlobal.breakP16Draw == 1) {break_draw_cleanup(&fp); return 0;}
+    if (svpSGlobal.breakP16Draw == 1) {
+      break_draw_cleanup(&fp);
+      return 0;
+    }
 
     if (LCD_canvas_get_y_overflow()) {
       break;
@@ -328,7 +331,7 @@ uint8_t sda_draw_p16_scaled_up(int16_t x, int16_t y, uint16_t width_n, uint16_t 
 
   LCD_getDrawArea(&area);
   LCD_setSubDrawArea(x, y, x + header.imageWidth * width_n, y + header.imageHeight * height_n);
-  LCD_canvas_set(x, y, x + header.imageWidth * width_n - 1, y + header.imageHeight * height_n - 1);
+  LCD_canvas_set(x, y, x + header.imageWidth * width_n, y + header.imageHeight * height_n);
 
   imageState.init = 0;
   imageState.repeat = 0;
@@ -423,7 +426,7 @@ uint8_t sda_draw_p16_scaled_down(int16_t x, int16_t y, uint16_t width_n, uint16_
   drawn_height = header.imageHeight / height_n + header.imageHeight % height_n;
   
   LCD_setSubDrawArea(x, y, x + drawn_width, y + drawn_height);
-  LCD_canvas_set(x, y, x + drawn_width - 1, y + drawn_height - 1);
+  LCD_canvas_set(x, y, x + drawn_width, y + drawn_height);
 
   //printf("draw: n:%u %u, size: %u %u\n", width_n, height_n, drawn_height, drawn_width);
 

@@ -126,7 +126,7 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
   }
 
   LCD_setSubDrawArea(x, y, x + img_width * scale, y + img_height * scale);
-  LCD_canvas_set(x, y, x + img_width * scale - 1, y + img_height * scale - 1);
+  LCD_canvas_set(x, y, x + img_width * scale, y + img_height * scale);
   fpos_line_begin = fpos;
   laneScaleCnt = 0;
 
