@@ -26,18 +26,24 @@ uint8_t svm_text_handler(varRetVal *result, argStruct *argS, svsVM *s);
 
 uint16_t sda_load_sic(uint8_t * fname,uint8_t * callback) {
   svp_file fil;
-  uint8_t icon[128];
+  uint8_t icon[130];
   uint16_t i = 0;
 
   if (svp_fexists(fname)) {
-    
+    // this loads the icon, 
     svp_fopen_rw(&fil, fname);
-    while (!svp_feof(&fil) && i < 128) {
+    uint8_t v = svp_fread_u8(&fil);
+    if (v != 2) {
+      printf("%s: Only SIC v.2 is supported!: %s (v. %u)\n", __FUNCTION__, fname, v);
+      return 0;
+    }
+
+    while (!svp_feof(&fil) && i < 130) {
       icon[i] = svp_fread_u8(&fil);
       i++;
     }
     svp_fclose(&fil);
-
+    // this will throw error on size mismatch
     return sda_custom_icon_set(icon, svmGetPid(), callback);
   } else {
     printf("%s: File does not exist!: %s\n", __FUNCTION__, fname);

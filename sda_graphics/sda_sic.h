@@ -20,21 +20,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SDA_CUSTOM_ICON_H
-#define SDA_CUSTOM_ICON_H
+#ifndef SDA_SIC_H
+#define SDA_SIC_H
 
-#include "sda_tray.h"
+#include "../SDA_OS.h"
 
-void sda_custom_icon_init();
-
-uint8_t sda_custom_icon_set(uint8_t *img, uint16_t pid, uint8_t* cb);
-int16_t sda_custom_icon_handle(int16_t x2, int16_t y1, int16_t w);
-
-void sda_custom_icon_release_spot(uint8_t spot);
-void sda_custom_icon_release_pid(uint16_t pid);
-
-uint8_t sda_custom_icon_release_spot_pid(uint8_t spot, uint16_t pid);
-
-void sda_custom_icon_handle_svm_events();
+void sda_draw_sic(int16_t x2, int16_t y1, uint16_t front_color, uint16_t back_color, uint8_t * icon);
+uint8_t sda_draw_sic_file(int16_t x1, int16_t y1, uint16_t front_color, uint16_t back_color, uint8_t * fname);
+uint8_t sda_sic_get_last_width();
+uint8_t sda_sic_get_width(uint8_t * fname);
+uint8_t sda_sic_get_height(uint8_t * fname);
 
 #endif

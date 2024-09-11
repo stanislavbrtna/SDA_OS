@@ -28,7 +28,7 @@ extern volatile uint8_t irq_redraw;
 #define SDA_CUSTOM_ICONS 4
 
 typedef struct {
-  uint8_t      image[128];
+  uint8_t      image[130];
   gr2EventType event;
   uint16_t     pid;
   uint8_t      callback[NAME_LENGTH];
@@ -61,8 +61,14 @@ uint8_t sda_custom_icon_set(uint8_t *img, uint16_t pid, uint8_t* cb) {
     printf("%s: No empty icon spot!\n", __FUNCTION__);
     return 0;
   }
+
+  if(img[0] != 32 || img[1] != 32) {
+    printf("%s: Only 32x32 images are supported!\n", __FUNCTION__);
+    return 0;
+  }
+
   // push data in
-  for(uint16_t i = 0; i < 128; i++) {
+  for(uint16_t i = 0; i < 130; i++) {
     icons[valid_spot - 1].image[i] = img[i];
   }
 
@@ -130,7 +136,7 @@ int16_t sda_custom_icon_handle(int16_t x2, int16_t y1, int16_t w) {
     
     for(uint16_t i = 0; i < SDA_CUSTOM_ICONS; i++) {
       if (icons[i].valid) {
-        sda_draw_sic(x2 - 32*icon_pos, y1, icons[i].image);
+        sda_draw_sic(x2 - 32*icon_pos - 32, y1, gr2_get_text_color(&sda_sys_con), trayBackgroundColor, icons[i].image);
         icon_pos++;
       }
     }
@@ -147,31 +153,6 @@ int16_t sda_custom_icon_handle(int16_t x2, int16_t y1, int16_t w) {
   }
 
   return w;
-}
-
-
-void sda_draw_sic(int16_t x2, int16_t y1, uint8_t * icon) {
-  int16_t x1 = x2 - 32;
-  
-  // using canvas
-  LCD_canvas_set(x1, y1 + 1, x2, y1 + 33);
-  LCD_canvas_zero();
-
-  uint8_t  bit_n = 0;
-  uint16_t icon_pos = 0;
-
-  for(uint32_t i = 0; i < 32*32; i++) {
-    if ((1 << bit_n) & icon[icon_pos]) {
-      LCD_canvas_putcol(gr2_get_text_color(&sda_sys_con));
-    } else {
-      LCD_canvas_putcol(trayBackgroundColor);
-    }
-    bit_n++;
-    if (bit_n == 8) {
-      bit_n = 0;
-      icon_pos++;
-    }
-  }
 }
 
 
