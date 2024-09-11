@@ -27,6 +27,7 @@ SOFTWARE.
 
 uint8_t sda_get_if_p16(uint8_t * filename);
 uint8_t sda_get_if_ppm(uint8_t * filename);
+int8_t sda_get_if_sic(uint8_t * filename);
 
 void sda_img_set_mix_color(uint8_t enable, uint16_t color);
 void sda_img_draw(int16_t x, int16_t y, int16_t scale_w, int16_t scale_h, uint8_t *filename);
