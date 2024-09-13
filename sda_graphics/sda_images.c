@@ -68,6 +68,10 @@ uint8_t sda_get_if_ppm(uint8_t * filename) {
 int8_t sda_get_if_sic(uint8_t * filename) {
   uint32_t fnameLen = 0;
 
+  if (filename[0] == 2) {
+    return 1;
+  }
+
   fnameLen = sda_strlen(filename);
 
   if(fnameLen < 3) {

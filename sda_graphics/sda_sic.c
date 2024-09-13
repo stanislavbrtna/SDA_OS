@@ -26,13 +26,13 @@ static uint8_t last_width;
 
 void sda_draw_sic(int16_t x1, int16_t y1, uint16_t front_color, uint16_t back_color, uint8_t * icon) {
   // using canvas
-  LCD_canvas_set(x1, y1 + 1, x1 + icon[0], y1 + icon[1]);
+  LCD_canvas_set(x1, y1 + 1, x1 + icon[1], y1 + icon[2]);
   LCD_canvas_zero();
 
   uint8_t  bit_n    = 0;
-  uint16_t icon_pos = 2;
+  uint16_t icon_pos = 3;
 
-  for(uint32_t i = 0; i < icon[0]*icon[1]; i++) {
+  for(uint32_t i = 0; i < icon[1]*icon[2]; i++) {
     if ((1 << bit_n) & icon[icon_pos]) {
       LCD_canvas_putcol(front_color);
     } else {
@@ -46,11 +46,18 @@ void sda_draw_sic(int16_t x1, int16_t y1, uint16_t front_color, uint16_t back_co
   }
 }
 
+
 uint8_t sda_draw_sic_file(int16_t x1, int16_t y1, uint16_t front_color, uint16_t back_color, uint8_t * fname) {
   svp_file fp;
   uint8_t image_width;
   uint8_t image_height;
   LCD_drawArea area;
+
+  if(fname[0] == 2) { // binary sic detection
+    sda_draw_sic(x1, y1, front_color, back_color, fname);
+    last_width = fname[1];
+    return 0;
+  }
 
   if (!svp_fopen_read(&fp, fname)) {
     printf("%s: Error while opening file %s!\n",__FUNCTION__, fname);
@@ -101,10 +108,15 @@ uint8_t sda_sic_get_last_width() {
   return last_width;
 }
 
+
 uint8_t sda_sic_get_width(uint8_t * fname) {
   svp_file fp;
   uint8_t image_width;
   uint8_t image_height;
+
+  if(fname[0] == 2) { // binary sic detection
+    return fname[1];
+  }
 
   if (!svp_fopen_read(&fp, fname)) {
     printf("%s: Error while opening file %s!\n",__FUNCTION__, fname);
@@ -128,6 +140,10 @@ uint8_t sda_sic_get_height(uint8_t * fname) {
   svp_file fp;
   uint8_t image_width;
   uint8_t image_height;
+
+  if(fname[0] == 2) { // binary sic detection
+    return fname[1];
+  }
 
   if (!svp_fopen_read(&fp, fname)) {
     printf("%s: Error while opening file %s!\n",__FUNCTION__, fname);

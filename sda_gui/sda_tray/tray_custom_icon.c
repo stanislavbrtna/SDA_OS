@@ -28,7 +28,7 @@ extern volatile uint8_t irq_redraw;
 #define SDA_CUSTOM_ICONS 4
 
 typedef struct {
-  uint8_t      image[130];
+  uint8_t      image[131];
   gr2EventType event;
   uint16_t     pid;
   uint8_t      callback[NAME_LENGTH];
@@ -62,13 +62,13 @@ uint8_t sda_custom_icon_set(uint8_t *img, uint16_t pid, uint8_t* cb) {
     return 0;
   }
 
-  if(img[0] != 32 || img[1] != 32) {
+  if(img[1] != 32 || img[2] != 32) {
     printf("%s: Only 32x32 images are supported!\n", __FUNCTION__);
     return 0;
   }
 
   // push data in
-  for(uint16_t i = 0; i < 130; i++) {
+  for(uint16_t i = 0; i < 131; i++) {
     icons[valid_spot - 1].image[i] = img[i];
   }
 
