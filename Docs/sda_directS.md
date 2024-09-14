@@ -86,15 +86,15 @@ Draws p16 image from the working directory. Supports upscaling, and downscaling.
 
 Scale table:
 
-|  Scale value | Image size|
-|      ---     |   ---     |
-|    -3        |   1/16    |
-|    -2        |   1/8     |
-|    -1        |   1/4     |
-|     0        |   1/2     |
-|     1        |    1      |
-|     2        |    2x     |
-|     n        |    n*x    |
+|  Scale value | Image size |
+|      ---     |   ---      |
+|    -3        |   1/16     |
+|    -2        |   1/8      |
+|    -1        |   1/4      |
+|     0        |   1/2      |
+|     1        |    1       |
+|     2        |    2x      |
+|     n        |    n*x     |
 
 Return: None
 ##### Get P16 image width
