@@ -48,14 +48,23 @@ static void break_draw_cleanup(svp_file *fp);
 uint16_t p16_get_pmc_alpha_color(uint16_t color);
 
 uint8_t sda_draw_p16_scaled(int16_t x, int16_t y, int16_t scale_w, int16_t scale_h, uint8_t *filename) {
-  if (scale_w > 0 && scale_h > 0) {
-    if (scale_w == 1 && scale_h == 1) {
-      return sda_draw_p16(x, y, filename);
-    }
-    return sda_draw_p16_scaled_up(x, y, (uint16_t)scale_w, (uint16_t)scale_h, filename);
+  LCD_drawArea a;
+  uint8_t ret_val;
+  LCD_getDrawArea(&a);
+  
+  if (scale_w == 1 && scale_h == 1) {
+    ret_val = sda_draw_p16(x, y, filename);
+  } else if (scale_w > 0 && scale_h > 0) {
+    ret_val = sda_draw_p16_scaled_up(x, y, (uint16_t)scale_w, (uint16_t)scale_h, filename);
+  } else if(scale_w <= 0 && scale_h <= 0) {
+    ret_val = sda_draw_p16_scaled_down(x, y, (uint16_t)(scale_w*-1), (uint16_t)(scale_h*-1), filename);
   } else {
-    return sda_draw_p16_scaled_down(x, y, (uint16_t)(scale_w*-1), (uint16_t)(scale_h*-1), filename);
+    printf("%s: upscaling and downscaling in different axis is not supported!\n", __FUNCTION__);
+    ret_val = 1;
   }
+
+  LCD_setDrawAreaS(&a);
+  return ret_val;
 }
 
 void sda_p16_set_pmc(uint8_t enable, uint16_t color) {
@@ -255,7 +264,6 @@ uint8_t sda_draw_p16(int16_t x, int16_t y, uint8_t *filename) {
   svp_file fp;
   p16Header header;
   p16State imageState;
-  LCD_drawArea area;
 
   if (!svp_fopen_read(&fp, filename)) {
     printf("sda_draw_p16: Error while opening file %s!\n", filename);
@@ -276,7 +284,6 @@ uint8_t sda_draw_p16(int16_t x, int16_t y, uint8_t *filename) {
 
   irq_redraw_block_enable();
 
-  LCD_getDrawArea(&area);
   LCD_setSubDrawArea(x, y, x + header.imageWidth, y + header.imageHeight);
   LCD_canvas_set(x, y, x + header.imageWidth, y + header.imageHeight);
 
@@ -299,7 +306,6 @@ uint8_t sda_draw_p16(int16_t x, int16_t y, uint8_t *filename) {
     }
   }
 
-  LCD_setDrawAreaS(&area);
   svp_fclose(&fp);
   irq_redraw_block_disable();
   return 0;
@@ -313,7 +319,6 @@ uint8_t sda_draw_p16_scaled_up(int16_t x, int16_t y, uint16_t width_n, uint16_t 
   uint32_t fpos, init;
   uint16_t prevVal;
   uint16_t repeat;
-  LCD_drawArea area;
 
   p16_buffer_keep = 0;
 
@@ -329,7 +334,6 @@ uint8_t sda_draw_p16_scaled_up(int16_t x, int16_t y, uint16_t width_n, uint16_t 
 
   irq_redraw_block_enable();
 
-  LCD_getDrawArea(&area);
   LCD_setSubDrawArea(x, y, x + header.imageWidth * width_n, y + header.imageHeight * height_n);
   LCD_canvas_set(x, y, x + header.imageWidth * width_n, y + header.imageHeight * height_n);
 
@@ -372,7 +376,6 @@ uint8_t sda_draw_p16_scaled_up(int16_t x, int16_t y, uint16_t width_n, uint16_t 
   }
 
   svp_fclose(&fp);
-  LCD_setDrawAreaS(&area);
   irq_redraw_block_disable(); 
   return 0;
 }
@@ -384,7 +387,6 @@ uint8_t sda_draw_p16_scaled_down(int16_t x, int16_t y, uint16_t width_n, uint16_
   svp_file fp;
   p16Header header;
   p16State imageState;
-  LCD_drawArea area;
   uint32_t drawn_width;
   uint32_t drawn_height;
 
@@ -419,8 +421,6 @@ uint8_t sda_draw_p16_scaled_down(int16_t x, int16_t y, uint16_t width_n, uint16_
   }
 
   irq_redraw_block_enable();
-
-  LCD_getDrawArea(&area);
   
   drawn_width = header.imageWidth / width_n + header.imageWidth % width_n;
   drawn_height = header.imageHeight / height_n + header.imageHeight % height_n;
@@ -471,7 +471,6 @@ uint8_t sda_draw_p16_scaled_down(int16_t x, int16_t y, uint16_t width_n, uint16_
   }
 
   svp_fclose(&fp);
-  LCD_setDrawAreaS(&area);
   irq_redraw_block_disable();
   return 0;
 }

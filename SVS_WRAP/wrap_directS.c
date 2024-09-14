@@ -488,9 +488,7 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 
 #ifdef PPM_SUPPORT_ENABLED
     IRQ_BLOCK
-    LCD_drawArea r;
 
-    LCD_getDrawArea(&r);
     sda_draw_p16_scaled(
       x1 + (int16_t)argS->arg[1].val_s,
       y1 + (int16_t) argS->arg[2].val_s,
@@ -498,7 +496,6 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
       (int16_t) argS->arg[4].val_s,
       s->stringField + argS->arg[5].val_str
     );
-    LCD_setDrawAreaS(&r);
     IRQ_ENABLE
 #endif
     return 1;
