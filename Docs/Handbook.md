@@ -230,7 +230,7 @@ Return: None
 #### Gui
 ##### Set main application screen
     sys.os.gui.setMainScr([num]id);
-Sets main screen to screen with given id
+Sets main screen to screen with given id.
 When you wish to display overlay only, set this to 0.
 
 Return: None
@@ -260,6 +260,11 @@ If the desired element is on a sub-screen of an button controlled screen,
 then the sub-screen must be also selected.
 
 Return: None
+##### Gets element selected by keyboard control
+    sys.os.gui.btnGetSel([num]screen_id);
+Gets selected element in current screen (or its sub-screens)
+
+Return: [num] element_id
 ##### Clear button control for a screen
     sys.os.gui.btnClear([num]screen_id);
 Clears keypad input for entire screen.
@@ -268,9 +273,22 @@ Return: None
 #### Text field handling
 ##### Handle text input
     sys.os.gui.handleText([num]id, [str]text);
+    sys.os.gui.handleText([num]id);
 Handles text input fields. Id is field id. Text is default text value.
 
 Return: [str] New modified text value
+
+Usage:
+    string_val = sys.os.gui.handleText([num]id, string_val);
+This is usefull if you are using string_val in every loop, handleText
+will keep the variable and the string in sync.
+
+Alternative usage:
+    sys.os.gui.handleText([num]id);
+This will handle the text field and text value can be retrieved
+with *sys.gui.getString*.
+Note: the text value is still stored in SVS string memory.
+
 ##### Set keyboard string
     sys.os.gui.setKbdStr([str] string);
 Sets the current keyboard string (max 63 chars)
@@ -517,6 +535,12 @@ Return: None
 Gets state of lcd.
 
 Return: 1 if lcd is on, otherwise 0
+##### Set LCD state
+    sys.hw.setLcdState([num]lcd_state);
+Sets the LCD state, 0 - off, 1 - on.
+In off state, the device will enter sleep mode.
+
+Return: None
 ##### Set notification led pattern
     sys.hw.setLed([num]led_type);
 Sets notification led to a given pattern, uses:
@@ -628,16 +652,23 @@ Pin number is number of pin on the connector, can be read from schematics.
 Return: 1 if the pin is high, 0 if it is low.
 ##### Get ADC readout
     sys.hw.eADCRead();
-Gets state of external expansion pin.
-Pin number is number of pin on the connector, can be read from schematics.
+Gets the voltage from pin 2 of the external expansion port.
+This function re-initializes the pin 2 to set it in the ADC
+mode. If you use this pin for anything else after, you need to 
+re-init it with *sys.hw.ePinDef*.
 
 Return: [float] measured voltage in volts.
 #### Buttons
+
+Functions for handling hw buttons.
+Button defines: BTN_A, BTN_LEFT, BTN_UP, BTN_DOWN, BTN_RIGHT, BTN_B
+Events are the same as in handling GUI: EV_NONE, EV_PRESSED, EV_HOLD, EV_RELEASED
+
 ##### Get button event
     sys.hw.btn.getEvent([num]btn);
 Return last button event. 
 
-Return: [num] event define (EV_NONE, EV_PRESSED, EV_HOLD, EV_RELEASED)
+Return: [num] event
 ##### Clears button events
     sys.hw.btn.clrEvent([num]btn);
 Sets button event to EV_NONE
@@ -646,7 +677,9 @@ Return: None
 ##### Enable button events with LCD off
     sys.hw.btn.stdbyEn([num]val);
 Enables button readout with LCD off.
-When this is enabled, SDA won't go in deep sleep.
+Val: 1 - enabled, 0 - disabled
+When this is enabled, SDA won't go in deep sleep,
+and button presses will be handled immediately.
 
 Return: None
 ### Communication
@@ -874,10 +907,20 @@ Return: [num] 1 - ok, 0 - fail
 ##### Change working directory
     sys.fs.chDir([str] pathInData);
 Changes working directory.
-call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA directory
-call sys.fs.chDir(1); to get to the APPS directory
+call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA context
+call sys.fs.chDir(1); to get to the APPS context
 
 Return: 1 - ok, 0 - fail
+##### Get current working directory
+    sys.fs.getCWD();
+Returns current working directory
+
+Return: [str]path
+##### Get current working context
+    sys.fs.getCWC();
+Returns current working context
+
+Return: [num]context 0 - DATA, 1 - APPS
 
 #### File copy
 
@@ -1043,7 +1086,10 @@ Checks if key exists in conf file
 Return: [num] 1 if key exists.
 ##### Read key
     sys.fs.conf.read([str]key);
-Reads key from config file as a string, 1024 chars max.
+    sys.fs.conf.read([str]key, [str]default);
+Reads key from config file as a string, 1024 chars max,
+when no default value is provided and the key doesn't exist,
+empty string is returnded.
 
 Return: [str]Value
 ##### Read Key as int
@@ -1884,7 +1930,7 @@ Gets height of a string, when drawn with current font.
 Return: [num] height (px)
 ##### Fill area with color
     sys.ds.clearArea([num]col);
-Clears draw area with goven color
+Clears draw area with given color
 
 Return: None
 #### P16 image tools
@@ -1894,15 +1940,15 @@ Draws p16 image from the working directory. Supports upscaling, and downscaling.
 
 Scale table:
 
-|  Scale value | Image size|
-|      ---     |   ---     |
-|    -3        |   1/16    |
-|    -2        |   1/8     |
-|    -1        |   1/4     |
-|     0        |   1/2     |
-|     1        |    1      |
-|     2        |    2x     |
-|     n        |    n*x    |
+|  Scale value | Image size |
+|      ---     |   ---      |
+|    -3        |   1/16     |
+|    -2        |   1/8      |
+|    -1        |   1/4      |
+|     0        |   1/2      |
+|     1        |    1       |
+|     2        |    2x      |
+|     n        |    n*x     |
 
 Return: None
 ##### Get P16 image width
