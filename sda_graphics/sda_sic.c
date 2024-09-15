@@ -112,7 +112,6 @@ uint8_t sda_sic_get_last_width() {
 uint8_t sda_sic_get_width(uint8_t * fname) {
   svp_file fp;
   uint8_t image_width;
-  uint8_t image_height;
 
   if(fname[0] == 2) { // binary sic detection
     return fname[1];
@@ -129,7 +128,6 @@ uint8_t sda_sic_get_width(uint8_t * fname) {
   }
 
   image_width  = svp_fread_u8(&fp);
-  image_height = svp_fread_u8(&fp);
 
   svp_fclose(&fp);
   return image_width;
@@ -138,7 +136,6 @@ uint8_t sda_sic_get_width(uint8_t * fname) {
 
 uint8_t sda_sic_get_height(uint8_t * fname) {
   svp_file fp;
-  uint8_t image_width;
   uint8_t image_height;
 
   if(fname[0] == 2) { // binary sic detection
@@ -155,7 +152,7 @@ uint8_t sda_sic_get_height(uint8_t * fname) {
     return 0;
   }
 
-  image_width  = svp_fread_u8(&fp);
+  svp_fread_u8(&fp); // dummy read
   image_height = svp_fread_u8(&fp);
 
   svp_fclose(&fp);
