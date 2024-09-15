@@ -111,7 +111,7 @@ uint8_t sda_screen_button_handler(uint16_t screen_id, uint16_t back_id, gr2conte
     uint8_t r;
     r = gr2_keypad_input(GR2_BUTTON_OK, sda_wrap_get_button(BUTTON_B), screen_id, con);
     
-    if (r == 2) {
+    if (r == 2 && svpSGlobal.inputMethod == ON_SCREEN_KEYBOARD) {
       sda_keyboard_show();
     }
     sda_wrap_clear_button(BUTTON_B);
