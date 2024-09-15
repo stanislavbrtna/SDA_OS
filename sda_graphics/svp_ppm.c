@@ -27,6 +27,12 @@ static uint8_t ppm_G;
 static uint8_t ppm_B;
 static uint8_t ppm_use_pmc;
 
+typedef struct {
+  uint16_t width;
+  uint16_t height;
+} svp_ppm_header;
+
+
 void svp_ppm_set_pmc(uint8_t enable, uint16_t color) {
   ppm_use_pmc = enable;
   ppm_R = (uint8_t)(((float)((color>>11)&0x1F)/32)*256);
@@ -35,98 +41,133 @@ void svp_ppm_set_pmc(uint8_t enable, uint16_t color) {
 }
 
 
+uint8_t sda_ppm_get_header(svp_ppm_header *p, svp_file *fp) {
+  uint8_t  ch2 = 0;
+  uint8_t  ch[16];
+  uint32_t fpos = 0;
+  uint32_t a;
+
+  p->width  = 0;
+  p->height = 0;
+
+  // header verification
+  ch[0] = svp_fread_u8(fp);
+  ch[1] = svp_fread_u8(fp);
+
+  if ((ch[0] != 'P') && (ch[1] != '6')) {
+    printf("%s: Error: wrong header\n", __FUNCTION__);
+    return 1;
+  }
+
+  ch[0] = svp_fread_u8(fp);
+
+  if (ch[0] != 10) {
+    printf("%s: Error: unparsable header\n",__FUNCTION__);
+    return 1;
+  }
+
+  // detect for gimp commentary
+  ch[0] = svp_fread_u8(fp);
+  if(ch[0] == '#') {
+    while (ch[0] != 10) {  
+      ch[0] = svp_fread_u8(fp);
+      if (svp_feof(fp)) {
+        printf("%s: Error: unparsable header (2)\n", __FUNCTION__);
+        return 1;
+      }
+    }
+  } else {
+    // seek back
+    svp_fseek(fp, svp_ftell(fp) - 1);
+  }
+
+  a = 0;
+  while (ch2 != 10) {
+    ch2 = svp_fread_u8(fp);
+    ch[a] = ch2;
+    a++;
+
+    if (svp_feof(fp) || a > 15) {
+      printf("%s: Error: unparsable header (2)\n", __FUNCTION__);
+      return 1;
+    }
+  }
+  ch[a] = 10;
+
+  // parse width/lenght
+  a = 0;
+  while (ch[a] != ' ') {
+    p->width *= 10;
+    p->width += ch[a] - 48;
+    a++;
+
+    if(a > 15) {
+      printf("%s: Error: unparsable width\n", __FUNCTION__);
+      return 1;
+    }
+  }
+  a++;
+  while (ch[a] != 10) {
+    p->height *= 10;
+    p->height += ch[a] - 48;
+    a++;
+    if(a > 15) {
+      printf("%s: Error: unparsable height\n", __FUNCTION__);
+      return 0;
+    }
+  }
+  ch2 = 0;
+
+  // skip the max value
+  while(ch2 != 10) {
+    ch2 = svp_fread_u8(fp);
+
+    if (svp_feof(fp)){
+      printf("%s: Error: unparsable header (5)\n", __FUNCTION__);
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+
 void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
-  svp_file fp;
-  uint8_t ch[16];
-  uint8_t ch2 = 0;
-  uint16_t a, color;
+  uint16_t color;
   uint32_t fpos = 0;
   uint32_t fpos_line_begin;
-  uint8_t r, g, b;
-  uint16_t img_width = 0;
-  uint16_t img_height = 0;
-  int16_t xi = 0;
-  int16_t yi = 0;
-  uint8_t n, laneScaleCnt;
+  uint8_t  r, g, b, n, laneScaleCnt;
+  int16_t  xi = 0;
+  int16_t  yi = 0;
+
+  svp_file fp;
+  svp_ppm_header img;
 
   if(!sda_get_if_ppm(filename)) {
     printf("draw_ppm: File %s is unsupported!\n", filename);
     return;
   }
 
-  if (!svp_fopen_read(&fp,filename)) {
+  if (!svp_fopen_read(&fp, filename)) {
     printf("draw_ppm: Error while opening file %s!\n", filename);
     return;
   }
 
-  touch_lock = SDA_LOCK_LOCKED;
-  ch[0] = svp_fread_u8(&fp);
-  ch[1] = svp_fread_u8(&fp);
-
-  if ((ch[0] != 'P') && (ch[1] != '6')) {
-    printf("draw_ppm: Error: wrong header\n");
-    touch_lock = SDA_LOCK_UNLOCKED;
+  if(sda_ppm_get_header(&img, &fp)) {
+    printf("%s: get header failed!\n", __FUNCTION__);
     return;
   }
 
-  fpos = 3;
-  while (ch2 != 10) {
-    svp_fseek(&fp, sizeof(uint8_t) * (fpos));
-    ch2 = svp_fread_u8(&fp);
-    fpos++;
-
-    if (svp_feof(&fp)){
-      printf("draw_ppm: Error: unparsable header\n");
-      touch_lock = SDA_LOCK_UNLOCKED;
-      return;
-    }
-  }
-  ch2 = 0;
-  a = 0;
-  while (ch2 != 10) {
-    svp_fseek(&fp, sizeof(uint8_t) * (fpos));
-    ch2 = svp_fread_u8(&fp);
-    ch[a] = ch2;
-    fpos++;
-    a++;
-
-    if (svp_feof(&fp)){
-      printf("draw_ppm: Error: unparsable header\n");
-      touch_lock = SDA_LOCK_UNLOCKED;
-      return;
-    }
-  }
-  ch[a] = 10;
-
-  a = 0;
-  while (ch[a] != ' ') {
-    img_width *= 10;
-    img_width += ch[a] - 48;
-    a++;
-  }
-  a++;
-  while (ch[a] != 10) {
-    img_height *= 10;
-    img_height += ch[a] - 48;
-    a++;
-  }
-
-  ch2 = 0;
-
-  while(ch2 != 10) {
-    svp_fseek(&fp, sizeof(uint8_t) * (fpos));
-    ch2 = svp_fread_u8(&fp);
-    fpos++;
-  }
-
-  if (img_width == 0 || img_height == 0){
+  if (img.width == 0 || img.height == 0){
     printf("draw_ppm: Error: image dimension is zero\n");
-    touch_lock = SDA_LOCK_UNLOCKED;
     return;
   }
 
-  LCD_setSubDrawArea(x, y, x + img_width * scale, y + img_height * scale);
-  LCD_canvas_set(x, y, x + img_width * scale, y + img_height * scale);
+  touch_lock = SDA_LOCK_LOCKED;
+
+  LCD_setSubDrawArea(x, y, x + img.width * scale, y + img.height * scale);
+  LCD_canvas_set(x, y, x + img.width * scale, y + img.height * scale);
+  fpos = svp_ftell(&fp);
   fpos_line_begin = fpos;
   laneScaleCnt = 0;
 
@@ -144,7 +185,7 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
     g = rgtmp[1];
     b = rgtmp[2];
 
-    if (xi == img_width - 1) {
+    if (xi == img.width - 1) {
       laneScaleCnt++;
       if (laneScaleCnt == scale) {
         yi++;
@@ -159,7 +200,7 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
       xi++;
     }
 
-    if (yi == img_height - 1) {
+    if (yi == img.height - 1) {
       break;
     }
 
@@ -170,7 +211,7 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
     }
 
     r = ( r * 249 + 1014 ) >> 11;  // 5
-    g = ( g * 253 + 505 ) >> 10;   // 6
+    g = ( g * 253 +  505 ) >> 10;  // 6
     b = ( b * 249 + 1014 ) >> 11;  // 5
 
     color = r << 11 | (g & 0x3F) << 5 | (b & 0x1F);
@@ -184,127 +225,40 @@ void draw_ppm(uint16_t x, uint16_t y, uint8_t scale, uint8_t *filename) {
   return;
 }
 
+
 uint16_t ppm_get_width(uint8_t *filename) {
   svp_file fp;
-  uint8_t ch[16];
-  uint8_t ch2 = 0;
-  uint16_t a;
-  uint32_t fpos = 0;
-  uint16_t img_width = 0;
-  uint16_t img_height = 0;
-
-  ch[0] = 0;
+  svp_ppm_header img;
 
   if (!svp_fopen_read(&fp, filename)) {
-    printf("ppm_get_width: Error while opening file %s!\n",filename);
+    printf("%s: Error while opening file %s!\n",__FUNCTION__, filename);
     return 0;
   }
 
-  ch[0] = svp_fread_u8(&fp);
-  ch[1] = svp_fread_u8(&fp);
-  if ((ch[0] != 'P') && (ch[1] != '6')) {
-    printf("ppm_get_width: Error: wrong header\n");
+  if(sda_ppm_get_header(&img, &fp)) {
+    printf("%s: get header failed!\n", __FUNCTION__);
     return 0;
-  }
-  fpos = 3;
-  while (ch2 != 10) {
-    svp_fseek(&fp, sizeof(uint8_t) * (fpos));
-    ch2 = svp_fread_u8(&fp);
-    fpos++;
-  }
-
-  ch2 = 0;
-
-  a = 0;
-  while (ch2 != 10) {
-    svp_fseek(&fp, sizeof(uint8_t) * (fpos));
-    ch2 = svp_fread_u8(&fp);
-    ch[a] = ch2;
-    fpos++;
-    a++;
-  }
-  ch[a] = 10;
-
-  a = 0;
-  if (ch[0] == 0) {
-    printf("ppm_get_width: Error: file header corruped!\n");
-    return 0;
-  }
-  while (ch[a] != ' ') {
-    img_width *= 10;
-    img_width += ch[a] - 48;
-    a++;
-  }
-  a++;
-  while (ch[a] != 10) {
-    img_height *= 10;
-    img_height += ch[a] - 48;
-    a++;
   }
 
   svp_fclose(&fp);
-  return img_width;
+  return img.width;
 }
 
 
 uint16_t ppm_get_height(uint8_t *filename) {
   svp_file fp;
-  uint8_t ch[16];
-  uint8_t ch2 = 0;
-  uint16_t a;
-  uint32_t fpos = 0;
-  uint16_t img_width = 0;
-  uint16_t img_height = 0;
-
-  ch[0] = 0;
+  svp_ppm_header img;
 
   if (!svp_fopen_read(&fp, filename)) {
-    printf("ppm_get_width: Error while opening file %s!\n",filename);
+    printf("%s: Error while opening file %s!\n",__FUNCTION__, filename);
     return 0;
   }
 
-  ch[0] = svp_fread_u8(&fp);
-  ch[1] = svp_fread_u8(&fp);
-  if ((ch[0] != 'P') && (ch[1] != '6')) {
-    printf("ppm_get_width: Error: wrong header\n");
+  if(sda_ppm_get_header(&img, &fp)) {
+    printf("%s: get header failed!\n", __FUNCTION__);
     return 0;
-  }
-  fpos = 3;
-  while (ch2 != 10) {
-    svp_fseek(&fp, sizeof(uint8_t) * (fpos));
-    ch2 = svp_fread_u8(&fp);
-    fpos++;
-  }
-
-  ch2 = 0;
-
-  a = 0;
-  while (ch2 != 10) {
-    svp_fseek(&fp, sizeof(uint8_t) * (fpos));
-    ch2 = svp_fread_u8(&fp);
-    ch[a] = ch2;
-    fpos++;
-    a++;
-  }
-  ch[a] = 10;
-
-  a = 0;
-  if (ch[0] == 0) {
-    printf("ppm_get_width: Error: file header corruped!\n");
-    return 0;
-  }
-  while (ch[a] != ' ') {
-    img_width *= 10;
-    img_width += ch[a] - 48;
-    a++;
-  }
-  a++;
-  while (ch[a] != 10) {
-    img_height *= 10;
-    img_height += ch[a] - 48;
-    a++;
   }
 
   svp_fclose(&fp);
-  return img_height;
+  return img.height;
 }
