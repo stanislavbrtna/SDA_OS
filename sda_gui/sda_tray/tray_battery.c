@@ -31,9 +31,8 @@ int16_t sda_tray_battery(int16_t x2, int16_t y1, int16_t w) {
   static uint8_t batt_string[5];
   static uint8_t oldbatt;
   static systemPwrType oldBattState;
-
-  int16_t x1 = x2 - w;
-
+  
+  int16_t x1;
   uint8_t curr_font;
 
   if ((oldbatt != svpSGlobal.battPercentage) || (oldBattState != svpSGlobal.pwrType)) {
