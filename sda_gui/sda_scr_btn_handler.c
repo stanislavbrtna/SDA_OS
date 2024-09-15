@@ -35,7 +35,9 @@ uint8_t sda_screen_button_handler(uint16_t screen_id, uint16_t back_id, gr2conte
   // Text field handler
   if (con->textActive) {
     if (sda_wrap_get_button(BUTTON_RIGHT) == EV_PRESSED) {
-      gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) + 1, con);
+      if(sda_strlen(gr2_get_str(con->textActiveId, con)) > gr2_get_param(con->textActiveId, con)) {
+        gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) + 1, con);
+      }
     }
 
     if (sda_wrap_get_button(BUTTON_LEFT) == EV_PRESSED) {
