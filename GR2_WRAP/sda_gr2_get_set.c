@@ -503,6 +503,25 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Set screen background redraw
+  //#!    sys.gui.setBgRedraw([num]screen_id, [num]val);
+  //#!Enables or disables redrawing background on a screen update.
+  //#!Usefull for iproving redraw speed in scrolling texts.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setBgRedraw", s)) {
+    argType[1] = SVS_TYPE_NUM; // 
+    argType[2] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    gr2_set_param2((uint16_t) argS->arg[1].val_s, 1 - argS->arg[1].val_s, &sda_app_con);
+    
+    return 1;
+  }
+
   //#!##### Set elemnent size and position
   //#!    sys.gui.setXYXY([num]Id, [num] x1, [num] y1, [num] x2, [num] y2);
   //#!Sets position of element inside screen.

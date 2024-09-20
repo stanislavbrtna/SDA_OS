@@ -246,6 +246,12 @@ Sets aplication gr2 context rounded init mode.
 In rounded init mode all elements are initialized as rounded type.
 
 Return: None
+##### Set screen background redraw
+    sys.gui.setBgRedraw([num]screen_id, [num]val);
+Enables or disables redrawing background on a screen update.
+Usefull for iproving redraw speed in scrolling texts.
+
+Return: None
 ##### Set elemnent size and position
     sys.gui.setXYXY([num]Id, [num] x1, [num] y1, [num] x2, [num] y2);
 Sets position of element inside screen.
