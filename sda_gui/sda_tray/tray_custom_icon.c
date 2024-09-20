@@ -145,7 +145,10 @@ int16_t sda_custom_icon_handle(int16_t x2, int16_t y1, int16_t w) {
   icon_pos = 0;
   for(uint16_t i = 0; i < SDA_CUSTOM_ICONS; i++) {
     if (icons[i].valid) {
-      if (sda_tray_clicked(x2 - 32*(icon_pos + 1) , y1, x2 - 32*icon_pos, y1 + 31) == EV_RELEASED) {
+      if (
+          sda_tray_clicked(x2 - 32*(icon_pos + 1) , y1, x2 - 32*icon_pos, y1 + 31) == EV_RELEASED
+          && svpSGlobal.sdaDeviceLock == DEVICE_UNLOCKED
+      ){
         icons[i].event = EV_RELEASED;
       }
       icon_pos++;
