@@ -139,11 +139,40 @@ uint8_t svmUpdatePath(uint8_t *newFname, uint8_t *oldFname) {
   return 1;
 }
 
+void svmPrintLocks(uint16_t pid) {
+  uint8_t printed = 0;
+
+  if (sda_resource_get_pid(EXTERNAL_EXPANSION_PORT) == pid) {
+    printf("EXTERNAL_EXPANSION_PORT ");
+    printed = 1;
+  }
+
+  if (sda_resource_get_pid(INTERNAL_EXPANSION_PORT) == pid) {
+    printf("INTERNAL_EXPANSION_PORT ");
+    printed = 1;
+  }
+
+  if (sda_resource_get_pid(SERIAL_PORT) == pid) {
+    printf("SERIAL_PORT ");
+    printed = 1;
+  }
+
+  if (sda_resource_get_pid(USB_PORT) == pid) {
+    printf("USB_PORT ");
+    printed = 1;
+  }
+
+  if(printed) {
+    printf("\n");
+  }
+}
+
 void svmProcInfo() {
   printf("ProcInfo:\n name, pid (id), crypto, singular, uartCB\n");
   for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
     if (svmSavedProc[i].valid) {
-       printf("%s, %u (%u), c:%u, s:%u, u:%u\n", svmSavedProc[i].name, svmSavedProc[i].pid, i, svmSavedProc[i].cryptoUnlocked, svmSavedProc[i].singular, svmSavedProc[i].uartCallbackEnabled);
+      printf("%s, %u (%u), c:%u, s:%u, u:%u\n", svmSavedProc[i].name, svmSavedProc[i].pid, i, svmSavedProc[i].cryptoUnlocked, svmSavedProc[i].singular, svmSavedProc[i].uartCallbackEnabled);
+      svmPrintLocks(svmSavedProc[i].pid);
     }
   }
 }

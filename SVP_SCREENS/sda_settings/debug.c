@@ -97,6 +97,9 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
       sizeof(gr2Element)*SDA_SYS_ELEM_MAX  + sizeof(gr2Screen)*SDA_SYS_SCREEN_MAX +
       sizeof(gr2Element)*SDA_APP_ELEM_MAX  + sizeof(gr2Screen)*SDA_APP_SCREEN_MAX
     );
+
+    printf("GR2 elements %u/%u (max:%u) (system)\n", sda_sys_con.elementsUsed, sda_sys_con.elementsMax, sda_sys_con.maxElementsId);
+    printf("GR2 elements %u/%u (max:%u) (app)\n", sda_app_con.elementsUsed, sda_app_con.elementsMax, sda_app_con.maxElementsId);
   }
 
   if (gr2_clicked(bSvmInfo, &sda_sys_con)) {

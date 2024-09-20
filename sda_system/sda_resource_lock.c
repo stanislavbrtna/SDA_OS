@@ -93,3 +93,12 @@ sdaLockState sda_resource_get_lock(sdaResource res, uint16_t pid) {
 
   return SDA_LOCK_LOCKED;
 }
+
+
+uint16_t sda_resource_get_pid(sdaResource res) {
+  if (sda_resource_locks[res] == SDA_LOCK_UNLOCKED) {
+    return 0;
+  }
+
+  return sda_resource_pids[res];
+}

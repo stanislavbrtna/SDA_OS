@@ -31,5 +31,6 @@ uint8_t sda_resource_claim(sdaResource res, uint16_t pid);
 uint8_t sda_resource_free(sdaResource res, uint16_t pid);
 void sda_resource_free_pid(uint16_t pid);
 sdaLockState sda_resource_get_lock(sdaResource res, uint16_t pid);
+uint16_t sda_resource_get_pid(sdaResource res);
 
 #endif
