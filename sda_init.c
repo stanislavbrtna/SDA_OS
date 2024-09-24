@@ -136,6 +136,7 @@ void sda_main_init() {
 void sda_main_run_autoexec() {
   // autoexec sits in the APPS directory, it's executed upon boot, if found
   if (svp_fexists((uint8_t *)"autoexec.svs")) {
+    svmSetNocacheFlag();
     if (svmLaunch((uint8_t *)"autoexec.svs", 0) == 1) {
       // if it loaded ok, we run it a few times for it to execute the exit call
       svmRun(0, 1);
