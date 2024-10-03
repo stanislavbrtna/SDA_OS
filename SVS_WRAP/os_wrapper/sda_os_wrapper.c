@@ -136,6 +136,7 @@ svsConstType svsWrapConsts[] = {
 
   {"ICON_NONE", SDA_ICON_NONE},
   {"ICON_BACK", SDA_ICON_BACK},
+  {"ICON_FORWARD", SDA_ICON_FORWARD},
 
   {"end", 0}
 };

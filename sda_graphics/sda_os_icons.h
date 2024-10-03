@@ -25,8 +25,9 @@ SOFTWARE.
 
 #include "../SDA_OS.h"
 
-#define SDA_ICON_NONE 0
-#define SDA_ICON_BACK 1
+#define SDA_ICON_NONE    0
+#define SDA_ICON_BACK    1
+#define SDA_ICON_FORWARD 2
 
 uint8_t * sda_get_icon(uint8_t ic);
 

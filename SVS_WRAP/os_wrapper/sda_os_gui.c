@@ -423,10 +423,11 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!#### Default Icons
 
   //#! List of icons
-  //#!| Define    | Descrition            |
-  //#!|   ---     |  ---                  |
-  //#!| ICON_NONE | Box with questionmark |
-  //#!| ICON_BACK | Back arrow            |
+  //#!| Define       | Descrition            |
+  //#!|   ---        |  ---                  |
+  //#!| ICON_NONE    | Box with questionmark |
+  //#!| ICON_BACK    | Back arrow            |
+  //#!| ICON_FORWARD | Forward arrow         |
   //#!
   //#!Hint: Unknown icons are drawn as ICON_NONE 
 
@@ -443,13 +444,7 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    if(argS->arg[2].val_u == SDA_ICON_NONE) {
-      gr2_set_str2(argS->arg[1].val_u, sda_get_icon(SDA_ICON_NONE), &sda_app_con);
-    }
-    
-    if(argS->arg[2].val_u == SDA_ICON_BACK) {
-      gr2_set_str2(argS->arg[1].val_u, sda_get_icon(SDA_ICON_BACK), &sda_app_con);
-    }
+    gr2_set_str2(argS->arg[1].val_u, sda_get_icon((uint8_t) argS->arg[2].val_u), &sda_app_con);
 
     return 1;
   }
