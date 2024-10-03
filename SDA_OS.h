@@ -58,6 +58,7 @@ SOFTWARE.
 #include "sda_graphics/sda_p16.h"
 #include "sda_graphics/sda_images.h"
 #include "sda_graphics/sda_sic.h"
+#include "sda_graphics/sda_os_icons.h"
 #include "sda_util/native_drivers/sda_keyboard_driver.h"
 #include "sda_gui/sda_overlays_api.h"
 #include "sda_gui/sda_system_overlays/sda_system_overlays.h"

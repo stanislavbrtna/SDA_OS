@@ -105,3 +105,16 @@ Return: [num] id (1 - 3), 0 - Error, probably no empty icon spot
 Removes notification icon with given id.
 
 Return: [num] 1 - ok, 0 - Error
+#### Default Icons
+ List of icons
+| Define    | Descrition            |
+|   ---     |  ---                  |
+| ICON_NONE | Box with questionmark |
+| ICON_BACK | Back arrow            |
+
+Hint: Unknown icons are drawn as ICON_NONE 
+##### Add an os icon to a button 
+    sys.os.gui.setIcon([num] id, [num] icon_define);
+Adds an icon to a given button. Icons are specified with system defines.
+
+Return: none

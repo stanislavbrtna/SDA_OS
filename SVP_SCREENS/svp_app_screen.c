@@ -303,11 +303,14 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
     gr2_set_screen(inScreen, appScreen, &sda_sys_con);
 
     textLabel = gr2_add_text(0, 0, 6, 2, ASCR_APPLICATIONS, appScreen, &sda_sys_con);
-    btnBack = gr2_add_button(0, 0, 2, 2, (uint8_t *)"<-", appScreen, &sda_sys_con);
+    btnBack = gr2_add_button(0, 0, 2, 2, (uint8_t *)"", appScreen, &sda_sys_con);
     btnSwitch = gr2_add_button(2, 25, 8, 27, ASCR_RUNNING_APP, appScreen, &sda_sys_con);
     btnSettings = gr2_add_button(6, 0, 10, 2, ASCR_SETTINGS_BTN, appScreen, &sda_sys_con);
     gr2_set_ghost(btnSettings, 1, &sda_sys_con);
     gr2_text_set_align(btnSettings, GR2_ALIGN_CENTER, &sda_sys_con);
+
+    gr2_set_str2(btnBack, sda_get_icon(SDA_ICON_BACK), &sda_sys_con);
+    gr2_set_param(btnBack, 32, &sda_sys_con);
 
     gr2_set_ghost(btnBack, 1, &sda_sys_con);
     gr2_text_set_align(btnBack, GR2_ALIGN_CENTER, &sda_sys_con);

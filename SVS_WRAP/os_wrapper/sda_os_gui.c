@@ -420,5 +420,39 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!#### Default Icons
+
+  //#! List of icons
+  //#!| Define    | Descrition            |
+  //#!|   ---     |  ---                  |
+  //#!| ICON_NONE | Box with questionmark |
+  //#!| ICON_BACK | Back arrow            |
+  //#!
+  //#!Hint: Unknown icons are drawn as ICON_NONE 
+
+  //#!##### Add an os icon to a button 
+  //#!    sys.os.gui.setIcon([num] id, [num] icon_define);
+  //#!Adds an icon to a given button. Icons are specified with system defines.
+  //#!
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "setIcon", s)) {
+    argType[1] = SVS_TYPE_NUM; // notification icon
+    argType[2] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 2, s)){
+      return 0;
+    }
+
+    if(argS->arg[2].val_u == SDA_ICON_NONE) {
+      gr2_set_str2(argS->arg[1].val_u, sda_get_icon(SDA_ICON_NONE), &sda_app_con);
+    }
+    
+    if(argS->arg[2].val_u == SDA_ICON_BACK) {
+      gr2_set_str2(argS->arg[1].val_u, sda_get_icon(SDA_ICON_BACK), &sda_app_con);
+    }
+
+    return 1;
+  }
+
   return 0;
 }

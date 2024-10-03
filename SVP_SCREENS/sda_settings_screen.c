@@ -74,7 +74,9 @@ uint16_t sda_settings_gui(uint8_t init, uint8_t top) {
     settingsMenu   = sda_settings_menu(1);
     settingsFrame  = gr2_add_frame(0, 1, 10, 14, settingsMenu, settingsScreen, &sda_sys_con);
 
-    btnBack = gr2_add_button(0, 0, 2, 1, "<-", settingsScreen, &sda_sys_con);
+    btnBack = gr2_add_button(0, 0, 2, 1, "", settingsScreen, &sda_sys_con);
+    gr2_set_str2(btnBack, sda_get_icon(SDA_ICON_BACK), &sda_sys_con);
+    gr2_set_param(btnBack, 32, &sda_sys_con);
 
     gr2_text_set_align(btnBack, GR2_ALIGN_CENTER, &sda_sys_con);
     gr2_set_ghost(btnBack, 1, &sda_sys_con);

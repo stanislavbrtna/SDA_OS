@@ -134,6 +134,9 @@ svsConstType svsWrapConsts[] = {
   {"SERIAL_PORT",  SERIAL_PORT},
   {"USB_PORT",     USB_PORT},
 
+  {"ICON_NONE", SDA_ICON_NONE},
+  {"ICON_BACK", SDA_ICON_BACK},
+
   {"end", 0}
 };
 
