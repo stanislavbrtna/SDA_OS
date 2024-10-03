@@ -107,10 +107,11 @@ Removes notification icon with given id.
 Return: [num] 1 - ok, 0 - Error
 #### Default Icons
  List of icons
-| Define    | Descrition            |
-|   ---     |  ---                  |
-| ICON_NONE | Box with questionmark |
-| ICON_BACK | Back arrow            |
+| Define       | Descrition            |
+|   ---        |  ---                  |
+| ICON_NONE    | Box with questionmark |
+| ICON_BACK    | Back arrow            |
+| ICON_FORWARD | Forward arrow         |
 
 Hint: Unknown icons are drawn as ICON_NONE 
 ##### Add an os icon to a button 
