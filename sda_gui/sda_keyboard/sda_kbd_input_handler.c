@@ -45,7 +45,7 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
       curr_font = LCD_Get_Font_Size();
       LCD_Set_Sys_Font(gr2_get_param2(input_id, &sda_sys_con));
 
-      temp = LCD_Text_Get_Cursor_Pos(str, gr2_get_tmx(&sda_sys_con), gr2_get_tmy(&sda_sys_con));
+      temp = LCD_Text_Get_Cursor_Pos(str, gr2_get_tmx(&sda_sys_con), gr2_get_tmy(&sda_sys_con), gr2_get_text_max_width(&sda_sys_con));
 
       LCD_Set_Sys_Font(curr_font);
 

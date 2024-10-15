@@ -407,7 +407,6 @@ Return: [num]isPassword
     sys.gui.setTxtFit([num]Id, [num]val);
     sys.gui.setTexFit([num]Id, [num]val); # TBR
 Sets automatic line-breaking. val: 1 - enabled, 0 - disabled
-Position of first line break is stored in the parameter.
 
 Return: None
 ##### Set text fit
