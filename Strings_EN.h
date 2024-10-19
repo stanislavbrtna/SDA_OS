@@ -87,6 +87,7 @@
 
 #define ASCR_CARD_ERROR                               (uint8_t*)"Card error!"
 #define ASCR_FILE_ERROR                               (uint8_t*)"File error!"
+#define ASCR_FILE_MISSING                             (uint8_t*)"File missing!"
 #define ASCR_NONAME                                   (uint8_t*)"No name"
 #define ASCR_APPLICATIONS                             (uint8_t*)"Applications:"
 #define ASCR_RUNNING_APP                              (uint8_t*)"Running apps"

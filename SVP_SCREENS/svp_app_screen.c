@@ -89,7 +89,7 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
   static uint16_t pageButton[6];
 
   uint16_t x = 0;
-  uint8_t retval = 0;
+  uint8_t  retval = 0;
   svp_csvf appsCSV;
 
   if (init) {
@@ -103,9 +103,13 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
       pageButton[x] = 0;
     }
 
+    for(int x = 0; x < MAX_APP_COUNT; x++) {
+      appFNameBtn[x] = 0;
+    }
+
     // file error detection
     if (svp_csv_open(&appsCSV, fileName) == 0) {
-      gr2_add_text(1, 1, 20, 4, ASCR_CARD_ERROR, retScreen, &sda_sys_con);
+      gr2_add_text(1, 1, 20, 4, ASCR_FILE_MISSING, retScreen, &sda_sys_con);
       return retScreen;
     }
 
@@ -126,7 +130,7 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
     } while(svp_csv_next_line(&appsCSV));
 
     if (listLen > 9) {
-      int x = 0;
+      uint32_t x;
       for(x = 0; x < listLen/9 || x > 4; x++) {
         pageButton[x] = gr2_add_button(2 + 2*x, 20, 4 + 2*x, 22, date_days_strs[x + 1], retScreen, &sda_sys_con);
         if (innerPage == x) {
@@ -154,13 +158,13 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
   } else {
     // normal event handling
     for(x = 0; x < appCount; x++) {
-      if (gr2_clicked(appFNameBtn[x], &sda_sys_con)) {
+      if (appFNameBtn[x] && gr2_clicked(appFNameBtn[x], &sda_sys_con)) {
         selectedObject = appFName[x];
         selectedObjectStr = appHumanName[x];
         retval = 1;
 
 #ifdef APP_SCREEN_DEBUG
-        printf("inner_handler: clicked\n");
+        printf("inner_handler: clicked selectedObject:%s selectedObjectStr:%s \n", selectedObject, selectedObjectStr);
 #endif
         break;
       }

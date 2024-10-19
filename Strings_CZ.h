@@ -86,6 +86,7 @@
 #define OVRL_DC_FMT                   (uint8_t *)"Fmt"
 
 #define ASCR_CARD_ERROR               (uint8_t *)"Chyba Karty"
+#define ASCR_FILE_MISSING             (uint8_t *)"Soubor Nenalezen"
 #define ASCR_FILE_ERROR               (uint8_t *)"Chyba Souboru"
 #define ASCR_NONAME                   (uint8_t *)"Není název"
 #define ASCR_APPLICATIONS             (uint8_t *)"Programy:"
