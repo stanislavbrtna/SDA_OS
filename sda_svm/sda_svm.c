@@ -129,7 +129,7 @@ uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
   return 0;
 }
 
-
+#define SVM_DBG_ENABLED
 // launch app
 uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   uint8_t cacheBuffer[256];
@@ -141,6 +141,11 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
 #ifdef SVM_DBG_ENABLED
       printf("%s: launching: %s \n",__FUNCTION__ , fname);
 #endif
+
+  if(strCmp(fname, "")) {
+    printf("%s: Error: Empty fname given!\n", __FUNCTION__);
+    return 0;
+  }
 
   uint16_t singularId = 0;
   singularId = svmGetIfSingular(fname);
