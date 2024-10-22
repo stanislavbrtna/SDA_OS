@@ -61,7 +61,8 @@ Draws text
 Return: None
 ##### Set text to fit specified width
     sys.ds.setTextFit([num] enable, [num] width);
-Sets max width for next drawn text
+Sets max width for next drawn text.
+(Redraw of UI elements might reset it)
 
 Return: None
 ##### Get text width

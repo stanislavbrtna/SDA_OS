@@ -382,7 +382,8 @@ uint8_t svsDirectSWrap(varRetVal *result, argStruct *argS, svsVM *s){
 
   //#!##### Set text to fit specified width
   //#!    sys.ds.setTextFit([num] enable, [num] width);
-  //#!Sets max width for next drawn text
+  //#!Sets max width for next drawn text.
+  //#!(Redraw of UI elements might reset it)
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setTextFit", s)) {
