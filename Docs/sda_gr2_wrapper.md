@@ -409,7 +409,21 @@ Return: [num]isPassword
 Sets automatic line-breaking. val: 1 - enabled, 0 - disabled
 
 Return: None
-##### Set text fit
+##### Get text width
+    sys.gui.getTxtWidth([num]Id, [num]pos);
+Get max width of string drawn in a given text element.
+Works with text field params like font size and text fit.
+pos: cursor position (0 for full string)
+
+Return: Text width in px
+##### Get text height
+    sys.gui.getTxtHeight([num]Id, [num]pos);
+Get max height of string drawn in a given text element.
+Works with text field params like font size and text fit.
+pos: cursor position (0 for full string)
+
+Return: Text height in px
+##### Set text editable
     sys.gui.setTxtEd([num]Id, [num]val);
     sys.gui.setTexEd([num]Id, [num]val); # TBR
 Sets text field as editable.

@@ -181,7 +181,47 @@ uint8_t sda_gr2_txt_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Set text fit
+  //#!##### Get text width
+  //#!    sys.gui.getTxtWidth([num]Id, [num]pos);
+  //#!Get max width of string drawn in a given text element.
+  //#!Works with text field params like font size and text fit.
+  //#!pos: cursor position (0 for full string)
+  //#!
+  //#!Return: Text width in px
+  if (sysFuncMatch(argS->callId, "getTxtWidth", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM; // 
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    result->value.val_s = gr2_get_text_width(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get text height
+  //#!    sys.gui.getTxtHeight([num]Id, [num]pos);
+  //#!Get max height of string drawn in a given text element.
+  //#!Works with text field params like font size and text fit.
+  //#!pos: cursor position (0 for full string)
+  //#!
+  //#!Return: Text height in px
+  if (sysFuncMatch(argS->callId, "getTxtHeight", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM; // 
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    result->value.val_s = gr2_get_text_height(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Set text editable
   //#!    sys.gui.setTxtEd([num]Id, [num]val);
   //#!    sys.gui.setTexEd([num]Id, [num]val); # TBR
   //#!Sets text field as editable.
