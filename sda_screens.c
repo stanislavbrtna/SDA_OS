@@ -249,12 +249,23 @@ void sda_main_process_touch() {
       }
     }
 
-    if (((svpSGlobal.touchX < overlayX1 - 10)
-        || (svpSGlobal.touchX > overlayX2 + 10)
-        || (svpSGlobal.touchY < overlayY1 - 10 && svpSGlobal.touchY > 32)
-        || (svpSGlobal.touchY > overlayY2 + 10))
-        && svpSGlobal.kbdVisible == 0 && kbdVisibleOld == 0
-        && svpSGlobal.touchType == EV_PRESSED) {
+    if (// clicked
+        svpSGlobal.touchType == EV_PRESSED &&
+        (
+          ( // and outside overlay
+            (svpSGlobal.touchX < overlayX1 - 10)
+            || (svpSGlobal.touchX > overlayX2 + 10)
+            || (svpSGlobal.touchY < overlayY1 - 10 && svpSGlobal.touchY > 32)
+            || (svpSGlobal.touchY > overlayY2 + 10)
+          )
+          &&
+          // and outside keyboard
+          !( //(not inside openned keyboard...)
+            svpSGlobal.kbdVisible == 1 && kbdVisibleOld == 1
+            && (svpSGlobal.touchY > 319 - 160*svpSGlobal.lcdLandscape)
+          ) 
+        )
+    ){
       destroyOverlay();
       setRedrawFlag();
     }
