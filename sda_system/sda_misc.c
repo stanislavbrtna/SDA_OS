@@ -262,10 +262,13 @@ void sda_precache() {
 void sda_set_landscape(uint8_t val) {
   if (val == 1) {
     LCD_set_orientation(OR_ROT_RIGHT);
+    //TODO: fix this mess...
     svpSGlobal.lcdLandscape = 1;
+    svpSGlobal.lcdOrientation = OR_ROT_RIGHT;
   } else {
     LCD_set_orientation(OR_NORMAL);
     svpSGlobal.lcdLandscape = 0;
+    svpSGlobal.lcdOrientation = OR_NORMAL;
   }
   setRedrawFlag();
 }

@@ -56,7 +56,7 @@ void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname) {
   svmMeta.openConfUsed    = 0;
   svmMeta.openCsvUsed     = 0;
   svmMeta.loadUptime      = svpSGlobal.uptimeMs;
-  svmMeta.landscape       = 0;
+  svmMeta.landscape       = svpSGlobal.lcdLandscape;
   svmMeta.lcdOffButtons   = 0;
   svmMeta.launchFromCWD   = 0;
   svmMeta.beepTime        = 0;

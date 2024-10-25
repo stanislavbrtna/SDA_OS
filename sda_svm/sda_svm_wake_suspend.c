@@ -162,7 +162,6 @@ void svmSuspend() {
 }
 
 // wakes up given pid, returns: 0 - ok, 1 - error
-// TODO: rewrite whis mess
 uint8_t svmWake(uint16_t pid) {
   if(!(pid == svmMeta.pid && svmGetValid())) {
     if (svmGetValid()) {

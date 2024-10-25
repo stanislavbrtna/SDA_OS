@@ -44,7 +44,7 @@ uint8_t *svmGetCallback() {
 }
 
 uint8_t svmRunPerformCall() {
-  uint8_t argBuff[APP_ARG_STR_LEN];
+  uint8_t  argBuff[APP_ARG_STR_LEN];
   uint16_t parentPid = svmMeta.pid;
   //TODO: Storing and restoring arguments crashes on emcc     
 
@@ -69,7 +69,7 @@ uint8_t svmRunPerformCall() {
     sda_strcp(svmCallback, svmMeta.svmCallback, NAME_LENGTH);
     return 1;
   }
-
+  
   // otherwise launch
   if(svmLaunch(svmCallName, svmMeta.pid) == 0) {
     svmWake(parentPid);
