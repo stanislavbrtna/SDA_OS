@@ -91,7 +91,7 @@ void sda_homescreen_configure() {
     return;
   }
 
-  // backgroun image
+  // background image
   sda_conf_key_read(&conffile, (uint8_t *) "background", background_img, sizeof(background_img));
   if (svp_fexists(background_img)) {
     gr2_set_str(screen, background_img, &sda_sys_con);
@@ -173,7 +173,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     svpSGlobal.systemXBtnVisible = 0;
 
     // time refresh
-    if (((uint16_t)svpSGlobal.hour * 10) + (uint16_t)svpSGlobal.min != oldtime) {
+    if (((uint16_t)svpSGlobal.hour * 100) + (uint16_t)svpSGlobal.min != oldtime) {
       time_string[0] = svpSGlobal.hour / 10 + 48;
       time_string[1] = svpSGlobal.hour % 10 + 48;
       time_string[2] = ':';
@@ -181,7 +181,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
       time_string[4] = svpSGlobal.min % 10 + 48;
       time_string[5] = 0;
       gr2_set_str(time, time_string, &sda_sys_con);
-      oldtime = ((uint16_t)svpSGlobal.hour * 10) + (uint16_t)svpSGlobal.min;
+      oldtime = ((uint16_t)svpSGlobal.hour * 100) + (uint16_t)svpSGlobal.min;
     }
 
     // date refresh
@@ -233,7 +233,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     }
     gr2_set_event(btnApps, EV_NONE, &sda_sys_con);
 
-     if (gr2_get_event(btnQuickLaunch, &sda_sys_con) == EV_RELEASED) {
+    if (gr2_get_event(btnQuickLaunch, &sda_sys_con) == EV_RELEASED) {
       gr2_ki_unselect(screen, &sda_sys_con);
       sda_ql_overlay_init();
     }
@@ -246,6 +246,6 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 
     sda_screen_button_handler(screen, 0, &sda_sys_con);
   }
-  //else: work in the background, noting for now
+  //else: work in the background, nothing for now
   return 0;
 }

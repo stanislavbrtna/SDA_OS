@@ -36,6 +36,7 @@ static uint16_t povId;
 static uint16_t povDone;
 static uint8_t  kbdInit;
 
+void password_overlay_destructor();
 
 uint16_t password_overlay_init() {
   passInputStr[0] = 0;
@@ -96,12 +97,14 @@ uint16_t password_overlay_init() {
 
   gr2_set_relative_init(rInit, &sda_sys_con);
 
+  setOverlayDestructor(password_overlay_destructor);
+
   return povId;
 }
 
 void password_overlay_update(uint16_t ovId) {
 
-  if (povId != ovId || ovId == 0) {
+  if (povId != ovId || ovId == 0 || povId != getOverlayId()) {
     return;
   }
 
@@ -172,4 +175,11 @@ void password_overlay_clear_ok(uint16_t ovId) {
   }
   povDone = 0;
   povId = 0xFFFF;
+}
+
+
+void password_overlay_destructor() {
+  gr2_destroy(screen, &sda_sys_con);
+  sda_keyboard_hide();
+  setRedrawFlag();
 }
