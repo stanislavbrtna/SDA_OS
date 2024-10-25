@@ -132,7 +132,6 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
   static uint16_t unlockOverlay;
   static uint8_t  time_string[6];
   static uint8_t  date_string[42];
-  static uint8_t  handleLock;
 
   if (init == 1) {
     screen = gr2_add_screen(&sda_sys_con);
@@ -163,7 +162,6 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     gr2_set_ghost(btnLock, 1, &sda_sys_con);
     
     oldLock    = DEVICE_UNLOCKED;
-    handleLock = 0;
 
     sda_homescreen_configure();
 
@@ -173,6 +171,12 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
   // loop top
   if (top == 1) {
     svpSGlobal.systemXBtnVisible = 0;
+
+    // backlight overlay is a bit slow on the homescreen,
+    // this should fix it
+    if(sda_batt_overlay_shown()) {
+      return 0;
+    }
 
     // time refresh
     if (((uint16_t)svpSGlobal.hour * 128) + (uint16_t)svpSGlobal.min != oldtime) {
@@ -202,36 +206,33 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
         gr2_set_visible(btnLock, 0, &sda_sys_con);
         gr2_set_visible(btnQuickLaunch, 0, &sda_sys_con);
         gr2_set_visible(btnApps, 0, &sda_sys_con);
-        handleLock = 1;
       } else {
         gr2_set_visible(btnUnLock, 0, &sda_sys_con);
         gr2_set_visible(btnQuickLaunch, 1, &sda_sys_con);
         gr2_set_visible(btnLock, 1, &sda_sys_con);
         gr2_set_visible(btnApps, 1, &sda_sys_con);
-        handleLock = 0;
       }
       oldLock = svpSGlobal.sdaDeviceLock;
     }
 
-    if (handleLock) {
-      if (gr2_get_event(btnUnLock, &sda_sys_con) == EV_RELEASED) {
-        unlockOverlay = password_overlay_init();
-      }
-      gr2_set_event(btnUnLock, EV_NONE, &sda_sys_con);
-
-      password_overlay_update(unlockOverlay);
-
-      if(password_overlay_get_ok(unlockOverlay) == 1) {
-        password_overlay_clear_ok(unlockOverlay);
-        svp_crypto_lock();
-        svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
-        rtc_write_locked(0);
-      }
-
-      if(password_overlay_get_ok(unlockOverlay) == 2) {
-        password_overlay_clear_ok(unlockOverlay);
-      }
+    if (gr2_get_event(btnUnLock, &sda_sys_con) == EV_RELEASED) {
+      unlockOverlay = password_overlay_init();
     }
+    gr2_set_event(btnUnLock, EV_NONE, &sda_sys_con);
+
+    password_overlay_update(unlockOverlay);
+
+    if(password_overlay_get_ok(unlockOverlay) == 1) {
+      password_overlay_clear_ok(unlockOverlay);
+      svp_crypto_lock();
+      svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
+      rtc_write_locked(0);
+    }
+
+    if(password_overlay_get_ok(unlockOverlay) == 2) {
+      password_overlay_clear_ok(unlockOverlay);
+    }
+
 
     if (gr2_get_event(btnApps, &sda_sys_con) == EV_RELEASED) {
       gr2_ki_unselect(screen, &sda_sys_con);
