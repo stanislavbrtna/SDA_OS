@@ -157,7 +157,7 @@ void password_overlay_update(uint16_t ovId) {
 
 
 uint16_t password_overlay_get_ok(uint16_t ovId) {
-  if (povId != ovId || ovId == 0 || povId != getOverlayId()) {
+  if (povId != ovId || ovId == 0) {
     return 0;
   }
 
@@ -170,7 +170,7 @@ uint16_t password_overlay_get_ok(uint16_t ovId) {
 
 
 void password_overlay_clear_ok(uint16_t ovId) {
-  if (povId != ovId || povId != getOverlayId()) {
+  if (povId != ovId || ovId == 0) {
     return;
   }
   povDone = 0;
