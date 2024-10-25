@@ -127,11 +127,12 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
   static uint16_t btnQuickLaunch;
   static uint16_t btnUnLock;
   static uint16_t oldtime;
-  static uint8_t olddate;
+  static uint8_t  olddate;
   static sdaDeviceLockType oldLock;
   static uint16_t unlockOverlay;
-  static uint8_t time_string[6];
-  static uint8_t date_string[42];
+  static uint8_t  time_string[6];
+  static uint8_t  date_string[42];
+  static uint8_t  handleLock;
 
   if (init == 1) {
     screen = gr2_add_screen(&sda_sys_con);
@@ -161,7 +162,8 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 
     gr2_set_ghost(btnLock, 1, &sda_sys_con);
     
-    oldLock = DEVICE_UNLOCKED;
+    oldLock    = DEVICE_UNLOCKED;
+    handleLock = 0;
 
     sda_homescreen_configure();
 
@@ -173,7 +175,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     svpSGlobal.systemXBtnVisible = 0;
 
     // time refresh
-    if (((uint16_t)svpSGlobal.hour * 100) + (uint16_t)svpSGlobal.min != oldtime) {
+    if (((uint16_t)svpSGlobal.hour * 128) + (uint16_t)svpSGlobal.min != oldtime) {
       time_string[0] = svpSGlobal.hour / 10 + 48;
       time_string[1] = svpSGlobal.hour % 10 + 48;
       time_string[2] = ':';
@@ -181,7 +183,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
       time_string[4] = svpSGlobal.min % 10 + 48;
       time_string[5] = 0;
       gr2_set_str(time, time_string, &sda_sys_con);
-      oldtime = ((uint16_t)svpSGlobal.hour * 100) + (uint16_t)svpSGlobal.min;
+      oldtime = ((uint16_t)svpSGlobal.hour * 128) + (uint16_t)svpSGlobal.min;
     }
 
     // date refresh
@@ -200,31 +202,36 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
         gr2_set_visible(btnLock, 0, &sda_sys_con);
         gr2_set_visible(btnQuickLaunch, 0, &sda_sys_con);
         gr2_set_visible(btnApps, 0, &sda_sys_con);
+        handleLock = 1;
       } else {
         gr2_set_visible(btnUnLock, 0, &sda_sys_con);
         gr2_set_visible(btnQuickLaunch, 1, &sda_sys_con);
         gr2_set_visible(btnLock, 1, &sda_sys_con);
         gr2_set_visible(btnApps, 1, &sda_sys_con);
+        handleLock = 0;
       }
       oldLock = svpSGlobal.sdaDeviceLock;
     }
 
-    if (gr2_get_event(btnUnLock, &sda_sys_con) == EV_RELEASED) {
-      unlockOverlay = password_overlay_init();
-    }
-    gr2_set_event(btnUnLock, EV_NONE, &sda_sys_con);
+    if (handleLock) {
+      printf("handling\n");
+      if (gr2_get_event(btnUnLock, &sda_sys_con) == EV_RELEASED) {
+        unlockOverlay = password_overlay_init();
+      }
+      gr2_set_event(btnUnLock, EV_NONE, &sda_sys_con);
 
-    password_overlay_update(unlockOverlay);
+      password_overlay_update(unlockOverlay);
 
-    if(password_overlay_get_ok(unlockOverlay) == 1) {
-      password_overlay_clear_ok(unlockOverlay);
-      svp_crypto_lock();
-      svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
-      rtc_write_locked(0);
-    }
+      if(password_overlay_get_ok(unlockOverlay) == 1) {
+        password_overlay_clear_ok(unlockOverlay);
+        svp_crypto_lock();
+        svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
+        rtc_write_locked(0);
+      }
 
-    if(password_overlay_get_ok(unlockOverlay) == 2) {
-      password_overlay_clear_ok(unlockOverlay);
+      if(password_overlay_get_ok(unlockOverlay) == 2) {
+        password_overlay_clear_ok(unlockOverlay);
+      }
     }
 
     if (gr2_get_event(btnApps, &sda_sys_con) == EV_RELEASED) {
