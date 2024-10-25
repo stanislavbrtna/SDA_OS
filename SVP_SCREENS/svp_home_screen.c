@@ -214,7 +214,6 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     }
 
     if (handleLock) {
-      printf("handling\n");
       if (gr2_get_event(btnUnLock, &sda_sys_con) == EV_RELEASED) {
         unlockOverlay = password_overlay_init();
       }
