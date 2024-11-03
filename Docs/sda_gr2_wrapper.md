@@ -29,6 +29,16 @@
 |  ALIGN_RIGHT  |  5     |  Text align: Right  |
 |  ALIGN_CENTER |  5     |  Text align: Center |
 
+##### Available fonts
+|  Constant     |  Value |  Meaning              |
+|  ---          |  ---   |  ---                  |
+|  FONT_12      |  12    |  Font 12px            |
+|  FONT_12_M    |  13    |  Font 12px, monospace |
+|  FONT_18      |  18    |  Font 18px            |
+|  FONT_32      |  32    |  Font 32px            |
+|  FONT_70      |  70    |  Font 70px            |
+|  FONT_87      |  87    |  Font 87px            |
+
 
 #### Element constructors
 

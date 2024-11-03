@@ -53,6 +53,16 @@ SOFTWARE.
 //#!|  ALIGN_RIGHT  |  5     |  Text align: Right  |
 //#!|  ALIGN_CENTER |  5     |  Text align: Center |
 //#!
+//#!##### Available fonts
+//#!|  Constant     |  Value |  Meaning              |
+//#!|  ---          |  ---   |  ---                  |
+//#!|  FONT_12      |  12    |  Font 12px            |
+//#!|  FONT_12_M    |  13    |  Font 12px, monospace |
+//#!|  FONT_18      |  18    |  Font 18px (Default)  |
+//#!|  FONT_32      |  32    |  Font 32px            |
+//#!|  FONT_70      |  70    |  Font 70px            |
+//#!|  FONT_87      |  87    |  Font 87px            |
+//#!
 
 svsConstType gr2WrapConsts[] = {
   {"EV_PRESSED", 1},
@@ -69,6 +79,13 @@ svsConstType gr2WrapConsts[] = {
   {"ALIGN_LEFT", 0},
   {"ALIGN_RIGHT", 1},
   {"ALIGN_CENTER", 2},
+
+  {"FONT_12", 12},
+  {"FONT_12_M", 13},
+  {"FONT_18", 18},
+  {"FONT_32", 32},
+  {"FONT_70", 70},
+  {"FONT_87", 87},
 
   {"end", 0}
 };
