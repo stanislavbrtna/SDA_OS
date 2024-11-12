@@ -23,7 +23,7 @@ SOFTWARE.
 #include "sda_keyboard.h"
 
 void init_kblayout_standard(psvcKbdLayout *l) {
-  l->keyStr[0] = (uint8_t*)"Num";
+  l->keyStr[0] = (uint8_t*)"123";
   l->key[0]    = (uint8_t*)"\x01\x04\x00";
   l->keyStr[1] = (uint8_t*)"ě";
   l->key[1]    = (uint8_t*)"ě";
@@ -368,7 +368,7 @@ void init_kblayout_special_shift(psvcKbdLayout *l) {
 }
 
 void init_kblayout_numeric(psvcKbdLayout *l) {
-  l->keyStr[0] = (uint8_t*)"Txt";
+  l->keyStr[0] = (uint8_t*)"Ab";
   l->key[0]    = (uint8_t*)"\x01\x00";
   l->keyStr[1] = (uint8_t*)"(";
   l->key[1]    = (uint8_t*)"(";
@@ -447,9 +447,8 @@ void init_kblayout_numeric(psvcKbdLayout *l) {
   l->keyStr[36] = (uint8_t*)"Prog";
   l->keyStr[37] = (uint8_t*)"Esc";
   l->key[37]    = (uint8_t*)"ignored";
-  l->keyStr[38] = (uint8_t*)"Fx";
-
-  l->key[38]    = (uint8_t*)"\x01\x02\x00";
+  l->keyStr[38] = (uint8_t*)"Ab";
+  l->key[38]    = (uint8_t*)"\x01\x00";
   // value returned with shift key (switch to another layout)
-  l->key[39]    = (uint8_t*)"\x01\x01\x00";
+  l->key[39]    = (uint8_t*)"\x01\x04\x00";
 }
