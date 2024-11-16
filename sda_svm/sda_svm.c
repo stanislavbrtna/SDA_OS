@@ -334,7 +334,15 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
 
     // Run "update"
     if(functionExists((uint8_t *)"update", &svm)) {
+#ifdef PLATFORM_PC
+      svsGetCacheReloads(1);
+#endif
       commExec((uint8_t *)"update", &svm);
+#ifdef PLATFORM_PC
+      if(svsGetCacheReloads(0)){
+        //printf("DBG: update cache reloads: %u\n", svsGetCacheReloads(0));
+      }
+#endif
     } else {
       printf("%s: No update function found. (%s pid: %u)\n", __FUNCTION__, svmMeta.name, svmMeta.pid);
       sda_show_error_message((uint8_t *)"No update function found.\n");
