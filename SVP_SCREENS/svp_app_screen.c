@@ -283,6 +283,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
   static uint8_t  labelbuff[APP_NAME_LEN+1];
   static uint8_t  appActivePrev;
   static uint8_t  inScrReloaded;
+  static uint8_t  mounted_prev;
   uint8_t appActive;
 
   if (init == 1) {
@@ -325,8 +326,35 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
     return appScreen;
   }
 
-  //loop top
   if (top == 1) {
+
+    // Mounted/Unmounted logic
+    if(svp_getMounted() != mounted_prev) {
+      if (inScreen != 0) {
+        gr2_destroy_screen(inScreen, &sda_sys_con);
+      }
+
+      folder_stack_max = 0;
+      innerPage = 0;
+      gr2_set_visible(btnBack, 0, &sda_sys_con);
+      gr2_set_x1(textLabel, 0, &sda_sys_con);
+
+      if(svp_getMounted()) { 
+        inScreen = inner_handler(1, (uint8_t *)"main.mnu");
+        inScrReloaded = 1;
+        add_to_stack((uint8_t *)"main.mnu");  
+        gr2_set_str(textLabel, ASCR_APPLICATIONS, &sda_sys_con);
+      } else {
+        inScreen = gr2_add_screen(&sda_sys_con);
+        gr2_add_text(1, 1, 10, 2, SCR_SD_NOT_PRESENT_WARNING, inScreen, &sda_sys_con);
+        gr2_set_str(textLabel, (uint8_t*)"", &sda_sys_con);
+      }
+
+      gr2_set_y_cell(appScreen, 16, &sda_sys_con);
+      inScreenResizer(inScreen);
+      gr2_set_screen(inScreen, appScreen, &sda_sys_con);
+      mounted_prev = svp_getMounted();
+    }
 
     svpSGlobal.systemXBtnVisible = 0;
 

@@ -132,9 +132,6 @@ void settings_sd_umount() {
   }
   svp_umount();
   gr2_set_str(optMntSel, SCR_SD_MOUNT, &sda_sys_con);
-  prac_screen = slotScreen[1];
-  slotScreen[1] = gr2_add_screen(&sda_sys_con);
-  gr2_add_text(1, 1, 10, 2, SCR_SD_NOT_PRESENT_WARNING, slotScreen[1], &sda_sys_con);
 }
 
 
@@ -143,16 +140,11 @@ void settings_sd_mount() {
     sda_show_error_message(SCR_CARD_ERROR_MSG);
   } else {
     gr2_set_str(optMntSel, SD_UMOUNT, &sda_sys_con);
-    // little hack for reload of app screen
-    gr2_destroy(slotScreen[1], &sda_sys_con);
-    gr2_destroy(prac_screen, &sda_sys_con);
-    slotScreen[1] = svp_appScreen(1, 0);
 
     if (svpSGlobal.sdaDeviceLock == DEVICE_UNLOCKED) {
       sda_slot_on_top(SDA_SLOT_SETTINGS);
     }
-
-    //next little hack, relod the main screen, this will be replaced someday
+    //relod the main screen, this will be replaced someday
     sda_homescreen_configure();
   }
 }
