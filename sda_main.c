@@ -45,12 +45,7 @@ static void sda_main_handle_soft_buttons();
 static void sda_main_check_for_alarm();
 
 void sda_main_run_autoexec();
-
-
-void test_code() {
-  // Testcode section is used for testing new things, it is called once after init
-  return;
-}
+void test_code();
 
 
 // misc functions
