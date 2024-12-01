@@ -51,6 +51,7 @@ SOFTWARE.
 #include "sda_fs/sda_conf.h"
 #include "sda_fs/svp_fs_misc.h"
 #include "sda_fs/svp_csv_parse.h"
+#include "sda_fs/sda_bdb.h"
 #include "sda_util/svp_crypto.h"
 #include "sda_util/sda_crypto_key_mgmt.h"
 #include "sda_util/sda_crypto_strings.h"

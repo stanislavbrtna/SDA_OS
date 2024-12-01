@@ -24,13 +24,20 @@ SOFTWARE.
 
 //Conf file
 sda_conf conFile;
-uint8_t conf_filename[64];
-uint8_t conf_open;
+uint8_t  conf_filename[64];
+uint8_t  conf_open;
 
 //Csv file
 svp_csvf csvFile;
-uint8_t csv_filename[64];
-uint8_t csv_open;
+uint8_t  csv_filename[64];
+uint8_t  csv_open;
+
+//db
+sda_bdb dbFile;
+uint8_t db_filename[64];
+uint8_t db_open;
+
+// TODO: load/store db on app suspend
 
 
 uint8_t * sda_get_conf_fname() {
@@ -471,6 +478,369 @@ uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     result->type = SVS_TYPE_NUM;
     return 1;
   }
+
+  return 0;
+}
+
+
+uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
+
+  uint8_t argType[11];
+
+  //#!#### Binary DB API
+
+  //#!##### Create new db file
+  //#!    sys.fs.db.new([str]fname);
+  //#!Creates new db file.
+  //#!
+  //#!Return: [num]1 on succes.
+  if (sysFuncMatch(argS->callId, "new", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    sda_strcp(s->stringField + argS->arg[1].val_str, db_filename, sizeof(db_filename));
+    if (sda_bdb_new(s->stringField + argS->arg[1].val_str, &dbFile)) {
+      result->value.val_s = 1;
+      db_open = 1;
+    } else {
+      result->value.val_s = 0;
+      db_open = 0;
+    }
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Open db file
+  //#!    sys.fs.db.open([str]fname);
+  //#!Opens existing db file.
+  //#!
+  //#!Return: [num]1 on succes.
+  if (sysFuncMatch(argS->callId, "open", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    sda_strcp(s->stringField + argS->arg[1].val_str, db_filename, sizeof(db_filename));
+    if (sda_bdb_open(s->stringField + argS->arg[1].val_str, &dbFile)) {
+      result->value.val_s = 1;
+      db_open = 1;
+    } else {
+      result->value.val_s = 0;
+      db_open = 0;
+    }
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Close config file
+  //#!    sys.fs.db.close();
+  //#!Close db file.
+  //#!
+  //#!Return: [num]1 on succes.
+  if (sysFuncMatch(argS->callId, "close", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    if (db_open == 1 && (sda_bdb_close(&dbFile) == 0)) {
+      db_open = 0;
+      result->value.val_s = 1;
+    } else {
+      result->value.val_s = 0;
+    }
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Create new table
+  //#!    sys.fs.db.newTable([str]name, [num] columns);
+  //#!Creates new table
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "newTable", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_new_table(s->stringField+argS->arg[1].val_str, s->stringField+argS->arg[2].val_u, &dbFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Set column type
+  //#!    sys.fs.db.setColumn([num] id, [str]name, [num] type);
+  //#!Sets name and type of given column
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "setColumn", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_STR;
+    argType[3] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 3, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_set_column(
+      argS->arg[1].val_u, 
+      s->stringField+argS->arg[2].val_str, 
+      argS->arg[3].val_u,
+      &dbFile
+    );
+
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Enable ID field
+  //#!    sys.fs.db.idEnable([str]fieldName);
+  //#!Sets given column as an id field.
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "idEnable", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_enable_id( 
+      s->stringField+argS->arg[1].val_str,
+      &dbFile
+    );
+
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Select table
+  //#!    sys.fs.db.selectTable([str]name);
+  //#!Selects existing table
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "selectTable", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_select_table(s->stringField+argS->arg[1].val_str, &dbFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### New row
+  //#!    sys.fs.db.newRow();
+  //#!Adds new row to the selected table.
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "newRow", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_new_row(&dbFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Select row
+  //#!    sys.fs.db.selectRow([num]row_n);
+  //#!Select row with given number (not an id).
+  //#!Usefull for selecting row 0 and then using *sys.fs.db.nextRow();*
+  //#!to read the full table line by line.
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "selectRow", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_select_row(argS->arg[1].val_s, &dbFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Select row by id
+  //#!    sys.fs.db.selectRowId([num]id);
+  //#!Select row with given id. (Id field must be enabled)
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "selectRowId", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_select_row_id(argS->arg[1].val_u ,&dbFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Next row
+  //#!    sys.fs.db.nextRow();
+  //#!Selects next available row.
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "nextRow", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_select_row_next(&dbFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Write text entry
+  //#!    sys.fs.db.setEntryStr([str]col_name, [str]value);
+  //#!Sets db entry
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "setEntryStr", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_store_string(s->stringField+argS->arg[1].val_str,s->stringField+argS->arg[2].val_str, &dbFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Write numeric entry
+  //#!    sys.fs.db.setEntryNum([str]col_name, [num]value);
+  //#!Sets db entry
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "setEntryNum", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_set_entry(
+      s->stringField+argS->arg[1].val_str, 
+      &(argS->arg[2].val_s), 
+      sizeof(argS->arg[2].val_s), 
+      &dbFile
+    );
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Read text entry
+  //#!    sys.fs.db.getEntryStr([str]col_name, [str]default);
+  //#!Gets db entry
+  //#!
+  //#!Return: [str] entry or default
+  if (sysFuncMatch(argS->callId, "getEntryStr", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+    //TODO: streaming mode
+
+    uint8_t buffer[1024];
+    if(sda_bdb_get_entry(s->stringField+argS->arg[1].val_str, &buffer, sizeof(buffer), &dbFile)) {
+      result->value.val_str = strNew(buffer, s);
+    } else {
+      result->value.val_str = strNew(s->stringField+argS->arg[2].val_str, s);
+    }
+
+    result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
+  //#!##### Read num entry
+  //#!    sys.fs.db.getEntryNum([str]col_name, [num]default);
+  //#!Gets db entry
+  //#!
+  //#!Return: [num] entry or default
+  if (sysFuncMatch(argS->callId, "getEntryNum", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+    //TODO: streaming mode
+    int32_t val; 
+    if(sda_bdb_get_entry(s->stringField+argS->arg[1].val_str, &val, sizeof(val), &dbFile)) {
+      result->value.val_s = val;
+    } else {
+      result->value.val_s = argS->arg[2].val_s;
+    }
+
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
 
   return 0;
 }

@@ -107,12 +107,14 @@ uint8_t sda_fr_fname_reopen(uint16_t index) {
 uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_fs_csv_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_fs_conf_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
+uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 
 
 void sda_files_wrapper_init() {
   addSysWrapper(sda_files_wrapper, (uint8_t *)"fs");
   addSysWrapper(sda_fs_csv_wrapper, (uint8_t *)"fs.csv");
   addSysWrapper(sda_fs_conf_wrapper, (uint8_t *)"fs.conf");
+  addSysWrapper(sda_fs_bdb_wrapper, (uint8_t *)"fs.db");
 }
 
 //#!### SDA Files

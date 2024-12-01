@@ -98,7 +98,7 @@ uint8_t sda_bdb_new(uint8_t *fname, sda_bdb *db) {
 
 uint8_t sda_bdb_open(uint8_t *fname, sda_bdb *db) {
   if(!svp_fexists(fname)) {
-    printf("%s: file does not exists\n", __FUNCTION__);
+    printf("%s: file \"%s\" does not exists\n", __FUNCTION__, fname);
     return 0;
   }
 
@@ -111,7 +111,8 @@ uint8_t sda_bdb_open(uint8_t *fname, sda_bdb *db) {
   db->valid = 1;
   db->current_table.valid = 0;
   db->start_offset = sda_bdb_read_u32(&(db->fil));
-
+  
+  return 1;
 }
 
 
@@ -249,6 +250,7 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
   return 1;
 }
 
+// Todo: Remove table
 
 uint32_t sda_bdb_truncate(sda_bdb *db, uint32_t position, uint32_t size) {
   uint32_t file_end = svp_get_size(&(db->fil));
@@ -295,6 +297,24 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
   uint32_t siz = db->current_table.cloumn_count*sizeof(sda_bdb_entry);
   uint32_t offset = db->current_table_offset + sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
   
+  // get last row
+  if(db->current_table.row_count != 0) {
+    svp_fseek(&(db->fil), offset);
+
+    for(uint32_t i = 0; i < db->current_table.row_count; i++) {
+      uint32_t row_size = 0;
+      svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
+
+      if(i == db->current_table.row_count) {
+        // got offset
+        break;
+      }
+
+      offset += row_size + sizeof(uint32_t);
+      svp_fseek(&(db->fil), offset);
+    } 
+  }
+
   // insert data
   sda_bdb_insert_data(
     db, 
@@ -327,10 +347,12 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
     sda_bdb_set_entry_id(db->current_table.auto_id_field, &(db->current_table.max_id), sizeof(uint32_t), db);
     db->current_table.max_id++;
   }
-  
-  sda_bdb_sync_table(db); 
+
+  sda_bdb_sync_table(db);
+  return 1;
 }
 
+uint8_t sda_bdb_gc_type;
 
 uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db) {
   sda_bdb_column c;
@@ -341,11 +363,14 @@ uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db) {
   for(uint8_t i = 0; i < db->current_table.cloumn_count; i++) {
     svp_fread(&(db->fil), &c, sizeof(sda_bdb_column));
     if(svp_strcmp(c.name, column_name)) {
+      sda_bdb_gc_type = c.type;
       return i + 1;
     }
   }
+  sda_bdb_gc_type = 0;
   return 0;
 }
+
 
 uint8_t sda_bdb_enable_id(uint8_t *column_name, sda_bdb *db) {
   if(db->current_table.auto_id) {
@@ -378,7 +403,6 @@ uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db)
   if(row_size != 0) {
     for(uint8_t i = 0; i < db->current_table.cloumn_count; i++) {
       svp_fread(&(db->fil), &e, sizeof(sda_bdb_entry));
-      //printf("looking at: %u, id: %u, siz:%u \n", i, e.entry_column, e.entry_size);
       if(e.entry_column == id) {
         // compare sizes
         if(size == e.entry_size) {
@@ -470,6 +494,25 @@ uint8_t sda_bdb_set_entry(uint8_t* name, void* data, uint32_t size, sda_bdb *db)
   id--;
 
   return sda_bdb_set_entry_id(id, data, size, db);
+}
+
+uint8_t sda_bdb_store_string(uint8_t* column_name, uint8_t* str, sda_bdb *db) {
+  // todo: somewhat fix the +1 error
+
+  uint8_t id = sda_bdb_get_column_id(column_name, db);
+
+  if(!id) {
+    printf("%s: column \"%s\" does not exist\n", __FUNCTION__, column_name);
+    return 0;
+  }
+  id--;
+
+  if(sda_bdb_gc_type != SDA_BDB_TYPE_STR) {
+    printf("%s: column \"%s\" type mismatch! (%u, %u)\n", __FUNCTION__, column_name, sda_bdb_gc_type, SDA_BDB_TYPE_STR);
+    return 0;
+  }
+
+  return sda_bdb_set_entry_id(id, str, sda_strlen(str) + 1, db);
 }
 
 // Read
@@ -580,11 +623,12 @@ text contains
 
 */
 
-
 // Delete
+// TODO: remove row
 
 // Select row
 uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
+  printf("selecting row: %u\n", n);
   uint32_t offset = db->current_table_offset + sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
     
   svp_fseek(&(db->fil), offset);
@@ -613,11 +657,58 @@ uint8_t sda_bdb_select_row_next(sda_bdb *db) {
   svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
   
   offset += row_size + sizeof(uint32_t);
-  svp_fseek(&(db->fil), offset);
-  db->current_table.current_row_offset = offset;
+  
+  if(offset < db->current_table_offset + db->current_table.table_size) {
+    svp_fseek(&(db->fil), offset);
+    db->current_table.current_row_offset = offset;
+    return 1;
+  }
    
   return 0;
 }
+
+
+uint8_t sda_bdb_select_row_id(uint32_t id, sda_bdb *db) {
+
+  if(!db->current_table.auto_id) {
+    printf("%s: auto ID not enabled on table \"%s\"\n", __FUNCTION__, db->current_table.name);
+    return 0;
+  }
+
+  uint32_t offset = db->current_table_offset + sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
+    
+  svp_fseek(&(db->fil), offset);
+
+  for(uint32_t i = 0; i < db->current_table.row_count; i++) {
+    uint32_t row_size = 0;
+    svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
+
+    uint32_t entry_offset = offset + sizeof(uint32_t);
+    for(uint8_t col_id = 0; col_id < db->current_table.cloumn_count; col_id++) {
+      sda_bdb_entry e;
+      svp_fread(&(db->fil), &e, sizeof(e));
+      if(e.entry_column == db->current_table.auto_id_field) {
+        // read, compare
+        uint32_t entry_id = 0;
+        svp_fread(&(db->fil), &entry_id, sizeof(uint32_t));
+        if(id == entry_id) {
+          db->current_table.current_row_offset = offset;
+          return 1;
+        }
+      }
+      
+      entry_offset += e.entry_size + sizeof(sda_bdb_entry);
+      svp_fseek(&(db->fil), entry_offset);
+    }
+
+    offset += row_size + sizeof(uint32_t);
+    svp_fseek(&(db->fil), offset);
+  } 
+  return 0;
+}
+
+// ok, search will wait for the next dev phase
+//uint8_t sda_bdb_select_row_match(uint8_t *col_name, void* data, uint32_t size)
 
 
 // DBG:
@@ -640,7 +731,7 @@ void sda_bdb_list_table(sda_bdb *db) {
   for(uint32_t i = 0; i < db->current_table.row_count; i++) {
     uint32_t row_size = 0;
     svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
-    printf("Row %u, (size:%u):\n", db->current_table.row_count - i - 1, row_size);
+    printf("Row %u, (size:%u):\n", i, row_size);
     
     uint32_t entry_offset = offset + sizeof(uint32_t);
     for(uint8_t id = 0; id < db->current_table.cloumn_count; id++) {
@@ -687,19 +778,23 @@ void svs_bdb_test() {
   //todo:fix this
   //sda_bdb_list_table(&test);
 
+  sda_bdb_select_row_id(5, &test);
+  sda_bdb_set_entry("sloupec_1", "id 5 rowdata", 14, &test);
+
   uint8_t buff[32];
   sda_bdb_select_row(0, &test);
   uint32_t id = 0;
-  for(int i = 0; i < 5; i++) {
+  while(1) {
     sda_bdb_get_entry("id", &id, sizeof(id), &test);
-    
     sda_bdb_get_entry("sloupec_1", buff, sizeof(buff), &test);
     printf("id: %u, entry1: %s ",id, buff);
     sda_bdb_get_entry("sloupec_2", buff, sizeof(buff), &test);
     printf("entry2: %s ", buff);
     sda_bdb_get_entry("sloupec_3", buff, sizeof(buff), &test);
     printf("entry3: %s \n", buff);
-    sda_bdb_select_row_next(&test);
+    if(!sda_bdb_select_row_next(&test)) {
+      break;
+    }
   }
 
 /*
