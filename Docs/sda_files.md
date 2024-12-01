@@ -288,3 +288,87 @@ Returns 1 if value matches portion of a value in a given key.
 Case sensitive switch switches if the thing is case sensitive...
 
 Return: [num] isMatch (0 - no match, 1 - match, -1 - key not found)
+#### Binary DB API
+
+Sda supports its own binary data format. It is quick, universal
+but not easily readable or recoverable when data corruption occurs.  
+
+##### Create new db file
+    sys.fs.db.new([str]fname);
+Creates new db file.
+
+Return: [num]1 on succes.
+##### Open db file
+    sys.fs.db.open([str]fname);
+Opens existing db file.
+
+Return: [num]1 on succes.
+##### Close config file
+    sys.fs.db.close();
+Close db file.
+
+Return: [num]1 on succes.
+##### Create new table
+    sys.fs.db.newTable([str]name, [num] columns);
+Creates new table
+
+Return: [num] 1 if ok.
+##### Set column type
+    sys.fs.db.setColumn([num] id, [str]name, [num] type);
+Sets name and type of given column
+
+Return: [num] 1 if ok.
+##### Enable ID field
+    sys.fs.db.idEnable([str]fieldName);
+Sets given column as an id field.
+
+Return: [num] 1 if ok.
+##### Select table
+    sys.fs.db.selectTable([str]name);
+Selects existing table
+
+Return: [num] 1 if ok.
+##### New row
+    sys.fs.db.newRow();
+Adds new row to the selected table.
+New row is selected automatically.
+
+Return: [num] 1 if ok.
+##### Select row
+    sys.fs.db.selectRow([num]row_n);
+Select row with given number (not an id).
+Usefull for selecting row 0 and then using *sys.fs.db.nextRow();*
+to read the full table line by line.
+Note: When app is suspended, selected row is forgotten.
+
+Return: [num] 1 if ok.
+##### Select row by id
+    sys.fs.db.selectRowId([num]id);
+Select row with given id. (Id field must be enabled)
+
+Return: [num] 1 if ok.
+##### Next row
+    sys.fs.db.nextRow();
+Selects next available row.
+
+Return: [num] 1 if ok.
+##### Write text entry
+    sys.fs.db.setEntryStr([str]col_name, [str]value);
+Sets db entry
+
+Return: [num] 1 if ok.
+##### Write numeric entry
+    sys.fs.db.setEntryNum([str]col_name, [num]value);
+Sets db entry
+
+Return: [num] 1 if ok.
+##### Read text entry
+    sys.fs.db.getEntryStr([str]col_name, [str]default);
+Gets db entry
+
+Return: [str] entry or default
+##### Read num entry
+    sys.fs.db.getEntryNum([str]col_name, [num]default);
+Gets db entry
+
+Return: [num] entry or default

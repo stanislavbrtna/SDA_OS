@@ -22,6 +22,8 @@ SOFTWARE.
 
 #include "sda_files.h"
 
+extern sdaSvmMetadata svmMeta;
+
 //Conf file
 sda_conf conFile;
 uint8_t  conf_filename[64];
@@ -37,8 +39,14 @@ sda_bdb dbFile;
 uint8_t db_filename[64];
 uint8_t db_open;
 
-// TODO: load/store db on app suspend
 
+uint8_t * sda_get_db_fname() {
+  if (db_open) {
+    return db_filename;
+  } else {
+    return 0;
+  }
+}
 
 uint8_t * sda_get_conf_fname() {
   if (conf_open) {
@@ -69,6 +77,15 @@ uint8_t sda_files_csv_open(uint8_t * fname) {
   return csv_open;
 }
 
+
+uint8_t sda_files_db_open(uint8_t * fname) {
+  sda_strcp(fname, db_filename, sizeof(db_filename));
+  db_open = sda_bdb_open(fname, &dbFile);
+  sda_bdb_select_table(svmMeta.openDbTable, &dbFile);
+  return db_open;
+}
+
+
 void sda_files_close_conf_csv() {
   if (conf_open) {
     conf_open = 0;
@@ -78,6 +95,11 @@ void sda_files_close_conf_csv() {
   if (csv_open) {
     csv_open = 0;
     svp_csv_close(&csvFile);
+  }
+
+  if (db_open) {
+    db_open = 0;
+    sda_bdb_close(&dbFile);
   }
 }
 
@@ -488,6 +510,10 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   uint8_t argType[11];
 
   //#!#### Binary DB API
+  //#!
+  //#!Sda supports its own binary data format. It is quick, universal
+  //#!but not easily readable or recoverable when data corruption occurs.  
+  //#!
 
   //#!##### Create new db file
   //#!    sys.fs.db.new([str]fname);
@@ -522,6 +548,7 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
+    sda_strcp("", svmMeta.openDbTable, sizeof(svmMeta.openDbTable));
     sda_strcp(s->stringField + argS->arg[1].val_str, db_filename, sizeof(db_filename));
     if (sda_bdb_open(s->stringField + argS->arg[1].val_str, &dbFile)) {
       result->value.val_s = 1;
@@ -544,6 +571,8 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
+
+    sda_strcp("", svmMeta.openDbTable, sizeof(svmMeta.openDbTable));
     if (db_open == 1 && (sda_bdb_close(&dbFile) == 0)) {
       db_open = 0;
       result->value.val_s = 1;
@@ -571,6 +600,7 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
+    sda_strcp(s->stringField + argS->arg[1].val_str, svmMeta.openDbTable, sizeof(svmMeta.openDbTable));
     result->value.val_s = sda_bdb_new_table(s->stringField+argS->arg[1].val_str, s->stringField+argS->arg[2].val_u, &dbFile);
     result->type = SVS_TYPE_NUM;
     return 1;
@@ -645,7 +675,8 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       errSoft((uint8_t *)"DB file not openned!", s);
       return 0;
     }
-
+    
+    sda_strcp(s->stringField + argS->arg[1].val_str, svmMeta.openDbTable, sizeof(svmMeta.openDbTable));
     result->value.val_s = sda_bdb_select_table(s->stringField+argS->arg[1].val_str, &dbFile);
     result->type = SVS_TYPE_NUM;
     return 1;
@@ -654,6 +685,7 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### New row
   //#!    sys.fs.db.newRow();
   //#!Adds new row to the selected table.
+  //#!New row is selected automatically.
   //#!
   //#!Return: [num] 1 if ok.
   if (sysFuncMatch(argS->callId, "newRow", s)) {
@@ -676,6 +708,7 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Select row with given number (not an id).
   //#!Usefull for selecting row 0 and then using *sys.fs.db.nextRow();*
   //#!to read the full table line by line.
+  //#!Note: When app is suspended, selected row is forgotten.
   //#!
   //#!Return: [num] 1 if ok.
   if (sysFuncMatch(argS->callId, "selectRow", s)) {

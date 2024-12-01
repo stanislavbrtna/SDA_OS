@@ -151,6 +151,9 @@ typedef struct {
   uint8_t  openConfUsed;
   uint8_t  openCsvName[128];
   uint8_t  openCsvUsed;
+  uint8_t  openDbName[128];
+  uint8_t  openDbTable[16];
+  uint8_t  openDbUsed;
   uint8_t  lcdOffButtons;
   uint8_t  launchFromCWD;
   uint64_t loadUptime;

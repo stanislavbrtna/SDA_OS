@@ -295,9 +295,15 @@ void svmSaveProcData() {
     sda_strcp(sda_get_conf_fname(), svmMeta.openConfName, sizeof(svmMeta.openConfName));
     svmMeta.openConfUsed = 1;
   }
+
   if (sda_get_csv_fname() != 0)  {
     sda_strcp(sda_get_csv_fname(), svmMeta.openCsvName, sizeof(svmMeta.openCsvName));
     svmMeta.openCsvUsed = 1;
+  }
+  
+  if (sda_get_db_fname() != 0)  {
+    sda_strcp(sda_get_db_fname(), svmMeta.openDbName, sizeof(svmMeta.openDbName));
+    svmMeta.openDbUsed = 1;
   }
 
   svmMeta.lcdOffButtons = wrap_get_lcdOffButtons();
@@ -379,6 +385,16 @@ uint8_t svmLoadProcData(uint16_t pid) {
     }
 
     sda_files_csv_open(svmMeta.openCsvName);
+  }
+
+  if (svmMeta.openDbUsed) {
+    if (!svp_fexists(svmMeta.openDbName)) {
+      printf("Failed to open db file: %s\n", svmMeta.openDbName);
+      sda_show_error_message("Filed to open db file!");
+      return 0;
+    }
+
+    sda_files_db_open(svmMeta.openDbName);
   }
 
   if (svmMeta.lcdOffButtons) {

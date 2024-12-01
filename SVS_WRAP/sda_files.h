@@ -27,10 +27,12 @@ SOFTWARE.
 void sda_files_close();
 uint8_t * sda_get_conf_fname();
 uint8_t * sda_get_csv_fname();
+uint8_t * sda_get_db_fname();
 uint8_t sda_fr_fname_reopen(uint16_t index);
 uint8_t sda_fr_fname_open(uint16_t index, uint8_t * fname);
 uint8_t sda_files_conf_open(uint8_t * fname);
 uint8_t sda_files_csv_open(uint8_t * fname);
+uint8_t sda_files_db_open(uint8_t * fname);
 
 void sda_files_copyer();
 
