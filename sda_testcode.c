@@ -22,11 +22,7 @@ SOFTWARE.
 
 #include "SDA_OS.h"
 
-void svs_bdb_test();
-
 void test_code() {
-  svs_bdb_test();
-  
   // Testcode section is used for testing new things, it is called once after init
   return;
 }
