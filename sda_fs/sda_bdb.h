@@ -77,10 +77,13 @@ uint8_t sda_bdb_set_column(uint8_t id, uint8_t *name, uint8_t type, sda_bdb *db)
 uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db);
 
 // Enables auto-incremented ID field
-uint8_t sda_bdb_enable_id(uint8_t *column_name, sda_bdb *db);
+uint8_t sda_bdb_enable_auto_id(uint8_t *column_name, sda_bdb *db);
 
 // Creates new row
 uint32_t sda_bdb_new_row(sda_bdb *db);
+
+// Current table row count
+uint32_t sda_bdb_get_row_count(sda_bdb *db);
 
 // Select given row
 uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db);
@@ -90,6 +93,9 @@ uint8_t sda_bdb_select_row_next(sda_bdb *db);
 
 // Select row with given id
 uint8_t sda_bdb_select_row_id(uint32_t id, sda_bdb *db);
+
+// Select next row with given numeric value
+uint8_t sda_bdb_next_row_match_num(uint8_t *column_name, uint32_t val, sda_bdb *db);
 
 // Set entry
 uint8_t sda_bdb_set_entry(uint8_t* name, void* data, uint32_t size, sda_bdb *db);

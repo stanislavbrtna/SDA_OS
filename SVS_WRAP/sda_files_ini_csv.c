@@ -651,7 +651,7 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = sda_bdb_enable_id( 
+    result->value.val_s = sda_bdb_enable_auto_id( 
       s->stringField+argS->arg[1].val_str,
       &dbFile
     );
@@ -699,6 +699,26 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     result->value.val_s = sda_bdb_new_row(&dbFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get Row count
+  //#!    sys.fs.db.getRowCount();
+  //#!Gets row count of the selected table.
+  //#!
+  //#!Return: [num] row count.
+  if (sysFuncMatch(argS->callId, "getRowCount", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_get_row_count(&dbFile);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -764,6 +784,28 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     result->value.val_s = sda_bdb_select_row_next(&dbFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Select next matching row
+  //#!    sys.fs.db.selectRowNum([str]column, [num]id);
+  //#!Selectcs next row where given column has given value
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "selectRowNum", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_next_row_match_num(s->stringField+argS->arg[1].val_str, argS->arg[2].val_u, &dbFile);
     result->type = SVS_TYPE_NUM;
     return 1;
   }

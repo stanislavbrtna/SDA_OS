@@ -224,3 +224,11 @@ uint32_t sda_str_find(uint8_t* str, uint8_t* pattern) {
 
   return 0;
 }
+
+uint8_t sda_str_lower(uint8_t c) {
+  if (c >= 'A' && c <= 'Z') {
+    return c + 32;
+  } else {
+    return c;
+  }
+}

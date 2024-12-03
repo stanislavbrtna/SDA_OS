@@ -28,14 +28,19 @@ BDB header
 8b  version
 32b table 0 offset
 ---
-->next table offset
+table:
+table size
 table name 16B
 row 0 offset
 max_id
 8b columns count
+auto_id fields
+  - enabled
+  - max id
+  - auto id column
 column:
     16B column name
-    8b  column type (Number(signed/unsigned)/string/float, auto_id)
+    8b  column type (Number(signed/unsigned)/string/float)
 ---
 Row:
     32b next row offset
@@ -44,10 +49,7 @@ Entry:
     32b data size
      nb data 
 
-
-  Todo:
-  device agnostic entity read/write
-
+Function return:
  0 - error
  1 - ok
 
@@ -121,8 +123,8 @@ uint8_t sda_bdb_close(sda_bdb *db) {
   svp_fclose(&(db->fil));
 }
 
-// miscs
-// table_exist
+// Misc internal
+
 uint8_t sda_bdb_table_exists(uint8_t *name, sda_bdb *db) {
   // empty db
   if(db->start_offset == 0) {
@@ -221,7 +223,6 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
     printf("%s: table \"%s\" does not exist\n", __FUNCTION__, name);
     return 0;
   }
-  // read table data
   
   // walk db
   uint32_t offset = 0;
@@ -246,6 +247,7 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
 
   svp_fseek(&(db->fil), db->current_table_offset);
   svp_fread(&(db->fil), &(db->current_table), sizeof(sda_bdb_table));
+  db->current_table.valid = 1;
 
   return 1;
 }
@@ -372,16 +374,22 @@ uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db) {
 }
 
 
-uint8_t sda_bdb_enable_id(uint8_t *column_name, sda_bdb *db) {
+uint8_t sda_bdb_enable_auto_id(uint8_t *column_name, sda_bdb *db) {
   if(db->current_table.auto_id) {
     printf("%s: table already has an id column!\n", __FUNCTION__);
     return 0;
   }
 
-  db->current_table.auto_id = 1;
   db->current_table.auto_id_field = sda_bdb_get_column_id(column_name, db) - 1;
+  if (sda_bdb_gc_type != SDA_BDB_TYPE_NUM) {
+    printf("%s: column \"%s\" is not type NUM!\n", __FUNCTION__, column_name);
+    return 0;
+  }
+
+  db->current_table.auto_id = 1;
   db->current_table.max_id = 0;
   sda_bdb_sync_table(db);
+  return 1;
 }
 
 // Update
@@ -606,6 +614,15 @@ uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_
   return 0;
 }
 
+// misc
+// gets row count for the selected table
+uint32_t sda_bdb_get_row_count(sda_bdb *db) {
+  if(db->valid) {
+    return db->current_table.row_count;
+  }
+  return 0;
+}
+
 // Find
 /*
 Select row:
@@ -628,7 +645,6 @@ text contains
 
 // Select row
 uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
-  printf("selecting row: %u\n", n);
   uint32_t offset = db->current_table_offset + sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
     
   svp_fseek(&(db->fil), offset);
@@ -668,14 +684,8 @@ uint8_t sda_bdb_select_row_next(sda_bdb *db) {
 }
 
 
-uint8_t sda_bdb_select_row_id(uint32_t id, sda_bdb *db) {
-
-  if(!db->current_table.auto_id) {
-    printf("%s: auto ID not enabled on table \"%s\"\n", __FUNCTION__, db->current_table.name);
-    return 0;
-  }
-
-  uint32_t offset = db->current_table_offset + sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
+uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db) {
+  uint32_t offset = db->current_table.current_row_offset;
     
   svp_fseek(&(db->fil), offset);
 
@@ -684,14 +694,14 @@ uint8_t sda_bdb_select_row_id(uint32_t id, sda_bdb *db) {
     svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
 
     uint32_t entry_offset = offset + sizeof(uint32_t);
-    for(uint8_t col_id = 0; col_id < db->current_table.cloumn_count; col_id++) {
+    for(uint8_t id = 0; id < db->current_table.cloumn_count; id++) {
       sda_bdb_entry e;
       svp_fread(&(db->fil), &e, sizeof(e));
-      if(e.entry_column == db->current_table.auto_id_field) {
+      if(e.entry_column == col_id) {
         // read, compare
         uint32_t entry_id = 0;
         svp_fread(&(db->fil), &entry_id, sizeof(uint32_t));
-        if(id == entry_id) {
+        if(val == entry_id) {
           db->current_table.current_row_offset = offset;
           return 1;
         }
@@ -707,9 +717,137 @@ uint8_t sda_bdb_select_row_id(uint32_t id, sda_bdb *db) {
   return 0;
 }
 
-// ok, search will wait for the next dev phase
-//uint8_t sda_bdb_select_row_match(uint8_t *col_name, void* data, uint32_t size)
 
+uint8_t sda_bdb_select_row_id(uint32_t id, sda_bdb *db) {
+  if(!db->current_table.auto_id) {
+    printf("%s: auto ID not enabled on table \"%s\"\n", __FUNCTION__, db->current_table.name);
+    return 0;
+  }
+  // rewinds table
+  sda_bdb_select_row(0, db);
+
+  return sda_bdb_select_row_num_generic(db->current_table.auto_id_field, id, db);
+}
+
+
+// finds next matching row
+uint8_t sda_bdb_next_row_match_num(uint8_t *column_name, uint32_t val, sda_bdb *db) {
+
+  uint8_t col_id = sda_bdb_get_column_id(column_name, db); 
+
+  if(!col_id) {
+    printf("%s: no column named \"%s\"\n", __FUNCTION__, column_name);
+    return 0;
+  }
+
+  if(sda_bdb_gc_type != SDA_BDB_TYPE_NUM) {
+    printf("%s: column \"%s\" is not type NUM\n", __FUNCTION__, column_name);
+    return 0;
+  }
+
+  col_id--;
+  return sda_bdb_select_row_num_generic(col_id, val, db);
+}
+
+// internal
+uint8_t sda_bdb_entry_contains(uint32_t entry_size, uint8_t *value, uint8_t partial, uint8_t case_sensitive, sda_bdb *db) {
+  uint32_t x = 0;
+  uint32_t pos = 0;
+
+  while (pos < entry_size) {
+    uint8_t c = svp_fread_u8(&(db->fil));
+    uint8_t cmp = 0;
+    pos++;
+
+    if (case_sensitive == 1) {
+      cmp = value[x] == c;
+    } else {
+      cmp = sda_str_lower(value[x]) == sda_str_lower(c);
+    }
+
+    if (cmp) {
+      x++;
+    } else {
+      if (partial) {
+        // rewind
+        if (x != 0) {
+          x = 0;
+        }
+      } else {
+        return 0;
+      }
+    }
+
+    if (value[x] == 0) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+
+// select row based on its string value
+// TODO: test this
+uint8_t sda_bdb_select_row_str(uint8_t* column_name, uint8_t *str, uint8_t partial, uint8_t case_sensitive, sda_bdb *db) {
+
+  uint8_t col_id = sda_bdb_get_column_id(column_name, db); 
+
+  if(!col_id) {
+    printf("%s: no column named \"%s\"\n", __FUNCTION__, column_name);
+    return 0;
+  }
+
+  if(sda_bdb_gc_type != SDA_BDB_TYPE_STR) {
+    printf("%s: column \"%s\" is not type NUM\n", __FUNCTION__, column_name);
+    return 0;
+  }
+
+  col_id--;
+
+  uint32_t offset = db->current_table.current_row_offset;
+  svp_fseek(&(db->fil), offset);
+
+  for(uint32_t i = 0; i < db->current_table.row_count; i++) {
+    uint32_t row_size = 0;
+    svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
+
+    uint32_t entry_offset = offset + sizeof(uint32_t);
+    for(uint8_t id = 0; id < db->current_table.cloumn_count; id++) {
+      sda_bdb_entry e;
+      svp_fread(&(db->fil), &e, sizeof(e));
+      if(e.entry_column == col_id) {
+        // read, compare
+        if(sda_bdb_entry_contains(e.entry_size, str, partial, case_sensitive, db)) {
+          return 1;
+        }
+      }
+      entry_offset += e.entry_size + sizeof(sda_bdb_entry);
+      svp_fseek(&(db->fil), entry_offset);
+    }
+
+    offset += row_size + sizeof(uint32_t);
+    svp_fseek(&(db->fil), offset);
+  } 
+  return 0;
+}
+
+// ok, search:
+//uint8_t sda_bdb_select_row_match(uint8_t *col_name, void* data, uint32_t size)
+/*
+next row match
+- skips rows until one of them matches
+- can be called until 0 is returned, that signals end of table
+
+seek start
+loop(match) {
+  get value, do some logic, push value in an array
+  next_row()
+} -> at the end of the loop, all matching entries are processed/added pushed in an array
+
+process results
+
+*/
 
 // DBG:
 // print_db
@@ -765,7 +903,7 @@ void svs_bdb_test() {
     sda_bdb_select_table("table1", &test);
   }
 
-  sda_bdb_enable_id("id", &test);
+  sda_bdb_enable_auto_id("id", &test);
 
   sda_bdb_select_table("table1", &test);
   for(int i = 0; i < 5; i++) {
