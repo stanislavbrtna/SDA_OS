@@ -601,7 +601,7 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     sda_strcp(s->stringField + argS->arg[1].val_str, svmMeta.openDbTable, sizeof(svmMeta.openDbTable));
-    result->value.val_s = sda_bdb_new_table(s->stringField+argS->arg[1].val_str, s->stringField+argS->arg[2].val_u, &dbFile);
+    result->value.val_s = sda_bdb_new_table(s->stringField+argS->arg[1].val_str, argS->arg[2].val_u, &dbFile);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
