@@ -57,7 +57,7 @@ Function return:
 
 // internal
 
-#define START_OFFSET 3 + sizeof(uint32_t)
+#define START_OFFSET 4 + sizeof(uint32_t)
 
 uint32_t sda_bdb_read_u32(svp_file *f) {
   uint32_t val = 0;
@@ -82,6 +82,7 @@ uint8_t sda_bdb_new(uint8_t *fname, sda_bdb *db) {
   svp_fwrite_u8(&(db->fil), 'B');
   svp_fwrite_u8(&(db->fil), 'D');
   svp_fwrite_u8(&(db->fil), 'B');
+  svp_fwrite_u8(&(db->fil), '0'); // padding
   // version
   sda_bdb_write_u32(&(db->fil), 1);
   // offset (now 0)
@@ -191,7 +192,7 @@ uint8_t sda_bdb_new_table(uint8_t *name, uint8_t no_columns, sda_bdb *db) {
   svp_fwrite(&(db->fil), &db->current_table, sizeof(sda_bdb_table));
   
   // reserve space for columns
-  for (uint32_t i = 0; i < no_columns*sizeof(sda_bdb_column); i++) {
+  for (uint32_t i = 0; i < ((uint32_t)no_columns)*sizeof(sda_bdb_column); i++) {
     svp_fwrite_u8(&(db->fil), 0);
   }
   
