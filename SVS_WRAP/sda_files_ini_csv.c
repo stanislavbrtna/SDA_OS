@@ -789,7 +789,7 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Select next matching row
-  //#!    sys.fs.db.selectRowNum([str]column, [num]id);
+  //#!    sys.fs.db.selectRowNum([str]column, [num]val);
   //#!Selectcs next row where given column has given value
   //#!
   //#!Return: [num] 1 if ok.
@@ -809,6 +809,45 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     result->type = SVS_TYPE_NUM;
     return 1;
   }
+
+  //#!##### Select next row matching string
+  //#!    sys.fs.db.selectRowStr([str]column, [str]string, [num]partial, [num]case_sensitive);
+  //#!Selectcs next row where given column has given value.
+  //#!
+  //#! | Parameter      | Value | Meaning                                 |
+  //#! | ---            | ---   | ---                                     |
+  //#! | partial        |   1   | string can be only a part odf the entry |
+  //#! |                |   0   | full string must be contained           |
+  //#! | case_sensitive |   1   | strings are matched case-sensitive      |
+  //#! |                |   0   | strings are matched non case-sensitive  |
+  //#!
+  //#!Return: [num] 1 if entry was found.
+  if (sysFuncMatch(argS->callId, "selectRowStr", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_STR;
+    argType[3] = SVS_TYPE_NUM;
+    argType[4] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 4, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_select_row_str(
+      s->stringField+argS->arg[1].val_str, 
+      s->stringField+argS->arg[2].val_str, 
+      (uint8_t)argS->arg[3].val_u, 
+      (uint8_t)argS->arg[4].val_u, 
+      &dbFile
+    );
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
 
   //#!##### Write text entry
   //#!    sys.fs.db.setEntryStr([str]col_name, [str]value);

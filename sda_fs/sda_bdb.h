@@ -40,6 +40,7 @@ typedef struct {
   uint8_t  valid;
   uint32_t table_size;
   uint32_t current_row_offset;
+  uint8_t  current_row_valid;
   uint32_t row_count;
 } sda_bdb_table;
 
@@ -96,6 +97,15 @@ uint8_t sda_bdb_select_row_id(uint32_t id, sda_bdb *db);
 
 // Select next row with given numeric value
 uint8_t sda_bdb_next_row_match_num(uint8_t *column_name, uint32_t val, sda_bdb *db);
+
+// Select row with given string value
+uint8_t sda_bdb_select_row_str(
+  uint8_t* column_name, 
+  uint8_t  *str, 
+  uint8_t  partial, 
+  uint8_t  case_sensitive, 
+  sda_bdb  *db
+);
 
 // Set entry
 uint8_t sda_bdb_set_entry(uint8_t* name, void* data, uint32_t size, sda_bdb *db);

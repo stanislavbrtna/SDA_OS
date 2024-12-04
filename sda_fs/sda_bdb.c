@@ -25,7 +25,7 @@ SOFTWARE.
 /* create/read header
 Header data:
 BDB header
-8b  version
+32b  version
 32b table 0 offset
 ---
 table:
@@ -57,6 +57,7 @@ Function return:
 
 // internal
 
+#define START_OFFSET 3 + sizeof(uint32_t)
 
 uint32_t sda_bdb_read_u32(svp_file *f) {
   uint32_t val = 0;
@@ -82,7 +83,7 @@ uint8_t sda_bdb_new(uint8_t *fname, sda_bdb *db) {
   svp_fwrite_u8(&(db->fil), 'D');
   svp_fwrite_u8(&(db->fil), 'B');
   // version
-  svp_fwrite_u8(&(db->fil), 1);
+  sda_bdb_write_u32(&(db->fil), 1);
   // offset (now 0)
   svp_fwrite_u8(&(db->fil), 0);
   svp_fwrite_u8(&(db->fil), 0);
@@ -108,7 +109,7 @@ uint8_t sda_bdb_open(uint8_t *fname, sda_bdb *db) {
 
   //TODO: header check
 
-  svp_fseek(&(db->fil), 4);
+  svp_fseek(&(db->fil), START_OFFSET);
 
   db->valid = 1;
   db->current_table.valid = 0;
@@ -189,7 +190,7 @@ uint8_t sda_bdb_new_table(uint8_t *name, uint8_t no_columns, sda_bdb *db) {
   
   // update first table
   if(db->start_offset == 0) {
-    svp_fseek(&(db->fil), 4);
+    svp_fseek(&(db->fil), START_OFFSET);
     sda_bdb_write_u32(&(db->fil), table_begin);
     db->start_offset = table_begin;
   }
@@ -655,12 +656,15 @@ uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
 
     if(i == n) {
       db->current_table.current_row_offset = offset;
+      db->current_table.current_row_valid  = 1;
       return 1;
     }
 
     offset += row_size + sizeof(uint32_t);
     svp_fseek(&(db->fil), offset);
-  } 
+  }
+
+  db->current_table.current_row_valid = 0;
   return 0;
 }
 
@@ -677,16 +681,22 @@ uint8_t sda_bdb_select_row_next(sda_bdb *db) {
   if(offset < db->current_table_offset + db->current_table.table_size) {
     svp_fseek(&(db->fil), offset);
     db->current_table.current_row_offset = offset;
+    db->current_table.current_row_valid  = 1;
     return 1;
   }
-   
+
+  db->current_table.current_row_valid = 0;
   return 0;
 }
 
-
+// if entry is not found, current row is kept the same
 uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db) {
   uint32_t offset = db->current_table.current_row_offset;
-    
+  
+  if(!db->current_table.current_row_valid) {
+    return 0;
+  }
+
   svp_fseek(&(db->fil), offset);
 
   for(uint32_t i = 0; i < db->current_table.row_count; i++) {
@@ -713,7 +723,7 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
 
     offset += row_size + sizeof(uint32_t);
     svp_fseek(&(db->fil), offset);
-  } 
+  }
   return 0;
 }
 
@@ -777,19 +787,22 @@ uint8_t sda_bdb_entry_contains(uint32_t entry_size, uint8_t *value, uint8_t part
         return 0;
       }
     }
-
     if (value[x] == 0) {
       return 1;
     }
   }
-
   return 0;
 }
 
 
 // select row based on its string value
-// TODO: test this
-uint8_t sda_bdb_select_row_str(uint8_t* column_name, uint8_t *str, uint8_t partial, uint8_t case_sensitive, sda_bdb *db) {
+uint8_t sda_bdb_select_row_str(
+  uint8_t* column_name, 
+  uint8_t *str, 
+  uint8_t partial, 
+  uint8_t case_sensitive, 
+  sda_bdb *db
+){
 
   uint8_t col_id = sda_bdb_get_column_id(column_name, db); 
 
@@ -800,6 +813,10 @@ uint8_t sda_bdb_select_row_str(uint8_t* column_name, uint8_t *str, uint8_t parti
 
   if(sda_bdb_gc_type != SDA_BDB_TYPE_STR) {
     printf("%s: column \"%s\" is not type NUM\n", __FUNCTION__, column_name);
+    return 0;
+  }
+
+  if(!db->current_table.current_row_valid) {
     return 0;
   }
 
@@ -819,6 +836,7 @@ uint8_t sda_bdb_select_row_str(uint8_t* column_name, uint8_t *str, uint8_t parti
       if(e.entry_column == col_id) {
         // read, compare
         if(sda_bdb_entry_contains(e.entry_size, str, partial, case_sensitive, db)) {
+          db->current_table.current_row_offset = offset;
           return 1;
         }
       }
