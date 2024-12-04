@@ -120,6 +120,9 @@ uint8_t sda_bdb_open(uint8_t *fname, sda_bdb *db) {
 
 
 uint8_t sda_bdb_close(sda_bdb *db) {
+  if(db->current_table.valid) {
+    sda_bdb_sync_table(db);
+  }
   db->valid = 0;
   svp_fclose(&(db->fil));
 }
@@ -160,6 +163,10 @@ uint8_t sda_bdb_table_exists(uint8_t *name, sda_bdb *db) {
 // Create
 uint8_t sda_bdb_new_table(uint8_t *name, uint8_t no_columns, sda_bdb *db) {
   
+  if(db->current_table.valid) {
+    sda_bdb_sync_table(db);
+  }
+
   // validate table name
   if(sda_bdb_table_exists(name, db)) {
     printf("%s: table \"%s\" already exists\n", __FUNCTION__, name);
@@ -223,6 +230,10 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
   if(!sda_bdb_table_exists(name, db)) {
     printf("%s: table \"%s\" does not exist\n", __FUNCTION__, name);
     return 0;
+  }
+
+  if(db->current_table.valid) {
+    sda_bdb_sync_table(db);
   }
   
   // walk db
@@ -302,20 +313,7 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
   
   // get last row
   if(db->current_table.row_count != 0) {
-    svp_fseek(&(db->fil), offset);
-
-    for(uint32_t i = 0; i < db->current_table.row_count; i++) {
-      uint32_t row_size = 0;
-      svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
-
-      if(i == db->current_table.row_count) {
-        // got offset
-        break;
-      }
-
-      offset += row_size + sizeof(uint32_t);
-      svp_fseek(&(db->fil), offset);
-    } 
+    offset = db->current_table_offset + db->current_table.table_size;
   }
 
   // insert data
@@ -351,7 +349,6 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
     db->current_table.max_id++;
   }
 
-  sda_bdb_sync_table(db);
   return 1;
 }
 
@@ -445,8 +442,6 @@ uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db)
         // update row header
         svp_fseek(&(db->fil), db->current_table.current_row_offset);
         svp_fwrite(&(db->fil), &row_size, sizeof(uint32_t));
-        // sync db
-        sda_bdb_sync_table(db);
         return 1;
       }
 
@@ -478,7 +473,7 @@ uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db)
     size
   );
   row_size += size + sizeof(sda_bdb_entry);
-  printf("size: %u, real: %u \n", size + sizeof(sda_bdb_entry), svp_ftell(&(db->fil)) - begin);
+  //printf("size: %u, real: %u \n", size + sizeof(sda_bdb_entry), svp_ftell(&(db->fil)) - begin);
 
   // update row header
   svp_fseek(&(db->fil), db->current_table.current_row_offset);
@@ -486,7 +481,6 @@ uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db)
 
   // sync db
   db->current_table.table_size += size + sizeof(sda_bdb_entry);
-  sda_bdb_sync_table(db);
 
   return 1;
 }
@@ -641,8 +635,13 @@ text contains
 
 */
 
+// TODO: insert column
+// TODO: drop column
+
 // Delete
-// TODO: remove row
+// TODO: drop table
+// TODO: drop all rows
+// TODO: drop row
 
 // Select row
 uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
