@@ -94,6 +94,7 @@ uint8_t sda_bdb_new(uint8_t *fname, sda_bdb *db) {
   db->current_table.valid = 0;
   db->valid = 1;
   db->start_offset = 0;
+  db->last_entry_id_en = 0;
   svp_fsync(&(db->fil));
 
   return 1;
@@ -114,6 +115,7 @@ uint8_t sda_bdb_open(uint8_t *fname, sda_bdb *db) {
 
   db->valid = 1;
   db->current_table.valid = 0;
+  db->last_entry_id_en = 0;
   db->start_offset = sda_bdb_read_u32(&(db->fil));
   
   return 1;
@@ -203,6 +205,8 @@ uint8_t sda_bdb_new_table(uint8_t *name, uint8_t no_columns, sda_bdb *db) {
     db->start_offset = table_begin;
   }
 
+  db->last_entry_id_en = 0;
+
   svp_fsync(&(db->fil));
   return 1;
 }
@@ -261,6 +265,7 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
   svp_fseek(&(db->fil), db->current_table_offset);
   svp_fread(&(db->fil), &(db->current_table), sizeof(sda_bdb_table));
   db->current_table.valid = 1;
+  db->last_entry_id_en = 0;
 
   return 1;
 }
@@ -665,6 +670,7 @@ uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
   }
 
   db->current_table.current_row_valid = 0;
+  db->last_entry_id_en = 0;
   return 0;
 }
 
@@ -696,6 +702,8 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
   if(!db->current_table.current_row_valid) {
     return 0;
   }
+
+  db->last_entry_id_en = 0;
 
   svp_fseek(&(db->fil), offset);
 
@@ -733,10 +741,22 @@ uint8_t sda_bdb_select_row_id(uint32_t id, sda_bdb *db) {
     printf("%s: auto ID not enabled on table \"%s\"\n", __FUNCTION__, db->current_table.name);
     return 0;
   }
-  // rewinds table
-  sda_bdb_select_row(0, db);
 
-  return sda_bdb_select_row_num_generic(db->current_table.auto_id_field, id, db);
+  // rewinds table
+  if(!(db->last_entry_id_en && db->last_entry_id >= id)) {
+    sda_bdb_select_row(0, db);
+  }
+
+  uint8_t val = sda_bdb_select_row_num_generic(db->current_table.auto_id_field, id, db);
+
+  if(val) {
+    db->last_entry_id = id;
+    db->last_entry_id_en = 1;
+  } else {
+    db->last_entry_id_en = 0;
+  }
+
+  return val;
 }
 
 
@@ -744,6 +764,8 @@ uint8_t sda_bdb_select_row_id(uint32_t id, sda_bdb *db) {
 uint8_t sda_bdb_next_row_match_num(uint8_t *column_name, uint32_t val, sda_bdb *db) {
 
   uint8_t col_id = sda_bdb_get_column_id(column_name, db); 
+  
+  db->last_entry_id_en = 0;
 
   if(!col_id) {
     printf("%s: no column named \"%s\"\n", __FUNCTION__, column_name);
@@ -819,6 +841,8 @@ uint8_t sda_bdb_select_row_str(
   if(!db->current_table.current_row_valid) {
     return 0;
   }
+
+  db->last_entry_id_en = 0;
 
   col_id--;
 

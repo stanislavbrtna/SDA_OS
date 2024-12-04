@@ -62,6 +62,8 @@ typedef struct {
   uint32_t      start_offset;
   sda_bdb_table current_table;
   uint32_t      current_table_offset;
+  uint8_t       last_entry_id_en;
+  uint32_t      last_entry_id;
 } sda_bdb;
 
 // DB file
