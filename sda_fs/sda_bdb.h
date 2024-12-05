@@ -64,6 +64,9 @@ typedef struct {
   uint32_t      current_table_offset;
   uint8_t       last_entry_id_en;
   uint32_t      last_entry_id;
+  uint8_t       column_cache_valid;
+  uint8_t       cached_column[SDA_BDB_NAME_LEN];
+  uint8_t       cached_column_id;
 } sda_bdb;
 
 // DB file

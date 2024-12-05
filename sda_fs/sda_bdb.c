@@ -97,6 +97,7 @@ uint8_t sda_bdb_new(uint8_t *fname, sda_bdb *db) {
   db->valid = 1;
   db->start_offset = 0;
   db->last_entry_id_en = 0;
+  db->column_cache_valid = 0;
   svp_fsync(&(db->fil));
 
   return 1;
@@ -118,6 +119,7 @@ uint8_t sda_bdb_open(uint8_t *fname, sda_bdb *db) {
   db->valid = 1;
   db->current_table.valid = 0;
   db->last_entry_id_en = 0;
+  db->column_cache_valid = 0;
   db->start_offset = sda_bdb_read_u32(&(db->fil));
   
   return 1;
@@ -141,7 +143,7 @@ uint8_t sda_bdb_sync(sda_bdb *db) {
   if(db->current_table.valid) {
     sda_bdb_sync_table(db);
   }
-  
+
   svp_fsync(&(db->fil));
 }
 
@@ -200,6 +202,7 @@ uint8_t sda_bdb_new_table(uint8_t *name, uint8_t no_columns, sda_bdb *db) {
   db->current_table.auto_id_field = 0;
   db->current_table.max_id = 0;
   db->current_table.valid = 1;
+  db->column_cache_valid = 0;
   db->current_table.cloumn_count = no_columns;
   db->current_table.table_size = sizeof(sda_bdb_table) + no_columns*sizeof(sda_bdb_column);
   db->current_table.row_count = 0;
@@ -281,6 +284,7 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
   svp_fread(&(db->fil), &(db->current_table), sizeof(sda_bdb_table));
   db->current_table.valid = 1;
   db->last_entry_id_en = 0;
+  db->column_cache_valid = 0;
 
   return 1;
 }
@@ -377,7 +381,13 @@ uint8_t sda_bdb_gc_type;
 
 uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db) {
   sda_bdb_column c;
-  sda_strcp("", c.name, SDA_BDB_NAME_LEN);
+
+  if(db->column_cache_valid) {
+    if(svp_strcmp(db->cached_column, column_name)){
+      //printf("col_id loaded from cache\n");
+      return db->cached_column_id + 1;
+    }
+  }
 
   svp_fseek(&(db->fil), db->current_table_offset + sizeof(sda_bdb_table));
   
@@ -385,6 +395,12 @@ uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db) {
     svp_fread(&(db->fil), &c, sizeof(sda_bdb_column));
     if(svp_strcmp(c.name, column_name)) {
       sda_bdb_gc_type = c.type;
+      if (!db->column_cache_valid) {
+        db->column_cache_valid = 1;
+        sda_strcp(c.name, db->cached_column, SDA_BDB_NAME_LEN);
+        db->cached_column_id = i;
+      }
+      
       return i + 1;
     }
   }

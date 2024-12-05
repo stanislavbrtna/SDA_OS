@@ -300,7 +300,7 @@ void svmSaveProcData() {
     sda_strcp(sda_get_csv_fname(), svmMeta.openCsvName, sizeof(svmMeta.openCsvName));
     svmMeta.openCsvUsed = 1;
   }
-  
+
   if (sda_get_db_fname() != 0)  {
     sda_strcp(sda_get_db_fname(), svmMeta.openDbName, sizeof(svmMeta.openDbName));
     svmMeta.openDbUsed = 1;
@@ -389,7 +389,7 @@ uint8_t svmLoadProcData(uint16_t pid) {
 
   if (svmMeta.openDbUsed) {
     if (!svp_fexists(svmMeta.openDbName)) {
-      printf("Failed to open db file: %s\n", svmMeta.openDbName);
+      printf("%s: Failed to open db file: %s\n", __FUNCTION__, svmMeta.openDbName);
       sda_show_error_message("Filed to open db file!");
       return 0;
     }
