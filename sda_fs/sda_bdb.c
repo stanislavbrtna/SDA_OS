@@ -55,9 +55,11 @@ Function return:
 
 */
 
-// internal
-
+// Internal Defines
 #define START_OFFSET 4 + sizeof(uint32_t)
+
+// Internal Headers
+void sda_bdb_sync_table(sda_bdb *db);
 
 uint32_t sda_bdb_read_u32(svp_file *f) {
   uint32_t val = 0;
