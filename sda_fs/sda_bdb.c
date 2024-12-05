@@ -132,6 +132,19 @@ uint8_t sda_bdb_close(sda_bdb *db) {
   svp_fclose(&(db->fil));
 }
 
+uint8_t sda_bdb_sync(sda_bdb *db) {
+  if(!db->valid) {
+    printf("%s: Db is not valid\n", __FUNCTION__);
+    return 0;
+  }
+
+  if(db->current_table.valid) {
+    sda_bdb_sync_table(db);
+  }
+  
+  svp_fsync(&(db->fil));
+}
+
 // Misc internal
 
 uint8_t sda_bdb_table_exists(uint8_t *name, sda_bdb *db) {

@@ -70,6 +70,7 @@ typedef struct {
 uint8_t sda_bdb_new(uint8_t *fname, sda_bdb *db);
 uint8_t sda_bdb_open(uint8_t *fname, sda_bdb *db);
 uint8_t sda_bdb_close(sda_bdb *db);
+uint8_t sda_bdb_sync(sda_bdb *db);
 
 // Tables
 // Create new table

@@ -561,7 +561,28 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Close config file
+  //#!##### Sync file
+  //#!    sys.fs.db.sync();
+  //#!Writes all the file changes to the card.
+  //#!Same as when file is closed, but can be triggered on demand.
+  //#!
+  //#!Return: [num]1 on succes.
+  if (sysFuncMatch(argS->callId, "sync", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    if (db_open == 1) {
+      sda_bdb_sync(&dbFile);
+      result->value.val_s = 1;
+    } else {
+      result->value.val_s = 0;
+    }
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Close db file
   //#!    sys.fs.db.close();
   //#!Close db file.
   //#!
@@ -866,7 +887,7 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_s = sda_bdb_store_string(s->stringField+argS->arg[1].val_str,s->stringField+argS->arg[2].val_str, &dbFile);
+    result->value.val_s = sda_bdb_store_string(s->stringField+argS->arg[1].val_str, s->stringField+argS->arg[2].val_str, &dbFile);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
