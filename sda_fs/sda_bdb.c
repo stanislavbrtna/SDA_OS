@@ -385,6 +385,7 @@ uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db) {
   if(db->column_cache_valid) {
     if(svp_strcmp(db->cached_column, column_name)){
       //printf("col_id loaded from cache\n");
+      sda_bdb_gc_type = db->cached_column_type;
       return db->cached_column_id + 1;
     }
   }
@@ -399,6 +400,7 @@ uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db) {
         db->column_cache_valid = 1;
         sda_strcp(c.name, db->cached_column, SDA_BDB_NAME_LEN);
         db->cached_column_id = i;
+        db->cached_column_type = c.type;
       }
       
       return i + 1;
@@ -606,6 +608,10 @@ uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_
   }
   id--;
 
+  if(!db->current_table.current_row_valid) {
+    return 0;
+  }
+
   svp_fseek(&(db->fil), db->current_table.current_row_offset);
   uint32_t row_size = 0;
   svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
@@ -686,6 +692,12 @@ uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
     
   svp_fseek(&(db->fil), offset);
 
+  if(n == 0 && db->current_table.row_count > 0) {
+    db->current_table.current_row_offset = offset;
+    db->current_table.current_row_valid  = 1;
+    return 1;
+  }
+
   for(uint32_t i = 0; i < db->current_table.row_count; i++) {
     uint32_t row_size = 0;
     svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
@@ -731,6 +743,7 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
   uint32_t offset = db->current_table.current_row_offset;
   
   if(!db->current_table.current_row_valid) {
+    printf("%s: invalid row selected!\n", __FUNCTION__);
     return 0;
   }
 
@@ -751,6 +764,7 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
         uint32_t entry_id = 0;
         svp_fread(&(db->fil), &entry_id, sizeof(uint32_t));
         if(val == entry_id) {
+          db->current_table.current_row_valid  = 1;
           db->current_table.current_row_offset = offset;
           return 1;
         }
@@ -761,8 +775,15 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
     }
 
     offset += row_size + sizeof(uint32_t);
+
+    if(offset > db->current_table_offset + db->current_table.table_size) {
+      break;
+    }
+
     svp_fseek(&(db->fil), offset);
   }
+
+  db->current_table.current_row_valid = 0;
   return 0;
 }
 
@@ -774,7 +795,7 @@ uint8_t sda_bdb_select_row_id(uint32_t id, sda_bdb *db) {
   }
 
   // rewinds table
-  if(!(db->last_entry_id_en && db->last_entry_id >= id)) {
+  if(db->last_entry_id_en == 0 || db->last_entry_id > id || db->current_table.current_row_valid == 0) {
     sda_bdb_select_row(0, db);
   }
 
@@ -865,7 +886,7 @@ uint8_t sda_bdb_select_row_str(
   }
 
   if(sda_bdb_gc_type != SDA_BDB_TYPE_STR) {
-    printf("%s: column \"%s\" is not type NUM\n", __FUNCTION__, column_name);
+    printf("%s: column \"%s\" is not type STR\n", __FUNCTION__, column_name);
     return 0;
   }
 
@@ -900,6 +921,11 @@ uint8_t sda_bdb_select_row_str(
     }
 
     offset += row_size + sizeof(uint32_t);
+    
+    if(offset > db->current_table_offset + db->current_table.table_size) {
+      break;
+    }
+
     svp_fseek(&(db->fil), offset);
   } 
   return 0;

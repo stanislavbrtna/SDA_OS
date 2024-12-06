@@ -67,6 +67,7 @@ typedef struct {
   uint8_t       column_cache_valid;
   uint8_t       cached_column[SDA_BDB_NAME_LEN];
   uint8_t       cached_column_id;
+  uint8_t       cached_column_type;
 } sda_bdb;
 
 // DB file
