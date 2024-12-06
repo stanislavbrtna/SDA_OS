@@ -486,7 +486,7 @@ uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db)
 
       offset += e.entry_size + sizeof(sda_bdb_entry);
 
-      if(offset > db->current_table.current_row_offset + row_size) {
+      if(offset >= db->current_table.current_row_offset + row_size) {
         break;
       }
       svp_fseek(&(db->fil), offset);
@@ -588,9 +588,11 @@ uint32_t sda_bdb_get_entry_size(uint8_t* name, sda_bdb *db) {
         return e.entry_size;
       }
       offset += e.entry_size + sizeof(sda_bdb_entry);
-      if(offset > db->current_table.current_row_offset + row_size) {
+
+      if(offset >= db->current_table.current_row_offset + row_size) {
         break;
       }
+      
       svp_fseek(&(db->fil), offset);
     }
   }
@@ -642,9 +644,10 @@ uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_
 
       offset += e.entry_size + sizeof(sda_bdb_entry);
 
-      if(offset > db->current_table.current_row_offset + row_size) {
+      if(offset >= db->current_table.current_row_offset + row_size) {
         break;
       }
+
       svp_fseek(&(db->fil), offset);
     }
   }
@@ -689,7 +692,7 @@ text contains
 // Select row
 uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
   uint32_t offset = db->current_table_offset + sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
-    
+  
   svp_fseek(&(db->fil), offset);
 
   if(n == 0 && db->current_table.row_count > 0) {
@@ -709,6 +712,10 @@ uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
     }
 
     offset += row_size + sizeof(uint32_t);
+
+    if(offset >= db->current_table_offset + db->current_table.table_size) {
+      break;
+    }
     svp_fseek(&(db->fil), offset);
   }
 
@@ -720,6 +727,12 @@ uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
 // Select next
 uint8_t sda_bdb_select_row_next(sda_bdb *db) {
   uint32_t offset = db->current_table.current_row_offset;
+  
+  if(offset > db->current_table_offset + db->current_table.table_size) {
+    db->current_table.current_row_valid = 0;
+    return 0;
+  }
+  
   svp_fseek(&(db->fil), offset);
   uint32_t row_size = 0;
 
@@ -749,6 +762,12 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
 
   db->last_entry_id_en = 0;
 
+ 
+  if(offset >= db->current_table_offset + db->current_table.table_size) {
+    db->current_table.current_row_valid = 0;
+    return 0;
+  }
+
   svp_fseek(&(db->fil), offset);
 
   for(uint32_t i = 0; i < db->current_table.row_count; i++) {
@@ -776,7 +795,7 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
 
     offset += row_size + sizeof(uint32_t);
 
-    if(offset > db->current_table_offset + db->current_table.table_size) {
+    if(offset >= db->current_table_offset + db->current_table.table_size) {
       break;
     }
 
