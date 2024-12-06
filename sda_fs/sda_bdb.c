@@ -728,7 +728,7 @@ uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
 uint8_t sda_bdb_select_row_next(sda_bdb *db) {
   uint32_t offset = db->current_table.current_row_offset;
   
-  if(offset > db->current_table_offset + db->current_table.table_size) {
+  if(offset >= db->current_table_offset + db->current_table.table_size) {
     db->current_table.current_row_valid = 0;
     return 0;
   }
@@ -941,7 +941,7 @@ uint8_t sda_bdb_select_row_str(
 
     offset += row_size + sizeof(uint32_t);
     
-    if(offset > db->current_table_offset + db->current_table.table_size) {
+    if(offset >= db->current_table_offset + db->current_table.table_size) {
       break;
     }
 
