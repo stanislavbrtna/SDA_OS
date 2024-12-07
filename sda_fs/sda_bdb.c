@@ -56,7 +56,7 @@ Function return:
 */
 
 // Internal Defines
-#define START_OFFSET 4 + sizeof(uint32_t)
+#define DATA_START_OFFSET 4 + sizeof(uint32_t)
 
 // Internal Headers
 void sda_bdb_sync_table(sda_bdb *db);
@@ -87,15 +87,17 @@ uint8_t sda_bdb_new(uint8_t *fname, sda_bdb *db) {
   svp_fwrite_u8(&(db->fil), '0'); // padding
   // version
   sda_bdb_write_u32(&(db->fil), 1);
-  // offset (now 0)
-  svp_fwrite_u8(&(db->fil), 0);
-  svp_fwrite_u8(&(db->fil), 0);
-  svp_fwrite_u8(&(db->fil), 0);
-  svp_fwrite_u8(&(db->fil), 0);
+  
+  // table data
+  // table count
+  sda_bdb_write_u32(&(db->fil), 0);
+  // first table offset (now 0)
+  sda_bdb_write_u32(&(db->fil), 0);
 
   db->current_table.valid = 0;
   db->valid = 1;
-  db->start_offset = 0;
+  db->table_count = 0;
+  db->start_offset = DATA_START_OFFSET + 2*sizeof(uint32_t);
   db->last_entry_id_en = 0;
   db->column_cache_valid = 0;
   svp_fsync(&(db->fil));
@@ -114,9 +116,11 @@ uint8_t sda_bdb_open(uint8_t *fname, sda_bdb *db) {
 
   //TODO: header check
 
-  svp_fseek(&(db->fil), START_OFFSET);
+  svp_fseek(&(db->fil), DATA_START_OFFSET);
+
 
   db->valid = 1;
+  db->table_count = sda_bdb_read_u32(&(db->fil));
   db->current_table.valid = 0;
   db->last_entry_id_en = 0;
   db->column_cache_valid = 0;
@@ -149,33 +153,52 @@ uint8_t sda_bdb_sync(sda_bdb *db) {
 
 // Misc internal
 
-uint8_t sda_bdb_table_exists(uint8_t *name, sda_bdb *db) {
+uint32_t sda_bdb_table_exists(uint8_t *name, sda_bdb *db) {
   // empty db
-  if(db->start_offset == 0) {
+  if(db->table_count == 0) {
     return 0;
   }
 
   // walk db
-  uint32_t offset = 0;
-  uint32_t offset_pre = 0;
+  uint32_t offset = db->start_offset;
+  sda_bdb_table t;
+
+  svp_fseek(&(db->fil), offset);
+
+  for(uint32_t i = 0; i < db->table_count; i++) {
+    svp_fread(&(db->fil), &t, sizeof(t));
+    
+    if(svp_strcmp(name, t.name)) {
+      return offset;
+    }
+    offset += t.table_size;
+
+    svp_fseek(&(db->fil), offset);
+  }
+
+  return 0;
+}
+
+uint32_t sda_bdb_new_offset(sda_bdb *db) {
+  // empty db
+  if(db->table_count == 0) {
+    return db->start_offset;
+  }
+
+  // walk db
+  uint32_t offset = db->start_offset;
   sda_bdb_table t;
 
   svp_fseek(&(db->fil), db->start_offset);
 
-  while(svp_ftell(&(db->fil)) <= svp_get_size(&(db->fil))) {
-    
-    uint32_t table_start = svp_ftell(&(db->fil));
+  for(uint32_t i = 0; i < db->table_count; i++) {
     svp_fread(&(db->fil), &t, sizeof(t));
-    offset = t.table_size;
-
-    if(svp_strcmp(name, t.name)) {
-      return 1;
-    }
-
-    svp_fseek(&(db->fil), table_start + offset);
+    offset += t.table_size;
+    
+    svp_fseek(&(db->fil), offset);
   }
 
-  return 0;
+  return offset;
 }
 
 //C(F)RUD
@@ -194,7 +217,8 @@ uint8_t sda_bdb_new_table(uint8_t *name, uint8_t no_columns, sda_bdb *db) {
   }
 
   // seek end
-  uint32_t table_begin = svp_get_size(&(db->fil));
+  uint32_t table_begin = sda_bdb_new_offset(db);
+
   svp_fseek(&(db->fil), table_begin);
   
   sda_strcp(name, db->current_table.name, SDA_BDB_NAME_LEN);
@@ -207,6 +231,7 @@ uint8_t sda_bdb_new_table(uint8_t *name, uint8_t no_columns, sda_bdb *db) {
   db->current_table.table_size = sizeof(sda_bdb_table) + no_columns*sizeof(sda_bdb_column);
   db->current_table.row_count = 0;
   db->current_table_offset = table_begin;
+  db->current_table.current_row_valid = 0;
 
   // write header
   svp_fwrite(&(db->fil), &db->current_table, sizeof(sda_bdb_table));
@@ -217,15 +242,17 @@ uint8_t sda_bdb_new_table(uint8_t *name, uint8_t no_columns, sda_bdb *db) {
   }
   
   // update first table
-  if(db->start_offset == 0) {
-    svp_fseek(&(db->fil), START_OFFSET);
+  db->table_count++;
+  svp_fseek(&(db->fil), DATA_START_OFFSET);
+  sda_bdb_write_u32(&(db->fil), db->table_count);
+  if(db->table_count == 1) { // on table zero, but since we incremented it, tha magic val is 1
     sda_bdb_write_u32(&(db->fil), table_begin);
     db->start_offset = table_begin;
   }
 
   db->last_entry_id_en = 0;
-
   svp_fsync(&(db->fil));
+  //printf("creating table %s offset: %u\n", name, table_begin);
   return 1;
 }
 
@@ -257,27 +284,26 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
 
   if(db->current_table.valid) {
     sda_bdb_sync_table(db);
+    //printf("Select: prev: %s, offset:%u size:%u\n", db->current_table.name, db->current_table_offset, db->current_table.table_size);
   }
   
   // walk db
-  uint32_t offset = 0;
-  uint32_t offset_pre = 0;
+  uint32_t offset = db->start_offset;
   sda_bdb_table t;
 
-  svp_fseek(&(db->fil), db->start_offset);
+  svp_fseek(&(db->fil), offset);
 
-  while(svp_ftell(&(db->fil)) <= svp_get_size(&(db->fil))) {
+  for(uint32_t i = 0; i < db->table_count; i++) {
     
-    uint32_t table_start = svp_ftell(&(db->fil));
     svp_fread(&(db->fil), &t, sizeof(t));
-    offset = t.table_size;
-
     if(svp_strcmp(name, t.name)) {
-      db->current_table_offset = table_start;
+      db->current_table_offset = offset;
       break;
     }
 
-    svp_fseek(&(db->fil), table_start + offset);
+    offset += t.table_size;
+
+    svp_fseek(&(db->fil), offset);
   }
 
   svp_fseek(&(db->fil), db->current_table_offset);
@@ -285,11 +311,12 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
   db->current_table.valid = 1;
   db->last_entry_id_en = 0;
   db->column_cache_valid = 0;
-
+  //printf("selected: %s, offset:%u\n", db->current_table.name, db->current_table_offset);
+  // to set the current row offset correct
+  sda_bdb_select_row(0, db);
   return 1;
 }
 
-// Todo: Remove table
 
 uint32_t sda_bdb_truncate(sda_bdb *db, uint32_t position, uint32_t size) {
   uint32_t file_end = svp_get_size(&(db->fil));
@@ -301,6 +328,7 @@ uint32_t sda_bdb_truncate(sda_bdb *db, uint32_t position, uint32_t size) {
   }
   svp_fseek(&(db->fil), file_end - size);
   svp_truncate(&(db->fil));
+  return 1;
 }
 
 
@@ -317,6 +345,7 @@ uint32_t sda_bdb_insert_space(sda_bdb *db, uint32_t position, uint32_t size) {
       svp_fwrite_u8(&(db->fil), c);
     }
   }
+  return 1;
 }
 
 uint32_t sda_bdb_insert_data(sda_bdb *db, uint32_t position, void* data, uint32_t size) {
@@ -329,6 +358,32 @@ uint32_t sda_bdb_insert_data(sda_bdb *db, uint32_t position, void* data, uint32_
 void sda_bdb_sync_table(sda_bdb *db) {
   svp_fseek(&(db->fil), db->current_table_offset);
   svp_fwrite(&(db->fil), &(db->current_table), sizeof(sda_bdb_table));
+}
+
+// drops current table
+uint8_t sda_bdb_drop_table(sda_bdb *db) {
+  if(!db->current_table.valid) {
+    return 0;
+  }
+
+  // drop table
+  sda_bdb_truncate(db, db->current_table_offset, db->current_table.table_size);
+
+  db->table_count--;
+
+  // update table count
+  svp_fseek(&(db->fil), DATA_START_OFFSET);
+  sda_bdb_write_u32(&(db->fil), db->table_count);
+  // update first?
+  if(db->table_count == 0) {
+    sda_bdb_write_u32(&(db->fil), 0);
+    db->start_offset = 0;
+  }
+
+  db->current_table.valid = 0;
+  db->current_table.current_row_valid = 0;
+
+  return 1;
 }
 
 // new row -> creates new row and sets it as current 
@@ -376,6 +431,32 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
 
   return 1;
 }
+
+// Drops current row
+uint8_t sda_bdb_drop_row(sda_bdb *db) {
+  if(!db->current_table.current_row_valid) {
+    printf("%s: selected row is not valid!\n", __FUNCTION__);
+    return 0;
+  }
+
+  // get row size
+  svp_fseek(&(db->fil), db->current_table.current_row_offset);
+  uint32_t row_size;
+  row_size = sda_bdb_read_u32(&(db->fil));
+
+  // truncate file
+  sda_bdb_truncate(db, db->current_table.current_row_offset, row_size + sizeof(uint32_t));
+
+  // set db data size
+  db->current_table.row_count--;
+  db->current_table.table_size -= row_size + sizeof(uint32_t);
+
+  db->current_table.current_row_valid = 0;
+
+  sda_bdb_sync(db);
+  return 1;
+}
+
 
 uint8_t sda_bdb_gc_type;
 
@@ -572,7 +653,7 @@ uint32_t sda_bdb_get_entry_size(uint8_t* name, sda_bdb *db) {
   svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
 
   if(row_size == 0) {
-    printf("%s: Row is empty!", __FUNCTION__);
+    printf("%s: Row is empty!\n", __FUNCTION__);
     return 0;
   }
   
@@ -619,7 +700,7 @@ uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_
   svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
 
   if(row_size == 0) {
-    printf("%s: Row is empty!", __FUNCTION__);
+    printf("%s: Row is empty!\n", __FUNCTION__);
     return 0;
   }
   
@@ -727,6 +808,10 @@ uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
 // Select next
 uint8_t sda_bdb_select_row_next(sda_bdb *db) {
   uint32_t offset = db->current_table.current_row_offset;
+
+  if(!db->current_table.current_row_valid) {
+    return 0;
+  }
   
   if(offset >= db->current_table_offset + db->current_table.table_size) {
     db->current_table.current_row_valid = 0;

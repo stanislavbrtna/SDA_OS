@@ -68,6 +68,8 @@ typedef struct {
   uint8_t       cached_column[SDA_BDB_NAME_LEN];
   uint8_t       cached_column_id;
   uint8_t       cached_column_type;
+
+  uint32_t      table_count;
 } sda_bdb;
 
 // DB file
@@ -84,11 +86,17 @@ uint8_t sda_bdb_set_column(uint8_t id, uint8_t *name, uint8_t type, sda_bdb *db)
 // Select existing table
 uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db);
 
+// Drop selected table
+uint8_t sda_bdb_drop_table(sda_bdb *db);
+
 // Enables auto-incremented ID field
 uint8_t sda_bdb_enable_auto_id(uint8_t *column_name, sda_bdb *db);
 
 // Creates new row
 uint32_t sda_bdb_new_row(sda_bdb *db);
+
+// Drops currently selected row
+uint8_t sda_bdb_drop_row(sda_bdb *db);
 
 // Current table row count
 uint32_t sda_bdb_get_row_count(sda_bdb *db);

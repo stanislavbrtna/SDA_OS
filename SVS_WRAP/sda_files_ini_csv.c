@@ -627,6 +627,26 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Drop table
+  //#!    sys.fs.db.dropTable();
+  //#!Drops currently selected table.
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "dropTable", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_drop_table(&dbFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Set column type
   //#!    sys.fs.db.setColumn([num] id, [str]name, [num] type);
   //#!Sets name and type of given column
@@ -720,6 +740,26 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     result->value.val_s = sda_bdb_new_row(&dbFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Drop row
+  //#!    sys.fs.db.dropRow();
+  //#!Drops current row from the slected table.
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "dropRow", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_drop_row(&dbFile);
     result->type = SVS_TYPE_NUM;
     return 1;
   }

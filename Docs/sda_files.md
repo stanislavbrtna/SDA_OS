@@ -303,7 +303,13 @@ Return: [num]1 on succes.
 Opens existing db file.
 
 Return: [num]1 on succes.
-##### Close config file
+##### Sync file
+    sys.fs.db.sync();
+Writes all the file changes to the card.
+Same as when file is closed, but can be triggered on demand.
+
+Return: [num]1 on succes.
+##### Close db file
     sys.fs.db.close();
 Close db file.
 
@@ -311,6 +317,11 @@ Return: [num]1 on succes.
 ##### Create new table
     sys.fs.db.newTable([str]name, [num] columns);
 Creates new table
+
+Return: [num] 1 if ok.
+##### Drop table
+    sys.fs.db.dropTable();
+Drops currently selected table.
 
 Return: [num] 1 if ok.
 ##### Set column type
@@ -334,6 +345,16 @@ Adds new row to the selected table.
 New row is selected automatically.
 
 Return: [num] 1 if ok.
+##### Drop row
+    sys.fs.db.dropRow();
+Drops current row from the slected table.
+
+Return: [num] 1 if ok.
+##### Get Row count
+    sys.fs.db.getRowCount();
+Gets row count of the selected table.
+
+Return: [num] row count.
 ##### Select row
     sys.fs.db.selectRow([num]row_n);
 Select row with given number (not an id).
@@ -352,6 +373,23 @@ Return: [num] 1 if ok.
 Selects next available row.
 
 Return: [num] 1 if ok.
+##### Select next matching row
+    sys.fs.db.selectRowNum([str]column, [num]val);
+Selectcs next row where given column has given value
+
+Return: [num] 1 if ok.
+##### Select next row matching string
+    sys.fs.db.selectRowStr([str]column, [str]string, [num]partial, [num]case_sensitive);
+Selectcs next row where given column has given value.
+
+ | Parameter      | Value | Meaning                                 |
+ | ---            | ---   | ---                                     |
+ | partial        |   1   | string can be only a part odf the entry |
+ |                |   0   | full string must be contained           |
+ | case_sensitive |   1   | strings are matched case-sensitive      |
+ |                |   0   | strings are matched non case-sensitive  |
+
+Return: [num] 1 if entry was found.
 ##### Write text entry
     sys.fs.db.setEntryStr([str]col_name, [str]value);
 Sets db entry
