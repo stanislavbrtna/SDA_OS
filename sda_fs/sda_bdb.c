@@ -164,6 +164,7 @@ uint32_t sda_bdb_table_exists(uint8_t *name, sda_bdb *db) {
   sda_bdb_table t;
 
   svp_fseek(&(db->fil), offset);
+  //printf("seek start %x\n", offset);
 
   for(uint32_t i = 0; i < db->table_count; i++) {
     svp_fread(&(db->fil), &t, sizeof(t));
@@ -172,6 +173,7 @@ uint32_t sda_bdb_table_exists(uint8_t *name, sda_bdb *db) {
       return offset;
     }
     offset += t.table_size;
+    //printf("seek continue %x\n", offset);
 
     svp_fseek(&(db->fil), offset);
   }
@@ -224,7 +226,7 @@ uint8_t sda_bdb_new_table(uint8_t *name, uint8_t no_columns, sda_bdb *db) {
   sda_strcp(name, db->current_table.name, SDA_BDB_NAME_LEN);
   db->current_table.auto_id = 0;
   db->current_table.auto_id_field = 0;
-  db->current_table.max_id = 0;
+  db->current_table.max_id = 1;
   db->current_table.valid = 1;
   db->column_cache_valid = 0;
   db->current_table.cloumn_count = no_columns;
@@ -276,15 +278,17 @@ uint8_t sda_bdb_set_column(uint8_t id, uint8_t *name, uint8_t type, sda_bdb *db)
 
 // select table
 uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
+
+  // store current table, so we can validate if the table-to-be-selected exists
+  if(db->current_table.valid) {
+    sda_bdb_sync_table(db);
+    printf("Select: prev: %s, offset:%u size:%u\n", db->current_table.name, db->current_table_offset, db->current_table.table_size);
+  }
+
   // validate table name
   if(!sda_bdb_table_exists(name, db)) {
     printf("%s: table \"%s\" does not exist\n", __FUNCTION__, name);
     return 0;
-  }
-
-  if(db->current_table.valid) {
-    sda_bdb_sync_table(db);
-    //printf("Select: prev: %s, offset:%u size:%u\n", db->current_table.name, db->current_table_offset, db->current_table.table_size);
   }
   
   // walk db
@@ -302,7 +306,6 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
     }
 
     offset += t.table_size;
-
     svp_fseek(&(db->fil), offset);
   }
 
@@ -391,6 +394,9 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
   uint32_t siz = db->current_table.cloumn_count*sizeof(sda_bdb_entry);
   uint32_t offset = db->current_table_offset + sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
   
+  //printf("creating new row with %u columns\n", db->current_table.cloumn_count);
+  //printf("old offset behind: %x\n", db->current_table_offset + db->current_table.table_size);
+
   // get last row
   if(db->current_table.row_count != 0) {
     offset = db->current_table_offset + db->current_table.table_size;
@@ -418,9 +424,13 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
   }
 
   // Update table size
+  //printf("table size: %u row_size: %u\n", db->current_table.table_size, sizeof(uint32_t) + siz);
+
   db->current_table.table_size += sizeof(uint32_t) + siz;
   db->current_table.row_count++;
   db->current_table.current_row_offset = offset;
+
+  
 
   // increment autoId
   if(db->current_table.auto_id) {
@@ -428,6 +438,9 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
     sda_bdb_set_entry_id(db->current_table.auto_id_field, &(db->current_table.max_id), sizeof(uint32_t), db);
     db->current_table.max_id++;
   }
+
+  //printf("table size after auto id: %u\n", db->current_table.table_size);
+  //printf("new offset behind: %x\n", db->current_table_offset + db->current_table.table_size);
 
   return 1;
 }
@@ -505,7 +518,7 @@ uint8_t sda_bdb_enable_auto_id(uint8_t *column_name, sda_bdb *db) {
   }
 
   db->current_table.auto_id = 1;
-  db->current_table.max_id = 0;
+  db->current_table.max_id = 1;
   sda_bdb_sync_table(db);
   return 1;
 }
@@ -593,7 +606,6 @@ uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db)
     size
   );
   row_size += size + sizeof(sda_bdb_entry);
-  //printf("size: %u, real: %u \n", size + sizeof(sda_bdb_entry), svp_ftell(&(db->fil)) - begin);
 
   // update row header
   svp_fseek(&(db->fil), db->current_table.current_row_offset);
