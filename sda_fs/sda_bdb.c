@@ -282,7 +282,7 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
   // store current table, so we can validate if the table-to-be-selected exists
   if(db->current_table.valid) {
     sda_bdb_sync_table(db);
-    printf("Select: prev: %s, offset:%u size:%u\n", db->current_table.name, db->current_table_offset, db->current_table.table_size);
+    //printf("Select: prev: %s, offset:%u size:%u end: %x\n", db->current_table.name, db->current_table_offset, db->current_table.table_size, db->current_table_offset + db->current_table.table_size);
   }
 
   // validate table name
@@ -389,6 +389,30 @@ uint8_t sda_bdb_drop_table(sda_bdb *db) {
   return 1;
 }
 
+// drops data from current table
+uint8_t sda_bdb_drop_data(sda_bdb *db) {
+  if(!db->current_table.valid) {
+    return 0;
+  }
+
+  sda_bdb_truncate(
+    db, 
+    db->current_table_offset + sizeof(sda_bdb_table) + sizeof(sda_bdb_column)*db->current_table.cloumn_count, 
+    db->current_table.table_size - (sizeof(sda_bdb_table) + sizeof(sda_bdb_column)*db->current_table.cloumn_count)
+  );
+
+  db->current_table.max_id = 1;
+  db->current_table.valid = 1;
+  db->column_cache_valid = 0;
+  db->current_table.table_size = sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
+  db->current_table.row_count = 0;
+  db->current_table.current_row_valid = 0;
+
+  sda_bdb_sync(db);
+
+  return 1;
+}
+
 // new row -> creates new row and sets it as current 
 uint32_t sda_bdb_new_row(sda_bdb *db) {
   uint32_t siz = db->current_table.cloumn_count*sizeof(sda_bdb_entry);
@@ -429,9 +453,7 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
   db->current_table.table_size += sizeof(uint32_t) + siz;
   db->current_table.row_count++;
   db->current_table.current_row_offset = offset;
-
-  
-
+  db->current_table.current_row_valid = 1;
   // increment autoId
   if(db->current_table.auto_id) {
     //printf("auto id increment: %u\n", db->current_table.max_id);

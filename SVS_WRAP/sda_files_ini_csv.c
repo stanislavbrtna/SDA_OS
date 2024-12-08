@@ -627,6 +627,26 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Drop Data
+  //#!    sys.fs.db.dropAllRows();
+  //#!Drops all data from currently selected table.
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "dropAllRows", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_drop_data(&dbFile);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Drop table
   //#!    sys.fs.db.dropTable();
   //#!Drops currently selected table.

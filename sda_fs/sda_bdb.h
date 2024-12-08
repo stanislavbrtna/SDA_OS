@@ -89,6 +89,9 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db);
 // Drop selected table
 uint8_t sda_bdb_drop_table(sda_bdb *db);
 
+// Drop all data from a table
+uint8_t sda_bdb_drop_data(sda_bdb *db);
+
 // Enables auto-incremented ID field
 uint8_t sda_bdb_enable_auto_id(uint8_t *column_name, sda_bdb *db);
 
