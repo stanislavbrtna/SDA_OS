@@ -68,7 +68,7 @@ void sda_files_close() {
       fr_open[i] = 0;
     }
   }
-  
+
   sda_files_close_conf_csv();
 }
 
@@ -545,7 +545,7 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA context
   //#!call sys.fs.chDir(1); to get to the APPS context
   //#!
-  //#!Return: 1 - ok, 0 - fail
+  //#!Return: [num] 1 - ok, 0 - fail
   if (sysFuncMatch(argS->callId, "chDir", s)) {
 
     uint8_t r = 0;
