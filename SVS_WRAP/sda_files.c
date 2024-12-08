@@ -67,8 +67,8 @@ void sda_files_close() {
       svp_fclose(&readFil[i]);
       fr_open[i] = 0;
     }
-
   }
+  
   sda_files_close_conf_csv();
 }
 

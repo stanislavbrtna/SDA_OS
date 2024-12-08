@@ -136,6 +136,7 @@ uint8_t sda_bdb_close(sda_bdb *db) {
   }
   db->valid = 0;
   svp_fclose(&(db->fil));
+  return 1;
 }
 
 uint8_t sda_bdb_sync(sda_bdb *db) {
@@ -281,6 +282,11 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
 
   // store current table, so we can validate if the table-to-be-selected exists
   if(db->current_table.valid) {
+    // selecting currently selected table, we do nothing
+    if(svp_strcmp(db->current_table.name, name)) {
+      return 1;
+    }
+
     sda_bdb_sync_table(db);
     //printf("Select: prev: %s, offset:%u size:%u end: %x\n", db->current_table.name, db->current_table_offset, db->current_table.table_size, db->current_table_offset + db->current_table.table_size);
   }

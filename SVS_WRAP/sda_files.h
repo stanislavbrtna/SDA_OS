@@ -41,4 +41,6 @@ void sda_files_wrapper_init();
 // internal wrapper functions
 void sda_files_close_conf_csv();
 
+void sda_files_reset();
+
 #endif

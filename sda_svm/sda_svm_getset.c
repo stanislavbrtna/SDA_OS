@@ -51,10 +51,12 @@ void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname) {
   
   sda_strcp((uint8_t *)"", svmMeta.openConfName, sizeof(svmMeta.openConfName));
   sda_strcp((uint8_t *)"", svmMeta.openCsvName, sizeof(svmMeta.openCsvName));
+  sda_strcp((uint8_t *)"", svmMeta.openDbName, sizeof(svmMeta.openDbName));
   sda_strcp((uint8_t *)"DATA", svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
   sda_strcp((uint8_t *)"DATA", svmMeta.drawRoot, sizeof(svmMeta.drawRoot));
   svmMeta.openConfUsed    = 0;
   svmMeta.openCsvUsed     = 0;
+  svmMeta.openDbUsed      = 0;
   svmMeta.loadUptime      = svpSGlobal.uptimeMs;
   svmMeta.landscape       = svpSGlobal.lcdLandscape;
   svmMeta.lcdOffButtons   = 0;

@@ -37,7 +37,7 @@ uint8_t  csv_open;
 //db
 sda_bdb dbFile;
 uint8_t db_filename[64];
-uint8_t db_open;
+volatile uint8_t db_open;
 
 
 uint8_t * sda_get_db_fname() {
@@ -101,6 +101,12 @@ void sda_files_close_conf_csv() {
     db_open = 0;
     sda_bdb_close(&dbFile);
   }
+}
+
+void sda_files_reset() {
+  db_open = 0;
+  csv_open = 0;
+  conf_open = 0;
 }
 
 
@@ -594,7 +600,10 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     sda_strcp("", svmMeta.openDbTable, sizeof(svmMeta.openDbTable));
-    if (db_open == 1 && (sda_bdb_close(&dbFile) == 0)) {
+    if (db_open == 1) {
+      if(!sda_bdb_close(&dbFile)) {
+        errSoft((uint8_t *)"Failed to close DB!", s);
+      }
       db_open = 0;
       result->value.val_s = 1;
     } else {

@@ -371,6 +371,8 @@ uint8_t svmLoadProcData(uint16_t pid) {
     if (!svp_fexists(svmMeta.openConfName)) {
       printf("Failed to open conf file: %s\n", svmMeta.openConfName);
       sda_show_error_message("Filed to open conf file!");
+      sda_files_reset();
+      SVScloseCache(&svm);
       return 0;
     }
 
@@ -381,6 +383,8 @@ uint8_t svmLoadProcData(uint16_t pid) {
     if (!svp_fexists(svmMeta.openCsvName)) {
       printf("Failed to open csv file: %s\n", svmMeta.openCsvName);
       sda_show_error_message("Filed to open conf file!");
+      sda_files_reset();
+      SVScloseCache(&svm);
       return 0;
     }
 
@@ -389,8 +393,10 @@ uint8_t svmLoadProcData(uint16_t pid) {
 
   if (svmMeta.openDbUsed) {
     if (!svp_fexists(svmMeta.openDbName)) {
-      printf("%s: Failed to open db file: %s\n", __FUNCTION__, svmMeta.openDbName);
+      printf("%s: Failed to open db file: %s (%s)\n", __FUNCTION__, svmMeta.openDbName, svmMeta.name);
       sda_show_error_message("Filed to open db file!");
+      SVScloseCache(&svm);
+      sda_files_reset();
       return 0;
     }
 
