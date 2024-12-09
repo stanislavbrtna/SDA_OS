@@ -151,6 +151,8 @@ uint8_t sda_bdb_sync(sda_bdb *db) {
   }
 
   svp_fsync(&(db->fil));
+
+  return 1;
 }
 
 // Misc internal
@@ -427,6 +429,8 @@ uint32_t sda_bdb_insert_freeblock(sda_bdb *db, uint32_t position) {
 uint32_t sda_bdb_write_data(sda_bdb *db, uint32_t position, void* data, uint32_t size) {
   svp_fseek(&(db->fil), position);
   svp_fwrite(&(db->fil), data, size);
+
+  return 0;
 }
 
 
@@ -560,7 +564,6 @@ uint8_t sda_bdb_drop_row(sda_bdb *db) {
   return 1;
 }
 
-
 uint8_t sda_bdb_gc_type;
 
 uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db) {
@@ -680,7 +683,6 @@ uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db)
   // if not: create and write
   e.entry_column = id;
   e.entry_size = size;
-  uint32_t begin = svp_ftell(&(db->fil));
   
   sda_bdb_check_table_space(db, size + size + sizeof(sda_bdb_entry));
 
