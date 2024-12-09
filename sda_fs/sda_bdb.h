@@ -30,6 +30,8 @@ SOFTWARE.
 #define SDA_BDB_TYPE_STR 1
 #define SDA_BDB_TYPE_FLT 2
 
+#define SDA_BDB_BLOCKSIZE 512
+
 typedef struct {
   uint8_t  name[SDA_BDB_NAME_LEN];
   uint32_t cloumn_offset;
@@ -39,6 +41,7 @@ typedef struct {
   uint32_t max_id;
   uint8_t  valid;
   uint32_t table_size;
+  uint32_t usedup_size;
   uint32_t current_row_offset;
   uint8_t  current_row_valid;
   uint32_t row_count;
