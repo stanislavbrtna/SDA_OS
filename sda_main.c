@@ -177,7 +177,6 @@ static void sda_main_handle_soft_buttons() {
       
       svp_chdir(mainDir);
       svp_chdir((uint8_t *)"APPS");
-      sda_set_sleep_lock(0);
     }
     svpSGlobal.systemOptClick = CLICKED_NONE;
   }

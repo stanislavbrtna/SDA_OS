@@ -34,7 +34,6 @@ void sda_keyboard_hide();
 
 void set_sda_counter(uint16_t val);
 uint16_t get_sda_counter();
-void sda_set_sleep_lock(uint8_t val);
 
 void gr2_error_callback(uint8_t *str, gr2context * c);
 

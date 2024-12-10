@@ -69,7 +69,6 @@ void svmCloseRunning() {
 
   SVScloseCache(&svm);
   svmInValidate(svmMeta.pid);
-  sda_set_sleep_lock(0);
   svpSGlobal.kbdVisible = 0;
   sda_set_landscape(0);
   sdaAlarmClearFlag();

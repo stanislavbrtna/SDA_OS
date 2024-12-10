@@ -218,7 +218,6 @@ uint8_t svmGetSuspendOnClose() {
   return svmMeta.suspendOnClose;
 }
 
-
 void sdaSetRedrawDetect(uint8_t val) {
   redrawDetect = val;
 }
@@ -267,3 +266,39 @@ uint8_t svmGetSuspendFlag() {
   return suspend_flag;
 }
 
+void svmSetScreenShdnLock(uint8_t val) {
+  if(!svmGetValid()) {
+    return;
+  }
+
+  svmSavedProc[svmGetId(svmGetPid())].screenShdnLock = val;
+}
+
+
+uint8_t svmGetScreenShdnLock() {
+  for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
+    if (svmSavedProc[i].screenShdnLock && svmSavedProc[i].valid) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+
+void svmSetSleepLock(uint8_t val) {
+  if(!svmGetValid()) {
+    return;
+  }
+
+  svmSavedProc[svmGetId(svmGetPid())].sleepLock = val;
+}
+
+
+uint8_t svmGetSleepLock() {
+  for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
+    if (svmSavedProc[i].sleepLock && svmSavedProc[i].valid) {
+      return 1;
+    }
+  }
+  return 0;
+}

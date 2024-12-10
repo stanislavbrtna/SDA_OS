@@ -65,5 +65,10 @@ uint8_t svmGetValidPid(uint16_t pid);
 uint8_t  svmGetSavedProcValid(uint16_t proc_array_index);
 uint16_t svmGetSavedProcPid(uint16_t id);
 
+void    svmSetSleepLock(uint8_t val);
+uint8_t svmGetSleepLock();
+void    svmSetScreenShdnLock(uint8_t val);
+uint8_t svmGetScreenShdnLock();
+
 
 #endif

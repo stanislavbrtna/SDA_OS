@@ -395,7 +395,6 @@ void sdaSvmKillApp_handle() {
   sda_slot_set_invalid(SDA_SLOT_SVM);
 
   svmInValidate(svmMeta.pid);
-  sda_set_sleep_lock(0);
 
   sdaAlarmClearFlag();
   sda_files_close();
@@ -409,7 +408,6 @@ void sdaSvmKillApp_handle() {
   sda_prev_slot_on_top(SDA_SLOT_HOMESCREEN);
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
-  sda_set_sleep_lock(0);
 }
 
 

@@ -181,6 +181,8 @@ typedef struct {
   uint8_t  valid;
   uint8_t  singular;
   uint8_t  uartCallbackEnabled;
+  uint8_t  screenShdnLock;
+  uint8_t  sleepLock;
 } svmSavedProcType;
 
 

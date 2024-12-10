@@ -73,11 +73,30 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!| PIN_PULLDOWN | Pin set as input with no pull resistor |
   //#!
 
-  //#!#### LCD Functions
+  //#!#### Power Functions
+
+  //#!##### Lock system suspend
+  //#!    sys.hw.lockSuspend([num]val);
+  //#!Sets sleep lock value. On 1 system won't go to anny deeper
+  //#!sleep mode than SDA_PWR_MODE_SLEEP_LOW, regardless of the screen state.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "lockSuspend", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    svmSetSleepLock((uint8_t)argS->arg[1].val_s);
+    return 1;
+  }
+
+
 
   //#!##### Lock LCD sleep
   //#!    sys.hw.lockSleep([num]val);
-  //#!Sets sleep lock value. On 1 system wont go to sleep.
+  //#!Sets sleep lock value. On 1 system won't shut down LCD automatically.
+  //#!User can still shut down the screen with power button,
+  //#!in that case, SDA will go in the SDA_PWR_MODE_SLEEP_LOW mode.
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "lockSleep", s)) {
@@ -85,7 +104,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    sda_set_sleep_lock(argS->arg[1].val_s);
+    svmSetScreenShdnLock((uint8_t)argS->arg[1].val_s);
     return 1;
   }
 

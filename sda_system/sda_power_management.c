@@ -24,20 +24,14 @@ SOFTWARE.
 
 // time of the last input
 static uint32_t lastInputTime;
-
-// flag to disable automatic sleep
-uint8_t sleepLock;
-
 volatile uint32_t sleepTimer;
 
-void sda_set_sleep_lock(uint8_t val) {
-  sleepLock = val;
-}
 
 void sda_power_sleep() {
   if (svpSGlobal.lcdState == LCD_ON) {
     svp_set_lcd_state(LCD_OFF);
   }
+
   svpSGlobal.powerMode = SDA_PWR_MODE_SLEEP;
   system_clock_set_low();
 }
@@ -70,6 +64,8 @@ uint64_t sda_lcd_off_handler() {
   if ((wrap_get_lcdOffButtons() == 1 && sda_if_slot_on_top(SDA_SLOT_SVM)) // active app has enabled buttons
       || sdaSvmIsTimerSet() // timer is enabled
       || svmGetUartCallbackActive() // active uart callback
+      || svmGetScreenShdnLock()    // Screen shutdown lock active, the lcd can still be shut down manually
+      || svmGetSleepLock()
      )
   {
     svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_LOW;
@@ -154,7 +150,7 @@ void sda_power_management_handler() {
 
   // lcd auto shut down, this must be at the bottom, so it does not turn off before the sda wakes.
   if (((svpSGlobal.lcdShutdownTime * 60) < (svpSGlobal.uptime - lastInputTime))
-        && (sleepLock == 0) && (svpSGlobal.powerMode != SDA_PWR_MODE_SLEEP)) {
+        && (!svmGetScreenShdnLock()) && (svpSGlobal.powerMode != SDA_PWR_MODE_SLEEP)) {
     sda_power_sleep();
   }
 

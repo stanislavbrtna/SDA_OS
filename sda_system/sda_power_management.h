@@ -24,7 +24,6 @@ SOFTWARE.
 #define SDA_POWER_MANAGEMENT_H
 #include "../SDA_OS.h"
 
-void sda_set_sleep_lock(uint8_t val);
 void sda_power_sleep();
 void sda_interrupt_sleep();
 void sda_power_wait_for_input();

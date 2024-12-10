@@ -114,8 +114,6 @@ void sda_show_error_message(uint8_t * text);
 void svp_errSoftPrint(svsVM *s);
 void svs_hardErrHandler();
 
-void sda_set_sleep_lock(uint8_t val);
-
 void setRedrawFlag();
 
 void svp_switch_main_dir();

@@ -85,7 +85,7 @@ Changes working directory.
 call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA context
 call sys.fs.chDir(1); to get to the APPS context
 
-Return: 1 - ok, 0 - fail
+Return: [num] 1 - ok, 0 - fail
 ##### Get current working directory
     sys.fs.getCWD();
 Returns current working directory
@@ -317,6 +317,11 @@ Return: [num]1 on succes.
 ##### Create new table
     sys.fs.db.newTable([str]name, [num] columns);
 Creates new table
+
+Return: [num] 1 if ok.
+##### Drop Data
+    sys.fs.db.dropAllRows();
+Drops all data from currently selected table.
 
 Return: [num] 1 if ok.
 ##### Drop table
