@@ -377,10 +377,10 @@ uint32_t sda_bdb_insert_space(sda_bdb *db, uint32_t position, uint32_t size) {
 uint8_t sda_bdb_check_table_space(sda_bdb *db, uint32_t size) {
   //printf("size check: size: %u table-usedup: %u\n", size, db->current_table.table_size - db->current_table.usedup_size);
   //TODO: why this fixes it?
-  if(size >= db->current_table.table_size - db->current_table.usedup_size) {
+  if(size > db->current_table.table_size - db->current_table.usedup_size) {
     //printf("inserting free block at %x\n", db->current_table_offset + db->current_table.table_size);
     //sda_bdb_insert_freeblock(db, db->current_table_offset + db->current_table.table_size);
-    sda_bdb_insert_space(db, db->current_table_offset + db->current_table.table_size - 1, SDA_BDB_BLOCKSIZE);
+    sda_bdb_insert_freeblock(db, db->current_table_offset + db->current_table.table_size);
     db->current_table.table_size += SDA_BDB_BLOCKSIZE;
     svp_fsync(&(db->fil));
   }
@@ -407,18 +407,49 @@ uint32_t sda_bdb_insert_space_indb(sda_bdb *db, uint32_t position, uint32_t size
 
 uint32_t sda_bdb_insert_freeblock(sda_bdb *db, uint32_t position) {
   uint32_t file_end = svp_get_size(&(db->fil));
-  uint8_t buffer[SDA_BDB_BLOCKSIZE];
+  uint8_t buffer[512];
 
-  svp_fseek(&(db->fil), svp_get_size(&(db->fil)));
-
-  uint32_t size = sizeof(buffer);
+  uint32_t size = SDA_BDB_BLOCKSIZE;
   // TODO: block transfer
+  //printf("eof at: %u, %u should be moved\n", file_end, file_end - position);
 
-  for(uint32_t i = 0; i <= file_end - position; i++) {
-    svp_fseek(&(db->fil), file_end - i);
-    uint8_t c = svp_fread_u8(&(db->fil));
-    svp_fseek(&(db->fil), file_end + size - i);
-    svp_fwrite_u8(&(db->fil), c);
+  if(file_end <= position) {
+    //printf("writing at the eof\n");
+    svp_fseek(&(db->fil), position + size);
+    svp_fwrite_u8(&(db->fil), 0); // write something
+    svp_fseek(&(db->fil), position);
+    return 1;
+  }
+
+  if(file_end - position < sizeof(buffer)) {
+    //printf("moving smaller than buffer \n");
+    svp_fseek(&(db->fil), position);
+    svp_fread(&(db->fil), buffer, file_end - position);
+    svp_fseek(&(db->fil), position + size);
+    svp_fwrite(&(db->fil), buffer, file_end - position);
+    return 1;
+  }
+
+  for(uint32_t i = 0; i*sizeof(buffer) < file_end - position; i++) {
+    
+    uint32_t read_size = 0;
+    svp_fseek(&(db->fil), file_end - (i + 1)*sizeof(buffer));
+
+    if (sizeof(buffer) > file_end) {
+      read_size = file_end;
+    } else {
+      read_size = sizeof(buffer);
+    }
+
+    //printf("i: %u, bs/b: %u reading: %u writing:%u \n", i, SDA_BDB_BLOCKSIZE / sizeof(buffer), file_end - (i + 1)*sizeof(buffer), file_end + size - (i + 1)*sizeof(buffer));
+
+    svp_fread(&(db->fil), buffer, read_size);
+
+    svp_fseek(&(db->fil), file_end + size - (i + 1)*sizeof(buffer));
+
+    svp_fwrite(&(db->fil), buffer, read_size);
+
+    //if (i > 100) break; //TODO:remove this
   }
 
   svp_fseek(&(db->fil), position);

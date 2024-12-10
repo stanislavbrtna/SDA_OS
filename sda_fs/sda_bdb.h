@@ -30,7 +30,7 @@ SOFTWARE.
 #define SDA_BDB_TYPE_STR 1
 #define SDA_BDB_TYPE_FLT 2
 
-#define SDA_BDB_BLOCKSIZE 512
+#define SDA_BDB_BLOCKSIZE 2048
 
 typedef struct {
   uint8_t  name[SDA_BDB_NAME_LEN];
