@@ -22,13 +22,15 @@ SOFTWARE.
 
 #ifndef SDA_BINARY_DB_H
 #define SDA_BINARY_DB_H
-#include "svp_fs.h"
+#include "../svp_fs.h"
 
 #define SDA_BDB_NAME_LEN 16
 
 #define SDA_BDB_TYPE_NUM 0
 #define SDA_BDB_TYPE_STR 1
 #define SDA_BDB_TYPE_FLT 2
+
+#define SDA_BDB_VERSION 1
 
 #define SDA_BDB_BLOCKSIZE 2048
 
