@@ -72,7 +72,7 @@ uint32_t sda_bdb_truncate(sda_bdb *db, uint32_t position, uint32_t size) {
 
 // move table content
 uint32_t sda_bdb_truncate_upto(sda_bdb *db, uint32_t position, uint32_t size) {
-  uint32_t file_end = db->current_table.table_size;
+  uint32_t file_end = db->current_table.usedup_size + db->current_table_offset;
   
   for(uint32_t i = position; i + size < file_end; i++) {
     svp_fseek(&(db->fil), i + size);
