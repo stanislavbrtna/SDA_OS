@@ -489,8 +489,11 @@ uint8_t sda_bdb_enable_auto_id(uint8_t *column_name, sda_bdb *db) {
 
 // fill entry data
 uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db) {
-
   // find if given row entry exists
+  if(!db->current_table.current_row_valid) {
+    printf("%s: Row not valid!\n", __FUNCTION__);
+    return 0;
+  }
   // seek on row start
   svp_fseek(&(db->fil), db->current_table.current_row_offset);
   uint32_t row_size = 0;
