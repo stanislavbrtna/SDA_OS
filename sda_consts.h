@@ -92,7 +92,7 @@ File description:
 
 // default minimum backlight value, override this in your SDA_OS base if needed
 #ifndef MIN_BACKLIGHT_VALUE
-#define MIN_BACKLIGHT_VALUE 160
+#define MIN_BACKLIGHT_VALUE 170
 #endif
 
 // button id defines
