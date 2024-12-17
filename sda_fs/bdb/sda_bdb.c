@@ -263,8 +263,9 @@ uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
 
   // store current table, so we can validate if the table-to-be-selected exists
   if(db->current_table.valid) {
-    // selecting currently selected table, we do nothing
+    // selecting currently selected table, we do nothing (just rewind the table)
     if(svp_strcmp(db->current_table.name, name)) {
+      sda_bdb_select_row(0, db);
       return 1;
     }
 
@@ -341,12 +342,11 @@ uint8_t sda_bdb_drop_data(sda_bdb *db) {
   }
 
   // wont truncate, just remove the usedup
-
   db->current_table.max_id = 1;
-  db->current_table.valid = 1;
-  db->column_cache_valid = 0;
+  db->current_table.valid  = 1;
+  db->column_cache_valid   = 0;
   db->current_table.usedup_size = sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
-  db->current_table.row_count = 0;
+  db->current_table.row_count   = 0;
   db->current_table.current_row_valid = 0;
 
   sda_bdb_sync(db);
