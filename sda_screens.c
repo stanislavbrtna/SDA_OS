@@ -97,7 +97,7 @@ void sda_main_redraw() {
         0,
         32,
         319 + 160 * svpSGlobal.lcdLandscape,
-        479 - 160 * svpSGlobal.kbdVisible - 160 * svpSGlobal.lcdLandscape,
+        479 - 160 * svpSGlobal.kbdVisible - 160 * svpSGlobal.lcdLandscape - 1,
         mainScr,
         svpSGlobal.systemRedraw,
         sda_current_con
@@ -113,7 +113,7 @@ void sda_main_redraw() {
           0,
           32,
           319 + 160 * svpSGlobal.lcdLandscape,
-          479 - 160 * svpSGlobal.kbdVisible - 160 * svpSGlobal.lcdLandscape,
+          479 - 160 * svpSGlobal.kbdVisible - 160 * svpSGlobal.lcdLandscape - 1,
           mainScr,
           1,
           sda_current_con
