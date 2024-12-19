@@ -419,6 +419,16 @@ Return: [num]isPassword
 Sets automatic line-breaking. val: 1 - enabled, 0 - disabled
 
 Return: None
+##### Set selected text inversion
+    sys.gui.setTxtInvert([num]Id, [num]val);
+When inverted text is selected, fill color is used for text fied background.
+
+Return: None
+##### Get selected text inversion
+    sys.gui.getTxtInvert([num]Id);
+Get the text inversion value.
+
+Return: [num] Text invert value
 ##### Get text width
     sys.gui.getTxtWidth([num]Id, [num]pos);
 Get max width of string drawn in a given text element.

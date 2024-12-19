@@ -181,6 +181,41 @@ uint8_t sda_gr2_txt_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Set selected text inversion
+  //#!    sys.gui.setTxtInvert([num]Id, [num]val);
+  //#!When inverted text is selected, fill color is used for text fied background.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setTxtInvert", s) || sysFuncMatch(argS->callId, "setTexAlign", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM; // val
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    gr2_text_set_invert_select(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+
+    return 1;
+  }
+
+  //#!##### Get selected text inversion
+  //#!    sys.gui.getTxtInvert([num]Id);
+  //#!Get the text inversion value.
+  //#!
+  //#!Return: [num] Text invert value
+  if (sysFuncMatch(argS->callId, "getTxtInvert", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = gr2_text_get_invert_select(argS->arg[1].val_s, &sda_app_con);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Get text width
   //#!    sys.gui.getTxtWidth([num]Id, [num]pos);
   //#!Get max width of string drawn in a given text element.
