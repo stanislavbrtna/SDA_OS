@@ -139,6 +139,8 @@ void settings_sd_mount() {
   if(svp_mount()) {
     sda_show_error_message(SCR_CARD_ERROR_MSG);
   } else {
+    svp_switch_main_dir();
+    svp_chdir("APPS");
     gr2_set_str(optMntSel, SD_UMOUNT, &sda_sys_con);
 
     if (svpSGlobal.sdaDeviceLock == DEVICE_UNLOCKED) {
