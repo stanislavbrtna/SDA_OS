@@ -29,12 +29,17 @@ void sda_bdb_write_u32(svp_file *f, uint32_t val);
 uint32_t sda_bdb_new_offset(sda_bdb *db);
 uint32_t sda_bdb_truncate(sda_bdb *db, uint32_t position, uint32_t size);
 uint32_t sda_bdb_truncate_upto(sda_bdb *db, uint32_t position, uint32_t size);
-uint32_t sda_bdb_insert_space(sda_bdb *db, uint32_t position, uint32_t size);
 uint8_t sda_bdb_check_table_space(sda_bdb *db, uint32_t size);
 uint32_t sda_bdb_insert_space_indb(sda_bdb *db, uint32_t position, uint32_t size);
 uint32_t sda_bdb_insert_freeblock(sda_bdb *db, uint32_t position);
 uint32_t sda_bdb_write_data(sda_bdb *db, uint32_t position, void* data, uint32_t size);
 void sda_bdb_sync_table(sda_bdb *db);
+uint32_t sda_bdb_insert_free_generic(
+    sda_bdb *db, 
+    uint32_t position,
+    uint32_t size, 
+    uint32_t file_end
+);
 
 
 #endif

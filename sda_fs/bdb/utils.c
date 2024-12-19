@@ -55,15 +55,40 @@ uint32_t sda_bdb_new_offset(sda_bdb *db) {
   return offset;
 }
 
+uint32_t sda_bdb_truncate_generic(sda_bdb *db, uint32_t position, uint32_t size, uint32_t end) {
+  uint8_t buffer[512];
+
+  uint32_t file_end = end;
+  
+  uint32_t copy_size = sizeof(buffer);
+
+  if(position + size + sizeof(buffer) > file_end) {
+    //printf("SHORT\n");
+    svp_fseek(&(db->fil), position + size);
+    copy_size = file_end - position;
+    svp_fread(&(db->fil), &buffer, copy_size);
+    svp_fseek(&(db->fil), position);
+    svp_fwrite(&(db->fil), &buffer, copy_size);
+    return 1;
+  }
+
+  for(uint32_t i = 0; position + size + (i)*sizeof(buffer) < file_end; i++) {
+    //printf("LONG i: %u pos: %u size: %u\n", i, position + size + i*sizeof(buffer), size);
+    svp_fseek(&(db->fil), position + size + i*sizeof(buffer));
+    svp_fread(&(db->fil), &buffer, sizeof(buffer));
+    svp_fseek(&(db->fil), position + i*sizeof(buffer));
+    svp_fwrite(&(db->fil), &buffer, sizeof(buffer));
+  }
+
+  return 1;
+}
+
 
 uint32_t sda_bdb_truncate(sda_bdb *db, uint32_t position, uint32_t size) {
   uint32_t file_end = svp_get_size(&(db->fil));
-  for(uint32_t i = position; i + size < file_end; i++) {
-    svp_fseek(&(db->fil), i + size);
-    uint8_t c = svp_fread_u8(&(db->fil));
-    svp_fseek(&(db->fil), i);
-    svp_fwrite_u8(&(db->fil), c);
-  }
+  
+  sda_bdb_truncate_generic(db, position, size, file_end);
+
   svp_fseek(&(db->fil), file_end - size);
   svp_truncate(&(db->fil));
   return 1;
@@ -72,29 +97,10 @@ uint32_t sda_bdb_truncate(sda_bdb *db, uint32_t position, uint32_t size) {
 
 // move table content
 uint32_t sda_bdb_truncate_upto(sda_bdb *db, uint32_t position, uint32_t size) {
+  uint8_t buffer[512];
+
   uint32_t file_end = db->current_table.usedup_size + db->current_table_offset;
-  
-  for(uint32_t i = position; i + size < file_end; i++) {
-    svp_fseek(&(db->fil), i + size);
-    uint8_t c = svp_fread_u8(&(db->fil));
-    svp_fseek(&(db->fil), i);
-    svp_fwrite_u8(&(db->fil), c);
-  }
-  return 1;
-}
-
-
-uint32_t sda_bdb_insert_space(sda_bdb *db, uint32_t position, uint32_t size) {
-  uint32_t file_end = svp_get_size(&(db->fil));
-
-  svp_fseek(&(db->fil), svp_get_size(&(db->fil)));
-
-  for(uint32_t i = 0; i <= file_end - position; i++) {
-    svp_fseek(&(db->fil), file_end - i);
-    uint8_t c = svp_fread_u8(&(db->fil));
-    svp_fseek(&(db->fil), file_end + size - i);
-    svp_fwrite_u8(&(db->fil), c);
-  }
+  sda_bdb_truncate_generic(db, position, size, file_end);
   return 1;
 }
 
@@ -118,23 +124,26 @@ uint32_t sda_bdb_insert_space_indb(sda_bdb *db, uint32_t position, uint32_t size
   sda_bdb_check_table_space(db, size);
   
   uint32_t file_end = db->current_table_offset + db->current_table.usedup_size;
-  svp_fseek(&(db->fil), svp_get_size(&(db->fil)));
+  
+  sda_bdb_insert_free_generic( db, position, size, file_end);
 
-  for(uint32_t i = 0; i <= file_end - position; i++) {
-    svp_fseek(&(db->fil), file_end - i);
-    uint8_t c = svp_fread_u8(&(db->fil));
-    svp_fseek(&(db->fil), file_end + size - i);
-    svp_fwrite_u8(&(db->fil), c);
-  }
   return 1;
 }
 
 
 uint32_t sda_bdb_insert_freeblock(sda_bdb *db, uint32_t position) {
-  uint32_t file_end = svp_get_size(&(db->fil));
+  sda_bdb_insert_free_generic(db, position, SDA_BDB_BLOCKSIZE, svp_get_size(&(db->fil)));
+  return 1;
+}
+
+uint32_t sda_bdb_insert_free_generic(
+    sda_bdb *db, 
+    uint32_t position,
+    uint32_t size, 
+    uint32_t file_end
+){
   uint8_t buffer[512];
 
-  uint32_t size = SDA_BDB_BLOCKSIZE;
   // TODO: cleanup this mess
   //printf("eof at: %u, pos:%u, %u should be moved\n", file_end, position, file_end - position);
 
