@@ -517,6 +517,7 @@ uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db)
 
         if(size > e.entry_size) {
           uint32_t entry_pos = svp_ftell(&(db->fil));
+          //printf("size new: %u, size old: %u, diff: %u\n", size, e.entry_size, size - e.entry_size);
           sda_bdb_insert_space_indb(db, entry_pos, size - e.entry_size);
           svp_fseek(&(db->fil), entry_pos);
           svp_fwrite(&(db->fil), data, size);
