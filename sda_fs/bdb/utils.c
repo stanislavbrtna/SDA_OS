@@ -161,27 +161,20 @@ uint32_t sda_bdb_insert_free_generic(
   }
 
   uint32_t i = 0;
-  for(i = 0; file_end - (i + 1)*sizeof(buffer) > position; i++) {
+  for(i = 0; (file_end - (i + 1)*sizeof(buffer) > position) && (file_end > (i + 1)*sizeof(buffer)); i++) {
     svp_fseek(&(db->fil), file_end - (i + 1)*sizeof(buffer));   
     //printf("i: %u, bs/b: %u reading: %x writing:%x \n", i, SDA_BDB_BLOCKSIZE / sizeof(buffer), file_end - (i + 1)*sizeof(buffer), file_end + size - (i + 1)*sizeof(buffer));
     svp_fread(&(db->fil), buffer, sizeof(buffer));
     svp_fseek(&(db->fil), file_end + size - (i + 1)*sizeof(buffer));
     svp_fwrite(&(db->fil), buffer, sizeof(buffer));
-
-    if(file_end < (i + 1)*sizeof(buffer)) {
-      // break to prevent overflow...
-      break;
-    }
   }
 
-  if(file_end - (i)*sizeof(buffer) > position) {
+  if((file_end - (i)*sizeof(buffer) > position)) {
     //printf("moving rest... from: %x, size: %u (end: %u, ibuf:%u, pos:%u)\n", position, file_end - (i)*sizeof(buffer) - position, file_end, (i)*sizeof(buffer), position);
     svp_fseek(&(db->fil), position);
     svp_fread(&(db->fil), buffer, file_end - (i)*sizeof(buffer) - position);
     svp_fseek(&(db->fil), position + size);
     svp_fwrite(&(db->fil), buffer, file_end - (i)*sizeof(buffer) - position);
-    svp_fseek(&(db->fil), position);
-    return 1;
   }
 
   svp_fseek(&(db->fil), position);
