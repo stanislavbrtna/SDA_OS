@@ -97,8 +97,6 @@ uint32_t sda_bdb_truncate(sda_bdb *db, uint32_t position, uint32_t size) {
 
 // move table content
 uint32_t sda_bdb_truncate_upto(sda_bdb *db, uint32_t position, uint32_t size) {
-  uint8_t buffer[512];
-
   uint32_t file_end = db->current_table.usedup_size + db->current_table_offset;
   sda_bdb_truncate_generic(db, position, size, file_end);
   return 1;
