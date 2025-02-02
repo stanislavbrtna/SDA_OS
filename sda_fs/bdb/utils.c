@@ -142,7 +142,7 @@ uint32_t sda_bdb_insert_free_generic(
     uint32_t file_end
 ){
   uint8_t buffer[512];
-  //printf("eof at: %x, pos:%x, %u should be moved\n", file_end, position, file_end - position);
+  //printf("eof at: %x, pos:%x, size: %u, %u should be moved\n", file_end, position, size, file_end - position);
 
   if(file_end <= position) {
     //printf("writing at the eof\n");
@@ -169,6 +169,11 @@ uint32_t sda_bdb_insert_free_generic(
     svp_fread(&(db->fil), buffer, sizeof(buffer));
     svp_fseek(&(db->fil), file_end + size - (i + 1)*sizeof(buffer));
     svp_fwrite(&(db->fil), buffer, sizeof(buffer));
+
+    if(file_end < (i + 1)*sizeof(buffer)) {
+      // break to prevent overflow...
+      break;
+    }
   }
 
   if(file_end - (i)*sizeof(buffer) > position) {
