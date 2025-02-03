@@ -89,13 +89,19 @@ void svmPrecacheGetName(uint8_t* buffer, uint32_t len, int32_t crc, uint8_t* ext
 }
 
 
-void svmPrecacheGetFingerprint(uint8_t * runtimeFingerprint, uint16_t len, uint32_t siz) {
+void svmPrecacheGetFingerprint(uint8_t * runtimeFingerprint, uint16_t len, int mtime, uint32_t siz) {
+  uint8_t buff[20];
   for(int i = 0; i < len; i++){
     runtimeFingerprint[i] = 0;
   }
 
   sda_int_to_str(runtimeFingerprint, siz, len);
   sda_str_add(runtimeFingerprint, "b\n");
+  
+  sda_int_to_str(buff, mtime, sizeof(buff) - 1);
+  sda_str_add(runtimeFingerprint, buff);
+  sda_str_add(runtimeFingerprint, "\n");
+  
   #ifdef PC
   sda_str_add(runtimeFingerprint, "Platform:PC\n");
   #else
@@ -125,9 +131,10 @@ uint8_t svmPrecacheFile(uint8_t *fname) {
   svp_file fil;
   svp_fopen_rw(&fil, fname);
   uint32_t siz = svp_get_size(&fil);
+  int32_t  tim = svp_get_mtime(&fil);
   svp_fclose(&fil);
 
-  if(svmPreCachedExists(crc, siz)) {
+  if(svmPreCachedExists(crc, tim, siz)) {
     printf("%s: Already cached (%s)\n",__FUNCTION__, fname);
     return 0;
   }
@@ -177,7 +184,7 @@ uint8_t svmPrecacheFile(uint8_t *fname) {
   }
 
   uint8_t runtimeFingerprint[256];
-  svmPrecacheGetFingerprint(runtimeFingerprint, sizeof(runtimeFingerprint), siz);
+  svmPrecacheGetFingerprint(runtimeFingerprint, sizeof(runtimeFingerprint), tim, siz);
   
   svp_fwrite(&svmFile, runtimeFingerprint, sizeof(runtimeFingerprint));
   svp_fclose(&svmFile);
@@ -188,7 +195,7 @@ uint8_t svmPrecacheFile(uint8_t *fname) {
 }
 
 
-uint8_t svmPreCachedExists(int32_t crc, uint32_t siz) {
+uint8_t svmPreCachedExists(int32_t crc, int32_t tim, uint32_t siz) {
   uint8_t fileBuffer[256];
   
   svmPrecacheGetName(fileBuffer, sizeof(fileBuffer), crc, (uint8_t *) ".stc");
@@ -228,7 +235,7 @@ uint8_t svmPreCachedExists(int32_t crc, uint32_t siz) {
   svp_fread(&svmFile, runtimeFingerprint, sizeof(runtimeFingerprint));
   svp_fclose(&svmFile);
 
-  svmPrecacheGetFingerprint(myFingerprint, sizeof(myFingerprint), siz);
+  svmPrecacheGetFingerprint(myFingerprint, sizeof(myFingerprint), tim, siz);
 
   if(svp_strcmp(runtimeFingerprint, myFingerprint) == 0) {
     printf("%s: Error: OS Fingerprint mismatch! (%s)\n",__FUNCTION__, fileBuffer);

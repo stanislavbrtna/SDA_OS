@@ -29,7 +29,7 @@ static uint8_t subHeadingStr[64];
 
 static uint16_t tHeading;
 static uint16_t tSubheading;
-static uint16_t time;
+static uint16_t tTime;
 static uint16_t date;
 static uint16_t screen;
 
@@ -107,7 +107,7 @@ void sda_homescreen_configure() {
   set_element(tHeading, &conffile, (uint8_t *)"heading", headingStr);
   set_element(tSubheading, &conffile, (uint8_t *)"sub_heading", subHeadingStr);
 
-  set_element(time, &conffile, (uint8_t *)"time", 0);
+  set_element(tTime, &conffile, (uint8_t *)"time", 0);
   set_element(date, &conffile, (uint8_t *)"date", 0);
 
   svp_chdir(dirbuf);
@@ -137,7 +137,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     screen = gr2_add_screen(&sda_sys_con);
     tHeading = gr2_add_text(0, 1, 12, 3,(uint8_t *)"S!   PDA", screen, &sda_sys_con);
     tSubheading = gr2_add_text(1, 3, 9, 4,(uint8_t *)"", screen, &sda_sys_con);
-    time = gr2_add_text(3, 4, 12, 6,(uint8_t *)"??:??", screen, &sda_sys_con);
+    tTime = gr2_add_text(3, 4, 12, 6,(uint8_t *)"??:??", screen, &sda_sys_con);
     date = gr2_add_text(3, 6, 12, 7,(uint8_t *)"?. ?. 20??", screen, &sda_sys_con);
     btnApps = gr2_add_icon(8, 12, 10, 14,(uint8_t *)"", (uint8_t *)"Icons/apps.p16", screen, &sda_sys_con);
     btnLock = gr2_add_icon(0, 13, 1, 14, (uint8_t *)"", (uint8_t *)"Icons/lock.p16", screen, &sda_sys_con);
@@ -145,7 +145,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
     btnQuickLaunch = gr2_add_icon(7, 12, 8, 14,(uint8_t *)"", (uint8_t *)"Icons/quick.p16", screen, &sda_sys_con);
     gr2_set_visible(btnUnLock, 0, &sda_sys_con);
     gr2_text_set_size(tHeading, 70, &sda_sys_con);
-    gr2_text_set_size(time, 70, &sda_sys_con);
+    gr2_text_set_size(tTime, 70, &sda_sys_con);
     oldtime = 5566; // absurd value, so current minute would not equal oldmin and time would update after init
 
     if (svp_fexists((uint8_t *)"APPS/background.p16")) {
@@ -186,7 +186,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
       time_string[3] = svpSGlobal.min / 10 + 48;
       time_string[4] = svpSGlobal.min % 10 + 48;
       time_string[5] = 0;
-      gr2_set_str(time, time_string, &sda_sys_con);
+      gr2_set_str(tTime, time_string, &sda_sys_con);
       oldtime = ((uint16_t)svpSGlobal.hour * 128) + (uint16_t)svpSGlobal.min;
     }
 

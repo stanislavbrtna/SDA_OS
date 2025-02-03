@@ -467,6 +467,38 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get last modification time
+  //#!    sys.fs.mtime();
+  //#!    sys.fs.mtime([num] index);
+  //#!Returns last modified time of a openned file.
+  //#!In sda timestamp format.
+  //#!
+  //#!Return: [num] size in bytes
+  if (sysFuncMatch(argS->callId, "mtime", s)) {
+    uint16_t file_index = 0;
+
+    if(argS->usedup == 0) {
+      if(sysExecTypeCheck(argS, argType, 0, s)) {
+        return 0;
+      }
+    } else {
+      argType[1] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+      file_index = argS->arg[1].val_s;
+    }
+
+    if (fr_open[file_index]) {
+      result->value.val_u = svp_get_mtime(&readFil[file_index]);
+    }else{
+      result->value.val_u = 0;
+    }
+    result->type = SVS_TYPE_NUM;
+
+    return 1;
+  }
+
   //#!##### Close file
   //#!    sys.fs.close();
   //#!    sys.fs.close([num] index);
