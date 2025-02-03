@@ -468,32 +468,18 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   //#!##### Get last modification time
-  //#!    sys.fs.mtime();
-  //#!    sys.fs.mtime([num] index);
-  //#!Returns last modified time of a openned file.
+  //#!    sys.fs.mtime([str] fname);
+  //#!Returns last modified time of a given fname.
   //#!In sda timestamp format.
   //#!
-  //#!Return: [num] size in bytes
+  //#!Return: [num] timestamp
   if (sysFuncMatch(argS->callId, "mtime", s)) {
-    uint16_t file_index = 0;
-
-    if(argS->usedup == 0) {
-      if(sysExecTypeCheck(argS, argType, 0, s)) {
-        return 0;
-      }
-    } else {
-      argType[1] = SVS_TYPE_NUM;
-      if(sysExecTypeCheck(argS, argType, 1, s)) {
-        return 0;
-      }
-      file_index = argS->arg[1].val_s;
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
     }
 
-    if (fr_open[file_index]) {
-      result->value.val_u = svp_get_mtime(&readFil[file_index]);
-    }else{
-      result->value.val_u = 0;
-    }
+    result->value.val_u = svp_get_mtime(s->stringField + argS->arg[1].val_str);
     result->type = SVS_TYPE_NUM;
 
     return 1;

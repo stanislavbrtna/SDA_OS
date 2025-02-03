@@ -53,7 +53,8 @@ uint8_t svp_fexists(uint8_t *fname);
 uint32_t svp_get_size(svp_file *fp);
 uint32_t svp_ftell(svp_file *fp);
 
-int32_t svp_get_mtime(svp_file *fp);
+int32_t  svp_get_mtime(uint8_t *fname);
+uint32_t svp_get_size_n(uint8_t *fname);
 
 uint8_t svp_unlink(uint8_t* path);
 uint8_t svp_rmdir(uint8_t* path);

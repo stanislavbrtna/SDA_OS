@@ -131,7 +131,7 @@ uint8_t svmPrecacheFile(uint8_t *fname) {
   svp_file fil;
   svp_fopen_rw(&fil, fname);
   uint32_t siz = svp_get_size(&fil);
-  int32_t  tim = svp_get_mtime(&fil);
+  int32_t  tim = svp_get_mtime(fname);
   svp_fclose(&fil);
 
   if(svmPreCachedExists(crc, tim, siz)) {

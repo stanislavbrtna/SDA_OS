@@ -60,6 +60,12 @@ Return: [num] pos
 Returns size of openned file.
 
 Return: [num] size in bytes
+##### Get last modification time
+    sys.fs.mtime([str] fname);
+Returns last modified time of a given fname.
+In sda timestamp format.
+
+Return: [num] timestamp
 ##### Close file
     sys.fs.close();
     sys.fs.close([num] index);
