@@ -63,6 +63,7 @@ uint8_t sda_bdb_select_row_next(sda_bdb *db) {
   uint32_t offset = db->current_table.current_row_offset;
 
   if(!db->current_table.current_row_valid) {
+    printf("%s: Warn: Current row invalid, nothing to do...!\n", __FUNCTION__);
     return 0;
   }
   
@@ -94,7 +95,7 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
   uint32_t offset = db->current_table.current_row_offset;
   
   if(!db->current_table.current_row_valid) {
-    printf("%s: invalid row selected!\n", __FUNCTION__);
+    printf("%s: current row is invalid!\n", __FUNCTION__);
     return 0;
   }
 
@@ -205,6 +206,15 @@ loop(match) {
 
 process results
 
+Note:
+if you are droping row in a search loop, next row after the one dropped is selected.
+TODO: this should perhaps be fixed some day
+
+loop(match) {
+  drop_row()
+  // next row is now redundant
+}
+
 */
 
 
@@ -230,6 +240,7 @@ uint8_t sda_bdb_select_row_str(
   }
 
   if(!db->current_table.current_row_valid) {
+    printf("%s: current row is invalid!\n", __FUNCTION__);
     return 0;
   }
 

@@ -427,7 +427,9 @@ uint8_t sda_bdb_drop_row(sda_bdb *db) {
   db->current_table.row_count--;
   db->current_table.usedup_size -= row_size + sizeof(uint32_t);
 
-  db->current_table.current_row_valid = 0;
+  if (db->current_table.current_row_offset >= db->current_table_offset + db->current_table.usedup_size) {
+    db->current_table.current_row_valid = 0;
+  }
 
   sda_bdb_sync(db);
   return 1;
