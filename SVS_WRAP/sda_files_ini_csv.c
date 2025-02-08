@@ -1010,6 +1010,10 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sda_bdb_get_entry(s->stringField+argS->arg[1].val_str, &buffer, sizeof(buffer), &dbFile)) {
       result->value.val_str = strNew(buffer, s);
     } else {
+      printf(
+        "WARN: sys.fs.db.getEntryStr: get_entry failed (col: %s), returning default.\n",
+        s->stringField+argS->arg[1].val_str
+      );
       result->value.val_str = strNew(s->stringField+argS->arg[2].val_str, s);
     }
 
@@ -1038,6 +1042,10 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sda_bdb_get_entry(s->stringField+argS->arg[1].val_str, &val, sizeof(val), &dbFile)) {
       result->value.val_s = val;
     } else {
+      printf(
+        "WARN: sys.fs.db.getEntryNum: get_entry failed (col: %s), returning default.\n",
+        s->stringField+argS->arg[1].val_str
+      );
       result->value.val_s = argS->arg[2].val_s;
     }
 
