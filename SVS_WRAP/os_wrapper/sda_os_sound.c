@@ -47,6 +47,8 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Makes sound of given frequency and duration, calls given callback afterwards.
   //#!Internally calls sys.snd.beepTime and sys.snd.beepFreq, so calling sys.snd.beep();
   //#!will produce tone with frequency nad duration of last sys.snd.beepC call.
+  //#!If 0 is given as frequency_hz, only callback will be performed afrer given duration.
+  //#!If empty string is passed as callback, no callback will be performed. 
   //#!
   //#!Return: None
    if (sysFuncMatch(argS->callId, "beepC", s)) {
@@ -57,9 +59,11 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 3, s)) {
       return 0;
     }
-    svp_beep_set_pf(argS->arg[1].val_u);
-    svp_beep_set_t(argS->arg[2].val_u);
-    svp_beep();
+    if(argS->arg[1].val_u != 0) {
+      svp_beep_set_pf(argS->arg[1].val_u);
+      svp_beep_set_t(argS->arg[2].val_u);
+      svp_beep();
+    }
     svmBeepSetCallback(s->stringField + argS->arg[3].val_str, argS->arg[2].val_u);
     return 1;
   }

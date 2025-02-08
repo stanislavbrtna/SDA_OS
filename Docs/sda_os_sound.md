@@ -9,6 +9,8 @@ Return: None
 Makes sound of given frequency and duration, calls given callback afterwards.
 Internally calls sys.snd.beepTime and sys.snd.beepFreq, so calling sys.snd.beep();
 will produce tone with frequency nad duration of last sys.snd.beepC call.
+If 0 is given as frequency_hz, only callback will be performed afrer given duration.
+If empty string is passed as callback, no callback will be performed. 
 
 Return: None
 ##### Set beep param to default
