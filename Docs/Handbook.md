@@ -334,6 +334,20 @@ Return: [num] id (1 - 3), 0 - Error, probably no empty icon spot
 Removes notification icon with given id.
 
 Return: [num] 1 - ok, 0 - Error
+#### Default Icons
+ List of icons
+| Define       | Descrition            |
+|   ---        |  ---                  |
+| ICON_NONE    | Box with questionmark |
+| ICON_BACK    | Back arrow            |
+| ICON_FORWARD | Forward arrow         |
+
+Hint: Unknown icons are drawn as ICON_NONE 
+##### Add an os icon to a button 
+    sys.os.gui.setIcon([num] id, [num] icon_define);
+Adds an icon to a given button. Icons are specified with system defines.
+
+Return: none
 #### Sound
 ##### Beep the speaker
     sys.snd.beep();
@@ -519,10 +533,18 @@ Return: [str] decryptedString
 | PIN_PULLUP   | Pin set as input with pullup           |
 | PIN_PULLDOWN | Pin set as input with no pull resistor |
 
-#### LCD Functions
+#### Power Functions
+##### Lock system suspend
+    sys.hw.lockSuspend([num]val);
+Sets sleep lock value. On 1 system won't go to anny deeper
+sleep mode than SDA_PWR_MODE_SLEEP_LOW, regardless of the screen state.
+
+Return: None
 ##### Lock LCD sleep
     sys.hw.lockSleep([num]val);
-Sets sleep lock value. On 1 system wont go to sleep.
+Sets sleep lock value. On 1 system won't shut down LCD automatically.
+User can still shut down the screen with power button,
+in that case, SDA will go in the SDA_PWR_MODE_SLEEP_LOW mode.
 
 Return: None
 ##### Turn on the LCD
@@ -885,6 +907,12 @@ Return: [num] pos
 Returns size of openned file.
 
 Return: [num] size in bytes
+##### Get last modification time
+    sys.fs.mtime([str] fname);
+Returns last modified time of a given fname.
+In sda timestamp format.
+
+Return: [num] timestamp
 ##### Close file
     sys.fs.close();
     sys.fs.close([num] index);
@@ -910,7 +938,7 @@ Changes working directory.
 call sys.fs.chDir(0); or sys.fs.chDir(); to get to the DATA context
 call sys.fs.chDir(1); to get to the APPS context
 
-Return: 1 - ok, 0 - fail
+Return: [num] 1 - ok, 0 - fail
 ##### Get current working directory
     sys.fs.getCWD();
 Returns current working directory
@@ -1113,6 +1141,133 @@ Returns 1 if value matches portion of a value in a given key.
 Case sensitive switch switches if the thing is case sensitive...
 
 Return: [num] isMatch (0 - no match, 1 - match, -1 - key not found)
+#### Binary DB API
+
+Sda supports its own binary data format. It is quick, universal
+but not easily readable or recoverable when data corruption occurs.  
+
+##### Create new db file
+    sys.fs.db.new([str]fname);
+Creates new db file.
+
+Return: [num]1 on succes.
+##### Open db file
+    sys.fs.db.open([str]fname);
+Opens existing db file.
+
+Return: [num]1 on succes.
+##### Sync file
+    sys.fs.db.sync();
+Writes all the file changes to the card.
+Same as when file is closed, but can be triggered on demand.
+
+Return: [num]1 on succes.
+##### Close db file
+    sys.fs.db.close();
+Close db file.
+
+Return: [num]1 on succes.
+##### Create new table
+    sys.fs.db.newTable([str]name, [num] columns);
+Creates new table
+
+Return: [num] 1 if ok.
+##### Drop Data
+    sys.fs.db.dropAllRows();
+Drops all data from currently selected table.
+
+Return: [num] 1 if ok.
+##### Drop table
+    sys.fs.db.dropTable();
+Drops currently selected table.
+
+Return: [num] 1 if ok.
+##### Set column type
+    sys.fs.db.setColumn([num] id, [str]name, [num] type);
+Sets name and type of given column
+
+Return: [num] 1 if ok.
+##### Enable ID field
+    sys.fs.db.idEnable([str]fieldName);
+Sets given column as an id field.
+
+Return: [num] 1 if ok.
+##### Select table
+    sys.fs.db.selectTable([str]name);
+Selects existing table
+
+Return: [num] 1 if ok.
+##### New row
+    sys.fs.db.newRow();
+Adds new row to the selected table.
+New row is selected automatically.
+
+Return: [num] 1 if ok.
+##### Drop row
+    sys.fs.db.dropRow();
+Drops current row from the slected table.
+
+Return: [num] 1 if ok.
+##### Get Row count
+    sys.fs.db.getRowCount();
+Gets row count of the selected table.
+
+Return: [num] row count.
+##### Select row
+    sys.fs.db.selectRow([num]row_n);
+Select row with given number (not an id).
+Usefull for selecting row 0 and then using *sys.fs.db.nextRow();*
+to read the full table line by line.
+Note: When app is suspended, selected row is forgotten.
+
+Return: [num] 1 if ok.
+##### Select row by id
+    sys.fs.db.selectRowId([num]id);
+Select row with given id. (Id field must be enabled)
+
+Return: [num] 1 if ok.
+##### Next row
+    sys.fs.db.nextRow();
+Selects next available row.
+
+Return: [num] 1 if ok.
+##### Select next matching row
+    sys.fs.db.selectRowNum([str]column, [num]val);
+Selectcs next row where given column has given value
+
+Return: [num] 1 if ok.
+##### Select next row matching string
+    sys.fs.db.selectRowStr([str]column, [str]string, [num]partial, [num]case_sensitive);
+Selectcs next row where given column has given value.
+
+ | Parameter      | Value | Meaning                                 |
+ | ---            | ---   | ---                                     |
+ | partial        |   1   | string can be only a part odf the entry |
+ |                |   0   | full string must be contained           |
+ | case_sensitive |   1   | strings are matched case-sensitive      |
+ |                |   0   | strings are matched non case-sensitive  |
+
+Return: [num] 1 if entry was found.
+##### Write text entry
+    sys.fs.db.setEntryStr([str]col_name, [str]value);
+Sets db entry
+
+Return: [num] 1 if ok.
+##### Write numeric entry
+    sys.fs.db.setEntryNum([str]col_name, [num]value);
+Sets db entry
+
+Return: [num] 1 if ok.
+##### Read text entry
+    sys.fs.db.getEntryStr([str]col_name, [str]default);
+Gets db entry
+
+Return: [str] entry or default
+##### Read num entry
+    sys.fs.db.getEntryNum([str]col_name, [num]default);
+Gets db entry
+
+Return: [num] entry or default
 #### Overlay API
 ##### Set overlay screen
     sys.o.setScr([num]screen_id);
@@ -1429,6 +1584,16 @@ Return: [num]param
 |  ALIGN_RIGHT  |  5     |  Text align: Right  |
 |  ALIGN_CENTER |  5     |  Text align: Center |
 
+##### Available fonts
+|  Constant     |  Value |  Meaning              |
+|  ---          |  ---   |  ---                  |
+|  FONT_12      |  12    |  Font 12px            |
+|  FONT_12_M    |  13    |  Font 12px, monospace |
+|  FONT_18      |  18    |  Font 18px (Default)  |
+|  FONT_32      |  32    |  Font 32px            |
+|  FONT_70      |  70    |  Font 70px            |
+|  FONT_87      |  87    |  Font 87px            |
+
 
 #### Element constructors
 
@@ -1646,6 +1811,12 @@ Sets aplication gr2 context rounded init mode.
 In rounded init mode all elements are initialized as rounded type.
 
 Return: None
+##### Set screen background redraw
+    sys.gui.setBgRedraw([num]screen_id, [num]val);
+Enables or disables redrawing background on a screen update.
+Usefull for iproving redraw speed in scrolling texts.
+
+Return: None
 ##### Set elemnent size and position
     sys.gui.setXYXY([num]Id, [num] x1, [num] y1, [num] x2, [num] y2);
 Sets position of element inside screen.
@@ -1801,10 +1972,33 @@ Return: [num]isPassword
     sys.gui.setTxtFit([num]Id, [num]val);
     sys.gui.setTexFit([num]Id, [num]val); # TBR
 Sets automatic line-breaking. val: 1 - enabled, 0 - disabled
-Position of first line break is stored in the parameter.
 
 Return: None
-##### Set text fit
+##### Set selected text inversion
+    sys.gui.setTxtInvert([num]Id, [num]val);
+When inverted text is selected, fill color is used for text fied background.
+
+Return: None
+##### Get selected text inversion
+    sys.gui.getTxtInvert([num]Id);
+Get the text inversion value.
+
+Return: [num] Text invert value
+##### Get text width
+    sys.gui.getTxtWidth([num]Id, [num]pos);
+Get max width of string drawn in a given text element.
+Works with text field params like font size and text fit.
+pos: cursor position (0 for full string)
+
+Return: Text width in px
+##### Get text height
+    sys.gui.getTxtHeight([num]Id, [num]pos);
+Get max height of string drawn in a given text element.
+Works with text field params like font size and text fit.
+pos: cursor position (0 for full string)
+
+Return: Text height in px
+##### Set text editable
     sys.gui.setTxtEd([num]Id, [num]val);
     sys.gui.setTexEd([num]Id, [num]val); # TBR
 Sets text field as editable.
@@ -1915,7 +2109,8 @@ Draws text
 Return: None
 ##### Set text to fit specified width
     sys.ds.setTextFit([num] enable, [num] width);
-Sets max width for next drawn text
+Sets max width for next drawn text.
+(Redraw of UI elements might reset it)
 
 Return: None
 ##### Get text width

@@ -29,7 +29,7 @@ arg0 - arg2: call arguments passed from sys.os.subProcess
 Update function is called each update cycle, when the app
 is active and in the foreground.
 #### Optional functions
-User might also implement optional functions. OS will call these functions under circumstanctes defined below.
+User might also implement optional functions. OS will call these functions under circumstances defined below.
 
 ##### Exit function
     function exit {}

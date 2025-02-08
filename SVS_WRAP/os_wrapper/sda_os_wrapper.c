@@ -52,8 +52,9 @@ SOFTWARE.
 //#!    function update
 //#!Update function is called each update cycle, when the app
 //#!is active and in the foreground.
+//#!
 //#!#### Optional functions
-//#!User might also implement optional functions. OS will call these functions under circumstanctes defined below.
+//#!User might also implement optional functions. OS will call these functions under circumstances defined below.
 //#!
 //#!##### Exit function
 //#!    function exit {}
@@ -70,11 +71,12 @@ SOFTWARE.
 //#!init arguments are passed to the wakeup function.
 //#!
 
-//#!#### SVP API Level history
+//#!#### SDA API Level history
 //#!
 //#!API level given by *sys.os.getVer* etc. works like this: 
-//#!1000 - SDA version 1.0.0 with all its features
-//#! ...
+//#!10510 - SDA version 1.5.1 with all its features
+//#!
+//#!Note: before 1.4 sub-version used only one digit
 //#!1120 - SDA version 1.1.2 with all its features
 //#!
 
