@@ -124,9 +124,19 @@ void sda_ql_overlay_handle(uint8_t init) {
 
   for(int32_t i = 0; i < SDA_QUICK_LAUNCH_POSITIONS; i++) {
     if (gr2_get_event(qlIcons[i].id, &sda_sys_con) == EV_RELEASED) {
-      if(svmLaunch(qlIcons[i].fPath, 0) == 0) {
+      uint8_t type = sda_menu_detect_type(qlIcons[i].fPath);
+
+      if(type == OBJ_TYPE_MENU) {
+        sda_app_screen_load(qlIcons[i].fPath, qlIcons[i].appName);
+        destroyOverlay();
+        sda_slot_on_top(SDA_SLOT_APPLIST);
+        return;
+      }
+
+      if(type == OBJ_TYPE_APP && svmLaunch(qlIcons[i].fPath, 0) == 0) {
         sda_show_error_message((uint8_t *)"Error occured while launching file!");
       }
+
       gr2_set_event(qlIcons[i].id, EV_NONE, &sda_sys_con);
       ql_overlay_flag = 0;
       setRedrawFlag();

@@ -22,8 +22,11 @@ SOFTWARE.
 
 #ifndef SVP_SCREENS_H
 #define SVP_SCREENS_H
-
 #include "../SDA_OS.h"
+
+#define OBJ_TYPE_ERROR 0
+#define OBJ_TYPE_MENU  1
+#define OBJ_TYPE_APP   2 
 
 extern uint16_t slotScreen[];
 extern uint16_t slotOnTop[];
@@ -33,6 +36,9 @@ extern uint16_t mainScr;
 uint16_t svp_homeScreen(uint8_t init, uint8_t top);
 uint16_t svp_appScreen(uint8_t init, uint8_t top);
 uint16_t sda_settings_gui(uint8_t init, uint8_t top);
+
+uint8_t sda_menu_detect_type(uint8_t * fname);
+void sda_app_screen_load(uint8_t* folder, uint8_t* folder_label);
 
 void sda_homescreen_configure();
 

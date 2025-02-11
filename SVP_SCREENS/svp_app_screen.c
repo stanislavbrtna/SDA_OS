@@ -25,18 +25,14 @@ SOFTWARE.
 #define MAX_APP_COUNT 10
 #define MAX_FOLDER_STACK 5
 
-#define OBJ_TYPE_ERROR 0
-#define OBJ_TYPE_MENU 1
-#define OBJ_TYPE_APP 2 
-
 /* APP screen
 feature request:
 de-init
 sd-unmounted lock state
 */
 
-static uint8_t * selectedObject;
-static uint8_t * selectedObjectStr;
+static uint8_t * selectedObjectPath;
+static uint8_t * selectedObjectName;
 static uint16_t innerPage;
 
 static uint8_t folderStack[MAX_FOLDER_STACK][APP_NAME_LEN+1];
@@ -44,11 +40,19 @@ static uint8_t folderStackStr[MAX_FOLDER_STACK][APP_NAME_LEN+1];
 static uint16_t folder_stack_max;
 static uint8_t appNum;
 
+static uint16_t folder_stack_leave;
+
 static uint16_t appScreen;
 static uint16_t inScreen;
+static uint8_t  inScrReloaded;
+
+static uint8_t  labelbuff[APP_NAME_LEN+1];
+static uint16_t textLabel;
+static uint16_t btnBack;
 
 // static headers
 void inScreenResizer(uint16_t id);
+static void set_inscreen(uint8_t* folder_path, uint8_t* folder_label);
 
 
 void add_button(uint16_t x, svp_csvf appsCSV, uint8_t *appFName, uint8_t *appIcoName, uint8_t *appHumanName, uint16_t *appFNameBtn, uint16_t retScreen) {
@@ -159,12 +163,12 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
     // normal event handling
     for(x = 0; x < appCount; x++) {
       if (appFNameBtn[x] && gr2_clicked(appFNameBtn[x], &sda_sys_con)) {
-        selectedObject = appFName[x];
-        selectedObjectStr = appHumanName[x];
+        selectedObjectPath = appFName[x];
+        selectedObjectName = appHumanName[x];
         retval = 1;
 
 #ifdef APP_SCREEN_DEBUG
-        printf("inner_handler: clicked selectedObject:%s selectedObjectStr:%s \n", selectedObject, selectedObjectStr);
+        printf("inner_handler: clicked selectedObjectPath:%s selectedObjectName:%s \n", selectedObjectPath, selectedObjectName);
 #endif
         break;
       }
@@ -191,17 +195,15 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
 }
 
 
-static void add_to_stack(uint8_t * fname) {
-  uint16_t x;
-  folder_stack_max++;
-  for (x = 0; x < APP_NAME_LEN; x++) {
-    if (fname[x] != 0){
-      folderStack[folder_stack_max][x] = fname[x];
-    } else {
-      folderStack[folder_stack_max][x] = fname[x];
-      break;
-    }
+static void add_to_stack(uint8_t * fname, uint8_t* label) {
+  if (fname[0] == 0) {
+    printf("%s: Got empty fname!\n", __FUNCTION__);
   }
+
+  folder_stack_max++;
+  sda_strcp(label, folderStackStr[folder_stack_max], sizeof(folderStackStr[folder_stack_max]));
+  sda_strcp(fname, folderStack[folder_stack_max], sizeof(folderStack[folder_stack_max]));
+
 #ifdef APP_SCREEN_DEBUG
   printf("folder stack added: %s\n", folderStack[folder_stack_max]);
 #endif
@@ -232,7 +234,7 @@ static void get_from_stack(uint8_t * fname) {
  *
  * return - OBJ_TYPE 0:error 1:menu 2:svs
  */
-static uint8_t detect_type(uint8_t * fname) {
+uint8_t sda_menu_detect_type(uint8_t * fname) {
   uint16_t x;
 
   for(x = 0; x < APP_NAME_LEN-3; x++) {
@@ -276,13 +278,9 @@ void inScreenResizer(uint16_t id) {
 
 
 uint16_t svp_appScreen(uint8_t init, uint8_t top) {
-  static uint16_t textLabel;
-  static uint16_t btnBack;
   static uint16_t btnSwitch;
   static uint16_t btnSettings;
-  static uint8_t  labelbuff[APP_NAME_LEN+1];
   static uint8_t  appActivePrev;
-  static uint8_t  inScrReloaded;
   static uint8_t  mounted_prev;
   uint8_t appActive;
 
@@ -301,7 +299,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
     inScreen = inner_handler(1, (uint8_t *)"main.mnu");
     inScrReloaded = 1;
 
-    add_to_stack((uint8_t *)"main.mnu");
+    add_to_stack((uint8_t *)"main.mnu", (uint8_t *)"");
 
     inScreenResizer(inScreen);
 
@@ -323,11 +321,12 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
     gr2_text_set_align(btnSwitch, GR2_ALIGN_CENTER, &sda_sys_con);
     gr2_set_visible(btnBack, 0, &sda_sys_con);
 
+    mounted_prev = svp_getMounted();
+
     return appScreen;
   }
 
   if (top == 1) {
-
     // Mounted/Unmounted logic
     if(svp_getMounted() != mounted_prev) {
       if (inScreen != 0) {
@@ -339,10 +338,10 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
       gr2_set_visible(btnBack, 0, &sda_sys_con);
       gr2_set_x1(textLabel, 0, &sda_sys_con);
 
-      if(svp_getMounted()) { 
+      if(svp_getMounted()) {
         inScreen = inner_handler(1, (uint8_t *)"main.mnu");
         inScrReloaded = 1;
-        add_to_stack((uint8_t *)"main.mnu");  
+        add_to_stack((uint8_t *)"main.mnu", (uint8_t*)"");  
         gr2_set_str(textLabel, ASCR_APPLICATIONS, &sda_sys_con);
       } else {
         inScreen = gr2_add_screen(&sda_sys_con);
@@ -369,28 +368,13 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
     if (inner_handler(0, (uint8_t *)"")) {
       uint8_t type = 0;
       gr2_ki_unselect(inScreen, &sda_sys_con);
-      type = detect_type(selectedObject);
+      type = sda_menu_detect_type(selectedObjectPath);
       if (type == OBJ_TYPE_APP) {
-        if(svmLaunch(selectedObject, 0) == 0) {
+        if(svmLaunch(selectedObjectPath, 0) == 0) {
           sda_show_error_message((uint8_t *)"Error occured while launching file!");
         }
-      }else if (type == OBJ_TYPE_MENU) {
-        add_to_stack(selectedObject);
-        sda_strcp(selectedObjectStr, labelbuff, sizeof(labelbuff));
-        gr2_set_str(textLabel, labelbuff, &sda_sys_con);
-        gr2_set_x1(textLabel, 2, &sda_sys_con);
-        sda_strcp(selectedObjectStr, folderStackStr[folder_stack_max], sizeof(folderStackStr));
-
-        gr2_set_visible(btnBack, 1, &sda_sys_con);
-        gr2_destroy_screen(inScreen, &sda_sys_con);
-        innerPage = 0;
-        inScreen = inner_handler(1, selectedObject);
-        inScrReloaded = 1;
-#ifdef APP_SCREEN_DEBUG
-        printf("screen id %u\n", inScreen);
-#endif
-        inScreenResizer(inScreen);
-        gr2_set_screen(inScreen, appScreen, &sda_sys_con);
+      } else if (type == OBJ_TYPE_MENU) {
+        set_inscreen(selectedObjectPath, selectedObjectName);
       } else {
         sda_show_error_message((uint8_t *)"Menu file error: Unknown file type!");
       }
@@ -423,6 +407,11 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
         gr2_set_str(textLabel, ASCR_APPLICATIONS, &sda_sys_con);
         gr2_set_x1(textLabel, 0, &sda_sys_con);
       }
+
+      if (folder_stack_max == folder_stack_leave) {
+        folder_stack_leave = 0;
+        sda_slot_on_top(SDA_SLOT_HOMESCREEN);
+      }
     }
     gr2_set_event(btnBack, EV_NONE, &sda_sys_con);
 
@@ -449,3 +438,29 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
   return 0;
 }
 
+static void set_inscreen(uint8_t* folder_path, uint8_t* folder_label) {
+  add_to_stack(folder_path, folder_label);
+  sda_strcp(folder_label, labelbuff, sizeof(labelbuff));
+  gr2_set_str(textLabel, labelbuff, &sda_sys_con);
+  gr2_set_x1(textLabel, 2, &sda_sys_con);
+  
+  gr2_set_visible(btnBack, 1, &sda_sys_con);
+  
+  gr2_destroy_screen(inScreen, &sda_sys_con);
+
+  innerPage     = 0;
+  inScreen      = inner_handler(1, folder_path);
+  inScrReloaded = 1;
+#ifdef APP_SCREEN_DEBUG
+  printf("screen id %u\n", inScreen);
+#endif
+
+  inScreenResizer(inScreen);
+  gr2_set_screen(inScreen, appScreen, &sda_sys_con);
+}
+
+void sda_app_screen_load(uint8_t* folder, uint8_t* folder_label) {
+  folder_stack_leave = folder_stack_max;
+  printf("setting: %s - %s\n", folder, folder_label);
+  set_inscreen(folder, folder_label);
+}
