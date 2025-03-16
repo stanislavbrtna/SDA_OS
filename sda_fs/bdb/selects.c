@@ -100,7 +100,6 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
   }
 
   db->last_entry_id_en = 0;
-
  
   if(offset >= db->current_table_offset + db->current_table.usedup_size) {
     db->current_table.current_row_valid = 0;

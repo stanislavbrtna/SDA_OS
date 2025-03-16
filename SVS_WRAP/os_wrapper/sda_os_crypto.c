@@ -272,9 +272,14 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (svmGetCryptoUnlock()) {
       uint8_t *dest;
       uint16_t str_id;
+      uint32_t len = sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1;
 
-      dest = strNewPLen(sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1, &str_id, s);
-      sda_encrypt_string((uint8_t*) (s->stringField + argS->arg[1].val_str), dest, sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1);
+      dest = strNewPLen(len, &str_id, s);
+      sda_encrypt_string(
+        (uint8_t*) (s->stringField + argS->arg[1].val_str), 
+        dest, 
+        len
+      );
 
       result->value.val_str = str_id;
     } else {
@@ -299,9 +304,15 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (svmGetCryptoUnlock()) {
       uint8_t *dest;
       uint16_t str_id;
+      uint32_t len = sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1;
+      
+      dest = strNewPLen(len, &str_id, s);
 
-      dest = strNewPLen(sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1, &str_id, s);
-      sda_decrypt_string((uint8_t*) (s->stringField + argS->arg[1].val_str), dest, sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1);
+      sda_decrypt_string(
+        (uint8_t*) (s->stringField + argS->arg[1].val_str),
+        dest,
+        len
+      );
 
       result->value.val_str = str_id;
     } else {
