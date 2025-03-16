@@ -413,10 +413,11 @@ Return: None
 Gets if text field is a password field.
 
 Return: [num]isPassword
-##### Set text fit
-    sys.gui.setTxtFit([num]Id, [num]val);
-    sys.gui.setTexFit([num]Id, [num]val); # TBR
-Sets automatic line-breaking. val: 1 - enabled, 0 - disabled
+##### Set text wrap
+    sys.gui.setTxtWrap([num]Id, [num]val);
+    sys.gui.setTxtFit([num]Id, [num]val); # TBR
+Sets automatic line-breaking.
+val: 1 - enabled, 0 - disabled
 
 Return: None
 ##### Set selected text inversion

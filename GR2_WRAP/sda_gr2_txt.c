@@ -163,15 +163,19 @@ uint8_t sda_gr2_txt_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Set text fit
-  //#!    sys.gui.setTxtFit([num]Id, [num]val);
-  //#!    sys.gui.setTexFit([num]Id, [num]val); # TBR
-  //#!Sets automatic line-breaking. val: 1 - enabled, 0 - disabled
+  //#!##### Set text wrap
+  //#!    sys.gui.setTxtWrap([num]Id, [num]val);
+  //#!    sys.gui.setTxtFit([num]Id, [num]val); # TBR
+  //#!Sets automatic line-breaking.
+  //#!val: 1 - enabled, 0 - disabled
   //#!
   //#!Return: None
-  if (sysFuncMatch(argS->callId, "setTxtFit", s) || sysFuncMatch(argS->callId, "setTexFit", s)) {
-    argType[1] = 0; // id
-    argType[2] = 0; // val
+  if (
+      sysFuncMatch(argS->callId, "setTxtFit", s)
+      || sysFuncMatch(argS->callId, "setTxtWrap", s)
+  ) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM; // val
 
     if(sysExecTypeCheck(argS, argType, 2, s)) {
       return 0;

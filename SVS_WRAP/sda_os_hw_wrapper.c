@@ -256,6 +256,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Free hardware resource
   //#!    sys.hw.free([num]Resource);
   //#!Frees given hardware resouce.
+  //#!
   //#!Return: [num] 1 - error, 0 - ok
   if (sysFuncMatch(argS->callId, "free", s)) {
     argType[1] = SVS_TYPE_NUM;
@@ -271,7 +272,11 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Get hardware resource state
   //#!    sys.hw.getLock([num]Resource);
-  //#!Frees given hardware resouce.
+  //#!Get if given resource is locked by another app.
+  //#!Note:
+  //#!If the resource is currently claimed by app that calls
+  //#!the sys.hw.getLock, 0 (free) is returned.
+  //#!
   //#!Return: [num] 1 - locked, 0 - free
   if (sysFuncMatch(argS->callId, "getLock", s)) {
     argType[1] = SVS_TYPE_NUM;

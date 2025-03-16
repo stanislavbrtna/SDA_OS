@@ -91,10 +91,15 @@ Return: [num] 1 - error, 0 - ok
 ##### Free hardware resource
     sys.hw.free([num]Resource);
 Frees given hardware resouce.
+
 Return: [num] 1 - error, 0 - ok
 ##### Get hardware resource state
     sys.hw.getLock([num]Resource);
-Frees given hardware resouce.
+Get if given resource is locked by another app.
+Note:
+If the resource is currently claimed by app that calls
+the sys.hw.getLock, 0 (free) is returned.
+
 Return: [num] 1 - locked, 0 - free
 #### Internal expansion port
 
