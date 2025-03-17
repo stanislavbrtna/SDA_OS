@@ -104,7 +104,7 @@ void restore_overlay() {
   }
 }
 
-void copy_to_clipboard(uint16_t id, gr2context *c) {
+void sda_copy_gr2_to_clipboard(uint16_t id, gr2context *c) {
   uint32_t i = 0;
   uint32_t b = 0;
   uint8_t * str = gr2_get_str(id, c);
@@ -128,6 +128,37 @@ void copy_to_clipboard(uint16_t id, gr2context *c) {
   svpSGlobal.clipboard[b] = 0;   
 }
 
+void sda_cut_gr2_to_clipboard(uint16_t id, gr2context *c) {
+  sda_copy_gr2_to_clipboard(id, c);
+  svpSGlobal.newStringIdFlag = id;
+  strNewStreamInit(&svm);
+  uint32_t i = 0;
+  uint8_t *str = gr2_get_str(id, c);
+  
+  while(str[i] != 0) {
+    if (!(i >= (c->textBlockStart - 1) && i < c->textBlockEnd)) {
+      strNewStreamPush(str[i], &svm);
+    }
+    i++;
+  }
+
+  gr2_set_param(id, c->textBlockStart - 1, c);
+  c->textBlockStart = 0;
+  c->textBlockEnd = 0;
+
+  svpSGlobal.newString = strNewStreamEnd(&svm); 
+}
+
+void sda_paste_gr2_from_clipboard(uint16_t id, gr2context *c) {
+  svpSGlobal.newStringIdFlag = id;
+  svpSGlobal.newString = strInsert(
+    (uint16_t)((uint32_t) gr2_get_str(id, c) - (uint32_t) svm.stringField),
+    strNew(svpSGlobal.clipboard, &svm),
+    gr2_get_param(id, c),
+    &svm
+  );
+  gr2_set_param(id, gr2_get_param(id, c) + sda_strlen(svpSGlobal.clipboard), c);
+}
 
 void handle_clipboard_exit() {
   destroyOverlay();
@@ -160,45 +191,19 @@ uint16_t sda_clipboard_overlay_update() {
   }
 
   if (gr2_clicked(bCopy, sda_current_con)) {
-    copy_to_clipboard(target_id, sda_current_con);
+    sda_copy_gr2_to_clipboard(target_id, sda_current_con);
     handle_clipboard_exit();
     return 0;
   }
 
   if (gr2_clicked(bCut, sda_current_con)) {
-    copy_to_clipboard(target_id, sda_current_con);
-    svpSGlobal.newStringIdFlag = target_id;
-    strNewStreamInit(&svm);
-    uint32_t i = 0;
-    uint8_t * str = gr2_get_str(target_id, sda_current_con);
-    
-    while(str[i] != 0) {
-      if (!(i >= (sda_current_con->textBlockStart - 1) && i < sda_current_con->textBlockEnd)) {
-        strNewStreamPush(str[i], &svm);
-      }
-      i++;
-    }
-
-    gr2_set_param(target_id, sda_current_con->textBlockStart - 1, sda_current_con);
-    sda_current_con->textBlockStart = 0;
-    sda_current_con->textBlockEnd = 0;
-
-    svpSGlobal.newString = strNewStreamEnd(&svm);
-     
+    sda_cut_gr2_to_clipboard(target_id, sda_current_con);
     handle_clipboard_exit();
     return 0;
   }
 
   if (gr2_clicked(bPaste, sda_current_con)) {
-    svpSGlobal.newStringIdFlag = target_id;
-    svpSGlobal.newString = strInsert(
-      (uint16_t)((uint32_t) gr2_get_str(target_id, sda_current_con) - (uint32_t) svm.stringField),
-      strNew(svpSGlobal.clipboard, &svm),
-      gr2_get_param(target_id, sda_current_con),
-      &svm
-    );
-    gr2_set_param(target_id, gr2_get_param(target_id, sda_current_con) + sda_strlen(svpSGlobal.clipboard), sda_current_con),
-
+    sda_paste_gr2_from_clipboard(target_id, sda_current_con);
     handle_clipboard_exit();
     return 0;
   }

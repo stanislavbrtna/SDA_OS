@@ -27,4 +27,9 @@ SOFTWARE.
 uint16_t sda_clipboard_overlay_update();
 uint16_t sda_clipboard_overlay_init(uint16_t id);
 
+// misc clipboard functions
+void sda_copy_gr2_to_clipboard(uint16_t id, gr2context *c);
+void sda_cut_gr2_to_clipboard(uint16_t id, gr2context *c);
+void sda_paste_gr2_from_clipboard(uint16_t id, gr2context *c);
+
 #endif

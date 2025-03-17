@@ -88,9 +88,40 @@ uint8_t svm_text_handler(varRetVal *result, argStruct *argS, svsVM *s) {
 
   // keyboard read and svs string modification
   if (sda_get_keyboard_key_flag()) {
+
+    if(sda_keyboard_driver_get_ctrl()) {
+      if(svpSGlobal.kbdKeyStr[0] == 'v') {
+        sda_paste_gr2_from_clipboard(argS->arg[1].val_s, sda_current_con);
+        result->value.val_str = svpSGlobal.newString;
+        svpSGlobal.newStringIdFlag = 0;
+        return 1;
+      }
+
+      if(svpSGlobal.kbdKeyStr[0] == 'a') {
+        sda_app_con.textBlockStart = 1;
+        sda_app_con.textBlockEnd = sda_strlen(gr2_get_str(argS->arg[1].val_s, sda_current_con));
+        gr2_set_modified(argS->arg[1].val_s, sda_current_con);
+        return 1;
+      }
+    }
     
     // block rewrite handling
     if (sda_app_con.textBlockStart != 0 || sda_app_con.textBlockEnd != 0) {
+      if(sda_keyboard_driver_get_ctrl()) {
+        if(svpSGlobal.kbdKeyStr[0] == 'c') {
+          sda_copy_gr2_to_clipboard(argS->arg[1].val_s, sda_current_con);
+          return 1;
+        }
+
+        if(svpSGlobal.kbdKeyStr[0] == 'x') {
+          sda_cut_gr2_to_clipboard(argS->arg[1].val_s, sda_current_con);
+          printf("str: %s\n", gr2_get_str(argS->arg[1].val_s, sda_current_con));
+          result->value.val_str = svpSGlobal.newString;
+          svpSGlobal.newStringIdFlag = 0;
+          return 1;
+        }
+      } 
+
       strNewStreamInit(s);
       uint32_t i = 0;
       uint8_t * str = gr2_get_str((uint16_t)argS->arg[1].val_str, sda_current_con);
@@ -113,6 +144,7 @@ uint8_t svm_text_handler(varRetVal *result, argStruct *argS, svsVM *s) {
           result->type = SVS_TYPE_STR;
           return 1; 
       }
+      
     }
 
     if ((svpSGlobal.kbdKeyStr[0]) != 8) { // normal chars
