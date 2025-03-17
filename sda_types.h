@@ -53,60 +53,65 @@ typedef enum {DEVICE_LOCKED, DEVICE_UNLOCKED} sdaDeviceLockType;
 typedef enum {ON_SCREEN_KEYBOARD, OTHER} sdaInputMethodType;
 
 typedef struct {
-  //touch
-  volatile uint8_t   touchValid;
-  volatile uint16_t  touchX; //x pro dotyk
-  volatile uint16_t  touchY; //y pro dotyk
+  // Touch
+  volatile uint8_t      touchValid;
+  volatile uint16_t     touchX;
+  volatile uint16_t     touchY;
   volatile gr2EventType touchType;
 
-  //keys
+  // Keypad
   volatile gr2EventType keyEv[6];
-  volatile uint8_t btnFlag;
+  volatile uint8_t      btnFlag;
 
-  //battery
+  // Battery
   volatile uint8_t battPercentage;
-  uint8_t battString[6]; //3.654V např
+  uint8_t  battString[6]; // 3.654V for example 
   volatile systemPwrType pwrType;
 
-  //sysled
+  // Power mode
+  volatile pwrModeType powerMode;
+  volatile pwrSleepModeType powerSleepMode;
+
+  // Status LED
   ledPatternType ledPattern;
 
-  //LCDetect
+  // Screen
   lcdOrientationType lcdOrientation;
-  uint8_t lcdLandscape;
-  lcdStateType lcdState;
-  uint8_t lcdBacklight;
+  lcdStateType       lcdState;
+  uint8_t  lcdLandscape;
+  uint8_t  lcdBacklight;
   uint32_t lcdShutdownTime;
 
-  //RTC
-  volatile uint8_t sec;
-  volatile uint8_t min;
-  volatile uint8_t hour;
-  volatile uint8_t day;
-  volatile uint8_t weekday;
-  volatile uint8_t month;
+  // RTC
+  volatile uint8_t  sec;
+  volatile uint8_t  min;
+  volatile uint8_t  hour;
+  volatile uint8_t  day;
+  volatile uint8_t  weekday;
+  volatile uint8_t  month;
   volatile uint16_t year;
-  volatile uint8_t dateUpdated;
-  volatile int32_t timestamp;
+  volatile uint8_t  dateUpdated;
+  volatile int32_t  timestamp;
 
-  //time
+  // Time
   volatile uint32_t uptime;
   volatile uint32_t lcdOnTime;
   volatile uint32_t battTime;
   volatile uint64_t uptimeMs;
 
-  //sound
-  volatile uint8_t mute;
+  // Sound
+  volatile uint8_t  mute;
 
-  //keyboard
+  // Keyboard, clipboard, text input method
   volatile uint8_t   kbdFlag;
   volatile uint8_t   kbdVisible;
+  sdaInputMethodType inputMethod;
   uint8_t  kbdKeyStr[64];
   uint8_t  clipboard[SDA_CLIPBOARD_SIZE];
   uint16_t newStringIdFlag;
   uint16_t newString;
 
-  //system
+  // System
   volatile uint8_t   systemRedraw;
   volatile uint16_t  systemOverlay;
   volatile uint16_t  systemMessage;
@@ -116,14 +121,10 @@ typedef struct {
   volatile clickType systemOptClick;
   volatile uint8_t   systemPwrLongPress;
 
-  sdaInputMethodType inputMethod;
-
+  // Misc
   volatile uint8_t breakP16Draw;
-
   volatile sdaDeviceLockType sdaDeviceLock;
 
-  volatile pwrModeType  powerMode; // normal or sleep
-  volatile pwrSleepModeType powerSleepMode;
   } svpStatusStruct;
 
 //TODO: specify what should be part of os and what should be part of touch driver
@@ -188,7 +189,7 @@ typedef struct {
 
 typedef struct {
   uint16_t overlayScr;
-  gr2context * overlayCont;
+  gr2context *overlayCont;
   uint16_t overlayX1;
   uint16_t overlayX2;
   uint16_t overlayY1;

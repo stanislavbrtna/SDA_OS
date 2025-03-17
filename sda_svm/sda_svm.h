@@ -71,7 +71,6 @@ uint16_t svmGetMainScreen();
 void sdaSetRedrawDetect(uint8_t val);
 uint8_t sdaGetRedrawDetect();
 
-
 // throw svs error in currently running svm
 void svmThrowError(uint8_t* str);
 
