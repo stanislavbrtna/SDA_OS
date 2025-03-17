@@ -34,37 +34,45 @@ uint8_t sda_screen_button_handler(uint16_t screen_id, uint16_t back_id, gr2conte
 
   // Text field handler
   if (con->textActive) {
-    if(sda_keyboard_driver_get_shift()) {
-      if ((con->textBlockStart == 0 || con->textBlockEnd == 0) && (sda_wrap_get_button(BUTTON_RIGHT) == EV_PRESSED  || sda_wrap_get_button(BUTTON_LEFT) == EV_PRESSED )) {
-        con->textBlockStart = gr2_get_param(con->textActiveId, con) + 1;
+    if (sda_wrap_get_button(BUTTON_RIGHT) == EV_PRESSED  || sda_wrap_get_button(BUTTON_LEFT) == EV_PRESSED ) {
+      if(sda_keyboard_driver_get_shift()) {
+        if ((con->textBlockStart == 0 || con->textBlockEnd == 0)) {
+          con->textBlockStart = gr2_get_param(con->textActiveId, con) + 1;
+        }
+      } else {
+        con->textBlockStart = 0;
+        con->textBlockEnd = 0;
       }
+    }
+    
 
-      if (sda_wrap_get_button(BUTTON_RIGHT) == EV_PRESSED) {
+    if (sda_wrap_get_button(BUTTON_RIGHT) == EV_PRESSED) {
+      uint8_t *str = gr2_get_str(con->textActiveId, con);
+
+      if(sda_strlen(str) > gr2_get_param(con->textActiveId, con)) {
+        if ((str[gr2_get_param(con->textActiveId, con)] >= 0xC3) && (str[gr2_get_param(con->textActiveId, con)] <= 0xC5)) {
+          gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) + 2, con);
+        } else {
+          gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) + 1, con);
+        }
+      }
+    }
+
+    if (sda_wrap_get_button(BUTTON_LEFT) == EV_PRESSED) {
+      if(gr2_get_param(con->textActiveId, con) != 0) {
         uint8_t *str = gr2_get_str(con->textActiveId, con);
 
-        if(sda_strlen(str) > gr2_get_param(con->textActiveId, con)) {
-          if ((str[gr2_get_param(con->textActiveId, con)] >= 0xC3) && (str[gr2_get_param(con->textActiveId, con)] <= 0xC5)) {
-            gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) + 2, con);
-          } else {
-            gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) + 1, con);
-          }
+        if (gr2_get_param(con->textActiveId, con) >= 2 && (str[gr2_get_param(con->textActiveId, con) - 2] >= 0xC3)
+            && (str[gr2_get_param(con->textActiveId, con) - 2] <= 0xC5)
+        ){
+          gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) - 2, con);
+        } else {
+          gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) - 1, con);
         }
       }
+    }
 
-      if (sda_wrap_get_button(BUTTON_LEFT) == EV_PRESSED) {
-        if(gr2_get_param(con->textActiveId, con) != 0) {
-          uint8_t *str = gr2_get_str(con->textActiveId, con);
-
-          if (gr2_get_param(con->textActiveId, con) >= 2 && (str[gr2_get_param(con->textActiveId, con) - 2] >= 0xC3)
-              && (str[gr2_get_param(con->textActiveId, con) - 2] <= 0xC5)
-          ){
-            gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) - 2, con);
-          } else {
-            gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) - 1, con);
-          }
-        }
-      }
-
+    if(sda_keyboard_driver_get_shift()) {
       if(con->textBlockStart != 0) {
         if(gr2_get_param(con->textActiveId, con) > con->textBlockStart) {
           con->textBlockEnd = gr2_get_param(con->textActiveId, con);
@@ -75,35 +83,8 @@ uint8_t sda_screen_button_handler(uint16_t screen_id, uint16_t back_id, gr2conte
           con->textBlockStart = gr2_get_param(con->textActiveId, con);
         }
       }
-      
-    } else {
-      if (sda_wrap_get_button(BUTTON_RIGHT) == EV_PRESSED) {
-        uint8_t *str = gr2_get_str(con->textActiveId, con);
-
-        if(sda_strlen(str) > gr2_get_param(con->textActiveId, con)) {
-          if ((str[gr2_get_param(con->textActiveId, con)] >= 0xC3) && (str[gr2_get_param(con->textActiveId, con)] <= 0xC5)) {
-            gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) + 2, con);
-          } else {
-            gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) + 1, con);
-          }
-        }
-      }
-
-      if (sda_wrap_get_button(BUTTON_LEFT) == EV_PRESSED) {
-        if(gr2_get_param(con->textActiveId, con) != 0) {
-          uint8_t *str = gr2_get_str(con->textActiveId, con);
-
-          if (gr2_get_param(con->textActiveId, con) >= 2 && (str[gr2_get_param(con->textActiveId, con) - 2] >= 0xC3)
-              && (str[gr2_get_param(con->textActiveId, con) - 2] <= 0xC5)
-          ){
-            gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) - 2, con);
-          } else {
-            gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) - 1, con);
-          }
-        }
-      }
     }
-
+    
     if (sda_wrap_get_button(BUTTON_A) == EV_RELEASED) {
       gr2_text_deactivate(con);
       sda_keyboard_hide();
