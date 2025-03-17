@@ -29,6 +29,8 @@ SOFTWARE.
 void sda_keyboard_driver_set(uint8_t en);
 uint8_t sda_keyboard_driver_update();
 uint8_t sda_keyboard_driver_enabled();
+uint8_t sda_keyboard_driver_get_shift();
+uint8_t sda_keyboard_driver_get_ctrl();
 
 void sda_extensions_detect(); 
 

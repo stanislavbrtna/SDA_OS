@@ -23,6 +23,8 @@ SOFTWARE.
 #include "sda_keyboard_driver.h"
 
 static uint8_t enabled;
+static uint8_t kbdShiftFlag;
+static uint8_t kbdCtrlFlag;
 
 static uint8_t kbd_icon[] = {
   0x02,
@@ -117,7 +119,6 @@ void sda_keyboard_driver_set(uint8_t en) {
     sda_resource_claim(EXTERNAL_EXPANSION_PORT, 0);
     sda_resource_claim(SERIAL_PORT, 0);
     ico_id = sda_custom_icon_set(kbd_icon, 0, (uint8_t*)"");
-
   } else {
     svpSGlobal.inputMethod = ON_SCREEN_KEYBOARD;
     sda_resource_free(EXTERNAL_EXPANSION_PORT, 0);
@@ -125,7 +126,9 @@ void sda_keyboard_driver_set(uint8_t en) {
 
     sda_custom_icon_release_spot(ico_id);
   }
-  
+
+  kbdShiftFlag = 0;
+  kbdCtrlFlag = 0;
 }
 
 uint8_t sda_keyboard_driver_enabled() {
@@ -137,6 +140,7 @@ uint8_t sda_keyboard_driver_init() {
   // set pins
   sda_external_pin_def(5, SDA_BASE_PIN_ALT, SDA_BASE_PIN_NOPULL);
   sda_external_pin_def(6, SDA_BASE_PIN_ALT, SDA_BASE_PIN_NOPULL);
+  
   // detect pin
   sda_external_pin_def(4, SDA_BASE_PIN_IN, SDA_BASE_PIN_PULLDOWN);
 
@@ -230,7 +234,7 @@ void decode(uint8_t *buff) {
     return;
   }
 
-  if (id == 52) { //ent
+  if (id == 52) { // ent
     if (type == TYPE_PRESSED) {
       svpSGlobal.keyEv[BUTTON_A] = EV_PRESSED;
       sda_strcp("\n", svpSGlobal.kbdKeyStr, sizeof(svpSGlobal.kbdKeyStr));
@@ -246,6 +250,28 @@ void decode(uint8_t *buff) {
   if (id == 28 && type == TYPE_PRESSED) { // tab
     sda_strcp("  ", svpSGlobal.kbdKeyStr, sizeof(svpSGlobal.kbdKeyStr));
     svpSGlobal.kbdFlag = 1;
+    return;
+  }
+
+  // shift
+  if ((id == 53 || id == 66) && (type == TYPE_PRESSED || type == TYPE_HOLD )) { // ctrl
+    kbdShiftFlag = 1;
+    return;
+  }
+
+  if ((id == 53 || id == 66) && type == TYPE_RELEASED) { // ctrl
+    kbdShiftFlag = 0;
+    return;
+  }
+
+  // ctrl
+  if (id == 68 && (type == TYPE_PRESSED || type == TYPE_HOLD )) { // ctrl
+    kbdCtrlFlag = 1;
+    return;
+  }
+
+  if (id == 68 && type == TYPE_RELEASED) { // ctrl
+    kbdCtrlFlag = 0;
     return;
   }
   
@@ -273,8 +299,12 @@ void decode(uint8_t *buff) {
     ev_handler(BUTTON_DOWN, type);
     return;
   }
+}
 
-  // manage shifts
+uint8_t sda_keyboard_driver_get_shift() {
+  return kbdShiftFlag;
+}
 
-
+uint8_t sda_keyboard_driver_get_ctrl() {
+  return kbdCtrlFlag;
 }
