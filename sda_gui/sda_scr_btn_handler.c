@@ -149,7 +149,9 @@ uint8_t sda_screen_button_handler(uint16_t screen_id, uint16_t back_id, gr2conte
   if (sda_wrap_get_button(BUTTON_B) != EV_NONE) {
     uint8_t r;
     r = gr2_keypad_input(GR2_BUTTON_OK, sda_wrap_get_button(BUTTON_B), screen_id, con);
-    
+
+    svpSGlobal.kbdKeyStr[0] = 0; // reset keyboard string (if keyboard was activated with ent key)
+
     if (r == 2 && svpSGlobal.inputMethod == ON_SCREEN_KEYBOARD) {
       sda_keyboard_show();
     }
