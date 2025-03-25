@@ -467,6 +467,37 @@ uint8_t sda_files_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get end of file
+  //#!    sys.fs.eof();
+  //#!    sys.fs.eof([num] index);
+  //#!Returns if file read pointer is at the end of file.
+  //#!
+  //#!Return: [num] 1 - eof, otherwise 0
+  if (sysFuncMatch(argS->callId, "eof", s)) {
+    uint16_t file_index = 0;
+
+    if(argS->usedup == 0) {
+      if(sysExecTypeCheck(argS, argType, 0, s)) {
+        return 0;
+      }
+    } else {
+      argType[1] = SVS_TYPE_NUM;
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+      file_index = argS->arg[1].val_s;
+    }
+
+    if (fr_open[file_index]) {
+      result->value.val_u = svp_feof(&readFil[file_index]);
+    }else{
+      result->value.val_u = 0;
+    }
+    result->type = SVS_TYPE_NUM;
+
+    return 1;
+  }
+
   //#!##### Get last modification time
   //#!    sys.fs.mtime([str] fname);
   //#!Returns last modified time of a given fname.

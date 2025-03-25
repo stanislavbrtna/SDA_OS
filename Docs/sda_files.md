@@ -60,6 +60,12 @@ Return: [num] pos
 Returns size of openned file.
 
 Return: [num] size in bytes
+##### Get end of file
+    sys.fs.eof();
+    sys.fs.eof([num] index);
+Returns if file read pointer is at the end of file.
+
+Return: [num] 1 - eof, otherwise 0
 ##### Get last modification time
     sys.fs.mtime([str] fname);
 Returns last modified time of a given fname.
