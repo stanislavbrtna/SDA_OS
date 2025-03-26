@@ -93,11 +93,6 @@ extern volatile sdaLockState touch_lock;
 extern volatile sdaLockState irq_lock;
 extern volatile sdaLockState tick_lock;
 
-//fonts
-extern uint8_t *font8x8_basic;
-extern uint8_t *font18;
-extern uint8_t *font32;
-
 extern gr2context sda_sys_con;
 extern gr2context sda_app_con;
 
