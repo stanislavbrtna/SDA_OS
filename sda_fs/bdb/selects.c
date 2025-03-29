@@ -36,8 +36,8 @@ uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
   }
 
   for(uint32_t i = 0; i < db->current_table.row_count; i++) {
-    uint32_t row_size = 0;
-    svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
+    sda_bdb_row row;
+    svp_fread(&(db->fil), &row, sizeof(sda_bdb_row));
 
     if(i == n) {
       db->current_table.current_row_offset = offset;
@@ -45,7 +45,7 @@ uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
       return 1;
     }
 
-    offset += row_size + sizeof(uint32_t);
+    offset += row.size + sizeof(sda_bdb_row);
 
     if(offset >= db->current_table_offset + db->current_table.usedup_size) {
       break;
@@ -73,11 +73,11 @@ uint8_t sda_bdb_select_row_next(sda_bdb *db) {
   }
   
   svp_fseek(&(db->fil), offset);
-  uint32_t row_size = 0;
+  sda_bdb_row row;
 
-  svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
+  svp_fread(&(db->fil), &row, sizeof(sda_bdb_row));
   
-  offset += row_size + sizeof(uint32_t);
+  offset += row.size + sizeof(sda_bdb_row);
   
   if(offset < db->current_table_offset + db->current_table.usedup_size) {
     svp_fseek(&(db->fil), offset);
@@ -109,10 +109,10 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
   svp_fseek(&(db->fil), offset);
 
   for(uint32_t i = 0; i < db->current_table.row_count; i++) {
-    uint32_t row_size = 0;
-    svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
+    sda_bdb_row row;
+    svp_fread(&(db->fil), &row, sizeof(sda_bdb_row));
 
-    uint32_t entry_offset = offset + sizeof(uint32_t);
+    uint32_t entry_offset = offset + sizeof(sda_bdb_row);
     for(uint8_t id = 0; id < db->current_table.cloumn_count; id++) {
       sda_bdb_entry e;
       svp_fread(&(db->fil), &e, sizeof(e));
@@ -131,7 +131,7 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
       svp_fseek(&(db->fil), entry_offset);
     }
 
-    offset += row_size + sizeof(uint32_t);
+    offset += row.size + sizeof(sda_bdb_row);
 
     if(offset >= db->current_table_offset + db->current_table.usedup_size) {
       break;
@@ -251,10 +251,10 @@ uint8_t sda_bdb_select_row_str(
   svp_fseek(&(db->fil), offset);
 
   for(uint32_t i = 0; i < db->current_table.row_count; i++) {
-    uint32_t row_size = 0;
-    svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
+    sda_bdb_row row;
+    svp_fread(&(db->fil), &row, sizeof(sda_bdb_row));
 
-    uint32_t entry_offset = offset + sizeof(uint32_t);
+    uint32_t entry_offset = offset + sizeof(sda_bdb_row);
     for(uint8_t id = 0; id < db->current_table.cloumn_count; id++) {
       sda_bdb_entry e;
       svp_fread(&(db->fil), &e, sizeof(e));
@@ -269,7 +269,7 @@ uint8_t sda_bdb_select_row_str(
       svp_fseek(&(db->fil), entry_offset);
     }
 
-    offset += row_size + sizeof(uint32_t);
+    offset += row.size + sizeof(sda_bdb_row);
     
     if(offset >= db->current_table_offset + db->current_table.usedup_size) {
       break;

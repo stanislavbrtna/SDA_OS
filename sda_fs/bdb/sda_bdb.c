@@ -204,6 +204,7 @@ uint8_t sda_bdb_new_table(uint8_t *name, uint8_t no_columns, sda_bdb *db) {
 
   svp_fseek(&(db->fil), table_begin);
   
+  sda_strcp(SDA_BDB_TAG_TABLE, db->current_table.table_tag, SDA_BDB_TAG_SIZE);
   sda_strcp(name, db->current_table.name, SDA_BDB_NAME_LEN);
   db->current_table.auto_id = 0;
   db->current_table.auto_id_field = 0;
@@ -356,7 +357,11 @@ uint8_t sda_bdb_drop_data(sda_bdb *db) {
 
 // new row -> creates new row and sets it as current 
 uint32_t sda_bdb_new_row(sda_bdb *db) {
-  uint32_t siz = db->current_table.cloumn_count*sizeof(sda_bdb_entry);
+  sda_bdb_row row;
+  
+  row.size = db->current_table.cloumn_count*sizeof(sda_bdb_entry);
+  sda_strcp(SDA_BDB_TAG_ROW, row.row_tag, SDA_BDB_TAG_SIZE);
+
   uint32_t offset;
   
   //printf("creating new row with %u columns\n", db->current_table.cloumn_count);
@@ -365,15 +370,15 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
   // get last row
   offset = db->current_table_offset + db->current_table.usedup_size;
   
-  sda_bdb_check_table_space(db, sizeof(uint32_t) + siz);
+  sda_bdb_check_table_space(db, sizeof(sda_bdb_row) + row.size);
 
   svp_fseek(&(db->fil), offset);
 
   // Write row header
   svp_fwrite(
     &(db->fil), 
-    &siz,
-    sizeof(uint32_t)
+    &row,
+    sizeof(sda_bdb_row)
   );
   
   // write empty entries
@@ -389,9 +394,9 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
   }
 
   // Update table size
-  //printf("table size: %u row_size: %u\n", db->current_table.table_size, sizeof(uint32_t) + siz);
+  //printf("table size: %u row_size: %u\n", db->current_table.table_size, sizeof(sda_bdb_row) + siz);
 
-  db->current_table.usedup_size += sizeof(uint32_t) + siz;
+  db->current_table.usedup_size += sizeof(sda_bdb_row) + row.size;
   db->current_table.row_count++;
   db->current_table.current_row_offset = offset;
   db->current_table.current_row_valid = 1;
@@ -410,6 +415,8 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
 
 // Drops current row
 uint8_t sda_bdb_drop_row(sda_bdb *db) {
+  sda_bdb_row row; 
+  
   if(!db->current_table.current_row_valid) {
     printf("%s: selected row is not valid!\n", __FUNCTION__);
     return 0;
@@ -417,15 +424,14 @@ uint8_t sda_bdb_drop_row(sda_bdb *db) {
 
   // get row size
   svp_fseek(&(db->fil), db->current_table.current_row_offset);
-  uint32_t row_size;
-  row_size = sda_bdb_read_u32(&(db->fil));
+  svp_fread(&(db->fil), &row, sizeof(sda_bdb_row));
 
   // truncate file
-  sda_bdb_truncate_upto(db, db->current_table.current_row_offset, row_size + sizeof(uint32_t));
+  sda_bdb_truncate_upto(db, db->current_table.current_row_offset, row.size + sizeof(sda_bdb_row));
 
   // set db data size
   db->current_table.row_count--;
-  db->current_table.usedup_size -= row_size + sizeof(uint32_t);
+  db->current_table.usedup_size -= row.size + sizeof(sda_bdb_row);
 
   if (db->current_table.current_row_offset >= db->current_table_offset + db->current_table.usedup_size) {
     db->current_table.current_row_valid = 0;
@@ -498,15 +504,15 @@ uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db)
   }
   // seek on row start
   svp_fseek(&(db->fil), db->current_table.current_row_offset);
-  uint32_t row_size = 0;
-  svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
+  sda_bdb_row row;
+  svp_fread(&(db->fil), &row, sizeof(sda_bdb_row));
   
   sda_bdb_entry e;
   
   // if row is not empty, then walk entries
-  uint32_t offset = db->current_table.current_row_offset + sizeof(uint32_t);
+  uint32_t offset = db->current_table.current_row_offset + sizeof(sda_bdb_row);
 
-  if(row_size != 0) {
+  if(row.size != 0) {
     for(uint8_t i = 0; i < db->current_table.cloumn_count; i++) {
       svp_fread(&(db->fil), &e, sizeof(sda_bdb_entry));
       //printf("setEntry offse: %x, i: %u id: %u size: %u\n", offset, i, e.entry_column, e.entry_size);
@@ -523,14 +529,14 @@ uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db)
           sda_bdb_insert_space_indb(db, entry_pos, size - e.entry_size);
           svp_fseek(&(db->fil), entry_pos);
           svp_fwrite(&(db->fil), data, size);
-          row_size += size - e.entry_size;
+          row.size += size - e.entry_size;
           db->current_table.usedup_size += size - e.entry_size;
         } else if(size < e.entry_size) {
           uint32_t pos = svp_ftell(&(db->fil));
           sda_bdb_truncate_upto(db, pos, e.entry_size - size);
           svp_fseek(&(db->fil), pos);    
           svp_fwrite(&(db->fil), data, size);
-          row_size -= e.entry_size - size;
+          row.size -= e.entry_size - size;
           db->current_table.usedup_size -= e.entry_size - size;
         }
 
@@ -542,44 +548,47 @@ uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db)
 
         // update row header
         svp_fseek(&(db->fil), db->current_table.current_row_offset);
-        svp_fwrite(&(db->fil), &row_size, sizeof(uint32_t));
+        svp_fwrite(&(db->fil), &row, sizeof(sda_bdb_row));
         return 1;
       }
 
       offset += e.entry_size + sizeof(sda_bdb_entry);
 
-      if(offset >= db->current_table.current_row_offset + row_size) {
+      if(offset >= db->current_table.current_row_offset + row.size + sizeof(sda_bdb_row)) {
         break;
       }
       svp_fseek(&(db->fil), offset);
     }
   }
   
+  //TODO: fix this... it needs to prealocate the entry size in the file... 
+  printf("Warn: creating new row entry, this should not happen!\n");
   // if not: create and write
   e.entry_column = id;
   e.entry_size = size;
   
-  sda_bdb_check_table_space(db, size + size + sizeof(sda_bdb_entry));
+  sda_bdb_check_table_space(db, size + sizeof(sda_bdb_entry));
 
   // write header
   sda_bdb_write_data(
     db, 
-    db->current_table.current_row_offset + sizeof(uint32_t),
+    db->current_table.current_row_offset + sizeof(sda_bdb_row),
     &e,
     sizeof(sda_bdb_entry)
   );
+
   // write data
   sda_bdb_write_data(
     db, 
-    db->current_table.current_row_offset + sizeof(uint32_t) + sizeof(sda_bdb_entry),
+    db->current_table.current_row_offset + sizeof(sda_bdb_row) + sizeof(sda_bdb_entry),
     data,
     size
   );
-  row_size += size + sizeof(sda_bdb_entry);
+  row.size += size + sizeof(sda_bdb_entry);
 
   // update row header
   svp_fseek(&(db->fil), db->current_table.current_row_offset);
-  svp_fwrite(&(db->fil), &row_size, sizeof(uint32_t));
+  svp_fwrite(&(db->fil), &row, sizeof(sda_bdb_row));
 
   // sync db
   db->current_table.usedup_size += size + sizeof(sda_bdb_entry);
@@ -631,10 +640,10 @@ uint32_t sda_bdb_get_entry_size(uint8_t* name, sda_bdb *db) {
   id--;
 
   svp_fseek(&(db->fil), db->current_table.current_row_offset);
-  uint32_t row_size = 0;
-  svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
+  sda_bdb_row row;
+  svp_fread(&(db->fil), &row, sizeof(sda_bdb_row));
 
-  if(row_size == 0) {
+  if(row.size == 0) {
     printf("%s: Row is empty!\n", __FUNCTION__);
     return 0;
   }
@@ -642,9 +651,9 @@ uint32_t sda_bdb_get_entry_size(uint8_t* name, sda_bdb *db) {
   sda_bdb_entry e;
   
   // if row is not empty, then walk entries
-  uint32_t offset = db->current_table.current_row_offset + sizeof(uint32_t);
+  uint32_t offset = db->current_table.current_row_offset + sizeof(sda_bdb_row);
 
-  if(row_size != 0) {
+  if(row.size != 0) {
     for(uint8_t i = 0; i < db->current_table.cloumn_count; i++) {
       svp_fread(&(db->fil), &e, sizeof(sda_bdb_entry));
       if(e.entry_column == id) {
@@ -652,7 +661,7 @@ uint32_t sda_bdb_get_entry_size(uint8_t* name, sda_bdb *db) {
       }
       offset += e.entry_size + sizeof(sda_bdb_entry);
 
-      if(offset >= db->current_table.current_row_offset + row_size) {
+      if(offset >= db->current_table.current_row_offset + row.size + sizeof(sda_bdb_row)) {
         break;
       }
       
@@ -678,10 +687,10 @@ uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_
   }
 
   svp_fseek(&(db->fil), db->current_table.current_row_offset);
-  uint32_t row_size = 0;
-  svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
+  sda_bdb_row row;
+  svp_fread(&(db->fil), &row, sizeof(sda_bdb_row));
 
-  if(row_size == 0) {
+  if(row.size == 0) {
     printf("%s: Row is empty!\n", __FUNCTION__);
     return 0;
   }
@@ -689,9 +698,9 @@ uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_
   sda_bdb_entry e;
   
   // if row is not empty, then walk entries
-  uint32_t offset = db->current_table.current_row_offset + sizeof(uint32_t);
+  uint32_t offset = db->current_table.current_row_offset + sizeof(sda_bdb_row);
 
-  if(row_size != 0) {
+  if(row.size != 0) {
     for(uint8_t i = 0; i < db->current_table.cloumn_count; i++) {
       svp_fread(&(db->fil), &e, sizeof(sda_bdb_entry));
       if(e.entry_column == id) {
@@ -707,7 +716,7 @@ uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_
 
       offset += e.entry_size + sizeof(sda_bdb_entry);
 
-      if(offset >= db->current_table.current_row_offset + row_size) {
+      if(offset >= db->current_table.current_row_offset + row.size + sizeof(sda_bdb_row)) {
         break;
       }
 
@@ -751,11 +760,11 @@ void sda_bdb_list_table(sda_bdb *db) {
   uint32_t offset = db->current_table_offset + sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
     
   for(uint32_t i = 0; i < db->current_table.row_count; i++) {
-    uint32_t row_size = 0;
-    svp_fread(&(db->fil), &row_size, sizeof(uint32_t));
-    printf("Row %u, (size:%u):\n", i, row_size);
+    sda_bdb_row row;
+    svp_fread(&(db->fil), &row, sizeof(sda_bdb_row));
+    printf("Row %u, (size:%u):\n", i, row.size);
     
-    uint32_t entry_offset = offset + sizeof(uint32_t);
+    uint32_t entry_offset = offset + sizeof(sda_bdb_row);
     for(uint8_t id = 0; id < db->current_table.cloumn_count; id++) {
       sda_bdb_entry e;
       svp_fread(&(db->fil), &e, sizeof(e));
@@ -764,7 +773,7 @@ void sda_bdb_list_table(sda_bdb *db) {
       svp_fseek(&(db->fil), entry_offset);
     }
 
-    offset += row_size + sizeof(uint32_t);
+    offset += row.size + sizeof(sda_bdb_row);
     svp_fseek(&(db->fil), offset);
   } 
 }

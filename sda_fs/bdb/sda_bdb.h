@@ -26,15 +26,21 @@ SOFTWARE.
 
 #define SDA_BDB_NAME_LEN 16
 
+#define SDA_BDB_TAG_SIZE 4
+
+#define SDA_BDB_TAG_TABLE "TAB"
+#define SDA_BDB_TAG_ROW   "ROW"
+
 #define SDA_BDB_TYPE_NUM 0
 #define SDA_BDB_TYPE_STR 1
 #define SDA_BDB_TYPE_FLT 2
 
-#define SDA_BDB_VERSION 1
+#define SDA_BDB_VERSION 2
 
 #define SDA_BDB_BLOCKSIZE 2048
 
 typedef struct {
+  uint8_t  table_tag[SDA_BDB_TAG_SIZE];
   uint8_t  name[SDA_BDB_NAME_LEN];
   uint32_t cloumn_offset;
   uint8_t  cloumn_count;
@@ -48,6 +54,11 @@ typedef struct {
   uint8_t  current_row_valid;
   uint32_t row_count;
 } sda_bdb_table;
+
+typedef struct {
+  uint32_t size;
+  uint8_t  row_tag[SDA_BDB_TAG_SIZE];
+} sda_bdb_row;
 
 typedef struct {
   uint32_t entry_size;
