@@ -48,7 +48,7 @@ uint32_t sda_strcp(uint8_t *in, uint8_t *out, uint32_t len) {
       return (x + 1);
     }
   }
-  out[len] = 0;
+  out[len - 1] = 0;
   return 0;
 }
 
