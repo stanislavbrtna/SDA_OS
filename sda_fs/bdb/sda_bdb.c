@@ -360,8 +360,6 @@ uint8_t sda_bdb_rebuild_index_id(uint8_t column_id, sda_bdb *db) {
           svp_fseek(&(db->fil), index_offset);
           svp_fwrite(&(db->fil), &index, sizeof(index));
           index_offset += sizeof(index);
-
-          printf("writing index value %u, offset: %u (real: %u)\n", index.value, index.row_offset, db->current_table.current_row_offset);
           sda_bdb_select_row_next(db);
         }  
       }
@@ -407,8 +405,6 @@ uint32_t sda_bdb_get_index(uint32_t val, uint8_t column_id, sda_bdb *db) {
     svp_fread(&(db->fil), &index_header, sizeof(index_header));
     if(index_header.column == column_id) {
       // dirty, return
-      
-
       for(uint32_t i = 0; i < db->current_table.row_count; i++) {
         if(index_header.indexing_type == SDA_BDB_INDEXING_VALUE) {
           sda_bdb_index index;
