@@ -24,18 +24,22 @@ SOFTWARE.
 #define SDA_BINARY_DB_H
 #include "../svp_fs.h"
 
-#define SDA_BDB_NAME_LEN 16
+#define SDA_BDB_VERSION 2
 
+#define SDA_BDB_NAME_LEN 16
 #define SDA_BDB_TAG_SIZE 4
 
 #define SDA_BDB_TAG_TABLE "TAB"
 #define SDA_BDB_TAG_ROW   "ROW"
+#define SDA_BDB_TAG_INDEX "IND"
 
 #define SDA_BDB_TYPE_NUM 0
 #define SDA_BDB_TYPE_STR 1
 #define SDA_BDB_TYPE_FLT 2
 
-#define SDA_BDB_VERSION 2
+#define SDA_BDB_INDEXING_NONE  0
+#define SDA_BDB_INDEXING_VALUE 1
+#define SDA_BDB_INDEXING_HASH  2
 
 #define SDA_BDB_BLOCKSIZE 2048
 
@@ -53,7 +57,31 @@ typedef struct {
   uint32_t current_row_offset;
   uint8_t  current_row_valid;
   uint32_t row_count;
+  uint32_t first_row_offset;
 } sda_bdb_table;
+
+
+typedef struct {
+  uint8_t  name[SDA_BDB_NAME_LEN];
+  uint8_t  type;
+  uint8_t  indexed;
+  uint8_t  index_dirty;
+} sda_bdb_column;
+
+
+typedef struct {
+  uint8_t  index_tag[SDA_BDB_TAG_SIZE];
+  uint32_t size;
+  uint8_t  column;
+  uint8_t  indexing_type;
+} sda_bdb_index_header;
+
+
+typedef struct {
+  uint32_t value;
+  uint32_t row_offset;
+} sda_bdb_index;
+
 
 typedef struct {
   uint32_t size;
@@ -64,13 +92,6 @@ typedef struct {
   uint32_t entry_size;
   uint8_t  entry_column;
 } sda_bdb_entry;
-
-
-typedef struct {
-  uint8_t  name[SDA_BDB_NAME_LEN];
-  uint8_t  type;
-} sda_bdb_column;
-
 
 typedef struct {
   svp_file      fil;
@@ -84,6 +105,7 @@ typedef struct {
   uint8_t       cached_column[SDA_BDB_NAME_LEN];
   uint8_t       cached_column_id;
   uint8_t       cached_column_type;
+  uint8_t       cached_column_indexed;
 
   uint32_t      table_count;
 } sda_bdb;
@@ -150,5 +172,21 @@ uint8_t sda_bdb_store_string(uint8_t* column_name, uint8_t* str, sda_bdb *db);
 
 // Read db entry
 uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_bdb *db);
+
+uint32_t sda_bdb_get_entry_id(uint8_t id, void* buffer, uint32_t buff_size, sda_bdb *db);
+
+// Indexing
+
+// Enable column index
+uint8_t sda_bdb_set_column_indexing(uint8_t* col_name, uint8_t indexing, sda_bdb *db);
+uint8_t sda_bdb_set_column_indexing_id(uint8_t id, uint8_t indexing, sda_bdb *db);
+uint32_t sda_bdb_get_index(uint32_t val, uint8_t column_id, sda_bdb *db);
+
+// Rebuild index
+uint8_t sda_bdb_rebuild_index(uint8_t *column_name, sda_bdb *db);
+uint8_t sda_bdb_rebuild_index_id(uint8_t column_id, sda_bdb *db);
+
+uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db);
+
 
 #endif

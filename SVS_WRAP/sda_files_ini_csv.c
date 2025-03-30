@@ -705,6 +705,60 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Set column index type
+  //#!    sys.fs.db.setIndex([str] column_name, [num] type);
+  //#!Sets index type of a given column
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "setIndex", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_set_column_indexing(
+      s->stringField+argS->arg[1].val_str,
+      argS->arg[2].val_u,
+      &dbFile
+    );
+
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Build column index
+  //#!    sys.fs.db.buildIndex([str] column_name);
+  //#!Builds/rebuilds index for a given column
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "buildIndex", s)) {
+    argType[1] = SVS_TYPE_STR;
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_rebuild_index(
+      s->stringField+argS->arg[1].val_str,
+      &dbFile
+    );
+
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Enable ID field
   //#!    sys.fs.db.idEnable([str]fieldName);
   //#!Sets given column as an id field.

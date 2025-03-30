@@ -42,6 +42,9 @@ auto_id fields
 column:
     16B column name
     8b  column type (Number(signed/unsigned)/string/float)
+    8b  indexing type
+---
+optional indexes
 ---
 Row:
     32b next row offset
@@ -217,6 +220,7 @@ uint8_t sda_bdb_new_table(uint8_t *name, uint8_t no_columns, sda_bdb *db) {
   db->current_table.row_count = 0;
   db->current_table_offset = table_begin;
   db->current_table.current_row_valid = 0;
+  db->current_table.first_row_offset = sizeof(sda_bdb_table) + no_columns*sizeof(sda_bdb_column);
 
   // write header
   svp_fwrite(&(db->fil), &db->current_table, sizeof(sda_bdb_table));
@@ -246,18 +250,182 @@ uint8_t sda_bdb_set_column(uint8_t id, uint8_t *name, uint8_t type, sda_bdb *db)
   sda_bdb_column c;
 
   if(id >= db->current_table.cloumn_count) {
-    printf("%s: column: \"%s\" id greater than column count!\n", __FUNCTION__, name);
+    printf("%s: column: \"%s\" id is greater than the column count!\n", __FUNCTION__, name);
     return 0;
   }
 
   sda_strcp(name, c.name, SDA_BDB_NAME_LEN);
   c.type = type;
+  c.indexed = 0;
+  c.index_dirty = 1;
 
   svp_fseek(&(db->fil), db->current_table_offset + sizeof(sda_bdb_table) + sizeof(sda_bdb_column) * id);
   svp_fwrite(&(db->fil), &c, sizeof(sda_bdb_column));
 
   return 1;
 }
+
+uint8_t sda_bdb_set_column_indexing(uint8_t* col_name, uint8_t indexing, sda_bdb *db) {
+  uint8_t id = sda_bdb_get_column_id(col_name, db);
+  id--;
+
+  return sda_bdb_set_column_indexing_id(id, indexing, db);
+}
+
+uint8_t sda_bdb_set_column_indexing_id(uint8_t id, uint8_t indexing, sda_bdb *db) {
+  sda_bdb_column c;
+  uint32_t offset;
+
+  if(id >= db->current_table.cloumn_count) {
+    printf("%s: column id is greater than the column count!\n", __FUNCTION__);
+    return 0;
+  }
+
+  // mark as indexed
+  svp_fseek(&(db->fil), db->current_table_offset + sizeof(sda_bdb_table) + sizeof(sda_bdb_column) * id);
+  svp_fread(&(db->fil), &c, sizeof(c));
+  c.indexed = 1;
+  c.index_dirty = 1;
+  svp_fseek(&(db->fil), db->current_table_offset + sizeof(sda_bdb_table) + sizeof(sda_bdb_column) * id);
+  svp_fwrite(&(db->fil), &c, sizeof(sda_bdb_column));
+  
+  // write index header
+  
+  // make some space
+  offset = db->current_table_offset + sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
+  sda_bdb_check_table_space(db, sizeof(sda_bdb_index_header));
+  sda_bdb_insert_space_indb(db, offset, sizeof(sda_bdb_index_header));
+  svp_fseek(&(db->fil), offset);
+  
+  sda_bdb_index_header ind;
+
+  ind.column = id;
+  ind.size = 0;
+  ind.indexing_type = indexing;
+  sda_strcp(SDA_BDB_TAG_INDEX, ind.index_tag, SDA_BDB_TAG_SIZE);
+  
+  // write header
+  svp_fwrite(&(db->fil), &ind, sizeof(ind));
+
+  // mark offset
+  db->current_table.first_row_offset += sizeof(sda_bdb_index_header);
+  db->current_table.usedup_size += sizeof(sda_bdb_index_header);
+
+  return 1;      
+}
+
+uint8_t sda_bdb_rebuild_index(uint8_t *column_name, sda_bdb *db) {
+  uint8_t id = sda_bdb_get_column_id(column_name, db);
+  id--;
+
+  return sda_bdb_rebuild_index_id(id, db);
+}
+
+uint8_t sda_bdb_rebuild_index_id(uint8_t column_id, sda_bdb *db) {
+  uint32_t offset = db->current_table_offset + sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
+  sda_bdb_index_header index_header;
+
+  svp_fseek(&(db->fil), offset);
+  // find index
+  while(offset < (db->current_table_offset + db->current_table.first_row_offset)) {
+    svp_fread(&(db->fil), &index_header, sizeof(index_header));
+    printf("reading: %u\n", index_header.column);
+    if(index_header.column == column_id) {
+      // allocate space
+      uint32_t index_size = db->current_table.row_count*sizeof(sda_bdb_index);
+      if(index_header.size < index_size) {
+        sda_bdb_check_table_space(db, index_size);
+        sda_bdb_insert_space_indb(db, offset, index_size);
+
+        db->current_table.first_row_offset += index_size;
+        db->current_table.usedup_size += index_size;
+
+        index_header.size = index_size;
+        svp_fseek(&(db->fil), offset);
+        svp_fwrite(&(db->fil), &index_header, sizeof(index_header));
+      }
+
+      // walk rows, store indexes
+      sda_bdb_select_row(0, db);
+      uint32_t index_offset = offset + sizeof(index_header);
+      for(uint32_t i = 0; i < db->current_table.row_count; i++) {
+        if(index_header.indexing_type == SDA_BDB_INDEXING_VALUE) {
+          uint32_t val;
+          sda_bdb_index index;
+          sda_bdb_get_entry_id(column_id, &val, sizeof(val), db);
+          index.value = val;
+          index.row_offset = db->current_table.current_row_offset - (db->current_table_offset + db->current_table.first_row_offset);
+
+          // write index
+          svp_fseek(&(db->fil), index_offset);
+          svp_fwrite(&(db->fil), &index, sizeof(index));
+          index_offset += sizeof(index);
+
+          printf("writing index value %u, offset: %u (real: %u)\n", index.value, index.row_offset, db->current_table.current_row_offset);
+          sda_bdb_select_row_next(db);
+        }  
+      }
+    }
+    offset += index_header.size + sizeof(index_header);
+  }
+
+  sda_bdb_set_index_dirty(column_id, 0, db);
+}
+
+void sda_bdb_set_index_dirty(uint8_t column_id, uint8_t val, sda_bdb *db) {
+  sda_bdb_column c;
+
+  svp_fseek(&(db->fil), db->current_table_offset + sizeof(sda_bdb_table) + sizeof(sda_bdb_column) * column_id);
+  svp_fread(&(db->fil), &c, sizeof(c));
+  c.index_dirty = val;
+  svp_fseek(&(db->fil), db->current_table_offset + sizeof(sda_bdb_table) + sizeof(sda_bdb_column) * column_id);
+  svp_fwrite(&(db->fil), &c, sizeof(c));
+}
+
+void sda_bdb_set_all_indexes_dirty(sda_bdb *db) {
+  for(uint8_t i = 0; i < db->current_table.cloumn_count; i++) {
+    sda_bdb_set_index_dirty(i, 1, db);
+  }
+}
+
+uint32_t sda_bdb_get_index(uint32_t val, uint8_t column_id, sda_bdb *db) {
+  uint32_t offset = db->current_table_offset + sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
+  sda_bdb_index_header index_header;
+
+  sda_bdb_column c;
+
+  svp_fseek(&(db->fil), db->current_table_offset + sizeof(sda_bdb_table) + sizeof(sda_bdb_column) * column_id);
+  svp_fread(&(db->fil), &c, sizeof(c));
+
+  if(c.index_dirty) {
+    return 0;
+  }
+
+  svp_fseek(&(db->fil), offset);
+  // find index
+  while(offset < (db->current_table_offset + db->current_table.first_row_offset)) {
+    svp_fread(&(db->fil), &index_header, sizeof(index_header));
+    if(index_header.column == column_id) {
+      // dirty, return
+      
+
+      for(uint32_t i = 0; i < db->current_table.row_count; i++) {
+        if(index_header.indexing_type == SDA_BDB_INDEXING_VALUE) {
+          sda_bdb_index index;
+          // read index
+          svp_fread(&(db->fil), &index, sizeof(index));
+          if(index.value == val) {
+            return index.row_offset;
+          }
+        }  
+      }
+    }
+    offset += index_header.size + sizeof(index_header);
+  }
+
+  return 0;
+}
+
 
 // select table
 uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db) {
@@ -347,8 +515,13 @@ uint8_t sda_bdb_drop_data(sda_bdb *db) {
   db->current_table.valid  = 1;
   db->column_cache_valid   = 0;
   db->current_table.usedup_size = sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
+  db->current_table.first_row_offset = db->current_table.usedup_size;
   db->current_table.row_count   = 0;
   db->current_table.current_row_valid = 0;
+
+  sda_bdb_set_all_indexes_dirty(db);
+
+  // Note: Index will be overwritten
 
   sda_bdb_sync(db);
 
@@ -407,6 +580,8 @@ uint32_t sda_bdb_new_row(sda_bdb *db) {
     db->current_table.max_id++;
   }
 
+  sda_bdb_set_all_indexes_dirty(db);
+
   //printf("table size after auto id: %u\n", db->current_table.table_size);
   //printf("new offset behind: %x\n", db->current_table_offset + db->current_table.table_size);
 
@@ -436,12 +611,14 @@ uint8_t sda_bdb_drop_row(sda_bdb *db) {
   if (db->current_table.current_row_offset >= db->current_table_offset + db->current_table.usedup_size) {
     db->current_table.current_row_valid = 0;
   }
+  sda_bdb_set_all_indexes_dirty(db);
 
   sda_bdb_sync(db);
   return 1;
 }
 
 uint8_t sda_bdb_gc_type;
+uint8_t sda_bdb_gc_indexed;
 
 uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db) {
   sda_bdb_column c;
@@ -449,7 +626,8 @@ uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db) {
   if(db->column_cache_valid) {
     if(svp_strcmp(db->cached_column, column_name)){
       //printf("col_id loaded from cache\n");
-      sda_bdb_gc_type = db->cached_column_type;
+      sda_bdb_gc_type    = db->cached_column_type;
+      sda_bdb_gc_indexed = db->cached_column_indexed; 
       return db->cached_column_id + 1;
     }
   }
@@ -460,17 +638,21 @@ uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db) {
     svp_fread(&(db->fil), &c, sizeof(sda_bdb_column));
     if(svp_strcmp(c.name, column_name)) {
       sda_bdb_gc_type = c.type;
+      sda_bdb_gc_indexed = c.indexed;
       if (!db->column_cache_valid) {
         db->column_cache_valid = 1;
         sda_strcp(c.name, db->cached_column, SDA_BDB_NAME_LEN);
         db->cached_column_id = i;
         db->cached_column_type = c.type;
+        db->cached_column_indexed = c.indexed;
       }
       
       return i + 1;
     }
   }
-  sda_bdb_gc_type = 0;
+  sda_bdb_gc_type   = 0;
+  sda_bdb_gc_indexed = 0;
+
   return 0;
 }
 
@@ -502,6 +684,9 @@ uint8_t sda_bdb_set_entry_id(uint8_t id, void* data, uint32_t size, sda_bdb *db)
     printf("%s: Row not valid!\n", __FUNCTION__);
     return 0;
   }
+
+  sda_bdb_set_index_dirty(id, 1, db);
+
   // seek on row start
   svp_fseek(&(db->fil), db->current_table.current_row_offset);
   sda_bdb_row row;
@@ -673,15 +858,7 @@ uint32_t sda_bdb_get_entry_size(uint8_t* name, sda_bdb *db) {
 }
 
 // returns entry size (bytes read)
-uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_bdb *db) {
-  uint8_t id = sda_bdb_get_column_id(name, db);
-
-  if(!id) {
-    printf("%s: column \"%s\" does not exist\n", __FUNCTION__, name);
-    return 0;
-  }
-  id--;
-
+uint32_t sda_bdb_get_entry_id(uint8_t id, void* buffer, uint32_t buff_size, sda_bdb *db) {
   if(!db->current_table.current_row_valid) {
     return 0;
   }
@@ -705,7 +882,7 @@ uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_
       svp_fread(&(db->fil), &e, sizeof(sda_bdb_entry));
       if(e.entry_column == id) {
         if(e.entry_size > buff_size) {
-          printf("%s: column \"%s\" is larger than the given buffer\n", __FUNCTION__, name);
+          printf("%s: column \"%u\" is larger than the given buffer\n", __FUNCTION__, id);
           return 0;
         }
         
@@ -726,6 +903,19 @@ uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_
 
   return 0;
 }
+
+// returns entry size (bytes read)
+uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_bdb *db) {
+  uint8_t id = sda_bdb_get_column_id(name, db);
+  if(!id) {
+    printf("%s: column id \"%u\" does not exist\n", __FUNCTION__, id);
+    return 0;
+  }
+  id--;
+
+  return sda_bdb_get_entry_id(id, buffer, buff_size, db);
+}
+
 
 // misc
 // gets row count for the selected table
