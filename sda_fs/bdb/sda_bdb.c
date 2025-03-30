@@ -329,7 +329,7 @@ uint8_t sda_bdb_rebuild_index_id(uint8_t column_id, sda_bdb *db) {
   // find index
   while(offset < (db->current_table_offset + db->current_table.first_row_offset)) {
     svp_fread(&(db->fil), &index_header, sizeof(index_header));
-    printf("reading: %u\n", index_header.column);
+    // printf("reading: %u\n", index_header.column);
     if(index_header.column == column_id) {
       // allocate space
       uint32_t index_size = db->current_table.row_count*sizeof(sda_bdb_index);
