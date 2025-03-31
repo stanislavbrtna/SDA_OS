@@ -705,6 +705,57 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Enable table row index
+  //#!    sys.fs.db.setRowIndex([num] val);
+  //#!Sets row indexing. (1 - enabled, 0 - disabled)
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "setRowIndex", s)) {
+    argType[1] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_enable_row_index(
+      argS->arg[1].val_u,
+      &dbFile
+    );
+
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Rebuild table row index
+  //#!    sys.fs.db.buildRowIndex();
+  //#!Builds row index.
+  //#!
+  //#!Return: [num] 1 if ok.
+  if (sysFuncMatch(argS->callId, "buildRowIndex", s)) {
+
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    if (!db_open) {
+      errSoft((uint8_t *)"DB file not openned!", s);
+      return 0;
+    }
+
+    result->value.val_s = sda_bdb_rebuild_row_index(
+      &dbFile
+    );
+
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+
   //#!##### Set column index type
   //#!    sys.fs.db.setIndex([str] column_name, [num] type);
   //#!Sets index type of a given column
@@ -735,7 +786,7 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Build column index
   //#!    sys.fs.db.buildIndex([str] column_name);
-  //#!Builds/rebuilds index for a given column
+  //#!Builds/rebuilds index for a given column.
   //#!
   //#!Return: [num] 1 if ok.
   if (sysFuncMatch(argS->callId, "buildIndex", s)) {

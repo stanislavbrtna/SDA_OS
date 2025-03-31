@@ -40,6 +40,7 @@ SOFTWARE.
 #define SDA_BDB_INDEXING_NONE  0
 #define SDA_BDB_INDEXING_VALUE 1
 #define SDA_BDB_INDEXING_HASH  2
+#define SDA_BDB_INDEXING_ROWS  3
 
 #define SDA_BDB_BLOCKSIZE 2048
 
@@ -58,6 +59,8 @@ typedef struct {
   uint8_t  current_row_valid;
   uint32_t row_count;
   uint32_t first_row_offset;
+  uint8_t  rows_indexed;
+  uint8_t  row_index_dirty;
 } sda_bdb_table;
 
 
@@ -185,8 +188,12 @@ uint32_t sda_bdb_get_index(uint32_t val, uint8_t column_id, sda_bdb *db);
 // Rebuild index
 uint8_t sda_bdb_rebuild_index(uint8_t *column_name, sda_bdb *db);
 uint8_t sda_bdb_rebuild_index_id(uint8_t column_id, sda_bdb *db);
-
 uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db);
+
+// Row indexing
+uint8_t sda_bdb_enable_row_index(uint8_t val, sda_bdb *db);
+uint32_t sda_bdb_get_row_index(uint32_t val, sda_bdb *db);
+uint8_t sda_bdb_rebuild_row_index(sda_bdb *db);
 
 
 #endif

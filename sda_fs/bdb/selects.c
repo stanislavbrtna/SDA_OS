@@ -35,6 +35,15 @@ uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
     return 1;
   }
 
+  if(db->current_table.rows_indexed && !db->current_table.row_index_dirty) {
+    uint32_t ind_offset = sda_bdb_get_row_index(n, db);
+    if(ind_offset) {
+      db->current_table.current_row_valid  = 1;
+      db->current_table.current_row_offset = db->current_table_offset + db->current_table.first_row_offset + ind_offset;
+      return 1;
+    }
+  }
+
   for(uint32_t i = 0; i < db->current_table.row_count; i++) {
     sda_bdb_row row;
     svp_fread(&(db->fil), &row, sizeof(sda_bdb_row));
