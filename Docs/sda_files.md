@@ -346,6 +346,26 @@ Return: [num] 1 if ok.
 Sets name and type of given column
 
 Return: [num] 1 if ok.
+##### Enable table row index
+    sys.fs.db.setRowIndex([num] val);
+Sets row indexing. (1 - enabled, 0 - disabled)
+
+Return: [num] 1 if ok.
+##### Rebuild table row index
+    sys.fs.db.buildRowIndex();
+Builds row index.
+
+Return: [num] 1 if ok.
+##### Set column index type
+    sys.fs.db.setIndex([str] column_name, [num] type);
+Sets index type of a given column
+
+Return: [num] 1 if ok.
+##### Build column index
+    sys.fs.db.buildIndex([str] column_name);
+Builds/rebuilds index for a given column.
+
+Return: [num] 1 if ok.
 ##### Enable ID field
     sys.fs.db.idEnable([str]fieldName);
 Sets given column as an id field.
