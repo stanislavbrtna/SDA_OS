@@ -178,22 +178,6 @@ uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_
 
 uint32_t sda_bdb_get_entry_id(uint8_t id, void* buffer, uint32_t buff_size, sda_bdb *db);
 
-// Indexing
-
-// Enable column index
-uint8_t sda_bdb_set_column_indexing(uint8_t* col_name, uint8_t indexing, sda_bdb *db);
-uint8_t sda_bdb_set_column_indexing_id(uint8_t id, uint8_t indexing, sda_bdb *db);
-uint32_t sda_bdb_get_index(uint32_t val, uint8_t column_id, sda_bdb *db);
-
-// Rebuild index
-uint8_t sda_bdb_rebuild_index(uint8_t *column_name, sda_bdb *db);
-uint8_t sda_bdb_rebuild_index_id(uint8_t column_id, sda_bdb *db);
-uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db);
-
-// Row indexing
-uint8_t sda_bdb_enable_row_index(uint8_t val, sda_bdb *db);
-uint32_t sda_bdb_get_row_index(uint32_t val, sda_bdb *db);
-uint8_t sda_bdb_rebuild_row_index(sda_bdb *db);
-
+#include "index.h"
 
 #endif

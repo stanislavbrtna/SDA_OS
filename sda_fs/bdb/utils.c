@@ -197,7 +197,12 @@ void sda_bdb_sync_table(sda_bdb *db) {
 
 // internal
 uint8_t sda_bdb_entry_contains(
-    uint32_t entry_size, uint8_t *value, uint8_t partial, uint8_t case_sensitive, sda_bdb *db) {
+  uint32_t entry_size,
+  uint8_t *value,
+  uint8_t partial,
+  uint8_t case_sensitive,
+  sda_bdb *db
+){
   uint32_t x = 0;
   uint32_t pos = 0;
 

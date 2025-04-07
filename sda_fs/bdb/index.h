@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2024 Stanislav Brtna
+Copyright (c) 2025 Stanislav Brtna
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,35 +20,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef SDA_BINARY_DB_UTILS_H
-#define SDA_BINARY_DB_UTILS_H
-#include "../svp_fs.h"
+#ifndef SDA_BDB_INDEX_H
+#define SDA_BDB_INDEX_H
+#include "sda_bdb.h"
 
-uint32_t sda_bdb_read_u32(svp_file *f);
-void sda_bdb_write_u32(svp_file *f, uint32_t val);
-uint32_t sda_bdb_new_offset(sda_bdb *db);
-uint32_t sda_bdb_truncate(sda_bdb *db, uint32_t position, uint32_t size);
-uint32_t sda_bdb_truncate_upto(sda_bdb *db, uint32_t position, uint32_t size);
-uint8_t sda_bdb_check_table_space(sda_bdb *db, uint32_t size);
-uint32_t sda_bdb_insert_space_indb(sda_bdb *db, uint32_t position, uint32_t size);
-uint32_t sda_bdb_insert_freeblock(sda_bdb *db, uint32_t position);
-uint32_t sda_bdb_write_data(sda_bdb *db, uint32_t position, void* data, uint32_t size);
-void sda_bdb_sync_table(sda_bdb *db);
-uint32_t sda_bdb_insert_free_generic(
-  sda_bdb *db, 
-  uint32_t position,
-  uint32_t size, 
-  uint32_t file_end
-);
+// Indexing
 
-// internal
-uint8_t sda_bdb_entry_contains(
-  uint32_t entry_size,
-  uint8_t *value,
-  uint8_t partial,
-  uint8_t case_sensitive,
-  sda_bdb *db
-);
+// Enable column index
+uint8_t sda_bdb_set_column_indexing(uint8_t* col_name, uint8_t indexing, sda_bdb *db);
+uint8_t sda_bdb_set_column_indexing_id(uint8_t id, uint8_t indexing, sda_bdb *db);
+uint32_t sda_bdb_get_index(uint32_t val, uint8_t column_id, sda_bdb *db);
 
+// Rebuild index
+uint8_t sda_bdb_rebuild_index(uint8_t *column_name, sda_bdb *db);
+uint8_t sda_bdb_rebuild_index_id(uint8_t column_id, sda_bdb *db);
+uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db);
+
+// Row indexing
+uint8_t sda_bdb_enable_row_index(uint8_t val, sda_bdb *db);
+uint32_t sda_bdb_get_row_index(uint32_t val, sda_bdb *db);
+uint8_t sda_bdb_rebuild_row_index(sda_bdb *db);
+
+// Internal
+void sda_bdb_set_index_dirty(uint8_t column_id, uint8_t val, sda_bdb *db);
+void sda_bdb_set_all_indexes_dirty(sda_bdb *db);
 
 #endif
