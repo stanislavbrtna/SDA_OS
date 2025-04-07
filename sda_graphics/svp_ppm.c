@@ -44,7 +44,6 @@ void svp_ppm_set_pmc(uint8_t enable, uint16_t color) {
 uint8_t sda_ppm_get_header(svp_ppm_header *p, svp_file *fp) {
   uint8_t  ch2 = 0;
   uint8_t  ch[16];
-  uint32_t fpos = 0;
   uint32_t a;
 
   p->width  = 0;
