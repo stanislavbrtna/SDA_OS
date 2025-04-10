@@ -361,6 +361,7 @@ uint8_t sda_bdb_drop_data(sda_bdb *db) {
 
   sda_bdb_set_all_indexes_dirty(db);
 
+  // TODO: new index headers must be created here...
   // Note: Index will be overwritten
 
   sda_bdb_sync(db);

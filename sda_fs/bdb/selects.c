@@ -23,6 +23,7 @@ SOFTWARE.
 #include "utils.h"
 #include "selects.h"
 
+uint8_t force_sequential_read;
 
 uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
   uint32_t offset = db->current_table_offset + db->current_table.first_row_offset;
@@ -34,6 +35,8 @@ uint8_t sda_bdb_select_row(uint32_t n, sda_bdb *db) {
     db->current_table.current_row_valid  = 1;
     return 1;
   }
+
+  //printf("selecting, dirty? %u\n", db->current_table.row_index_dirty);
 
   if(db->current_table.rows_indexed && !db->current_table.row_index_dirty) {
     uint32_t ind_offset = sda_bdb_get_row_index(n, db);
@@ -110,11 +113,13 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
 
   db->last_entry_id_en = 0;
 
-  uint32_t ind_offset = sda_bdb_get_index(val, col_id, db);
-  if(ind_offset) {
-    db->current_table.current_row_valid  = 1;
-    db->current_table.current_row_offset = db->current_table_offset + db->current_table.first_row_offset + ind_offset;
-    return 1;
+  if (!force_sequential_read) {
+    uint32_t ind_offset = sda_bdb_get_index(val, col_id, db);
+    if(ind_offset) {
+      db->current_table.current_row_valid  = 1;
+      db->current_table.current_row_offset = db->current_table_offset + db->current_table.first_row_offset + ind_offset;
+      return 1;
+    }
   }
  
   if(offset >= db->current_table_offset + db->current_table.usedup_size) {
@@ -162,18 +167,26 @@ uint8_t sda_bdb_select_row_num_generic(uint8_t col_id, uint32_t val, sda_bdb *db
 
 
 uint8_t sda_bdb_select_row_id(uint32_t id, sda_bdb *db) {
+  uint8_t val = 0;
+
   if(!db->current_table.auto_id) {
     printf("%s: auto ID not enabled on table \"%s\"\n", __FUNCTION__, db->current_table.name);
     return 0;
   }
 
-  // rewinds table
+  // id is before cursor, we must read the table from the start
   if(db->last_entry_id_en == 0 || db->last_entry_id > id || db->current_table.current_row_valid == 0) {
     sda_bdb_select_row(0, db);
+    force_sequential_read = 0;
+    val = sda_bdb_select_row_num_generic(db->current_table.auto_id_field, id, db);
+  } else {
+    if (db->last_entry_id < id + 30) {
+      force_sequential_read = 1;
+    }
+    val = sda_bdb_select_row_num_generic(db->current_table.auto_id_field, id, db);
   }
 
-  uint8_t val = sda_bdb_select_row_num_generic(db->current_table.auto_id_field, id, db);
-
+  force_sequential_read = 0;
   if(val) {
     db->last_entry_id = id;
     db->last_entry_id_en = 1;
