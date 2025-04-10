@@ -104,15 +104,28 @@ uint32_t sda_bdb_truncate_upto(sda_bdb *db, uint32_t position, uint32_t size) {
 
 
 uint8_t sda_bdb_check_table_space(sda_bdb *db, uint32_t size) {
-  //printf("size check: size: %u table-usedup: %u\n", size, db->current_table.table_size - db->current_table.usedup_size);
-  //TODO: why this fixes it?
-  if(size > db->current_table.table_size - db->current_table.usedup_size) {
-    //printf("inserting free block at %x\n", db->current_table_offset + db->current_table.table_size);
-    //sda_bdb_insert_freeblock(db, db->current_table_offset + db->current_table.table_size);
-    sda_bdb_insert_freeblock(db, db->current_table_offset + db->current_table.table_size);
-    db->current_table.table_size += SDA_BDB_BLOCKSIZE;
-    svp_fsync(&(db->fil));
+  //printf("size check: size: %u table-usedup: %u (%s)\n", size, db->current_table.table_size - db->current_table.usedup_size, db->current_table.name);
+  
+  if(db->current_table.table_size < db->current_table.usedup_size) {
+    printf("ERROR: table_size < usedup_size\n");
   }
+  
+  // if we neel larger space than the available
+  if(size > db->current_table.table_size - db->current_table.usedup_size) {
+    while(1) {
+      printf("inserting free block at %x\n", db->current_table_offset + db->current_table.table_size);
+      sda_bdb_insert_freeblock(db, db->current_table_offset + db->current_table.table_size);
+      db->current_table.table_size += SDA_BDB_BLOCKSIZE;
+      svp_fsync(&(db->fil));
+      
+      if(size > SDA_BDB_BLOCKSIZE) {
+        size -= SDA_BDB_BLOCKSIZE;
+      } else {
+        break;
+      }
+    }
+  }
+
   return 1;
 }
 

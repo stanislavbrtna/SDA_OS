@@ -86,10 +86,11 @@ static uint32_t allocate_index_space(sda_bdb_index_header index_header, uint32_t
   // allocate space
   uint32_t index_size = db->current_table.row_count*sizeof(sda_bdb_index);
   if(index_header.size < index_size) {
-    sda_bdb_insert_space_indb(db, header_offset, index_size);
+    //printf("rebuilding? index size: %u\n", index_size - index_header.size);
+    sda_bdb_insert_space_indb(db, header_offset, index_size - index_header.size);
 
-    db->current_table.first_row_offset += index_size;
-    db->current_table.usedup_size += index_size;
+    db->current_table.first_row_offset += index_size - index_header.size;
+    db->current_table.usedup_size += index_size - index_header.size;
   
     index_header.size = index_size;
     svp_fseek(&(db->fil), header_offset);
