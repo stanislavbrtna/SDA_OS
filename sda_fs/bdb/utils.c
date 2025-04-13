@@ -212,7 +212,7 @@ void sda_bdb_sync_table(sda_bdb *db) {
 uint8_t sda_bdb_entry_contains(
   uint32_t entry_size,
   uint8_t *value,
-  uint8_t partial,
+  uint8_t full_string,
   uint8_t case_sensitive,
   sda_bdb *db
 ){
@@ -233,7 +233,7 @@ uint8_t sda_bdb_entry_contains(
     if (cmp) {
       x++;
     } else {
-      if (partial) {
+      if (!full_string) {
         // rewind
         if (x != 0) {
           x = 0;

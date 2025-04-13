@@ -416,13 +416,13 @@ Selectcs next row where given column has given value
 
 Return: [num] 1 if ok.
 ##### Select next row matching string
-    sys.fs.db.selectRowStr([str]column, [str]string, [num]partial, [num]case_sensitive);
+    sys.fs.db.selectRowStr([str]column, [str]string, [num]full_string, [num]case_sensitive);
 Selectcs next row where given column has given value.
 
  | Parameter      | Value | Meaning                                 |
  | ---            | ---   | ---                                     |
- | partial        |   1   | string can be only a part odf the entry |
- |                |   0   | full string must be contained           |
+ | full_string    |   1   | full string must be contained           |
+ |                |   0   | string can be only a part odf the entry |
  | case_sensitive |   1   | strings are matched case-sensitive      |
  |                |   0   | strings are matched non case-sensitive  |
 

@@ -251,7 +251,7 @@ loop(match) {
 uint8_t sda_bdb_select_row_str(
   uint8_t* column_name, 
   uint8_t *str, 
-  uint8_t partial, 
+  uint8_t full_string, 
   uint8_t case_sensitive, 
   sda_bdb *db
 ){
@@ -290,7 +290,7 @@ uint8_t sda_bdb_select_row_str(
       svp_fread(&(db->fil), &e, sizeof(e));
       if(e.entry_column == col_id) {
         // read, compare
-        if(sda_bdb_entry_contains(e.entry_size, str, partial, case_sensitive, db)) {
+        if(sda_bdb_entry_contains(e.entry_size, str, full_string, case_sensitive, db)) {
           db->current_table.current_row_offset = offset;
           return 1;
         }

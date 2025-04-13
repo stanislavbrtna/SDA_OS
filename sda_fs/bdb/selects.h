@@ -33,7 +33,7 @@ uint8_t sda_bdb_next_row_match_num(uint8_t *column_name, uint32_t val, sda_bdb *
 uint8_t sda_bdb_select_row_str(
   uint8_t* column_name, 
   uint8_t *str, 
-  uint8_t partial, 
+  uint8_t full_string, 
   uint8_t case_sensitive, 
   sda_bdb *db
 );
