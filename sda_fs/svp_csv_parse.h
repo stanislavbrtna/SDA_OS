@@ -30,10 +30,12 @@ SOFTWARE.
 typedef struct {
   svp_file fil;
   uint8_t  separator;
+  uint8_t  escaping;
 } svp_csvf;
 
 uint8_t svp_csv_open(svp_csvf *fc, uint8_t * fname);
 void svp_csv_set_separator(svp_csvf *fc, uint8_t separator);
+void svp_csv_set_escaping(svp_csvf *fc, uint8_t escaping);
 uint8_t svp_csv_close(svp_csvf *fc);
 void svp_csv_new(svp_csvf *fc, uint8_t count); //aka newline
 uint16_t svp_csv_get_cell(svp_csvf *fc, uint8_t index, uint8_t * def, uint8_t * buff, uint16_t len);

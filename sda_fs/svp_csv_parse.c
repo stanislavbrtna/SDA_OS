@@ -28,11 +28,16 @@ uint8_t svp_csv_open(svp_csvf *fc, uint8_t * fname) {
     return 0;
   }
   fc->separator = SDA_SEPARATOR;
+  fc->escaping  = 1;
   return 1;
 }
 
 void svp_csv_set_separator(svp_csvf *fc, uint8_t separator) {
   fc->separator = separator;
+}
+
+void svp_csv_set_escaping(svp_csvf *fc, uint8_t escaping) {
+  fc->escaping = escaping;
 }
 
 uint8_t svp_csv_close(svp_csvf *fc) {
@@ -105,7 +110,13 @@ uint16_t svp_csv_get_cell_svs(svp_csvf *fc, uint8_t index, uint8_t * def, svsVM 
 
   strNewStreamInit(s);
 
-  c=svp_fread_u8(&(fc->fil));
+  c = svp_fread_u8(&(fc->fil));
+
+  if(fc->escaping) {
+    if(c == '#') {
+      c = '\n';
+    }
+  }
 
   while((c != fc->separator) && (c != SDA_ENDLINE)) {
     if (strNewStreamPush(c,s)) {
@@ -152,6 +163,12 @@ uint16_t svp_csv_get_cell(svp_csvf *fc, uint8_t index, uint8_t * def, uint8_t * 
   i = 0;
   while((c != fc->separator) && (c != SDA_ENDLINE) && !svp_feof(&(fc->fil))) {
     if (i < len) {
+      if(fc->escaping) {
+        if (c == '#') {
+          c = '\n';
+        }
+      }
+
       buff[i] = c;
     } else {
       buff[i] = 0;
@@ -173,7 +190,7 @@ uint8_t svp_csv_set_cell(svp_csvf *fc, uint8_t index, uint8_t * value) {
   uint16_t key_len;
   uint16_t i;
   uint32_t start_pos, fsize, x, line_start;
-  uint8_t c = 0;
+  uint8_t  c = 0;
   //seek on start of the line
   seek_line_start(fc);
 
@@ -227,7 +244,15 @@ uint8_t svp_csv_set_cell(svp_csvf *fc, uint8_t index, uint8_t * value) {
 
   if (key_len >= val_len) {
     for(i = 0; i < val_len; i++) {
-      svp_fwrite_u8(&(fc->fil),value[i]);
+      if(fc->escaping) {
+        if(value[i] == '\n') {
+          svp_fwrite_u8(&(fc->fil), '#');
+        } else {
+          svp_fwrite_u8(&(fc->fil), value[i]);
+        }
+      } else {
+        svp_fwrite_u8(&(fc->fil), value[i]);
+      }
     }
 
     fsize = svp_get_size(&(fc->fil));
@@ -262,9 +287,17 @@ uint8_t svp_csv_set_cell(svp_csvf *fc, uint8_t index, uint8_t * value) {
     }
     svp_fseek(&(fc->fil), start_pos);
 
-   for(i = 0; i < val_len; i++) {
-     svp_fwrite_u8(&(fc->fil), value[i]);
-   }
+    for(i = 0; i < val_len; i++) {
+      if(fc->escaping) {
+        if(value[i] == '\n') {
+          svp_fwrite_u8(&(fc->fil), '#');
+        } else {
+          svp_fwrite_u8(&(fc->fil), value[i]);
+        }
+      } else {
+        svp_fwrite_u8(&(fc->fil), value[i]);
+      }
+    }
 
     svp_fseek(&(fc->fil), line_start);
   }
