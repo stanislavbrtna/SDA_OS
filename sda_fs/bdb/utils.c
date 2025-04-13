@@ -113,7 +113,7 @@ uint8_t sda_bdb_check_table_space(sda_bdb *db, uint32_t size) {
   // if we neel larger space than the available
   if(size > db->current_table.table_size - db->current_table.usedup_size) {
     while(1) {
-      printf("inserting free block at %x\n", db->current_table_offset + db->current_table.table_size);
+      //printf("inserting free block at %x\n", db->current_table_offset + db->current_table.table_size);
       sda_bdb_insert_freeblock(db, db->current_table_offset + db->current_table.table_size);
       db->current_table.table_size += SDA_BDB_BLOCKSIZE;
       svp_fsync(&(db->fil));
