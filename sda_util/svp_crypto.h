@@ -46,9 +46,10 @@ uint8_t svp_crypto_stream_encrypt(uint8_t c);
 uint8_t svp_crypto_stream_decrypt(uint8_t c);
 
 // internal functions
-uint8_t svp_crypto_load_key_to_str(uint8_t * fname, uint8_t* str);
-uint8_t svp_crypto_write_keyfile(uint8_t *fname, uint8_t *key);
+uint8_t  svp_crypto_load_key_to_str(uint8_t * fname, uint8_t* str);
+uint8_t  svp_crypto_write_keyfile(uint8_t *fname, uint8_t *key);
 uint32_t crc32b(unsigned char *message);
+uint32_t crc32b_len(uint8_t *message, uint32_t len);
 void svp_crypto_test();
 
 #endif

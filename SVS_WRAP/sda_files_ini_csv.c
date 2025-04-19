@@ -757,15 +757,15 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
 
   //#!##### Set column index type
-  //#!    sys.fs.db.setIndex([str] column_name, [num] type);
-  //#!Sets index type of a given column
+  //#!    sys.fs.db.setIndex([str] column_name);
+  //#!Sets index type of a given column. Column type is inferred from the column type.
+  //#!String columns are indexed as hashes, float and num columns are indexed as value.
   //#!
   //#!Return: [num] 1 if ok.
   if (sysFuncMatch(argS->callId, "setIndex", s)) {
     argType[1] = SVS_TYPE_STR;
-    argType[2] = SVS_TYPE_NUM;
 
-    if(sysExecTypeCheck(argS, argType, 2, s)) {
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
 
@@ -776,7 +776,6 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
     result->value.val_s = sda_bdb_set_column_indexing(
       s->stringField+argS->arg[1].val_str,
-      argS->arg[2].val_u,
       &dbFile
     );
 

@@ -357,8 +357,9 @@ Builds row index.
 
 Return: [num] 1 if ok.
 ##### Set column index type
-    sys.fs.db.setIndex([str] column_name, [num] type);
-Sets index type of a given column
+    sys.fs.db.setIndex([str] column_name);
+Sets index type of a given column. Column type is inferred from the column type.
+String columns are indexed as hashes, float and num columns are indexed as value.
 
 Return: [num] 1 if ok.
 ##### Build column index

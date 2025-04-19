@@ -23,11 +23,24 @@ SOFTWARE.
 #include "index.h"
 #include "utils.h"
 
-uint8_t sda_bdb_set_column_indexing(uint8_t* col_name, uint8_t indexing, sda_bdb *db) {
+extern uint8_t sda_bdb_gc_type;
+
+uint8_t sda_bdb_set_column_indexing(uint8_t* col_name, sda_bdb *db) {
   uint8_t id = sda_bdb_get_column_id(col_name, db);
+  
+  if(id == 0) {
+    printf("%s: Invalid column!\n", __FUNCTION__);
+    return 0;
+  } 
+  
   id--;
 
-  return sda_bdb_set_column_indexing_id(id, indexing, db);
+  if(sda_bdb_gc_type == SDA_BDB_TYPE_NUM || sda_bdb_gc_type == SDA_BDB_TYPE_FLT) {
+    return sda_bdb_set_column_indexing_id(id, SDA_BDB_INDEXING_VALUE, db);
+  }
+
+  // type SDA_BDB_TYPE_STR, but this would work universally
+  return sda_bdb_set_column_indexing_id(id, SDA_BDB_INDEXING_HASH, db);
 }
 
 uint8_t sda_bdb_set_column_indexing_id(uint8_t id, uint8_t indexing, sda_bdb *db) {
@@ -146,13 +159,17 @@ uint8_t sda_bdb_rebuild_index_id(uint8_t column_id, sda_bdb *db) {
   uint32_t offset = db->current_table_offset + sizeof(sda_bdb_table) + db->current_table.cloumn_count*sizeof(sda_bdb_column);
   sda_bdb_index_header index_header;
 
+  sda_bdb_column c;
+  svp_fseek(&(db->fil), db->current_table_offset + sizeof(sda_bdb_table) + column_id*sizeof(sda_bdb_column));
+  svp_fread(&(db->fil), &c, sizeof(c));
+
   svp_fseek(&(db->fil), offset);
   // find index
   while(offset < (db->current_table_offset + db->current_table.first_row_offset)) {
     svp_fread(&(db->fil), &index_header, sizeof(index_header));
     //printf("found index: col:%u type:%u\n", index_header.column, index_header.indexing_type);    
     if(index_header.column == column_id) {
-      if(index_header.indexing_type == SDA_BDB_INDEXING_VALUE) {
+      if(index_header.indexing_type == SDA_BDB_INDEXING_VALUE && c.type == SDA_BDB_TYPE_NUM) {
         // allocate space
         uint32_t index_size = db->current_table.row_count*sizeof(sda_bdb_index);
         if(index_header.size < index_size) {
@@ -174,7 +191,26 @@ uint8_t sda_bdb_rebuild_index_id(uint8_t column_id, sda_bdb *db) {
             svp_fwrite(&(db->fil), &index, sizeof(index));
             index_offset += sizeof(index);
             sda_bdb_select_row_next(db);
-        }  
+        }
+      } else if(index_header.indexing_type == SDA_BDB_INDEXING_HASH && c.type == SDA_BDB_TYPE_STR) {
+        // allocate space
+        uint32_t index_size = db->current_table.row_count*sizeof(sda_bdb_index);
+        if(index_header.size < index_size) {
+          index_header.size = allocate_index_space(index_header, offset, db);
+        }
+        // walk rows, store indexes
+        sda_bdb_select_row(0, db);
+        uint32_t index_offset = offset + sizeof(index_header);
+        for(uint32_t i = 0; i < db->current_table.row_count; i++) {
+            sda_bdb_index index;
+            index.value = sda_bdb_get_entry_hash(column_id, db);
+            index.row_offset = db->current_table.current_row_offset - (db->current_table_offset + db->current_table.first_row_offset);
+            // write index
+            svp_fseek(&(db->fil), index_offset);
+            svp_fwrite(&(db->fil), &index, sizeof(index));
+            index_offset += sizeof(index);
+            sda_bdb_select_row_next(db);
+        }
       }
     }
     offset += index_header.size + sizeof(index_header);
@@ -188,6 +224,7 @@ void sda_bdb_set_index_dirty(uint8_t column_id, uint8_t val, sda_bdb *db) {
   svp_fseek(&(db->fil), db->current_table_offset + sizeof(sda_bdb_table) + sizeof(sda_bdb_column) * column_id);
   svp_fread(&(db->fil), &c, sizeof(c));
   c.index_dirty = val;
+  //printf("%s: setting index %s val: %u\n", __FUNCTION__, c.name, c.index_dirty);
   svp_fseek(&(db->fil), db->current_table_offset + sizeof(sda_bdb_table) + sizeof(sda_bdb_column) * column_id);
   svp_fwrite(&(db->fil), &c, sizeof(c));
 }
@@ -223,12 +260,15 @@ uint32_t sda_bdb_get_index(uint32_t val, uint8_t column_id, sda_bdb *db) {
     if(index_header.column == column_id && index_header.indexing_type != SDA_BDB_INDEXING_ROWS) {
       // dirty, return
       for(uint32_t i = 0; i < db->current_table.row_count; i++) {
-        if(index_header.indexing_type == SDA_BDB_INDEXING_VALUE) {
+        if(
+          index_header.indexing_type == SDA_BDB_INDEXING_VALUE
+          || index_header.indexing_type == SDA_BDB_INDEXING_HASH
+        ) {
           sda_bdb_index index;
           // read index
           svp_fread(&(db->fil), &index, sizeof(index));
           if(index.value == val) {
-            //printf("returning indexed offset! (column index)\n");
+            //printf("DBG: returning indexed offset %x for column %s, (value %u)\n", index.row_offset, c.name, index.value);
             return index.row_offset;
           }
         }  

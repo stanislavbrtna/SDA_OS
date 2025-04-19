@@ -497,6 +497,27 @@ uint8_t sda_bdb_get_column_id(uint8_t *column_name, sda_bdb *db) {
   return 0;
 }
 
+uint8_t sda_bdb_get_column_type(uint8_t *column_name, sda_bdb *db) {
+  sda_bdb_column c;
+
+  if(db->column_cache_valid) {
+    if(svp_strcmp(db->cached_column, column_name)){
+      return db->cached_column_type;
+    }
+  }
+
+  svp_fseek(&(db->fil), db->current_table_offset + sizeof(sda_bdb_table));
+  
+  for(uint8_t i = 0; i < db->current_table.cloumn_count; i++) {
+    svp_fread(&(db->fil), &c, sizeof(sda_bdb_column));
+    if(svp_strcmp(c.name, column_name)) {
+      return c.type;
+    }
+  }
+  printf("%s: ERROR: Could not get column type!\n", __FUNCTION__);
+  return 8;
+}
+
 
 uint8_t sda_bdb_enable_auto_id(uint8_t *column_name, sda_bdb *db) {
   if(db->current_table.auto_id) {
@@ -730,6 +751,61 @@ uint32_t sda_bdb_get_entry_id(uint8_t id, void* buffer, uint32_t buff_size, sda_
         svp_fread(&(db->fil), buffer, e.entry_size);
 
         return e.entry_size;
+      }
+
+      offset += e.entry_size + sizeof(sda_bdb_entry);
+
+      if(offset >= db->current_table.current_row_offset + row.size + sizeof(sda_bdb_row)) {
+        break;
+      }
+
+      svp_fseek(&(db->fil), offset);
+    }
+  }
+
+  return 0;
+}
+
+
+uint32_t sda_bdb_get_entry_hash(uint8_t id, sda_bdb *db) {
+  if(!db->current_table.current_row_valid) {
+    return 0;
+  }
+
+  svp_fseek(&(db->fil), db->current_table.current_row_offset);
+  sda_bdb_row row;
+  svp_fread(&(db->fil), &row, sizeof(sda_bdb_row));
+
+  if(row.size == 0) {
+    printf("%s: Row is empty!\n", __FUNCTION__);
+    return 0;
+  }
+  
+  sda_bdb_entry e;
+  
+  // if row is not empty, then walk entries
+  uint32_t offset = db->current_table.current_row_offset + sizeof(sda_bdb_row);
+
+  if(row.size != 0) {
+    for(uint8_t i = 0; i < db->current_table.cloumn_count; i++) {
+      svp_fread(&(db->fil), &e, sizeof(sda_bdb_entry));
+      if(e.entry_column == id) {
+        int32_t i, j;
+        uint32_t byte, crc, mask;
+        uint8_t c;
+
+        i = 0;
+        crc = 0xFFFFFFFF;
+        while (i < e.entry_size) {
+          byte = svp_fread_u8(&(db->fil));
+          crc = crc ^ byte;
+          for (j = 7; j >= 0; j--) {    // Do eight times.
+              mask = -(crc & 1);
+              crc = (crc >> 1) ^ (0xEDB88320 & mask);
+          }
+          i++;
+        }
+        return ~crc;
       }
 
       offset += e.entry_size + sizeof(sda_bdb_entry);

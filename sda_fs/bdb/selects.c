@@ -254,7 +254,7 @@ uint8_t sda_bdb_select_row_str(
   uint8_t full_string, 
   uint8_t case_sensitive, 
   sda_bdb *db
-){
+) {
 
   uint8_t col_id = sda_bdb_get_column_id(column_name, db); 
 
@@ -262,6 +262,8 @@ uint8_t sda_bdb_select_row_str(
     printf("%s: no column named \"%s\"\n", __FUNCTION__, column_name);
     return 0;
   }
+
+  col_id--;
 
   if(sda_bdb_gc_type != SDA_BDB_TYPE_STR) {
     printf("%s: column \"%s\" is not type STR\n", __FUNCTION__, column_name);
@@ -273,9 +275,16 @@ uint8_t sda_bdb_select_row_str(
     return 0;
   }
 
+  if(full_string && case_sensitive) {
+    uint32_t ind_offset = sda_bdb_get_index(crc32b_len(str, sda_strlen(str) + 1), col_id, db);
+    if(ind_offset) {
+      db->current_table.current_row_valid  = 1;
+      db->current_table.current_row_offset = db->current_table_offset + db->current_table.first_row_offset + ind_offset;
+      return 1;
+    }
+  }
+  
   db->last_entry_id_en = 0;
-
-  col_id--;
 
   uint32_t offset = db->current_table.current_row_offset;
   svp_fseek(&(db->fil), offset);

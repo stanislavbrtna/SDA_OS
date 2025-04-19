@@ -470,6 +470,9 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!Subprocess will be launched after the current application returns from its *update* function.
   //#!When strings are passed as arguments,
   //#!their total size must not exceed APP_ARG_STR_LEN define (2048 by default).
+  //#!Also be carefull when passing string expressions, they will be passed
+  //#!to the child process after the update function returns and could be garbage collected
+  //#!in the meantime. So prefferably pass string constants or global variables. 
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "subProcess", s)) {

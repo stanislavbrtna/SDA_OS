@@ -27,7 +27,7 @@ SOFTWARE.
 // Indexing
 
 // Enable column index
-uint8_t sda_bdb_set_column_indexing(uint8_t* col_name, uint8_t indexing, sda_bdb *db);
+uint8_t sda_bdb_set_column_indexing(uint8_t* col_name, sda_bdb *db);
 uint8_t sda_bdb_set_column_indexing_id(uint8_t id, uint8_t indexing, sda_bdb *db);
 uint32_t sda_bdb_get_index(uint32_t val, uint8_t column_id, sda_bdb *db);
 

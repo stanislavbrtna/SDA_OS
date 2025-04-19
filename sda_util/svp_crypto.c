@@ -401,6 +401,24 @@ uint32_t crc32b(uint8_t *message) {
    return ~crc;
 }
 
+uint32_t crc32b_len(uint8_t *message, uint32_t len) {
+  int32_t i, j;
+  uint32_t byte, crc, mask;
+
+  i = 0;
+  crc = 0xFFFFFFFF;
+  while (i < len) {
+     byte = message[i];            // Get next byte.
+     crc = crc ^ byte;
+     for (j = 7; j >= 0; j--) {    // Do eight times.
+        mask = -(crc & 1);
+        crc = (crc >> 1) ^ (0xEDB88320 & mask);
+     }
+     i++;
+  }
+  return ~crc;
+}
+
 
 uint32_t svp_crypto_get_key_crc(uint8_t *fname) {
   uint8_t new_key[KEY_LEN_MAX];

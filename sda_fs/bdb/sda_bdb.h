@@ -127,6 +127,8 @@ uint8_t sda_bdb_set_column(uint8_t id, uint8_t *name, uint8_t type, sda_bdb *db)
 // Select existing table
 uint8_t sda_bdb_select_table(uint8_t *name, sda_bdb *db);
 
+uint8_t sda_bdb_get_column_type(uint8_t *column_name, sda_bdb *db);
+
 // Drop selected table
 uint8_t sda_bdb_drop_table(sda_bdb *db);
 
@@ -177,6 +179,8 @@ uint8_t sda_bdb_store_string(uint8_t* column_name, uint8_t* str, sda_bdb *db);
 uint32_t sda_bdb_get_entry(uint8_t* name, void* buffer, uint32_t buff_size, sda_bdb *db);
 
 uint32_t sda_bdb_get_entry_id(uint8_t id, void* buffer, uint32_t buff_size, sda_bdb *db);
+
+uint32_t sda_bdb_get_entry_hash(uint8_t id, sda_bdb *db);
 
 #include "index.h"
 
