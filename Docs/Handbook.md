@@ -170,6 +170,9 @@ Runs child process with given arguments.
 Subprocess will be launched after the current application returns from its *update* function.
 When strings are passed as arguments,
 their total size must not exceed APP_ARG_STR_LEN define (2048 by default).
+Also be carefull when passing string expressions, they will be passed
+to the child process after the update function returns and could be garbage collected
+in the meantime. So prefferably pass string constants or global variables. 
 
 Return: None
 ##### Enable launching subprocess from cwd
@@ -599,10 +602,15 @@ Return: [num] 1 - error, 0 - ok
 ##### Free hardware resource
     sys.hw.free([num]Resource);
 Frees given hardware resouce.
+
 Return: [num] 1 - error, 0 - ok
 ##### Get hardware resource state
     sys.hw.getLock([num]Resource);
-Frees given hardware resouce.
+Get if given resource is locked by another app.
+Note:
+If the resource is currently claimed by app that calls
+the sys.hw.getLock, 0 (free) is returned.
+
 Return: [num] 1 - locked, 0 - free
 #### Internal expansion port
 
@@ -911,6 +919,12 @@ Return: [num] pos
 Returns size of openned file.
 
 Return: [num] size in bytes
+##### Get end of file
+    sys.fs.eof();
+    sys.fs.eof([num] index);
+Returns if file read pointer is at the end of file.
+
+Return: [num] 1 - eof, otherwise 0
 ##### Get last modification time
     sys.fs.mtime([str] fname);
 Returns last modified time of a given fname.
@@ -1191,6 +1205,27 @@ Return: [num] 1 if ok.
 Sets name and type of given column
 
 Return: [num] 1 if ok.
+##### Enable table row index
+    sys.fs.db.setRowIndex([num] val);
+Sets row indexing. (1 - enabled, 0 - disabled)
+
+Return: [num] 1 if ok.
+##### Rebuild table row index
+    sys.fs.db.buildRowIndex();
+Builds row index.
+
+Return: [num] 1 if ok.
+##### Set column index type
+    sys.fs.db.setIndex([str] column_name);
+Sets index type of a given column. Column type is inferred from the column type.
+String columns are indexed as hashes, float and num columns are indexed as value.
+
+Return: [num] 1 if ok.
+##### Build column index
+    sys.fs.db.buildIndex([str] column_name);
+Builds/rebuilds index for a given column.
+
+Return: [num] 1 if ok.
 ##### Enable ID field
     sys.fs.db.idEnable([str]fieldName);
 Sets given column as an id field.
@@ -1241,13 +1276,13 @@ Selectcs next row where given column has given value
 
 Return: [num] 1 if ok.
 ##### Select next row matching string
-    sys.fs.db.selectRowStr([str]column, [str]string, [num]partial, [num]case_sensitive);
+    sys.fs.db.selectRowStr([str]column, [str]string, [num]full_string, [num]case_sensitive);
 Selectcs next row where given column has given value.
 
  | Parameter      | Value | Meaning                                 |
  | ---            | ---   | ---                                     |
- | partial        |   1   | string can be only a part odf the entry |
- |                |   0   | full string must be contained           |
+ | full_string    |   1   | full string must be contained           |
+ |                |   0   | string can be only a part odf the entry |
  | case_sensitive |   1   | strings are matched case-sensitive      |
  |                |   0   | strings are matched non case-sensitive  |
 
@@ -1972,10 +2007,11 @@ Return: None
 Gets if text field is a password field.
 
 Return: [num]isPassword
-##### Set text fit
-    sys.gui.setTxtFit([num]Id, [num]val);
-    sys.gui.setTexFit([num]Id, [num]val); # TBR
-Sets automatic line-breaking. val: 1 - enabled, 0 - disabled
+##### Set text wrap
+    sys.gui.setTxtWrap([num]Id, [num]val);
+    sys.gui.setTxtFit([num]Id, [num]val); # TBR
+Sets automatic line-breaking.
+val: 1 - enabled, 0 - disabled
 
 Return: None
 ##### Set selected text inversion
