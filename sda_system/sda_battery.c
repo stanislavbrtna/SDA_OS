@@ -27,12 +27,17 @@ SOFTWARE.
 
 
 static uint8_t get_batt_percent(float voltage) {
-  uint8_t percent;
-  percent = (uint8_t)((voltage - MIN_VOLTAGE) / ((MAX_VOLTAGE - MIN_VOLTAGE) / 100 ));
+  uint16_t percent;
+  if(voltage < MIN_VOLTAGE) {
+    return 0;
+  }
+
+  percent = (uint16_t)((voltage - MIN_VOLTAGE) / ((MAX_VOLTAGE - MIN_VOLTAGE) / 100 ));
   if (percent > 100) {
     percent = 100;
   }
-  return percent;
+
+  return (uint8_t) percent;
 }
 
 

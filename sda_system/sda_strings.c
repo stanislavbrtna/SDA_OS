@@ -74,6 +74,7 @@ void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
     return;
   }
 
+  // empty the buffer
   for(uint16_t x = 0; x < len; x++) {
     buff[x] = ' ';
   }
@@ -89,7 +90,8 @@ void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
     buff[len - a - 1] = (val % 10 + 48);
     val = val / 10;
     a++;
-    if ((uint32_t)a == len){
+    if ((uint32_t)a == len - 1) {
+      // overflow
       buff[0] = 0;
       return;
     }
@@ -100,7 +102,7 @@ void sda_int_to_str(uint8_t * buff, int32_t val, uint32_t len) {
   }
 
   while(buff[0] == ' ') {
-    for(uint16_t x = 0; x < len ; x++) {
+    for(uint16_t x = 0; x < len - 1; x++) {
       buff[x] = buff[x + 1];
     }
   }

@@ -75,7 +75,7 @@ int32_t sdaRegisterAlarm(
 
   uint8_t dirbuf[258];
   uint8_t keybuff[25];
-  uint8_t numbuff[10];
+  uint8_t numbuff[25];
   int32_t maxId;
   sda_conf conffile;
 
@@ -149,7 +149,7 @@ int32_t sdaRegisterAlarm(
 void sdaReloadAlarms() {
   uint8_t dirbuf[258];
   uint8_t keybuff[25];
-  uint8_t numbuff[10];
+  uint8_t numbuff[25];
   int32_t maxId;
   int32_t alarmTime = 0;
   uint32_t alarmId = 0;
@@ -325,7 +325,7 @@ static int32_t resolveReapeating(uint8_t hour, uint8_t min, uint8_t wkday, uint8
 void sdaResolveAlarm() {
   uint8_t dirbuf[258];
   uint8_t keybuff[25];
-  uint8_t numbuff[10];
+  uint8_t numbuff[25];
   sda_conf conffile;
 
   svp_getcwd(dirbuf, sizeof(dirbuf));
@@ -386,7 +386,7 @@ uint8_t sdaGetCurentAlarm(int32_t * id, int32_t * param, uint8_t * appNameBuffer
 uint8_t removeAlarm(int32_t id, uint8_t * appName) {
   uint8_t dirbuf[258];
   uint8_t keybuff[25];
-  uint8_t numbuff[10];
+  uint8_t numbuff[25];
   uint8_t confAppName[APP_NAME_LEN];
   sda_conf conffile;
 
