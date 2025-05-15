@@ -58,57 +58,57 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
     gr2_set_event(input_id, EV_NONE, &sda_sys_con);
 
     if (sda_get_keyboard_key_flag()) {
-        if (*((uint8_t *)svpSGlobal.kbdKeyStr) != 8) {
-          // TODO: Fix this
-          sda_str_insert(str, svpSGlobal.kbdKeyStr, buff,  gr2_get_param(input_id, &sda_sys_con), len);
+      if (*((uint8_t *)svpSGlobal.kbdKeyStr) != 8) {
+        // TODO: Fix this
+        sda_str_insert(str, svpSGlobal.kbdKeyStr, buff,  gr2_get_param(input_id, &sda_sys_con), len);
 
-          if (*((uint8_t *)svpSGlobal.kbdKeyStr + 1) != 0) {
-            gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) + 2, &sda_sys_con); // move cursor
-          } else {
-            gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) + 1, &sda_sys_con);
-          }
-          return 1;
+        if (*((uint8_t *)svpSGlobal.kbdKeyStr + 1) != 0) {
+          gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) + 2, &sda_sys_con); // move cursor
         } else {
-          uint16_t len = 0;
+          gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) + 1, &sda_sys_con);
+        }
+        return 1;
+      } else {
+        uint16_t len = 0;
 
-          while(str[len] != 0) {
-            len++;
+        while(str[len] != 0) {
+          len++;
+        }
+
+        if (len > 0) {
+          uint16_t prac;
+          uint8_t czFlag = 0;
+
+          if (len >= 2
+              && (str[gr2_get_param(input_id, &sda_sys_con) - 2] >= 0xC3)
+              && (str[gr2_get_param(input_id, &sda_sys_con) - 2] <= 0xC5)
+              ) {
+            gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) - 2, &sda_sys_con);
+            czFlag = 1;
+          } else {
+            gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) - 1, &sda_sys_con);
+            czFlag = 0;
+          }
+          prac = gr2_get_param(input_id, &sda_sys_con);
+
+          x = 0;
+
+          while(str[x] != 0) {
+            str[prac + x] = str[prac + x + 1 + czFlag];
+            x++;
           }
 
-          if (len > 0) {
-            uint16_t prac;
-            uint8_t czFlag = 0;
-
-            if (len >= 2
-                && (str[gr2_get_param(input_id, &sda_sys_con) - 2] >= 0xC3)
-                && (str[gr2_get_param(input_id, &sda_sys_con) - 2] <= 0xC5)
-                ) {
-              gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) - 2, &sda_sys_con);
-              czFlag = 1;
-            } else {
-              gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) - 1, &sda_sys_con);
-              czFlag = 0;
-            }
-            prac = gr2_get_param(input_id, &sda_sys_con);
-
-            x = 0;
-
-            while(str[x] != 0) {
-              str[prac + x] = str[prac + x + 1 + czFlag];
-              x++;
-            }
-
-            str[x] = 0; // add null terminator, just to be sure
-            gr2_set_str(input_id, str, &sda_sys_con); // set/update
-            return 1;
-          }
+          str[x] = 0; // add null terminator, just to be sure
+          gr2_set_str(input_id, str, &sda_sys_con); // set/update
+          return 1;
         }
       }
     }
-    if (gr2_get_str(input_id, &sda_sys_con) != str && !gr2_get_grayout(input_id, &sda_sys_con)) {
-      gr2_set_str(input_id, str, &sda_sys_con); // still set/update
-    }
-    return 0;
+  }
+  if (gr2_get_str(input_id, &sda_sys_con) != str && !gr2_get_grayout(input_id, &sda_sys_con)) {
+    gr2_set_str(input_id, str, &sda_sys_con); // still set/update
+  }
+  return 0;
 }
 
 
@@ -129,4 +129,6 @@ uint8_t sda_kbd_input_ret_detect(uint8_t * str, uint16_t len) {
     str[x - 1] = 0;
     return 1;
   }
+
+  return 0;
 }
