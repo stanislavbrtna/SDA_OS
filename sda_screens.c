@@ -232,11 +232,17 @@ void sda_main_process_touch() {
   } else {
     // touch in overlay
     if ((svpSGlobal.touchType != EV_NONE)) {
+      int16_t y2 = overlayY2;
+
+      if(svpSGlobal.kbdVisible && y2 > 479 - 160 * svpSGlobal.lcdLandscape - 160) {
+        y2 = 479 - 160 * svpSGlobal.lcdLandscape - 160;
+      }
+
       scr_touch_retval = gr2_touch_input(
           overlayX1,
           overlayY1,
           overlayX2,
-          overlayY2,
+          y2,
           svpSGlobal.touchX,
           svpSGlobal.touchY,
           svpSGlobal.touchType,
