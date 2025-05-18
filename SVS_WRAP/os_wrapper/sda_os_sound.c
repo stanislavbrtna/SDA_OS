@@ -71,6 +71,7 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Set beep param to default
   //#!    sys.snd.beepDef();
   //#!Sets beep to its default values.
+  //#!(1000hz, 250ms)
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "beepDef", s)) {

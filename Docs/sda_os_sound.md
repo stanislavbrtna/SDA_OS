@@ -16,6 +16,7 @@ Return: None
 ##### Set beep param to default
     sys.snd.beepDef();
 Sets beep to its default values.
+(1000hz, 250ms)
 
 Return: None
 ##### Set the duration
