@@ -182,13 +182,13 @@ static void sda_main_handle_soft_buttons() {
   }
 
   // long press of the S! button
-  if ((svpSGlobal.systemOptClick == CLICKED_LONG)) {
+  if (svpSGlobal.systemOptClick == CLICKED_LONG) {
     taskSwitcherOpen();
     svpSGlobal.systemOptClick = CLICKED_NONE;
   }
 
   // batt button handler
-  if ((systemBattClick == 1 || svpSGlobal.systemPwrLongPress == 1)) {
+  if (systemBattClick == 1 || svpSGlobal.systemPwrLongPress == 1) {
     systemBattClick = 0;
 
     if (svpSGlobal.systemPwrLongPress == 1) {
