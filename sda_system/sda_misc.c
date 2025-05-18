@@ -173,20 +173,29 @@ void sda_draw_overlay_shadow(
 
   LCD_getDrawArea(&area);
   LCD_setDrawArea(overlayX1, overlayY1, overlayX2 + 11, overlayY2 +11);
+  int16_t y2 = overlayY2;
+  
+  if (svpSGlobal.kbdVisible && overlayY2 > 479 - 160*svpSGlobal.lcdLandscape - 160) {
+    y2 = 479 - 160*svpSGlobal.lcdLandscape - 160 - 1;
+  }
+
   LCD_FillRect(
         overlayX2 + 1,
         overlayY1 + 10,
         overlayX2 + 11,
-        overlayY2 + 1,
+        y2 + 1,
         sda_get_shadow_color16(c->background_color)
   );
-  LCD_FillRect(
+
+  if (!svpSGlobal.kbdVisible || overlayY2 + 11 < 479 - 160*svpSGlobal.lcdLandscape - 160) {
+    LCD_FillRect(
         overlayX1 + 10,
         overlayY2 + 1,
         overlayX2 + 11,
         overlayY2 + 11,
         sda_get_shadow_color16(c->background_color)
-  );
+    );
+  }
   LCD_setDrawAreaS(&area);
 }
 
