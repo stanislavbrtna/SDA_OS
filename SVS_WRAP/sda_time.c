@@ -390,6 +390,9 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!##### Register repeating alarm
   //#!    sys.alarm.setRep([num]hour, [num]min, [num]wkday, [num]day, [num]month,[num]param);
   //#!Creates new repeatable alarm. Zero value in wkday/day/month means repeat every wkday/day/month.
+  //#!Wkday repeating works by bit masking form monday to sunday:
+  //#!Monday - 1, Tuesday - 2, Wednesday - 4, Thursday - 8, Friday - 16, Saturady - 32, Sunday - 64
+  //#!So all week would have wkday = 127
   //#!Returns id of the new alarm.
   //#!
   //#!Return: [num]id

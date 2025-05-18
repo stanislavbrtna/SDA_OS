@@ -22,6 +22,8 @@ SOFTWARE.
 
 #include "sda_alarms.h"
 
+//#define SDA_ALARMS_DEBUG
+
 static uint8_t currentAlarmAppName[APP_NAME_LEN];
 static int32_t currentAlarmTime;
 static int32_t currentAlarmId;
@@ -183,6 +185,10 @@ void sdaReloadAlarms() {
     sda_str_add(keybuff, numbuff);
     time = sda_conf_key_read_i32(&conffile, keybuff, 0);
 
+    sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
+    sda_str_add(keybuff, numbuff);
+    param = sda_conf_key_read_i32(&conffile, keybuff, 0);
+
     if (time == 0) {
       int32_t timeTmp = 0;
 
@@ -209,10 +215,6 @@ void sdaReloadAlarms() {
       sda_strcp((uint8_t *) "last_", keybuff, sizeof(keybuff));
       sda_str_add(keybuff, numbuff);
       last = sda_conf_key_read_i32(&conffile, keybuff, svpSGlobal.timestamp);
-
-      sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
-      sda_str_add(keybuff, numbuff);
-      param = sda_conf_key_read_i32(&conffile, keybuff, 0);
 
       time = resolveReapeating(hour, min, wkday, day, month, last);
 
@@ -264,6 +266,22 @@ void sdaReloadAlarms() {
   sdaReloadAlarmIcon();
 }
 
+uint8_t wkdayInMask(uint8_t mask, int32_t time) {
+  uint8_t day = sdaTimeGetWeekDay(time);
+
+  if(((mask & 1) && day == 1)
+    || ((mask & 2) && day == 2)
+    || ((mask & 4) && day == 3)
+    || ((mask & 8) && day == 4)
+    || ((mask & 16) && day == 5)
+    || ((mask & 32) && day == 6)
+    || ((mask & 64) && day == 7)
+  ) {
+    return 1;
+  }
+  return 0;
+}
+
 
 static int32_t resolveReapeating(uint8_t hour, uint8_t min, uint8_t wkday, uint8_t day, uint8_t month, int32_t last) {
   int32_t alarmTime = 0;
@@ -285,7 +303,7 @@ static int32_t resolveReapeating(uint8_t hour, uint8_t min, uint8_t wkday, uint8
 
   alarmTime = sdaTimeGetTimestamp(sdaTimeGetYears(svpSGlobal.timestamp), tmpMonth, tmpDay, hour, min, 0);
 
-  if (alarmTime > last && (wkday == 0 || wkday == sdaTimeGetWeekDay(svpSGlobal.timestamp))) {
+  if (alarmTime > last && (wkday == 0 || wkdayInMask(wkday, svpSGlobal.timestamp))) {
     // event is today
     return alarmTime;
   } else {
@@ -304,7 +322,7 @@ static int32_t resolveReapeating(uint8_t hour, uint8_t min, uint8_t wkday, uint8
           continue;
         }
 
-        if (wkday != 0 && wkday != sdaTimeGetWeekDay(alarmTime)) {
+        if (wkday != 0 && !wkdayInMask(wkday, alarmTime)) {
           continue;
         }
 
