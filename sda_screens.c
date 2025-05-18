@@ -77,6 +77,9 @@ void sda_main_redraw() {
 
   if ((svpSGlobal.kbdVisible == 0) && (kbdVisibleOld == 1)) {
     svpSGlobal.systemRedraw = 1;
+    if(overlayScr) {
+      overlayRedrawFlag = 1;
+    }
   }
 
   kbdVisibleOld = svpSGlobal.kbdVisible;
@@ -106,7 +109,8 @@ void sda_main_redraw() {
     svpSGlobal.systemRedraw = 0;
   } else {
 
-    // workaround for clipboard overlay, redraws parent screen after cb overlay exits
+    // workaround for clipboard overlay and overlay keyboard hiding,
+    // redraws underlaing screen after cb overlay exits
     if (overlayRedrawFlag) {
       if (mainScr != 0) {
         gr2_draw_screen(
