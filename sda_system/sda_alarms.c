@@ -152,7 +152,8 @@ void sdaReloadAlarms() {
   uint8_t dirbuf[258];
   uint8_t keybuff[25];
   uint8_t numbuff[25];
-  int32_t maxId;
+  int32_t currentId;
+  int32_t maxId = 1;
   int32_t alarmTime = 0;
   uint32_t alarmId = 0;
   int32_t alarmParam = 0;
@@ -165,13 +166,14 @@ void sdaReloadAlarms() {
     printf("Failed to open notification config file\n");
   }
 
-  maxId = 1;
+  currentId = 1;
+  maxId = sda_conf_key_read_i32(&conffile, (uint8_t *)"maxId", 16);
 
-  sda_int_to_str(numbuff, maxId, sizeof(numbuff));
+  sda_int_to_str(numbuff, currentId, sizeof(numbuff));
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
 
-  while (sda_conf_key_exists(&conffile, keybuff)) {
+  while (currentId < maxId) {
     int32_t time = 0;
     uint8_t hour = 0;
     uint8_t min = 0;
@@ -180,6 +182,14 @@ void sdaReloadAlarms() {
     uint8_t month = 0;
     int32_t last = 0;
     int32_t param = 0;
+
+    if(!sda_conf_key_exists(&conffile, keybuff)) {
+      currentId++;
+      sda_int_to_str(numbuff, currentId, sizeof(numbuff));
+      sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
+      sda_str_add(keybuff, numbuff);
+      continue;
+    }
 
     sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
@@ -232,12 +242,12 @@ void sdaReloadAlarms() {
       if (alarmTime == 0) {
         alarmTime = time;
         alarmParam = param;
-        alarmId = maxId;
+        alarmId = currentId;
       } else {
         if (time < alarmTime) {
           alarmTime = time;
           alarmParam = param;
-          alarmId = maxId;
+          alarmId = currentId;
         }
       }
     }
@@ -245,8 +255,8 @@ void sdaReloadAlarms() {
     printf("time: %d\n", alarmId);
 #endif
 
-    maxId++;
-    sda_int_to_str(numbuff, maxId, sizeof(numbuff));
+    currentId++;
+    sda_int_to_str(numbuff, currentId, sizeof(numbuff));
     sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
     sda_str_add(keybuff, numbuff);
   }
@@ -265,6 +275,7 @@ void sdaReloadAlarms() {
 
   sdaReloadAlarmIcon();
 }
+
 
 uint8_t wkdayInMask(uint8_t mask, int32_t time) {
   uint8_t day = sdaTimeGetWeekDay(time);
