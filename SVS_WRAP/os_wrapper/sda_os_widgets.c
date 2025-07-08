@@ -22,10 +22,11 @@ SOFTWARE.
 
 #include "sda_os_wrapper.h"
 
+extern sdaSvmMetadata  svmMeta;
+dateSelectorWidgetType dateWidget;
 
 uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   uint8_t argType[11];
-  static dateSelectorWidgetType date;
 
   //#!
   //#!#### Date selector widget
@@ -44,7 +45,8 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
     if(sysExecTypeCheck(argS, argType, 3, s)) {
       return 0;
     }
-    result->value.val_u = date_select_widget_init(&date, argS->arg[1].val_s, argS->arg[2].val_s, argS->arg[3].val_s);
+    svmMeta.calWidgetUsed = 1;
+    result->value.val_u = date_select_widget_init(&dateWidget, argS->arg[1].val_s, argS->arg[2].val_s, argS->arg[3].val_s);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -61,7 +63,7 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
     if(sysExecTypeCheck(argS, argType, 3, s)) {
       return 0;
     }
-    date_select_widget_set_date(&date, argS->arg[1].val_s, argS->arg[2].val_s, argS->arg[3].val_s);
+    date_select_widget_set_date(&dateWidget, argS->arg[1].val_s, argS->arg[2].val_s, argS->arg[3].val_s);
     return 1;
   }
 
@@ -74,7 +76,7 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_u = date_select_widget_update(&date);
+    result->value.val_u = date_select_widget_update(&dateWidget);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -89,7 +91,7 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    date_select_highlight(&date, argS->arg[1].val_s);
+    date_select_highlight(&dateWidget, argS->arg[1].val_s);
     return 1;
   }
 
@@ -103,7 +105,7 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    date_select_set_highlight(&date, (uint8_t) argS->arg[1].val_s);
+    date_select_set_highlight(&dateWidget, (uint8_t) argS->arg[1].val_s);
     return 1;
   }
 
@@ -116,7 +118,7 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_u = date_select_widget_get_day(&date);
+    result->value.val_u = date_select_widget_get_day(&dateWidget);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
