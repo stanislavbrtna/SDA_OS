@@ -39,6 +39,8 @@ extern gr2Element *sda_app_gr2_elements;
 extern gr2Screen  *sda_app_gr2_screens;
 extern gr2context sda_app_con;
 
+extern dateSelectorWidgetType dateWidget;
+
 uint8_t *svmGetCallback() {
     return svmCallback;
 }
@@ -321,6 +323,10 @@ void svmSaveProcData() {
   sdaSvmSaver(svmMeta.pid, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context));
   sdaSvmSaver(svmMeta.pid, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta));
 
+  if(svmMeta.calWidgetUsed) {
+    sdaSvmSaver(svmMeta.pid, (uint8_t *) ".cal", &dateWidget, sizeof(dateWidget));
+  }
+
 #ifdef SVM_DBG_ENABLED
   printf("svmSaveProcData: done\n");
 #endif
@@ -350,6 +356,11 @@ uint8_t svmLoadProcData(uint16_t pid) {
 
   if(!sdaSvmLoader(pid, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta)))
     return 0;
+
+  if(svmMeta.calWidgetUsed) {
+    if(!sdaSvmLoader(pid, (uint8_t *) ".cal", &dateWidget, sizeof(dateWidget)))
+      return 0;
+  }
 
   SVSopenCache(&svm);
 
