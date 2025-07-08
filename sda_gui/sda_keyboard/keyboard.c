@@ -444,6 +444,8 @@ uint8_t sda_keyboard_set_layout(uint8_t layoutId, psvcKbdLayout *layout) {
     init_kblayout_special_shift(layout);
   } else if (layoutId == 4) {
     init_kblayout_numeric(layout);
+  } else if (layoutId == 5) {
+    init_kblayout_emoji(layout);
   } else {
     // default
     init_kblayout_standard(layout);

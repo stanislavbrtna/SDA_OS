@@ -22,6 +22,23 @@ SOFTWARE.
 
 #include "sda_svm_gr2_glue.h"
 
+uint8_t get_spec_char_len(uint8_t s) {
+  // cz chars
+  if (s >= 0xC3 &&
+      s <= 0xC5
+  ) {
+    return 2;
+  }
+
+  // emojis
+  if (s >= 0xF0) {
+    return 4;
+  }
+
+  return 1;
+}
+
+
 int32_t get_real_cursor_pos(uint16_t cpos_u8, uint8_t *str) {
   uint16_t len = 0;
   uint16_t x = 0;
@@ -31,10 +48,7 @@ int32_t get_real_cursor_pos(uint16_t cpos_u8, uint8_t *str) {
       return x;
     }
 
-    if ((str[x] >= 0xC3) \
-        && (str[x] <= 0xC5)) {
-      x++;
-    }
+    x += get_spec_char_len(str[x]) - 1;
     len++;
     x++;
   }
@@ -51,10 +65,7 @@ int32_t get_char_cursor_pos(uint16_t cpos, uint8_t *str) {
       return len;
     }
 
-    if ((str[x] >= 0xC3) \
-        && (str[x] <= 0xC5)) {
-      x++;
-    }
+    x += get_spec_char_len(str[x]) - 1;
     len++;
     x++;   
   }
@@ -181,15 +192,21 @@ uint8_t svm_text_handler(varRetVal *result, argStruct *argS, svsVM *s) {
         if (len > 0 && gr2_get_param(argS->arg[1].val_s, &sda_app_con) != 0) {
           charIndex = result->value.val_str + gr2_get_param(argS->arg[1].val_s, &sda_app_con);
 
-          if (len >= 2
-              && (s->stringField[charIndex - 2] >= 0xC3)
-              && (s->stringField[charIndex - 2] <= 0xC5))
-          {
-            gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) - 2, &sda_app_con);
+          if (
+            len >= 2 && (
+              s->stringField[charIndex - 2] >= 0xC3 &&
+              s->stringField[charIndex - 2] <= 0xC5
+            )
+          ){
             czFlag = 1;
-          } else {
-            gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) - 1, &sda_app_con);
+          } else if (
+            len >= 4 &&
+            s->stringField[charIndex - 4] == 0xF0
+          ) {
+            czFlag = 3;
           }
+
+          gr2_set_param(argS->arg[1].val_s, gr2_get_param(argS->arg[1].val_s, &sda_app_con) - (1 + czFlag), &sda_app_con);
 
         } else {
           result->value = argS->arg[2];
@@ -205,6 +222,14 @@ uint8_t svm_text_handler(varRetVal *result, argStruct *argS, svsVM *s) {
               && (s->stringField[charIndex] <= 0xC5))
           {
             czFlag = 1;
+          }
+
+          if (
+            len >= 4 &&
+            s->stringField[charIndex] == 0xF0 &&
+            s->stringField[charIndex + 1] == 0x9F
+          ){
+            czFlag = 4;
           }
 
         } else {

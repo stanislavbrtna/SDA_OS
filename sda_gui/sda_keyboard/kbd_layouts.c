@@ -258,8 +258,8 @@ void init_kblayout_special(psvcKbdLayout *l) {
   l->keyStr[28] = (uint8_t*)":";
   l->key[28]    = (uint8_t*)":";
 
-  l->keyStr[29] = (uint8_t*)"ý";
-  l->key[29]    = (uint8_t*)"ý";
+  l->keyStr[29] = (uint8_t*)"🙂";
+  l->key[29]    = (uint8_t*)"\x01\x05\x00";
   l->keyStr[30] = (uint8_t*)",";
   l->key[30]    = (uint8_t*)",";
   l->keyStr[31] = (uint8_t*)"č";
@@ -443,6 +443,92 @@ void init_kblayout_numeric(psvcKbdLayout *l) {
   l->key[34]    = (uint8_t*)".";
   l->keyStr[35] = (uint8_t*)":";
   l->key[35]    = (uint8_t*)":";
+
+  l->keyStr[36] = (uint8_t*)"Prog";
+  l->keyStr[37] = (uint8_t*)"Esc";
+  l->key[37]    = (uint8_t*)"ignored";
+  l->keyStr[38] = (uint8_t*)"Ab";
+  l->key[38]    = (uint8_t*)"\x01\x00";
+  // value returned with shift key (switch to another layout)
+  l->key[39]    = (uint8_t*)"\x01\x04\x00";
+}
+
+void init_kblayout_emoji(psvcKbdLayout *l) {
+  l->keyStr[0] = (uint8_t*)"Ab";
+  l->key[0]    = (uint8_t*)"\x01\x00";
+  l->keyStr[1] = (uint8_t*)"🙂";
+  l->key[1]    = (uint8_t*)"🙂";
+  l->keyStr[2] = (uint8_t*)"😉";
+  l->key[2]    = (uint8_t*)"😉";
+  l->keyStr[3] = (uint8_t*)"😁";
+  l->key[3]    = (uint8_t*)"😁";
+  l->keyStr[4] = (uint8_t*)"😂";
+  l->key[4]    = (uint8_t*)"😂";
+  l->keyStr[5] = (uint8_t*)"😏";
+  l->key[5]    = (uint8_t*)"😏";
+  l->keyStr[6] = (uint8_t*)"😮";
+  l->key[6]    = (uint8_t*)"😮";
+  l->keyStr[7] = (uint8_t*)"😘";
+  l->key[7]    = (uint8_t*)"😘";
+  l->keyStr[8] = (uint8_t*)"😍";
+  l->key[8]    = (uint8_t*)"😍";
+  l->keyStr[9] = (uint8_t*)"😚";
+  l->key[9]    = (uint8_t*)"😚";
+
+  l->keyStr[10] = (uint8_t*)"😎";
+  l->key[10]    = (uint8_t*)"😎";
+  l->keyStr[11] = (uint8_t*)"😦";
+  l->key[11]    = (uint8_t*)"😦";
+  l->keyStr[12] = (uint8_t*)"😀";
+  l->key[12]    = (uint8_t*)"😀";
+  l->keyStr[13] = (uint8_t*)"😅";
+  l->key[13]    = (uint8_t*)"😅";
+  l->keyStr[14] = (uint8_t*)"😋";
+  l->key[14]    = (uint8_t*)"😋";
+  l->keyStr[15] = (uint8_t*)"😊";
+  l->key[15]    = (uint8_t*)"😊";
+  l->keyStr[16] = (uint8_t*)"😬";
+  l->key[16]    = (uint8_t*)"😬";
+  l->keyStr[17] = (uint8_t*)"😛";
+  l->key[17]    = (uint8_t*)"😛";
+  l->keyStr[18] = (uint8_t*)"😜";
+  l->key[18]    = (uint8_t*)"😜";
+  l->keyStr[19] = (uint8_t*)"😜";
+  l->key[19]    = (uint8_t*)"😜";
+
+  l->keyStr[20] = (uint8_t*)"😧";
+  l->key[20]    = (uint8_t*)"😧";
+  l->keyStr[21] = (uint8_t*)"🙃";
+  l->key[21]    = (uint8_t*)"🙃";
+  l->keyStr[22] = (uint8_t*)"😶";
+  l->key[22]    = (uint8_t*)"😶";
+  l->keyStr[23] = (uint8_t*)"😐";
+  l->key[23]    = (uint8_t*)"😐";
+  l->keyStr[24] = (uint8_t*)"🙁";
+  l->key[24]    = (uint8_t*)"🙁";
+  l->keyStr[25] = (uint8_t*)"😞";
+  l->key[25]    = (uint8_t*)"😞";
+  l->keyStr[26] = (uint8_t*)"😥";
+  l->key[26]    = (uint8_t*)"😥";
+  l->keyStr[27] = (uint8_t*)"😇";
+  l->key[27]    = (uint8_t*)"😇";
+  l->keyStr[28] = (uint8_t*)"😈";
+  l->key[28]    = (uint8_t*)"😈";
+
+  l->keyStr[29] = (uint8_t*)"🙏";
+  l->key[29]    = (uint8_t*)"🙏";
+  l->keyStr[30] = (uint8_t*)"🙋";
+  l->key[30]    = (uint8_t*)"🙋";
+  l->keyStr[31] = (uint8_t*)"😲";
+  l->key[31]    = (uint8_t*)"😲";
+  l->keyStr[32] = (uint8_t*)"😖";
+  l->key[32]    = (uint8_t*)"😖";
+  l->keyStr[33] = (uint8_t*)"😳";
+  l->key[33]    = (uint8_t*)"😳";
+  l->keyStr[34] = (uint8_t*)"😴";
+  l->key[34]    = (uint8_t*)"😴";
+  l->keyStr[35] = (uint8_t*)"😵";
+  l->key[35]    = (uint8_t*)"😵";
 
   l->keyStr[36] = (uint8_t*)"Prog";
   l->keyStr[37] = (uint8_t*)"Esc";
