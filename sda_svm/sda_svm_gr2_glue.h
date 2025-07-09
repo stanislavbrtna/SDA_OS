@@ -28,4 +28,6 @@ SOFTWARE.
 int32_t get_real_cursor_pos(uint16_t cpos_u8, uint8_t *str);
 int32_t get_char_cursor_pos(uint16_t cpos, uint8_t *str);
 
+uint8_t get_spec_char_len(uint8_t s);
+
 #endif
