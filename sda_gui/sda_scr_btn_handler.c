@@ -50,25 +50,44 @@ uint8_t sda_screen_button_handler(uint16_t screen_id, uint16_t back_id, gr2conte
       uint8_t *str = gr2_get_str(con->textActiveId, con);
 
       if(sda_strlen(str) > gr2_get_param(con->textActiveId, con)) {
-        if ((str[gr2_get_param(con->textActiveId, con)] >= 0xC3) && (str[gr2_get_param(con->textActiveId, con)] <= 0xC5)) {
-          gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) + 2, con);
-        } else {
-          gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) + 1, con);
+        uint8_t len = 1;
+
+        if (
+          str[gr2_get_param(con->textActiveId, con)] >= 0xC3 && 
+          str[gr2_get_param(con->textActiveId, con)] <= 0xC5
+        ){
+          len = 2;
+        } else if(
+          str[gr2_get_param(con->textActiveId, con)] == 0xF0 && 
+          str[gr2_get_param(con->textActiveId, con) + 1] == 0x9F
+        ){
+          len = 4;
         }
+        gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) + len, con);
       }
     }
 
     if (sda_wrap_get_button(BUTTON_LEFT) == EV_PRESSED) {
       if(gr2_get_param(con->textActiveId, con) != 0) {
         uint8_t *str = gr2_get_str(con->textActiveId, con);
+        uint8_t len = 1;
 
-        if (gr2_get_param(con->textActiveId, con) >= 2 && (str[gr2_get_param(con->textActiveId, con) - 2] >= 0xC3)
-            && (str[gr2_get_param(con->textActiveId, con) - 2] <= 0xC5)
-        ){
-          gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) - 2, con);
-        } else {
-          gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) - 1, con);
+        if (
+          gr2_get_param(con->textActiveId, con) >= 2 && 
+          str[gr2_get_param(con->textActiveId, con) - 2] >= 0xC3 &&
+          str[gr2_get_param(con->textActiveId, con) - 2] <= 0xC5
+        ) {
+          len = 2;
+        } else if(
+          gr2_get_param(con->textActiveId, con) >= 4 && 
+          str[gr2_get_param(con->textActiveId, con) - 4] == 0xF0 &&
+          str[gr2_get_param(con->textActiveId, con) - 3] == 0x9F
+        ) {
+          len = 4;
         }
+        
+        gr2_set_param(con->textActiveId, gr2_get_param(con->textActiveId, con) - len, con);
+        
       }
     }
 

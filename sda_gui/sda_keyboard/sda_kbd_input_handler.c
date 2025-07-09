@@ -59,14 +59,8 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
 
     if (sda_get_keyboard_key_flag()) {
       if (*((uint8_t *)svpSGlobal.kbdKeyStr) != 8) {
-        // TODO: Fix this
         sda_str_insert(str, svpSGlobal.kbdKeyStr, buff,  gr2_get_param(input_id, &sda_sys_con), len);
-
-        if (*((uint8_t *)svpSGlobal.kbdKeyStr + 1) != 0) {
-          gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) + 2, &sda_sys_con); // move cursor
-        } else {
-          gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) + 1, &sda_sys_con);
-        }
+        gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) + sda_strlen(svpSGlobal.kbdKeyStr), &sda_sys_con); // move cursor
         return 1;
       } else {
         uint16_t len = 0;
@@ -75,20 +69,28 @@ uint8_t svp_input_handler(uint8_t * str, uint16_t len, uint16_t input_id) {
           len++;
         }
 
-        if (len > 0) {
+        if (len > 0 && gr2_get_param(input_id, &sda_sys_con) > 0) {
           uint16_t prac;
           uint8_t czFlag = 0;
 
-          if (len >= 2
-              && (str[gr2_get_param(input_id, &sda_sys_con) - 2] >= 0xC3)
-              && (str[gr2_get_param(input_id, &sda_sys_con) - 2] <= 0xC5)
-              ) {
-            gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) - 2, &sda_sys_con);
+          if (
+            len >= 2 &&
+            str[gr2_get_param(input_id, &sda_sys_con) - 2] >= 0xC3 &&
+            str[gr2_get_param(input_id, &sda_sys_con) - 2] <= 0xC5
+          ){
             czFlag = 1;
+          } else if(
+            len >= 4 &&
+            str[gr2_get_param(input_id, &sda_sys_con) - 4] == 0xF0 &&
+            str[gr2_get_param(input_id, &sda_sys_con) - 3] == 0x9F
+          ){
+            czFlag = 3;
           } else {
-            gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) - 1, &sda_sys_con);
             czFlag = 0;
           }
+
+          gr2_set_param(input_id, gr2_get_param(input_id, &sda_sys_con) - (1 + czFlag), &sda_sys_con);
+
           prac = gr2_get_param(input_id, &sda_sys_con);
 
           x = 0;
