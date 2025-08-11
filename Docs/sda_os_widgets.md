@@ -18,8 +18,10 @@ Updates callendar widget.
 
 Return: [num] 1 when callendar is clicked.
 ##### Mark day
+    sys.w.cal.mark([num]day, [num]value);
     sys.w.cal.mark([num]day);
 Marks day in callendar widget.
+Value: 1 - marked, 0 - unmarked
 
 Return: None
 ##### Set highlighting

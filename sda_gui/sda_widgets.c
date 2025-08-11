@@ -278,7 +278,7 @@ uint16_t date_select_widget_update(dateSelectorWidgetType *d) {
 }
 
 
-uint16_t date_select_highlight(dateSelectorWidgetType *d, uint8_t day) {
+uint16_t date_select_highlight(dateSelectorWidgetType *d, uint8_t day, uint8_t value) {
 
   // input validation
   if ((day == 0) || (day > 31)) {
@@ -286,9 +286,9 @@ uint16_t date_select_highlight(dateSelectorWidgetType *d, uint8_t day) {
   }
 
   if (d->useHighlight) {
-    gr2_set_ghost(d->buttons[day], 0, sda_current_con);
+    gr2_set_ghost(d->buttons[day], !value, sda_current_con);
   } else {
-    gr2_set_select(d->buttons[day], 1, sda_current_con);
+    gr2_set_select(d->buttons[day], value, sda_current_con);
   }
   return 0;
 }

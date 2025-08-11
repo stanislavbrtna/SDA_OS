@@ -49,7 +49,7 @@ void date_select_widget_set_date(dateSelectorWidgetType *d, uint16_t year, uint8
 uint16_t date_select_widget_update(dateSelectorWidgetType *d);
 
 // higliths day
-uint16_t date_select_highlight(dateSelectorWidgetType *d, uint8_t day);
+uint16_t date_select_highlight(dateSelectorWidgetType *d, uint8_t day, uint8_t value);
 
 // returns ID of given day button
 uint16_t date_select_widget_get_day_id(dateSelectorWidgetType *d, uint8_t day);
