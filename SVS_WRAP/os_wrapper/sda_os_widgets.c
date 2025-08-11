@@ -82,16 +82,29 @@ uint8_t sda_os_cal_widget_wrapper(varRetVal *result, argStruct *argS, svsVM *s) 
   }
 
   //#!##### Mark day
+  //#!    sys.w.cal.mark([num]day, [num]value);
   //#!    sys.w.cal.mark([num]day);
   //#!Marks day in callendar widget.
+  //#!Value: 1 - marked, 0 - unmarked
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "mark", s)) {
     argType[1] = SVS_TYPE_NUM;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
+    argType[2] = SVS_TYPE_NUM;
+    uint8_t val = 1;
+
+    if(argS->usedup == 1) {
+      if(sysExecTypeCheck(argS, argType, 1, s)) {
+        return 0;
+      }
+    } else {
+      if(sysExecTypeCheck(argS, argType, 2, s)) {
+        return 0;
+      }
+      val = argS->arg[2].val_s;
     }
-    date_select_highlight(&dateWidget, argS->arg[1].val_s);
+
+    date_select_highlight(&dateWidget, argS->arg[1].val_s, val);
     return 1;
   }
 
