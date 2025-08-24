@@ -111,9 +111,9 @@ void sda_img_draw(int16_t x, int16_t y, int16_t scale_w, int16_t scale_h, uint8_
 
   if (sda_get_if_sic(filename)) {
     if(!sic_pmc_enable) {
-      sic_pmc_color = sda_current_con->text_color;
+      sic_pmc_color = sda_current_con->textColor;
     }
-    sda_draw_sic_file(x, y, sic_pmc_color, sda_current_con->background_color, filename);
+    sda_draw_sic_file(x, y, sic_pmc_color, sda_current_con->backgroundColor, filename);
     return;
   }
 

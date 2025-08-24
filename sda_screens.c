@@ -59,8 +59,8 @@ void sda_main_redraw() {
       || kbdRedraw
     ) {
     if (svpSGlobal.lcdLandscape) {
-      LCD_FillRect(1, 320 - 160, 80, 319, sda_current_con->background_color);
-      LCD_FillRect(401, 320 - 160, 479, 319, sda_current_con->background_color);
+      LCD_FillRect(1, 320 - 160, 80, 319, sda_current_con->backgroundColor);
+      LCD_FillRect(401, 320 - 160, 479, 319, sda_current_con->backgroundColor);
     }
     svp_draw_keyboard(80*svpSGlobal.lcdLandscape, 319 - 160*svpSGlobal.lcdLandscape, &kbdLayout);
     if (kbdRedraw == 0) {
@@ -137,7 +137,7 @@ void sda_main_redraw() {
       );
     }
 
-    LCD_DrawRectangle(overlayX1 - 1, overlayY1 - 1, overlayX2 + 1, overlayY2 + 1, sda_current_con->border_color);
+    LCD_DrawRectangle(overlayX1 - 1, overlayY1 - 1, overlayX2 + 1, overlayY2 + 1, sda_current_con->borderColor);
     gr2_draw_screen(
             overlayX1,
             overlayY1,
