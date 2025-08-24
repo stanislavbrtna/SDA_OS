@@ -122,6 +122,53 @@ uint8_t sda_gr2_txt_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Enable automatic text scrolling for a screen
+  //#!    sys.gui.scrTxtScroll([num]screenId, [num] val);
+  //#!Enables automatic scrolling of active text when cursor gets out of screen.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "scrTxtScroll", s)) {
+    argType[1] = SVS_TYPE_NUM; // screenId
+    argType[2] = SVS_TYPE_NUM; // val
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    gr2_set_text_scr_auto_scroll(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+    return 1;
+  }
+
+  //#!##### Set active editable text offset
+  //#!    sys.gui.setTxtXScroll([num] val);
+  //#!Sets scroll value for active text field.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setTxtXScroll", s)) {
+    argType[1] = SVS_TYPE_NUM; // screenId
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    gr2_text_set_x_scroll(argS->arg[1].val_s, &sda_app_con);
+    return 1;
+  }
+
+  //#!##### Set active editable text offset
+  //#!    sys.gui.setTxtYScroll([num] val);
+  //#!Sets scroll value for active text field.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setTxtYScroll", s)) {
+    argType[1] = SVS_TYPE_NUM; // screenId
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    gr2_text_set_y_scroll(argS->arg[1].val_s, &sda_app_con);
+    return 1;
+  }
+
   //#!#### Text element modificators
   //#! Functions that work only on text element.
 

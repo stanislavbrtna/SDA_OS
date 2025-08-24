@@ -399,6 +399,21 @@ Return: [num]alignment (uses consts: ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER)
 Sets defalt screen text size.
 
 Return: None
+##### Enable automatic text scrolling for a screen
+    sys.gui.scrTxtScroll([num]screenId, [num] val);
+Enables automatic scrolling of active text when cursor gets out of screen.
+
+Return: None
+##### Set active editable text offset
+    sys.gui.setTxtXScroll([num] val);
+Sets scroll value for active text field.
+
+Return: None
+##### Set active editable text offset
+    sys.gui.setTxtYScroll([num] val);
+Sets scroll value for active text field.
+
+Return: None
 #### Text element modificators
  Functions that work only on text element.
 #####  Set text field as password
