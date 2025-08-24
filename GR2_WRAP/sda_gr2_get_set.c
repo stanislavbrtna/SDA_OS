@@ -495,9 +495,9 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
     if(argS->arg[1].val_s == 0){
-      sda_app_con.rounded_init = 0;
+      sda_app_con.roundedInit = 0;
     }else{
-      sda_app_con.rounded_init = 1;
+      sda_app_con.roundedInit = 1;
     }
     
     return 1;

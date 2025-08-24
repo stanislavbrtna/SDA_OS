@@ -184,7 +184,7 @@ void sda_draw_overlay_shadow(
         overlayY1 + 10,
         overlayX2 + 11,
         y2 + 1,
-        sda_get_shadow_color16(c->background_color)
+        sda_get_shadow_color16(c->backgroundColor)
   );
 
   if (!svpSGlobal.kbdVisible || overlayY2 + 11 < 479 - 160*svpSGlobal.lcdLandscape - 160) {
@@ -193,7 +193,7 @@ void sda_draw_overlay_shadow(
         overlayY2 + 1,
         overlayX2 + 11,
         overlayY2 + 11,
-        sda_get_shadow_color16(c->background_color)
+        sda_get_shadow_color16(c->backgroundColor)
     );
   }
   LCD_setDrawAreaS(&area);

@@ -131,7 +131,7 @@ void redraw_slider(int16_t x1, int16_t y1, uint8_t mode) {
     }
   }
 
-  LCD_DrawRectangle(x1, y1, x1 + SLIDER_W, y1 + 32, sda_current_con->border_color);
+  LCD_DrawRectangle(x1, y1, x1 + SLIDER_W, y1 + 32, sda_current_con->borderColor);
   
 }
 
