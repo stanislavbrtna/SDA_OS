@@ -150,3 +150,13 @@ Return: [num]id
 Returns parameter of the current alarm.
 
 Return: [num]param
+##### Get alarm parameter
+    sys.alarm.getParam([num]alarmId);
+Returns parameter of alarm with the given id.
+
+Return: [num]param
+##### Get alarm valid
+    sys.alarm.getValid([num]alarmId);
+Returns 1 when given alarmId is valid.
+
+Return: [num]isValid

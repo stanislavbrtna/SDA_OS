@@ -64,6 +64,40 @@ static void sdaReloadAlarmIcon() {
 }
 
 
+int32_t getValNum(uint8_t *name, int32_t id, sda_conf * pConffile) {
+  uint8_t keybuff[25];
+  uint8_t numbuff[25];
+
+  sda_int_to_str(numbuff, id, sizeof(numbuff));
+  
+  sda_strcp(name, keybuff, sizeof(keybuff));
+  sda_str_add(keybuff, (uint8_t *) "_");
+  sda_str_add(keybuff, numbuff);
+  return sda_conf_key_read_i32(pConffile, keybuff, 0);
+}
+
+
+uint8_t getValStr(
+  uint8_t *name,
+  int32_t id, 
+  uint8_t * buffer, 
+  uint32_t len, 
+  sda_conf * pConffile
+) {
+  uint8_t keybuff[25];
+  uint8_t numbuff[25];
+
+  sda_int_to_str(numbuff, id, sizeof(numbuff));
+  
+  sda_strcp(name, keybuff, sizeof(keybuff));
+  sda_str_add(keybuff, (uint8_t *) "_");
+  sda_str_add(keybuff, numbuff);
+
+  return sda_conf_key_read(pConffile, keybuff, buffer, len);
+}
+
+
+
 int32_t sdaRegisterAlarm(
     uint8_t * appname,
     int32_t timestamp,
@@ -484,3 +518,79 @@ uint8_t removeAlarm(int32_t id, uint8_t * appName) {
 
   return 0;
 }
+
+
+int32_t getAlarmParam(int32_t id, uint8_t * appName) {
+  uint8_t dirbuf[258];
+  uint8_t confAppName[APP_NAME_LEN];
+  sda_conf conffile;
+
+  if (id == 0) {
+    printf("%s: Warning: removeAlarm: zero id!\n", __FUNCTION__);
+    return 0;
+  }
+
+  svp_getcwd(dirbuf, sizeof(dirbuf));
+  svp_switch_main_dir();
+
+  if (sda_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
+    printf("Failed to open notification config file\n");
+  }
+
+  getValStr((uint8_t *) "appname", id, confAppName, APP_NAME_LEN, &conffile);
+
+  if (!strCmp(appName, confAppName)) {
+    printf("%s:Warning: appnames does not match!", __FUNCTION__);
+    sda_conf_close(&conffile);
+    svp_chdir(dirbuf);
+    return 1;
+  }
+
+  int32_t param = getValNum("param", id, &conffile);
+
+  sda_conf_close(&conffile);
+  svp_chdir(dirbuf);
+
+  return param;
+}
+
+
+uint8_t getAlarmValid(int32_t id, uint8_t * appName) {
+  uint8_t dirbuf[258];
+  uint8_t confAppName[APP_NAME_LEN];
+  sda_conf conffile;
+
+  if (id == 0) {
+    printf("%s: Warning: removeAlarm: zero id!\n", __FUNCTION__);
+    return 0;
+  }
+
+  svp_getcwd(dirbuf, sizeof(dirbuf));
+  svp_switch_main_dir();
+
+  if (sda_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
+    printf("Failed to open notification config file\n");
+  }
+
+  // alarm does not exist
+  if (!getValStr((uint8_t *) "appname", id, confAppName, APP_NAME_LEN, &conffile)) {
+    sda_conf_close(&conffile);
+    svp_chdir(dirbuf);
+    return 0;
+  }
+
+  // names does not match
+  if (!strCmp(appName, confAppName)) {
+    printf("%s:Warning: appnames does not match!", __FUNCTION__);
+    sda_conf_close(&conffile);
+    svp_chdir(dirbuf);
+    return 0;
+  }
+  sda_conf_close(&conffile);
+  svp_chdir(dirbuf);
+
+  // ok
+  return 1;
+}
+
+
