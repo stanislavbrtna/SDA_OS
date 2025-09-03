@@ -497,5 +497,39 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get alarm parameter
+  //#!    sys.alarm.getParam([num]alarmId);
+  //#!Returns parameter of alarm with the given id.
+  //#!
+  //#!Return: [num]param
+  if (sysFuncMatch(argS->callId, "getParam", s)) {
+    argType[1] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = getAlarmParam(argS->arg[1].val_s, s->fName);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get alarm valid
+  //#!    sys.alarm.getValid([num]alarmId);
+  //#!Returns 1 when given alarmId is valid.
+  //#!
+  //#!Return: [num]isValid
+  if (sysFuncMatch(argS->callId, "getValid", s)) {
+    argType[1] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_s = (int32_t) getAlarmValid(argS->arg[1].val_s, s->fName);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   return 0;
 }
