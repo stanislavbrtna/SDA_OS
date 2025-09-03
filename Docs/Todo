@@ -1,5 +1,21 @@
+OS features:
   - system log
-  - clean up that app-slot/screen-slot business
+  - better support for operation with lcd switched off (phone mngr, alarm)
+  - Notification icon overlay:
+    - When more icons are displayed than can fit the screen, hide the rest in an optional overlay.
+  - Better alarm API:
+    - better functions for managing of multiple alarms.
+    - rewrite alarms so they can use the csv format
+    - getParam(alarmId)
+    - perhaps function to list all alarms for an app
+    
+
+Gui:
+  - use UP and DOWN buttons to move cursor in an active text field
+
+DB:
+  - get row: array of all the row elements
+  - getValue: auto return string or num, leave the typecheck on the developer
 
 Examples:
   - ds image demo with scaling
@@ -21,11 +37,5 @@ Docs:
     - autoexec.svs function
 
 
-Misc TODO:
-  - Optimize char draw function
-  - Add an iconfont or something like that
-
-
 Bugfixes:
-  - weird bug happens when subprocess is called and in subprocess tokenize error occurs. It crashes on "no update function found" and it takes the parent process with it.
-  - weird bug with garbage collecting strings stored inside function arguments
+  - Unify the icon/uart and other callbacks
