@@ -125,6 +125,12 @@ So all week would have wkday = 127
 Returns id of the new alarm.
 
 Return: [num]id
+##### Mark alarm as not advertised
+    sys.alarm.setNotify([num]id, [num]value);
+Controlls if alarm is advertised with an alarmclock icon
+in the OS tray, if the alarm will occur in less than 24 hours. 
+
+Return: 1 - ok, 0 - something failed (alarm not found perhaps)
 ##### Remove alarm
     sys.alarm.destroy([num]id);
 Returns if alarm was deleted.

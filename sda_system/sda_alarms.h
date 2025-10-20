@@ -50,4 +50,6 @@ uint8_t sdaGetActiveAlarm();
 int32_t getAlarmParam(int32_t id, uint8_t * appName);
 uint8_t getAlarmValid(int32_t id, uint8_t * appName);
 
+uint8_t setAlarmNotify(int32_t id, uint8_t * appName, int32_t value);
+
 #endif
