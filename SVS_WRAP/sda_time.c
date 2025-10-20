@@ -421,6 +421,29 @@ uint8_t sda_time_alarm_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Mark alarm as not advertised
+  //#!    sys.alarm.setNotify([num]id, [num]value);
+  //#!Controlls if alarm is advertised with an alarmclock icon
+  //#!in the OS tray, if the alarm will occur in less than 24 hours. 
+  //#!
+  //#!Return: 1 - ok, 0 - something failed (alarm not found perhaps)
+  if (sysFuncMatch(argS->callId, "setNotify", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    argType[2] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    result->value.val_s = setAlarmNotify(
+      argS->arg[1].val_s, 
+      s->fName, 
+      argS->arg[2].val_s
+    );
+    
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Remove alarm
   //#!    sys.alarm.destroy([num]id);
   //#!Returns if alarm was deleted.
