@@ -674,6 +674,8 @@ uint8_t setAlarmNotify(int32_t id, uint8_t * appName, int32_t value) {
   sda_conf_close(&conffile);
   svp_chdir(dirbuf);
 
+  sdaReloadAlarms();
+  
   // ok
   return 1;
 }
