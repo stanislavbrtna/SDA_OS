@@ -25,7 +25,7 @@ Init is called once when the app is loaded.
 arg0 - arg2: call arguments passed from sys.os.subProcess
 
 ##### Update function
-    function update
+    function update {}
 Update function is called each update cycle, when the app
 is active and in the foreground.
 
@@ -229,6 +229,6 @@ Gets if high privileges are granted.
 Return: [num] 1 if authorization is given
 ##### Sets time and date
     sys.os.settings.setTime([num] year, [num] month, [num] day, [num] hour, [num] min);
-Sets values that will be returned to parent process
+Sets system time. Needs high privileges to work.
 
 Return: None

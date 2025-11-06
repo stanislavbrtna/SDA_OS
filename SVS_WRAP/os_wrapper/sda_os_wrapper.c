@@ -49,7 +49,7 @@ SOFTWARE.
 //#!arg0 - arg2: call arguments passed from sys.os.subProcess
 //#!
 //#!##### Update function
-//#!    function update
+//#!    function update {}
 //#!Update function is called each update cycle, when the app
 //#!is active and in the foreground.
 //#!
@@ -565,7 +565,11 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     if (sda_strlen(s->stringField + argS->arg[1].val_str) < sizeof(svpSGlobal.clipboard)) {
-      sda_strcp(s->stringField + argS->arg[1].val_str, svpSGlobal.clipboard, sizeof(svpSGlobal.clipboard));
+      sda_strcp(
+        s->stringField + argS->arg[1].val_str,
+        svpSGlobal.clipboard,
+        sizeof(svpSGlobal.clipboard)
+      );
       result->value.val_u = 1;
     } else {
       result->value.val_u = 0;
@@ -651,7 +655,7 @@ uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Sets time and date
   //#!    sys.os.settings.setTime([num] year, [num] month, [num] day, [num] hour, [num] min);
-  //#!Sets values that will be returned to parent process
+  //#!Sets system time. Needs high privileges to work.
   //#!
   //#!Return: None
   if (sysFuncMatch(argS->callId, "setTime", s)) {
