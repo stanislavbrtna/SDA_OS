@@ -428,6 +428,11 @@ Selectcs next row where given column has given value.
  |                |   0   | strings are matched non case-sensitive  |
 
 Return: [num] 1 if entry was found.
+##### Write entry
+    sys.fs.db.setEntry([str]col_name, [str/num]value);
+Sets db entry. Produces error when the write operation fails.
+
+Return: None.
 ##### Write text entry
     sys.fs.db.setEntryStr([str]col_name, [str]value);
 Sets db entry
@@ -438,13 +443,19 @@ Return: [num] 1 if ok.
 Sets db entry
 
 Return: [num] 1 if ok.
+##### Read entry
+    sys.fs.db.getEntry([str]col_name);
+Gets db entry, returns type according to the entry type.
+Produces error when the read fails.
+
+Return: [str or num] entry
 ##### Read text entry
     sys.fs.db.getEntryStr([str]col_name, [str]default);
-Gets db entry
+Gets db entry of type string, returns default when error occurs.
 
 Return: [str] entry or default
 ##### Read num entry
     sys.fs.db.getEntryNum([str]col_name, [num]default);
-Gets db entry
+Gets db entry of type Num, returns default when error occurs.
 
 Return: [num] entry or default

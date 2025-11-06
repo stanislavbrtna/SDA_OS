@@ -371,6 +371,7 @@ Return: None
 ##### Set beep param to default
     sys.snd.beepDef();
 Sets beep to its default values.
+(1000hz, 250ms)
 
 Return: None
 ##### Set the duration
@@ -408,8 +409,10 @@ Updates callendar widget.
 
 Return: [num] 1 when callendar is clicked.
 ##### Mark day
+    sys.w.cal.mark([num]day, [num]value);
     sys.w.cal.mark([num]day);
 Marks day in callendar widget.
+Value: 1 - marked, 0 - unmarked
 
 Return: None
 ##### Set highlighting
@@ -1287,6 +1290,11 @@ Selectcs next row where given column has given value.
  |                |   0   | strings are matched non case-sensitive  |
 
 Return: [num] 1 if entry was found.
+##### Write entry
+    sys.fs.db.setEntry([str]col_name, [str/num]value);
+Sets db entry. Produces error when the write operation fails.
+
+Return: None.
 ##### Write text entry
     sys.fs.db.setEntryStr([str]col_name, [str]value);
 Sets db entry
@@ -1297,14 +1305,20 @@ Return: [num] 1 if ok.
 Sets db entry
 
 Return: [num] 1 if ok.
+##### Read entry
+    sys.fs.db.getEntry([str]col_name);
+Gets db entry, returns type according to the entry type.
+Produces error when the read fails.
+
+Return: [str or num] entry
 ##### Read text entry
     sys.fs.db.getEntryStr([str]col_name, [str]default);
-Gets db entry
+Gets db entry of type string, returns default when error occurs.
 
 Return: [str] entry or default
 ##### Read num entry
     sys.fs.db.getEntryNum([str]col_name, [num]default);
-Gets db entry
+Gets db entry of type Num, returns default when error occurs.
 
 Return: [num] entry or default
 #### Overlay API
@@ -1564,9 +1578,18 @@ Return: [num]id
 ##### Register repeating alarm
     sys.alarm.setRep([num]hour, [num]min, [num]wkday, [num]day, [num]month,[num]param);
 Creates new repeatable alarm. Zero value in wkday/day/month means repeat every wkday/day/month.
+Wkday repeating works by bit masking form monday to sunday:
+Monday - 1, Tuesday - 2, Wednesday - 4, Thursday - 8, Friday - 16, Saturady - 32, Sunday - 64
+So all week would have wkday = 127
 Returns id of the new alarm.
 
 Return: [num]id
+##### Mark alarm as not advertised
+    sys.alarm.setNotify([num]id, [num]value);
+Controlls if alarm is advertised with an alarmclock icon
+in the OS tray, if the alarm will occur in less than 24 hours. 
+
+Return: 1 - ok, 0 - something failed (alarm not found perhaps)
 ##### Remove alarm
     sys.alarm.destroy([num]id);
 Returns if alarm was deleted.
@@ -1592,6 +1615,16 @@ Return: [num]id
 Returns parameter of the current alarm.
 
 Return: [num]param
+##### Get alarm parameter
+    sys.alarm.getParam([num]alarmId);
+Returns parameter of alarm with the given id.
+
+Return: [num]param
+##### Get alarm valid
+    sys.alarm.getValid([num]alarmId);
+Returns 1 when given alarmId is valid.
+
+Return: [num]isValid
   Automatically generated documentation for GR2 SVS wrapper, follows markdown syntax.
 
 ### GR2 Graphics library
@@ -1991,6 +2024,21 @@ Return: [num]alignment (uses consts: ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER)
     sys.gui.defTxtSize([num]screenId, [num] val);
     sys.gui.setDefFont([num]screenId, [num] val); # TBR
 Sets defalt screen text size.
+
+Return: None
+##### Enable automatic text scrolling for a screen
+    sys.gui.scrTxtScroll([num]screenId, [num] val);
+Enables automatic scrolling of active text when cursor gets out of screen.
+
+Return: None
+##### Set active editable text offset
+    sys.gui.setTxtXScroll([num] val);
+Sets scroll value for active text field.
+
+Return: None
+##### Set active editable text offset
+    sys.gui.setTxtYScroll([num] val);
+Sets scroll value for active text field.
 
 Return: None
 #### Text element modificators
