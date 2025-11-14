@@ -93,7 +93,7 @@ int16_t sda_tray_battery(int16_t x2, int16_t y1, int16_t w) {
     if (svpSGlobal.battPercentage != 101) {
       LCD_FillRect(x1 + 5,
         y1 + 31 - 6,
-        x1 + (int16_t)(((float)w - 5)*((float)svpSGlobal.battPercentage/(float)100)),
+        x1 + (int16_t)(((float)w - 10)*((float)svpSGlobal.battPercentage/(float)100)) + 5,
         y1 + 31 - 2,
         gr2_get_active_color(&sda_sys_con)
       );
