@@ -95,7 +95,7 @@ uint16_t sda_settings_gui(uint8_t init, uint8_t top) {
 
     if (gr2_clicked(btnBack, &sda_sys_con)) {
       if (settingsPrev == 1) {
-        sda_slot_on_top(SDA_SLOT_APPLIST);
+        sda_prev_slot_on_top(SDA_SLOT_HOMESCREEN);
         return 0;
       }
       settingsPrev--;

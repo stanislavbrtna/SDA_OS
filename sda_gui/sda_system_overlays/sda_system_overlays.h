@@ -97,4 +97,9 @@ uint8_t sda_clipboard_overlay_visible();
 
 #include "sda_date_copy_overlay.h"
 
+// main menu overlay
+void sda_mm_overlay_handle(uint8_t init);
+void sda_mm_overlay_init();
+void sda_mm_destructor();
+
 #endif
