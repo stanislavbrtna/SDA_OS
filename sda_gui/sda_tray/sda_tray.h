@@ -25,7 +25,7 @@ SOFTWARE.
 #include "../../SDA_OS.h"
 #include "tray_custom_icon.h"
 
-#define OPT_HOLD_CNT_MAX 12
+#define OPT_HOLD_CNT_MAX 16
 #define OPT_HOLD_CNT_BEGIN 5
 
 #define SDA_TRAY_RADIUS 4

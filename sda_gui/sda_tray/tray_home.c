@@ -82,7 +82,7 @@ int16_t sda_tray_home(int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
   }
   LCD_Set_Sys_Font(curr_font);
 
-  if (holdCounter < OPT_HOLD_CNT_MAX && click == 0 && clickOld == 1 && svpSGlobal.systemOptClick == CLICKED_NONE) {
+  if (click == 1 && clickOld == 0 && svpSGlobal.systemOptClick == CLICKED_NONE) {
     svpSGlobal.systemOptClick = CLICKED_SHORT;
     init = 0;
     holdCounter = 0;

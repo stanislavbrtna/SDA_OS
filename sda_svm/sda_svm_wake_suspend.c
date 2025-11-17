@@ -85,9 +85,11 @@ uint8_t svmExecSuspend() {
 }
 
 
-void svmHandleHomeButton() {
-  svmMeta.kbdVisible = svpSGlobal.kbdVisible;
-  svmExecSuspend();
+void svmHandleSlotSwitch() {
+  if(sda_get_top_slot() == SDA_SLOT_SVM && svmGetValid()) {
+    svmMeta.kbdVisible = svpSGlobal.kbdVisible;
+    svmExecSuspend();
+  }
 }
 
 

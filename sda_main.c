@@ -153,31 +153,7 @@ static void sda_main_handle_soft_buttons() {
   // top bar button handlers
   // handler for that big S! button
   if ((svpSGlobal.systemOptClick == CLICKED_SHORT)) {
-    if(sda_get_top_slot() == SDA_SLOT_SVM && svmGetValid()) {
-      svmHandleHomeButton();
-    }
-    
-    if(sda_get_top_slot() != SDA_SLOT_HOMESCREEN) {
-
-      svpSGlobal.systemXBtnClick = 0;
-      svpSGlobal.systemXBtnVisible = 0;
-
-      // destroy overlay if there is one
-      if (getOverlayId() != 0) {
-        destroyOverlay();
-      }
-      sda_set_landscape(0);
-      sda_keyboard_hide();
-      
-      if(sda_get_top_slot() == SDA_SLOT_APPLIST) {
-        sda_slot_on_top(SDA_SLOT_HOMESCREEN);
-      } else {
-        sda_prev_slot_on_top(SDA_SLOT_HOMESCREEN);
-      }
-      
-      svp_chdir(mainDir);
-      svp_chdir((uint8_t *)"APPS");
-    }
+    sda_mm_overlay_init();
     svpSGlobal.systemOptClick = CLICKED_NONE;
   }
 

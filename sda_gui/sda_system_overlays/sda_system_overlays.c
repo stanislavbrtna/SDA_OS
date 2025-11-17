@@ -41,6 +41,10 @@ void sda_system_overlays_handler() {
     sda_error_overlay_handle();
   }
 
+  if(sda_mm_overlay_shown()) {
+    sda_mm_overlay_handle(0);
+  }
+
   taskSwitcherUpdate();
   sda_auth_overlay_handle();
   sda_clipboard_overlay_update();
