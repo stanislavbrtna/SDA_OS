@@ -149,15 +149,20 @@ uint8_t sda_screen_button_handler(uint16_t screen_id, uint16_t back_id, gr2conte
       if (sda_wrap_get_button(BUTTON_A) == EV_PRESSED) {
         holdCnt = svpSGlobal.uptimeMs;
       }
-      if (sda_wrap_get_button(BUTTON_A) == EV_HOLD
+
+      if ((sda_wrap_get_button(BUTTON_A) == EV_HOLD)
           && holdCnt != 0
           && (holdCnt + 800) <= svpSGlobal.uptimeMs
+          && !sda_mm_overlay_shown()
       ) {
-        svpSGlobal.systemOptClick = CLICKED_LONG;
+        // Open system menu on the long press
+        svpSGlobal.systemOptClick = CLICKED_SHORT;
       }
+
       if (sda_wrap_get_button(BUTTON_A) == EV_RELEASED) {
         if ((holdCnt + 800) >= svpSGlobal.uptimeMs) {
-          svpSGlobal.systemOptClick = CLICKED_SHORT;
+          // Go to previous slot otherwise
+          sda_prev_slot_on_top(SDA_SLOT_HOMESCREEN);
         }
         holdCnt = 0;
       }
