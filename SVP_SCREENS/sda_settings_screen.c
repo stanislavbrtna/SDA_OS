@@ -58,6 +58,9 @@ void sda_settings_stack_add(uint16_t scr, uint8_t * label) {
 
 
 void sda_settings_open() {
+  sda_set_landscape(0);
+  sda_keyboard_hide();
+  
   sda_slot_on_top(SDA_SLOT_SETTINGS);
   settingsPrev = 0;
   sda_settings_stack_add(settingsMenu, SCR_SETTINGS);

@@ -90,9 +90,9 @@
 #define ASCR_FILE_ERROR               (uint8_t *)"Chyba Souboru"
 #define ASCR_NONAME                   (uint8_t *)"Není název"
 #define ASCR_APPLICATIONS             (uint8_t *)"Programy:"
-#define ASCR_RUNNING_APP              (uint8_t *)"Běžící aplikace"
+#define ASCR_RUNNING_APP              (uint8_t *)"Správce úloh"
 
-#define SWITCH_RUNNING_APPS           (uint8_t *)"Běžící procesy:"
+#define SWITCH_RUNNING_APPS           (uint8_t *)"Běžící aplikace:"
 #define SWITCH_CLOSE_ALL              (uint8_t *)"Zavřít vše"
 
 #define SCR_LED_NOTIFICATIONS         (uint8_t *)"Notifikační LED"

@@ -134,6 +134,10 @@ void sda_prev_slot_on_top(uint8_t def) {
     svp_switch_main_dir();
     svp_chdir((uint8_t *)"APPS");
   }
+
+  if(topSlot == SDA_SLOT_SVM) {
+    svmOnTop();
+  }
 }
 
 
