@@ -112,6 +112,10 @@ void sda_slot_on_top(uint8_t slot) {
 
 void sda_prev_slot_on_top(uint8_t def) {
 
+  if(topSlot == def) {
+    return;
+  }
+
   if (slotValid[prevSlot[topSlot]] == 0) {
     topSlot = def;
   } else {
@@ -122,6 +126,13 @@ void sda_prev_slot_on_top(uint8_t def) {
     mainScr = slotScreen[topSlot];
     sda_current_con = slotScreenContext[topSlot];
     setRedrawFlag();
+  }
+
+  svmHandleSlotSwitch();
+
+  if(topSlot == SDA_SLOT_HOMESCREEN || topSlot == SDA_SLOT_APPLIST) {
+    svp_switch_main_dir();
+    svp_chdir((uint8_t *)"APPS");
   }
 }
 
