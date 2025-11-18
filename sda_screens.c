@@ -39,16 +39,23 @@ uint8_t kbdVisibleOld;
 
 extern sdaSvmMetadata svmMeta;
 
+static uint8_t get_draw_root_en() {
+  return sda_get_top_slot() == SDA_SLOT_SVM &&
+    (svmGetValid() && svmMeta.suspendExecuted == 0) &&
+    (overlayCont == &sda_app_con || overlayScr == 0) &&
+    svmMeta.useDrawRoot == 1;
+}
 
 void sda_main_redraw() {
   uint8_t dirBuff[256];
 
-  if(sda_get_top_slot() == 4 && svmGetValid() && svmMeta.useDrawRoot == 1) {
+  if (
+    get_draw_root_en()
+  ) {
     svp_getcwd(dirBuff, 256);
     svp_switch_main_dir();
     svp_chdir(svmMeta.drawRoot);
   }
-  
 
   // lock tick for redraw
   tick_lock = SDA_LOCK_LOCKED;
@@ -155,7 +162,7 @@ void sda_main_redraw() {
     gr2_draw_end(overlayCont);
   }
 
-  if(sda_get_top_slot() == 4 && svmGetValid() && svmMeta.useDrawRoot == 1) {
+  if(get_draw_root_en()) {
     svp_switch_main_dir();
     svp_chdir(dirBuff);
   }

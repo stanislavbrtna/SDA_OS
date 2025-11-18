@@ -37,23 +37,30 @@ typedef struct {
 qlIconType qlIcons[SDA_QUICK_LAUNCH_POSITIONS];
 
 
-void sda_ql_overlay_init() {
+void sda_ql_overlay_init(uint8_t mode) {
   if (ql_overlay_flag == 0) {
     destroyOverlay();
     sda_ql_overlay_handle(1);
     setOverlayScreen(ql_overlay, &sda_sys_con);
     setOverlayDestructor(sda_ql_overlay_destructor);
     ql_overlay_flag = 1;
-    setOverlayY1(191 - 16);
-    setOverlayY2(479);
-    setOverlayX1(32);
-    setOverlayX2(320 - 3*32);
+
+    if (mode == 1) {
+      setOverlayPos(32, 176, 320 - 4*32, 303);
+    } else {
+      setOverlayPos(144, 64, 320 - 4*32, 303);
+    }
   }
 }
 
 
 void sda_ql_overlay_destructor() {
   gr2_destroy(ql_overlay, &sda_sys_con);
+  
+  if(sda_get_top_slot() == SDA_SLOT_SVM) {
+    svmOnTop();
+  }
+
   setRedrawFlag();
   ql_overlay_flag = 0;
   ql_overlay = 0xFFFF;
@@ -127,9 +134,9 @@ void sda_ql_overlay_handle(uint8_t init) {
       uint8_t type = sda_menu_detect_type(qlIcons[i].fPath);
 
       if(type == OBJ_TYPE_MENU) {
-        sda_app_screen_load(qlIcons[i].fPath, qlIcons[i].appName);
         destroyOverlay();
         sda_slot_on_top(SDA_SLOT_APPLIST);
+        sda_app_screen_load(qlIcons[i].fPath, qlIcons[i].appName);
         return;
       }
 

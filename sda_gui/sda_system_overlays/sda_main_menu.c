@@ -416,7 +416,11 @@ void sda_mm_overlay_handle(uint8_t init) {
     return;
   }
 
-  // TODO: QuickLaunch
+  if (gr2_clicked(quickBtn, &sda_sys_con)) {
+    svmHandleSlotSwitch();
+    sda_ql_overlay_init(2);
+    return;
+  }
 
   // RunningApps
   for(uint16_t x = 0; x < numberOfApps; x++) {
