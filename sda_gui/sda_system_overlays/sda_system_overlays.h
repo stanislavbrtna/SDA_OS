@@ -101,5 +101,6 @@ uint8_t sda_clipboard_overlay_visible();
 void sda_mm_overlay_handle(uint8_t init);
 void sda_mm_overlay_init();
 void sda_mm_destructor();
+uint8_t sda_mm_overlay_shown();
 
 #endif

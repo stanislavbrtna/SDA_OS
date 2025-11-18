@@ -116,7 +116,6 @@ uint8_t home[] = {
 };
 
 
-
 uint8_t apps[] = {
   0x02, // Format descriptor
   0x30, // img_width
@@ -164,7 +163,11 @@ uint8_t apps[] = {
 // Main menu overlay
 uint16_t main_menu_overlay;
 uint8_t  main_menu_overlay_flag;
-
+static uint16_t additionalHeight;
+static uint16_t appPid[MAX_OF_SAVED_PROC];
+static uint8_t niceSuspendName[MAX_OF_SAVED_PROC][35];
+static uint16_t appButtons[MAX_OF_SAVED_PROC];
+static uint16_t numberOfApps;
 
 void sda_mm_overlay_init() {
   if (main_menu_overlay_flag == 0 && svpSGlobal.sdaDeviceLock == DEVICE_UNLOCKED) {
@@ -172,8 +175,8 @@ void sda_mm_overlay_init() {
     sda_mm_overlay_handle(1);
     setOverlayScreen(main_menu_overlay, &sda_sys_con);
     setOverlayDestructor(sda_mm_destructor);
+    setOverlayPos(0, 32, 192, 160 + additionalHeight);
     main_menu_overlay_flag = 1;
-    setOverlayPos(0, 32, 160 + 32, 128 + 32);
   } else {
     destroyOverlay();
   }
@@ -210,6 +213,84 @@ void switch_to_homescreen() {
 }
 
 
+static void getNiceName(uint16_t pid, uint8_t *outBuff, uint32_t outLen) {
+  uint8_t  *buff;
+  uint32_t len;
+  uint16_t slash;
+
+  slash = 0;
+  buff = svmGetSuspendedName(svmGetId(pid));
+  len = sda_strlen(buff);
+
+  for(uint16_t i = 0; i < len; i++) {
+    if (buff[i] == '/') {
+      slash = i;
+    }
+  }
+
+  if (slash == 0) {
+    sda_strcp(buff, outBuff, outLen);
+  } else {
+    sda_strcp(buff + slash + 1, outBuff, outLen);
+  }
+}
+
+
+int16_t getRunningScreen(uint16_t scrId, uint16_t y0) {
+  if (!svmGetRunning()) {
+    additionalHeight = 0;
+    numberOfApps = 0;
+    return 0;
+  }
+
+  uint16_t screen = gr2_add_screen_ext(0, y0, 12, 2, scrId, &sda_sys_con);
+  uint16_t n = 0;
+
+  gr2_set_cell_spacing(screen, 0, 4, 0, 2, &sda_sys_con);
+  gr2_set_xscroll(screen, -2, &sda_sys_con);
+  gr2_set_yscroll(screen, 2, &sda_sys_con);
+
+  gr2_add_text(0, 0, 6, 1, SWITCH_RUNNING_APPS, screen, &sda_sys_con);
+
+  for(uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
+    appPid[n] = svmGetSuspendedPid(x);
+
+    if(appPid[n] == 0) {
+      continue;
+    }
+
+    getNiceName(appPid[n], niceSuspendName[x], 35);
+
+    appButtons[n] = gr2_add_button(
+      0, n + 1, 6, 1,
+      niceSuspendName[x],
+      screen,
+      &sda_sys_con
+    );
+
+    n++;
+
+    if (n == 7) {
+      gr2_add_text(
+        0, n + 1, 6, 1,
+        "...",
+        screen,
+        &sda_sys_con
+      );
+      n++;
+      break;
+    }
+  }
+
+  gr2_set_y2(screen, n*2 + 2, &sda_sys_con);
+
+  additionalHeight = 16 * (n * 2 + 2);
+  numberOfApps = n;
+
+  return n*2 + 2;
+}
+
+
 void sda_mm_overlay_handle(uint8_t init) {
   static uint16_t taskManagerBtn;
   static uint16_t lockBtn;
@@ -224,30 +305,6 @@ void sda_mm_overlay_handle(uint8_t init) {
     gr2_set_x_cell(main_menu_overlay, 16, &sda_sys_con);
     gr2_set_y_cell(main_menu_overlay, 16, &sda_sys_con);
     gr2_set_relative_init(1, &sda_sys_con);
-    
-    taskManagerBtn = gr2_add_button(
-      0, 4, 12, 2,
-      ASCR_RUNNING_APP,
-      main_menu_overlay,
-      &sda_sys_con
-    );
-    gr2_set_rounded(taskManagerBtn, 0, &sda_sys_con);
-    
-    lockBtn  = gr2_add_button(
-      0, 6, 12, 2,
-      SCR_LOCK_DEVICE,
-      main_menu_overlay,
-      &sda_sys_con
-    );
-    gr2_set_rounded(lockBtn, 0, &sda_sys_con);
-    
-    settingsBtn  = gr2_add_button(
-      0, 8, 12, 2,
-      ASCR_SETTINGS_BTN,
-      main_menu_overlay,
-      &sda_sys_con
-    );
-    gr2_set_rounded(settingsBtn, 0, &sda_sys_con);
 
     if (svp_crypto_get_if_set_up() == 0) {
       gr2_set_grayout(lockBtn, 1, &sda_sys_con);
@@ -283,6 +340,36 @@ void sda_mm_overlay_handle(uint8_t init) {
     gr2_set_param(appsBtn, -4, &sda_sys_con);
     gr2_set_rounded(appsBtn, 0, &sda_sys_con);
 
+    int16_t y = 4;
+    y += getRunningScreen(main_menu_overlay, y);
+
+    taskManagerBtn = gr2_add_button(
+      0, y, 12, 2,
+      ASCR_RUNNING_APP,
+      main_menu_overlay,
+      &sda_sys_con
+    );
+    gr2_set_rounded(taskManagerBtn, 0, &sda_sys_con);
+    y += 2;
+
+    lockBtn  = gr2_add_button(
+      0, y, 12, 2,
+      SCR_LOCK_DEVICE,
+      main_menu_overlay,
+      &sda_sys_con
+    );
+    gr2_set_rounded(lockBtn, 0, &sda_sys_con);
+    y += 2;
+
+    settingsBtn  = gr2_add_button(
+      0, y, 12, 2,
+      ASCR_SETTINGS_BTN,
+      main_menu_overlay,
+      &sda_sys_con
+    );
+    gr2_set_rounded(settingsBtn, 0, &sda_sys_con);
+    y += 2;
+
     gr2_set_relative_init(0, &sda_sys_con);
     return;
   }
@@ -317,14 +404,32 @@ void sda_mm_overlay_handle(uint8_t init) {
 
   if (gr2_clicked(appsBtn, &sda_sys_con)) {
     svmHandleSlotSwitch();
+    
+    sda_set_landscape(0);
+    sda_keyboard_hide();
+    
     svp_switch_main_dir();
     svp_chdir((uint8_t *)"APPS");
+    
     sda_slot_on_top(SDA_SLOT_APPLIST);
     destroyOverlay();
     return;
   }
 
   // TODO: QuickLaunch
+
+  // RunningApps
+  for(uint16_t x = 0; x < numberOfApps; x++) {
+    if (gr2_clicked(appButtons[x], &sda_sys_con)) {
+
+      if (svmWake(appPid[x])) {
+        sda_show_error_message((uint8_t *)"Error occured while waking app.");
+      }
+      setRedrawFlag();
+      destroyOverlay();
+      return;
+    }
+  }
 
   if (svpSGlobal.lcdState == LCD_OFF) {
     destroyOverlay();
