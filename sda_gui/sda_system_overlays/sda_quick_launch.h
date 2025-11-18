@@ -29,6 +29,6 @@ SOFTWARE.
 
 uint8_t sda_ql_overlay_shown();
 void sda_ql_overlay_handle(uint8_t init);
-void sda_ql_overlay_init();
+void sda_ql_overlay_init(uint8_t mode);
 
 #endif

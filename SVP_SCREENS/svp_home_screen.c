@@ -161,7 +161,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 
     gr2_set_ghost(btnLock, 1, &sda_sys_con);
     
-    oldLock    = DEVICE_UNLOCKED;
+    oldLock = DEVICE_UNLOCKED;
 
     sda_homescreen_configure();
 
@@ -242,7 +242,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 
     if (gr2_get_event(btnQuickLaunch, &sda_sys_con) == EV_RELEASED) {
       gr2_ki_unselect(screen, &sda_sys_con);
-      sda_ql_overlay_init();
+      sda_ql_overlay_init(1);
     }
     gr2_set_event(btnQuickLaunch, EV_NONE, &sda_sys_con);
 
