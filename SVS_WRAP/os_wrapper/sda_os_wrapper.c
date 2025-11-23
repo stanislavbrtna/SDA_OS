@@ -447,6 +447,29 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Set App display name
+  //#!    sys.os.setName([str] string);
+  //#!Sets the displayed app name. (14 chars by default)
+  //#!
+  //#!Return: [num] 1 - ok, 0 - string too long
+  if (sysFuncMatch(argS->callId, "setName", s)) {
+    argType[1] = SVS_TYPE_STR; // new app name
+
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    if (sda_strlen(s->stringField + argS->arg[1].val_str) < 15) {
+      svmSetNiceName(svmGetPid(), s->stringField + argS->arg[1].val_str);
+      result->value.val_u = 1;
+    } else {
+      result->value.val_u = 0;
+    }
+    
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!#### Subprocess
 
   //#!##### Set process as singular

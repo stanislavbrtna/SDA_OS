@@ -178,6 +178,7 @@ typedef struct {
 
 typedef struct {
   uint8_t  name[APP_NAME_LEN];
+  uint8_t  niceName[15];
   uint8_t  cryptoUnlocked;
   uint16_t pid;
   uint8_t  valid;

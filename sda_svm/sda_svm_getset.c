@@ -54,6 +54,7 @@ void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname) {
   sda_strcp((uint8_t *)"", svmMeta.openDbName, sizeof(svmMeta.openDbName));
   sda_strcp((uint8_t *)"DATA", svmMeta.currentWorkDir, sizeof(svmMeta.currentWorkDir));
   sda_strcp((uint8_t *)"DATA", svmMeta.drawRoot, sizeof(svmMeta.drawRoot));
+
   svmMeta.openConfUsed    = 0;
   svmMeta.openCsvUsed     = 0;
   svmMeta.openDbUsed      = 0;
@@ -271,8 +272,13 @@ void svmSetScreenShdnLock(uint8_t val) {
   if(!svmGetValid()) {
     return;
   }
+  int16_t id = svmGetPid();
 
-  svmSavedProc[svmGetId(svmGetPid())].screenShdnLock = val;
+  if(id == -1) {
+    return;
+  }
+
+  svmSavedProc[svmGetId(id)].screenShdnLock = val;
 }
 
 
@@ -291,7 +297,13 @@ void svmSetSleepLock(uint8_t val) {
     return;
   }
 
-  svmSavedProc[svmGetId(svmGetPid())].sleepLock = val;
+  int16_t id = svmGetPid();
+
+  if(id == -1) {
+    return;
+  }
+
+  svmSavedProc[svmGetId(id)].sleepLock = val;
 }
 
 
@@ -302,4 +314,12 @@ uint8_t svmGetSleepLock() {
     }
   }
   return 0;
+}
+
+
+void svmSetNiceName(uint16_t pid, uint8_t *name) {
+  int16_t index = svmGetId(pid);
+  if(index != -1) {
+    sda_strcp(name, svmSavedProc[index].niceName, sizeof(svmSavedProc[index].niceName));
+  }
 }

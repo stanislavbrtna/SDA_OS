@@ -43,6 +43,42 @@ uint8_t *svmGetSuspendedName(uint16_t id) {
   return (uint8_t *)"";
 }
 
+
+uint8_t *svmGetNiceName(uint16_t pid) {
+  int16_t id = svmGetId(pid);
+  
+  if(id != -1) {
+    if (svmSavedProc[id].valid == 1) {
+      return svmSavedProc[id].niceName;
+    }
+  }
+  
+  return (uint8_t *)"";
+}
+
+
+static void getNiceName(uint8_t *fname, uint8_t *outBuff, uint32_t outLen) {
+  uint8_t  *buff;
+  uint32_t len;
+  uint16_t slash;
+
+  slash = 0;
+  buff = fname;
+  len = sda_strlen(buff);
+
+  for(uint16_t i = 0; i < len; i++) {
+    if (buff[i] == '/') {
+      slash = i;
+    }
+  }
+
+  if (slash == 0) {
+    sda_strcp(buff, outBuff, outLen);
+  } else {
+    sda_strcp(buff + slash + 1, outBuff, outLen);
+  }
+}
+
 void svmSuspendInitPid(uint16_t pid, uint8_t * name) {
   uint16_t index = 0;
   while (svmSavedProc[index].valid != 0) {
@@ -53,6 +89,7 @@ void svmSuspendInitPid(uint16_t pid, uint8_t * name) {
   }
 
   sda_strcp(name, svmSavedProc[index].name, APP_NAME_LEN);
+  getNiceName(name, svmSavedProc[index].niceName, sizeof(svmSavedProc[index].niceName));
   svmSavedProc[index].pid = pid;
   svmSavedProc[index].valid = 1;
   svmSavedProc[index].singular = 0;
