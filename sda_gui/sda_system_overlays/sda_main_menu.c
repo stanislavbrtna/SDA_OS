@@ -216,23 +216,10 @@ void switch_to_homescreen() {
 static void getNiceName(uint16_t pid, uint8_t *outBuff, uint32_t outLen) {
   uint8_t  *buff;
   uint32_t len;
-  uint16_t slash;
 
-  slash = 0;
-  buff = svmGetSuspendedName(svmGetId(pid));
+  buff = svmGetNiceName(pid);
   len = sda_strlen(buff);
-
-  for(uint16_t i = 0; i < len; i++) {
-    if (buff[i] == '/') {
-      slash = i;
-    }
-  }
-
-  if (slash == 0) {
-    sda_strcp(buff, outBuff, outLen);
-  } else {
-    sda_strcp(buff + slash + 1, outBuff, outLen);
-  }
+  sda_strcp(buff, outBuff, outLen);
 }
 
 

@@ -57,6 +57,8 @@ uint8_t svmGetSuspendFlag();
 
 int16_t svmGetId(uint16_t pid);
 
+void svmSetNiceName(uint16_t pid, uint8_t *name);
+
 // internal
 void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname);
 void svmInValidate(uint16_t pid);
