@@ -447,6 +447,25 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get system screen lock state
+  //#!    sys.os.getLock();
+  //#!Returns if the deivice is locked.
+  //#!
+  //#!Return: 0 - unlocked, 1 - locked
+  if (sysFuncMatch(argS->callId, "getLock", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    if (svpSGlobal.sdaDeviceLock == DEVICE_LOCKED) {
+      result->value.val_u = 1;
+    } else {
+      result->value.val_u = 0;
+    }
+    
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Set App display name
   //#!    sys.os.setName([str] string);
   //#!Sets the displayed app name. (14 chars by default)
