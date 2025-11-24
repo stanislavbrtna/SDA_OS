@@ -104,21 +104,21 @@ uint8_t sda_main_loop() {
     svp_homeScreen(0, sda_if_slot_on_top(SDA_SLOT_HOMESCREEN));
   }
 
-  if (sda_slot_get_valid(SDA_SLOT_APPLIST)) {
-    svp_appScreen(0, sda_if_slot_on_top(SDA_SLOT_APPLIST));
-  }
-
-  if (sda_slot_get_valid(SDA_SLOT_SETTINGS)) {
-    sda_settings_gui(0, sda_if_slot_on_top(SDA_SLOT_SETTINGS));
-  }
-
   if (sda_slot_get_valid(SDA_SLOT_SVM)) {
     svmRun(0, sda_if_slot_on_top(SDA_SLOT_SVM));
   }
 
-  if (sda_slot_get_valid(sda_get_top_slot()) == 0) {
-    sda_slot_on_top(SDA_SLOT_HOMESCREEN);
-  }
+  if(svpSGlobal.sdaDeviceLock != DEVICE_LOCKED) {
+    if (sda_slot_get_valid(SDA_SLOT_APPLIST)) {
+      svp_appScreen(0, sda_if_slot_on_top(SDA_SLOT_APPLIST));
+    }
+    if (sda_slot_get_valid(SDA_SLOT_SETTINGS)) {
+      sda_settings_gui(0, sda_if_slot_on_top(SDA_SLOT_SETTINGS));
+    }
+    if (sda_slot_get_valid(sda_get_top_slot()) == 0) {
+      sda_slot_on_top(SDA_SLOT_HOMESCREEN);
+    }
+  } 
 
   // handling misc stuff
   sda_main_handle_soft_buttons();

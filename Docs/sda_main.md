@@ -156,6 +156,11 @@ Return: [num] SDA_OS version number
 Returns language of the running SDA_OS build.
 
 Return: defines SVP_LANG_CZ (0) or SVP_LANG_ENG(1)
+##### Get system screen lock state
+    sys.os.getLock();
+Returns if the deivice is locked.
+
+Return: 0 - unlocked, 1 - locked
 ##### Set App display name
     sys.os.setName([str] string);
 Sets the displayed app name. (14 chars by default)
