@@ -163,7 +163,7 @@ Returns if the deivice is locked.
 Return: 0 - unlocked, 1 - locked
 ##### Set App display name
     sys.os.setName([str] string);
-Sets the displayed app name. (14 chars by default)
+Sets the displayed app name. (31 chars by default)
 
 Return: [num] 1 - ok, 0 - string too long
 #### Subprocess
