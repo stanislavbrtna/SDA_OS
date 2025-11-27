@@ -48,7 +48,7 @@ void sda_ql_overlay_init(uint8_t mode) {
     if (mode == 1) {
       setOverlayPos(32, 176, 320 - 4*32, 303);
     } else {
-      setOverlayPos(144, 64, 320 - 4*32, 303);
+      setOverlayPos(144, 64 - 42*svpSGlobal.lcdLandscape, 320 - 4*32, 303);
     }
   }
 }
@@ -131,6 +131,7 @@ void sda_ql_overlay_handle(uint8_t init) {
 
   for(int32_t i = 0; i < SDA_QUICK_LAUNCH_POSITIONS; i++) {
     if (gr2_get_event(qlIcons[i].id, &sda_sys_con) == EV_RELEASED) {
+      sda_set_landscape(0);
       uint8_t type = sda_menu_detect_type(qlIcons[i].fPath);
 
       if(type == OBJ_TYPE_MENU) {

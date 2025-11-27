@@ -76,6 +76,9 @@ File description:
 // Size of OS clipboard (in bytes)
 #define SDA_CLIPBOARD_SIZE 256
 
+// String lenght of a process "nice name"
+#define SDA_NICE_NAME 32
+
 // Debug options
 // #define APP_SCREEN_DEBUG // App screen (launcher) debug switch
 // #define SVM_DBG_ENABLED // SVM debug switch

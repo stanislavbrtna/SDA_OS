@@ -165,7 +165,7 @@ uint16_t main_menu_overlay;
 uint8_t  main_menu_overlay_flag;
 static uint16_t additionalHeight;
 static uint16_t appPid[MAX_OF_SAVED_PROC];
-static uint8_t niceSuspendName[MAX_OF_SAVED_PROC][35];
+static uint8_t niceSuspendName[MAX_OF_SAVED_PROC][SDA_NICE_NAME];
 static uint16_t appButtons[MAX_OF_SAVED_PROC];
 static uint16_t numberOfApps;
 

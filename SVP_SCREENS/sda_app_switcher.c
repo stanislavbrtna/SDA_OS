@@ -35,7 +35,7 @@ static uint16_t close_all;
 static uint16_t scrollbar;
 static uint16_t numberOfApps;
 
-static uint8_t niceSuspendName[MAX_OF_SAVED_PROC][35];
+static uint8_t niceSuspendName[MAX_OF_SAVED_PROC][SDA_NICE_NAME];
 
 //#define APP_SWITCHER_DEBUG
 

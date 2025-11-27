@@ -468,7 +468,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!##### Set App display name
   //#!    sys.os.setName([str] string);
-  //#!Sets the displayed app name. (14 chars by default)
+  //#!Sets the displayed app name. (31 chars by default)
   //#!
   //#!Return: [num] 1 - ok, 0 - string too long
   if (sysFuncMatch(argS->callId, "setName", s)) {
@@ -478,7 +478,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    if (sda_strlen(s->stringField + argS->arg[1].val_str) < 15) {
+    if (sda_strlen(s->stringField + argS->arg[1].val_str) < SDA_NICE_NAME) {
       svmSetNiceName(svmGetPid(), s->stringField + argS->arg[1].val_str);
       result->value.val_u = 1;
     } else {
