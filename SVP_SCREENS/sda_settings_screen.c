@@ -64,6 +64,8 @@ void sda_settings_open() {
   sda_slot_on_top(SDA_SLOT_SETTINGS);
   settingsPrev = 0;
   sda_settings_stack_add(settingsMenu, SCR_SETTINGS);
+  svp_switch_main_dir();
+  svp_chdir("APPS");
 }
 
 
