@@ -135,10 +135,8 @@ void sda_ql_overlay_handle(uint8_t init) {
       uint8_t type = sda_menu_detect_type(qlIcons[i].fPath);
 
       if(type == OBJ_TYPE_MENU) {
-        destroyOverlay();
         sda_slot_on_top(SDA_SLOT_APPLIST);
         sda_app_screen_load(qlIcons[i].fPath, qlIcons[i].appName);
-        return;
       }
 
       if(type == OBJ_TYPE_APP && svmLaunch(qlIcons[i].fPath, 0) == 0) {
