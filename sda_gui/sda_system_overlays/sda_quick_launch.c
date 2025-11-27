@@ -48,7 +48,7 @@ void sda_ql_overlay_init(uint8_t mode) {
     if (mode == 1) {
       setOverlayPos(32, 176, 320 - 4*32, 303);
     } else {
-      setOverlayPos(144, 64 - 42*svpSGlobal.lcdLandscape, 320 - 4*32, 303);
+      setOverlayPos(120, 64 - 42*svpSGlobal.lcdLandscape, 320 - 4*32, 303);
     }
   }
 }
