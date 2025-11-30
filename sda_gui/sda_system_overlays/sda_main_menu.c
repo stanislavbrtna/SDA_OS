@@ -346,7 +346,9 @@ void sda_mm_overlay_handle(uint8_t init) {
       &sda_sys_con
     );
     gr2_set_rounded(lockBtn, 0, &sda_sys_con);
-    gr2_set_grayout(lockBtn, ~svp_crypto_get_if_set_up(), &sda_sys_con);
+    if(!svp_crypto_get_if_set_up()) {
+      gr2_set_grayout(lockBtn, 1, &sda_sys_con);
+    }
     y += 2;
 
     settingsBtn  = gr2_add_button(
