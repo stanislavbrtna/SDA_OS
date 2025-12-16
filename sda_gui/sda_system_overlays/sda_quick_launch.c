@@ -58,7 +58,10 @@ void sda_ql_overlay_destructor() {
   gr2_destroy(ql_overlay, &sda_sys_con);
   
   if(sda_get_top_slot() == SDA_SLOT_SVM) {
-    svmOnTop();
+    if(svmGetValid()) {
+      uint16_t pid = svmGetPid();
+      svmWake(svmGetPid());
+    }
   }
 
   setRedrawFlag();

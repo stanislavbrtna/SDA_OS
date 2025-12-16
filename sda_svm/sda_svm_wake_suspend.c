@@ -224,7 +224,9 @@ uint8_t svmWake(uint16_t pid) {
     svmSetValid(1);
   }
 
-  svmOnTop();
+  if(sda_get_top_slot() != SDA_SLOT_SVM) {
+    svmOnTop();
+  }
 
   // unlock
   if (svmGetCryptoUnlock()) {

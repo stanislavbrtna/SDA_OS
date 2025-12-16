@@ -286,8 +286,10 @@ void sda_mm_overlay_handle(uint8_t init) {
   static uint16_t quickBtn;
   static uint16_t homeBtn;
   static uint16_t appsBtn;
+  static uint8_t  qlFlag;
 
   if (init == 1) {
+    qlFlag = 0;
     main_menu_overlay = gr2_add_screen(&sda_sys_con);
     gr2_set_x_cell(main_menu_overlay, 16, &sda_sys_con);
     gr2_set_y_cell(main_menu_overlay, 16, &sda_sys_con);
@@ -408,7 +410,8 @@ void sda_mm_overlay_handle(uint8_t init) {
 
   if (gr2_clicked(quickBtn, &sda_sys_con)) {
     svmHandleSlotSwitch();
-    sda_ql_overlay_init(2);
+    sda_keyboard_hide();
+    qlFlag = 1;
     return;
   }
 
@@ -427,6 +430,11 @@ void sda_mm_overlay_handle(uint8_t init) {
 
   if (svpSGlobal.lcdState == LCD_OFF) {
     destroyOverlay();
+    return;
+  }
+
+  if(qlFlag) {
+    sda_ql_overlay_init(2);
     return;
   }
 
