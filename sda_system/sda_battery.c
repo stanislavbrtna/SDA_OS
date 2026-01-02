@@ -22,17 +22,22 @@ SOFTWARE.
 
 #include "sda_battery.h"
 
-#define MIN_VOLTAGE 3.1
-#define MAX_VOLTAGE 4.0
 
+#ifndef SDA_BATT_MIN_VOLTAGE
+  #define SDA_BATT_MIN_VOLTAGE 3.3
+#endif
+
+#ifndef SDA_BATT_MAX_VOLTAGE
+  #define MAX_VOLTAGE 4.0
+#endif
 
 static uint8_t get_batt_percent(float voltage) {
   uint16_t percent;
-  if(voltage < MIN_VOLTAGE) {
+  if(voltage < SDA_BATT_MIN_VOLTAGE) {
     return 0;
   }
 
-  percent = (uint16_t)((voltage - MIN_VOLTAGE) / ((MAX_VOLTAGE - MIN_VOLTAGE) / 100 ));
+  percent = (uint16_t)((voltage - SDA_BATT_MIN_VOLTAGE) / ((SDA_BATT_MAX_VOLTAGE - SDA_BATT_MIN_VOLTAGE) / 100 ));
   if (percent > 100) {
     percent = 100;
   }
