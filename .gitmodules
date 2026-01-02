@@ -1,6 +1,6 @@
 [submodule "GR2"]
 	path = GR2
-	url = https://github.com/stanislavbrtna/GR2
+	url = git@github.com:stanislavbrtna/GR2.git
 [submodule "SVS"]
 	path = SVS
 	url = git@github.com:stanislavbrtna/svs-script.git
