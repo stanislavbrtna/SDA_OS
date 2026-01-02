@@ -28,7 +28,7 @@ SOFTWARE.
 #endif
 
 #ifndef SDA_BATT_MAX_VOLTAGE
-  #define MAX_VOLTAGE 4.0
+  #define SDA_BATT_MAX_VOLTAGE 4.0
 #endif
 
 static uint8_t get_batt_percent(float voltage) {
