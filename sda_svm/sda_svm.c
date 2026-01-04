@@ -27,9 +27,21 @@ SOFTWARE.
 #include "sda_svm_wake_suspend.h"
 
 //svs VM
+
+#ifdef STM32H743xx
+__attribute__ ((section(".strdata"), used))
+#endif
 svsVM          svm;
+
+
 sdaSvmMetadata svmMeta;
+
+#ifdef STM32H743xx
+__attribute__ ((section(".strdata"), used))
+#endif
 uint8_t        svmStrings[STRING_FIELD_L];
+
+
 
 static uint16_t nextPid;
 static uint8_t  svmValid;
