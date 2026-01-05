@@ -26,6 +26,21 @@ SOFTWARE.
 uint16_t batt_overlay;
 uint8_t batt_overlay_flag;
 
+static uint8_t bl_icon[] = {
+  0x02, // Format descriptor
+  0x18, // img_width
+  0x18, // img_height
+  0x00, 0x18, 0x00, 0x00, 0x18, 0x00, 0x00, 0x18, 
+  0x00, 0x00, 0x18, 0x00, 0x30, 0xff, 0x0c, 0xf0, 
+  0xff, 0x0f, 0xe0, 0x8f, 0x07, 0xe0, 0x0f, 0x06, 
+  0xf0, 0x0f, 0x0e, 0xf0, 0x0f, 0x0c, 0xf0, 0x0f, 
+  0x0c, 0xff, 0x0f, 0xfc, 0xff, 0x0f, 0xfc, 0xf0, 
+  0x0f, 0x0c, 0xf0, 0x0f, 0x0c, 0xf0, 0x0f, 0x0e, 
+  0xe0, 0x0f, 0x06, 0xe0, 0x8f, 0x07, 0xf0, 0xff, 
+  0x0f, 0x30, 0xff, 0x0c, 0x00, 0x18, 0x00, 0x00, 
+  0x18, 0x00, 0x00, 0x18, 0x00, 0x00, 0x18, 0x00, 
+};
+
 void sda_batt_overlay_init() {
   if (batt_overlay_flag == 0) {
     destroyOverlay();
@@ -59,31 +74,33 @@ void batt_overlay_handle(uint8_t init) {
 
   if (init == 1) {
     batt_overlay = gr2_add_screen(&sda_sys_con);
+    gr2_set_yscroll(batt_overlay, 4, &sda_sys_con);
     gr2_set_x_cell(batt_overlay, 16, &sda_sys_con);
-    gr2_set_y_cell(batt_overlay, 16, &sda_sys_con);
-    backlightSlider
-      = gr2_add_slider_h(
-          1, 1, 15,  3,
-          255 - MIN_BACKLIGHT_VALUE,
-          svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
-          batt_overlay,
-          &sda_sys_con
-      );
-    backlightOk
-      = gr2_add_button(
-          11, 4, 15, 6,
-          OVRL_OK,
-          batt_overlay,
-          &sda_sys_con
-      );
+    gr2_set_y_cell(batt_overlay, 17, &sda_sys_con);
+    backlightSlider = gr2_add_slider_h(
+      1, 1, 15,  3,
+      255 - MIN_BACKLIGHT_VALUE,
+      svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
+      batt_overlay,
+      &sda_sys_con
+    );
+
+    gr2_set_str2(backlightSlider, bl_icon, &sda_sys_con);
+
+    backlightOk = gr2_add_button(
+      11, 4, 15, 6,
+      OVRL_OK,
+      batt_overlay,
+      &sda_sys_con
+    );
     gr2_text_set_align(backlightOk, GR2_ALIGN_CENTER, &sda_sys_con);
-    soundEnable
-      = gr2_add_checkbox(
-          1, 4, 10, 6,
-          OVRL_SILENT,
-          batt_overlay,
-          &sda_sys_con
-      );
+    
+    soundEnable = gr2_add_checkbox(
+      1, 4, 10, 6,
+      OVRL_SILENT,
+      batt_overlay,
+      &sda_sys_con
+    );
 
     gr2_set_value(soundEnable, svpSGlobal.mute, &sda_sys_con);
     return;

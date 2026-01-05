@@ -254,6 +254,7 @@ uint8_t sda_gr2_inits_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.gui.setIcon([num]id, [str]image);
   //#!Sets image for given icon. Image must be a file in current working directory, with resolution 64x64px.
   //#!When parameter of icon element is not zero, color of value param - 1 (16bit RGB565) is drawn as transparent.
+  //#!This Function can also set .sic image for a given button or a slider. 
   //#!
   //#!Return: none
 

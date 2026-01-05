@@ -99,8 +99,9 @@ typedef struct {
   volatile uint32_t battTime;
   volatile uint64_t uptimeMs;
 
-  // Sound
+  // Notifications
   volatile uint8_t  mute;
+  volatile uint8_t  vibrate;
 
   // Keyboard, clipboard, text input method
   volatile uint8_t   kbdFlag;
