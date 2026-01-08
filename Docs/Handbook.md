@@ -399,6 +399,16 @@ Return: None
 Returns system mute
 
 Return: [num]1 if system is on mute.
+##### Get if haptics is enabled
+    sys.snd.getHaptics();
+Returns system haptics
+
+Return: [num]1 if haptics is enabled.
+##### Perform haptic feedbach
+    sys.snd.haptics([num]time (~ms));
+Performs haptic feedback for a given time. (max 1s)
+
+Return: None
 
 #### Date selector widget
 
@@ -1723,6 +1733,7 @@ Return: [num]id
     sys.gui.setIcon([num]id, [str]image);
 Sets image for given icon. Image must be a file in current working directory, with resolution 64x64px.
 When parameter of icon element is not zero, color of value param - 1 (16bit RGB565) is drawn as transparent.
+This Function can also set .sic image for a given button or a slider. 
 
 Return: none
 ##### New image

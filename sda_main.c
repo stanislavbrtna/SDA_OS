@@ -38,6 +38,32 @@ volatile uint8_t systemDateClick;
 // variables used in main loop
 uint8_t oldsec;
 
+// feature set
+
+uint8_t *sdaFeatureSet[] = {
+#ifdef SDA_FEATURE_NOTIF_VIBRO
+  "HAPTICS",
+#endif
+#ifdef SDA_FEATURE_AMB_LIGHT_SENS
+  "LIGHT_SENS",
+#endif
+#ifdef SDA_FEATURE_IEXP_V1
+  "IEXP_V1",
+#endif
+#ifdef SDA_FEATURE_IEXP_V2
+  "IEXP_V2",
+#endif
+#ifdef SDA_FEATURE_PCM_SOUND
+  "PCM_SOUND",
+#endif
+#ifdef SDA_FEATURE_EEXP_V1
+  "EEXP_V1"
+#endif
+#ifdef SDA_FEATURE_PERF_MODE
+  "PERF_MODE"
+#endif
+};
+
 void sda_main_init();
 
 // static headers

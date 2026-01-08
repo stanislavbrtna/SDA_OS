@@ -124,5 +124,39 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get if haptics is enabled
+  //#!    sys.snd.getHaptics();
+  //#!Returns system haptics
+  //#!
+  //#!Return: [num]1 if haptics is enabled.
+  if (sysFuncMatch(argS->callId, "getHaptics", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+#ifdef SDA_FEATURE_NOTIF_VIBRO
+    result->value.val_u = svpSGlobal.haptics;
+#else
+    result->value.val_u = 0;
+#endif
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Perform haptic feedbach
+  //#!    sys.snd.haptics([num]time (~ms));
+  //#!Performs haptic feedback for a given time. (max 1s)
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "haptics", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+    if(argS->arg[1].val_u <= 1000) {
+      svp_haptic_fb(argS->arg[1].val_u);
+    }
+    return 1;
+  }
+
   return 0;
 }

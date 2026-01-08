@@ -77,7 +77,7 @@ void sda_error_overlay_handle();
 
 // battery overlay
 void sda_batt_overlay_init();
-void batt_overlay_handle(uint8_t init);
+int16_t batt_overlay_handle(uint8_t init);
 uint8_t sda_batt_overlay_shown();
 void sda_batt_overlay_destructor();
 

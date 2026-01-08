@@ -72,6 +72,9 @@ void sda_load_config() {
   // mute
   svpSGlobal.mute = sda_conf_key_read_i32(&conffile, (uint8_t *)"mute", 0);
 
+  // haptics
+  svpSGlobal.haptics = sda_conf_key_read_i32(&conffile, (uint8_t *)"haptics", 0);
+
   // usb debug
   sda_usb_enable_for_dbg(sda_conf_key_read_i32(&conffile, (uint8_t *)"usb_debug", 0));
   svmSetAutocahceEnable(sda_conf_key_read_i32(&conffile, (uint8_t *)"svm_autocache_enabled", 0));
@@ -187,6 +190,17 @@ void sda_store_mute_config() {
   printf("Done.\n");
 }
 
+void sda_set_haptics(uint8_t val) {
+  svpSGlobal.haptics = val;
+  
+  // store
+  sda_conf conffile;
+  uint8_t dirbuf[258];
+  if(sda_settings_switch_to_main(&conffile, dirbuf)) return;
+  sda_conf_key_write_i32(&conffile, (uint8_t *)"haptics", svpSGlobal.haptics);
+  sda_conf_close(&conffile);
+  svp_chdir(dirbuf);
+}
 
 void sda_store_calibration() {
   uint8_t dirbuf[258];

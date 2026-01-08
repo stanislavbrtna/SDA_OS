@@ -43,6 +43,9 @@ void svp_beep_set_t(uint16_t time);
 void svp_beep_set_pf(uint16_t val);
 void svp_beep_set_def();
 
+// [HW] Haptic feedback
+void svp_haptic_fb(uint16_t time);
+
 // [HW] Battery
 uint8_t sda_is_battery_measured();
 float   sda_get_battery_voltage();

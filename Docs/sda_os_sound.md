@@ -34,3 +34,13 @@ Return: None
 Returns system mute
 
 Return: [num]1 if system is on mute.
+##### Get if haptics is enabled
+    sys.snd.getHaptics();
+Returns system haptics
+
+Return: [num]1 if haptics is enabled.
+##### Perform haptic feedbach
+    sys.snd.haptics([num]time (~ms));
+Performs haptic feedback for a given time. (max 1s)
+
+Return: None

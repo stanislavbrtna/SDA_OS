@@ -319,7 +319,7 @@ void sda_set_init_struct_defaults() {
   svpSGlobal.systemXBtnVisible = 1;
   svpSGlobal.kbdVisible = 0;
   svpSGlobal.mute = 0;
-  svpSGlobal.vibrate = 0;
+  svpSGlobal.haptics = 0;
 
   // 101 is non-valid init value, displays questionmark
   svpSGlobal.battPercentage = 101;

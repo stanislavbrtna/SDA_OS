@@ -84,7 +84,6 @@ SOFTWARE.
 #include "sda_gui/sda_tray/sda_tray.h"
 #include "sda_gui/sda_scr_btn_handler.h"
 
-
 // main config
 extern svpStatusStruct svpSGlobal;
 
