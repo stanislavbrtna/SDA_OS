@@ -38,11 +38,16 @@ typedef enum {LCD_ON, LCD_OFF} lcdStateType;
 
 typedef enum {SDA_LOCK_LOCKED, SDA_LOCK_UNLOCKED} sdaLockState;
 
-typedef enum {PWR_MAX, PWR_MID, PWR_LOW} pwrStateType;
-
 typedef enum {SDA_PWR_MODE_NORMAL, SDA_PWR_MODE_SLEEP} pwrModeType;
 
 typedef enum {SDA_PWR_MODE_SLEEP_LOW, SDA_PWR_MODE_SLEEP_NORMAL, SDA_PWR_MODE_SLEEP_DEEP} pwrSleepModeType;
+
+// Power management enum
+typedef enum {
+  PERFORMANCE,
+  POWERSAVE,
+  AUTO,
+} sdaPwrModeType;
 
 typedef enum {POWER_USB, POWER_BATT} systemPwrType;
 
@@ -69,8 +74,10 @@ typedef struct {
   volatile systemPwrType pwrType;
 
   // Power mode
-  volatile pwrModeType powerMode;
+  volatile pwrModeType      powerMode;
   volatile pwrSleepModeType powerSleepMode;
+  volatile sdaPwrModeType   pwrClockScalingMode;
+  volatile uint16_t         systemClock; // clock speed in mhz
 
   // Status LED
   ledPatternType ledPattern;

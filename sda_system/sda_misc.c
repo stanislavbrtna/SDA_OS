@@ -329,6 +329,8 @@ void sda_set_init_struct_defaults() {
 
   svpSGlobal.pwrType        = POWER_BATT;
   svpSGlobal.powerMode      = SDA_PWR_MODE_NORMAL;
+  svpSGlobal.pwrClockScalingMode = AUTO;
+  svpSGlobal.systemClock    = 167;
   svpSGlobal.lcdBacklight   = 255;
   svpSGlobal.sdaDeviceLock  = DEVICE_UNLOCKED;
 

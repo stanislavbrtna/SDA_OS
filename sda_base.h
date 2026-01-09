@@ -109,6 +109,7 @@ uint8_t  sda_usb_get_enable_for_dbg();
 void    svp_set_calibration_data(touchCalibDataStruct input);
 uint8_t svp_getLcdCalibrationFlag();
 uint8_t sda_card_inserted();
+void    sda_set_perf_mode(sdaPwrModeType mode);
 
 // [HW] RTC Backup registers
 void    rtc_write_password(uint8_t *pwd);

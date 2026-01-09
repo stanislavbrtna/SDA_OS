@@ -57,10 +57,10 @@ uint8_t *sdaFeatureSet[] = {
   "PCM_SOUND",
 #endif
 #ifdef SDA_FEATURE_EEXP_V1
-  "EEXP_V1"
+  "EEXP_V1",
 #endif
-#ifdef SDA_FEATURE_PERF_MODE
-  "PERF_MODE"
+#ifdef SDA_FEATURE_FREQ_SCALING
+  "FREQ_SCALING",
 #endif
 };
 
