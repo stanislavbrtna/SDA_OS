@@ -62,6 +62,7 @@ uint8_t *sdaFeatureSet[] = {
 #ifdef SDA_FEATURE_FREQ_SCALING
   "FREQ_SCALING",
 #endif
+  "end"
 };
 
 void sda_main_init();
