@@ -349,7 +349,7 @@ int16_t batt_overlay_handle(uint8_t init) {
       batt_overlay,
       &sda_sys_con
     );
-    
+
     perfBtn = gr2_add_button(
       11, y1, 4, 2,
       "",
@@ -447,14 +447,13 @@ int16_t batt_overlay_handle(uint8_t init) {
       gr2_set_visible(perfScr, 0, &sda_sys_con);
       moveButtons(-3);
       setOverlayY2(ovrY2);
+      overlayRedrawFlag = 1;
     } else {
       // show
       gr2_set_visible(perfScr, 1, &sda_sys_con);
       moveButtons(3);
       setOverlayY2(ovrY2 + 48);
     }
-
-    overlayRedrawFlag = 1;
     setRedrawFlag();
   }
 
