@@ -37,11 +37,14 @@ uint8_t  sda_get_time_update_flag();
 void     sda_set_time_update_flag();
 uint16_t sda_get_uptime();
 
-// [HW] beeper
+// [HW] Beeper
 void svp_beep();
 void svp_beep_set_t(uint16_t time);
 void svp_beep_set_pf(uint16_t val);
 void svp_beep_set_def();
+
+// [HW] PCM Sound
+void svp_set_volume(uint16_t val);
 
 // [HW] Haptic feedback
 void svp_haptic_fb(uint16_t time);

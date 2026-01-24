@@ -59,18 +59,18 @@ typedef enum {ON_SCREEN_KEYBOARD, OTHER} sdaInputMethodType;
 
 typedef struct {
   // Touch
-  volatile uint8_t      touchValid;
-  volatile uint16_t     touchX;
-  volatile uint16_t     touchY;
-  volatile gr2EventType touchType;
+  volatile uint8_t       touchValid;
+  volatile uint16_t      touchX;
+  volatile uint16_t      touchY;
+  volatile gr2EventType  touchType;
 
   // Keypad
-  volatile gr2EventType keyEv[6];
-  volatile uint8_t      btnFlag;
+  volatile gr2EventType  keyEv[6];
+  volatile uint8_t       btnFlag;
 
   // Battery
-  volatile uint8_t battPercentage;
-  uint8_t  battString[6]; // 3.654V for example 
+  volatile uint8_t       battPercentage;
+  uint8_t                battString[6]; // 3.654V for example 
   volatile systemPwrType pwrType;
 
   // Power mode
@@ -107,9 +107,9 @@ typedef struct {
   volatile uint64_t uptimeMs;
 
   // Notifications
-  volatile uint8_t  mute;
-  volatile uint8_t  haptics;
-  volatile uint8_t  volumePCM;
+  volatile uint8_t   mute;
+  volatile uint8_t   haptics;
+  volatile uint16_t  volumePCM;
 
   // Keyboard, clipboard, text input method
   volatile uint8_t   kbdFlag;
