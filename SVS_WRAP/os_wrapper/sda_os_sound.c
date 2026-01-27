@@ -158,5 +158,41 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Play media
+  //#!    sys.snd.play([str] string);
+  //#!Plays given wav file (PCM sound must be supported by the device).
+  //#!
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "play", s)) {
+    argType[1] = SVS_TYPE_STR; // file
+
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    sda_media_play(s->stringField + argS->arg[1].val_str);
+
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Stop playback
+  //#!    sys.snd.stop();
+  //#!Stops media playback
+  //#!
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "stop", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)){
+      return 0;
+    }
+
+    sda_media_stop();
+
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   return 0;
 }

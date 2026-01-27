@@ -45,6 +45,9 @@ void svp_beep_set_def();
 
 // [HW] PCM Sound
 void svp_set_volume(uint16_t val);
+void sda_media_pause(uint8_t pause_on);
+void sda_media_play(uint8_t* fname);
+void sda_media_stop();
 
 // [HW] Haptic feedback
 void svp_haptic_fb(uint16_t time);

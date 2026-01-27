@@ -409,6 +409,16 @@ Return: [num]1 if haptics is enabled.
 Performs haptic feedback for a given time. (max 1s)
 
 Return: None
+##### Play media
+    sys.snd.play([str] string);
+Plays given wav file (PCM sound must be supported by the device).
+
+Return: none
+##### Stop playback
+    sys.snd.stop();
+Stops media playback
+
+Return: none
 
 #### Date selector widget
 

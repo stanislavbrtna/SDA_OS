@@ -8,6 +8,22 @@ OS features:
     - rewrite alarms so they can use the csv format
     - getParam(alarmId)
     - perhaps function to list all alarms for an app
+  - Notifications API:
+    - notification sounds, led modes, haptics
+    - sys.notif.send("soundOption","icon.sic", "message", &callback);
+      - perform beep/haptics/blink
+      - show notif box (TBD)
+    - settings options for notifications
+  - Sound api:
+    - current beeper - without led notif fallback
+    - Media playback:
+      - sys.snd.play("file.wav");
+      - sys.snd.pause();
+      - sys.snd.resume();
+      - sys.snd.seek(ms);
+      - sys.snd.stop();
+      - sys.snd.getLen("file.wav"); -> len [ms]
+        -> needs wav header parser on the os side?
     
 
 Gui:
