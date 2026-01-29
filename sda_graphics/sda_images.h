@@ -34,4 +34,6 @@ void sda_img_draw(int16_t x, int16_t y, int16_t scale_w, int16_t scale_h, uint8_
 uint16_t sda_img_get_width(uint8_t *filename);
 uint16_t sda_img_get_height(uint8_t *filename);
 
+int8_t sda_validate_extension(uint8_t* filename, uint8_t* exten);
+
 #endif

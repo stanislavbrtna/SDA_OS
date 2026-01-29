@@ -27,45 +27,20 @@ static uint16_t sic_pmc_color;
 
 // gets if file is p16 image
 uint8_t sda_get_if_p16(uint8_t * filename) {
-  uint32_t fnameLen = 0;
-
-  fnameLen = sda_strlen(filename);
-
-  if(fnameLen < 3) {
-    return 0;
-  }
-
-  if((filename[fnameLen - 3] == 'p' ||  filename[fnameLen - 3] == 'P') &&
-      filename[fnameLen - 2] == '1' &&
-      filename[fnameLen - 1] == '6'
-    ) {
-    return 1;
-  }
-
-  return 0;
+  return sda_validate_extension(filename, "p16");
 }
 
 // gets if file is ppm image
 uint8_t sda_get_if_ppm(uint8_t * filename) {
-  uint32_t fnameLen = 0;
-
-  fnameLen = sda_strlen(filename);
-
-  if(fnameLen < 3) {
-    return 0;
-  }
-
-  if((filename[fnameLen - 3] == 'p' || filename[fnameLen - 3] == 'P') &&
-     (filename[fnameLen - 2] == 'p' || filename[fnameLen - 3] == 'P') &&
-     (filename[fnameLen - 1] == 'm' || filename[fnameLen - 3] == 'M')
-    ) {
-    return 1;
-  }
-
-  return 0;
+  return sda_validate_extension(filename, "ppm");
 }
 
 int8_t sda_get_if_sic(uint8_t * filename) {
+  return sda_validate_extension(filename, "sic");
+}
+
+
+int8_t sda_validate_extension(uint8_t* filename, uint8_t* exten) {
   uint32_t fnameLen = 0;
 
   if (filename[0] == 2) {
@@ -78,10 +53,11 @@ int8_t sda_get_if_sic(uint8_t * filename) {
     return 0;
   }
 
-  if((filename[fnameLen - 3] == 's' || filename[fnameLen - 3] == 's') &&
-     (filename[fnameLen - 2] == 'i' || filename[fnameLen - 3] == 'i') &&
-     (filename[fnameLen - 1] == 'c' || filename[fnameLen - 3] == 'c')
-    ) {
+  if(
+    sda_str_lower(filename[fnameLen - 3]) == sda_str_lower(exten[0]) &&
+    sda_str_lower(filename[fnameLen - 2]) == sda_str_lower(exten[1]) &&
+    sda_str_lower(filename[fnameLen - 1]) == sda_str_lower(exten[2])
+  ) {
     return 1;
   }
 
