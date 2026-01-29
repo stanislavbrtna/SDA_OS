@@ -98,6 +98,14 @@ File description:
   #define MIN_BACKLIGHT_VALUE 170
 #endif
 
+#ifndef MIN_PCM_VOLUME_VALUE
+  #define MIN_PCM_VOLUME_VALUE 0
+#endif
+
+#ifndef MAX_PCM_VOLUME_VALUE
+  #define MAX_PCM_VOLUME_VALUE 1600
+#endif
+
 // button id defines
 #define BUTTON_A     0
 #define BUTTON_LEFT  1

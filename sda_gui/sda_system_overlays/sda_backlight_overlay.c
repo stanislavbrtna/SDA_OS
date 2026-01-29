@@ -328,7 +328,7 @@ int16_t batt_overlay_handle(uint8_t init) {
 #ifdef SDA_FEATURE_PCM_SOUND
     volumeSlider = gr2_add_slider_h(
       1, y1, 14,  2,
-      0xFFFF,
+      MAX_PCM_VOLUME_VALUE - MIN_PCM_VOLUME_VALUE,
       svpSGlobal.volumePCM,
       batt_overlay,
       &sda_sys_con
@@ -496,8 +496,11 @@ int16_t batt_overlay_handle(uint8_t init) {
   
 #ifdef SDA_FEATURE_PCM_SOUND
   if (gr2_get_event(volumeSlider, &sda_sys_con)) {
-    svpSGlobal.volumePCM = (uint16_t) (gr2_get_value(volumeSlider, &sda_sys_con));
+    svpSGlobal.volumePCM = (uint16_t) (gr2_get_value(volumeSlider, &sda_sys_con)) + MIN_PCM_VOLUME_VALUE;
     svp_set_volume(svpSGlobal.volumePCM);
+  }
+  if (gr2_get_event(volumeSlider, &sda_sys_con) == EV_RELEASED) {
+    sda_store_pcm_config();
   }
   gr2_set_event(volumeSlider, EV_NONE, &sda_sys_con);
 #endif

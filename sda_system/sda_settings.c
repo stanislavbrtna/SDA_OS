@@ -72,6 +72,9 @@ void sda_load_config() {
   // mute
   svpSGlobal.mute = sda_conf_key_read_i32(&conffile, (uint8_t *)"mute", 0);
 
+  // pcm volume
+  svpSGlobal.volumePCM = sda_conf_key_read_i32(&conffile, (uint8_t *)"pcm_vol", MAX_PCM_VOLUME_VALUE/2);
+
   // haptics
   svpSGlobal.haptics = sda_conf_key_read_i32(&conffile, (uint8_t *)"haptics", 0);
 
@@ -178,6 +181,25 @@ void sda_set_mute(uint8_t mute) {
   svpSGlobal.mute = mute;
   svp_set_irq_redraw();
   sda_store_mute_config();
+#ifdef SDA_FEATURE_PCM_SOUND
+  if(mute) {
+    svp_set_volume(MIN_PCM_VOLUME_VALUE);
+  } else {
+    svp_set_volume(svpSGlobal.volumePCM);
+  }
+#endif
+}
+
+
+void sda_store_pcm_config() {
+#ifdef SDA_FEATURE_PCM_SOUND
+  sda_conf conffile;
+  uint8_t dirbuf[258];
+  if(sda_settings_switch_to_main(&conffile, dirbuf)) return;
+  sda_conf_key_write_i32(&conffile, (uint8_t *)"pcm_vol", svpSGlobal.volumePCM);
+  sda_conf_close(&conffile);
+  svp_chdir(dirbuf);
+#endif
 }
 
 void sda_store_mute_config() {
