@@ -36,16 +36,16 @@ uint8_t sda_get_if_ppm(uint8_t * filename) {
 }
 
 int8_t sda_get_if_sic(uint8_t * filename) {
+  if (filename[0] == 2) {
+    return 1;
+  }
+
   return sda_validate_extension(filename, "sic");
 }
 
 
 int8_t sda_validate_extension(uint8_t* filename, uint8_t* exten) {
   uint32_t fnameLen = 0;
-
-  if (filename[0] == 2) {
-    return 1;
-  }
 
   fnameLen = sda_strlen(filename);
 
