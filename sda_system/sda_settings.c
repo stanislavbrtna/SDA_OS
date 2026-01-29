@@ -74,6 +74,7 @@ void sda_load_config() {
 
   // pcm volume
   svpSGlobal.volumePCM = sda_conf_key_read_i32(&conffile, (uint8_t *)"pcm_vol", MAX_PCM_VOLUME_VALUE/2);
+  svp_set_volume(svpSGlobal.volumePCM);
 
   // haptics
   svpSGlobal.haptics = sda_conf_key_read_i32(&conffile, (uint8_t *)"haptics", 0);
