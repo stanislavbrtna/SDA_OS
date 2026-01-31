@@ -48,6 +48,9 @@ void svp_set_volume(uint16_t val);
 void sda_media_pause(uint8_t pause_on);
 void sda_media_play(uint8_t* fname);
 void sda_media_stop();
+uint8_t  sda_media_seek(uint32_t s);
+uint32_t sda_media_getPos();
+uint32_t sda_media_getDuration(uint8_t *fname);
 
 // [HW] Haptic feedback
 void svp_haptic_fb(uint16_t time);

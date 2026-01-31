@@ -194,5 +194,54 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Seek
+  //#!    sys.snd.seek([num]secs);
+  //#!Seeks in current media to given timestamp (in seconds).
+  //#!
+  //#!Return: 0 - ok, 1 - error
+  if (sysFuncMatch(argS->callId, "seek", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    result->value.val_u = sda_media_seek(argS->arg[1].val_u);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get playback position
+  //#!    sys.snd.getPos();
+  //#!Get media playback position in seconds.
+  //#!
+  //#!Return: [num] position in seconds
+  if (sysFuncMatch(argS->callId, "getPos", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)){
+      return 0;
+    }
+
+    result->value.val_u = sda_media_getPos();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get media duration
+  //#!    sys.snd.getDuration([str] fileName);
+  //#!Returns media duration in seconds.
+  //#!
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "getDuration", s)) {
+    argType[1] = SVS_TYPE_STR; // file
+
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    result->value.val_u = sda_media_getDuration(s->stringField + argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   return 0;
 }
