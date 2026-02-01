@@ -419,6 +419,21 @@ Return: none
 Stops media playback
 
 Return: none
+##### Seek
+    sys.snd.seek([num]secs);
+Seeks in current media to given timestamp (in seconds).
+
+Return: 0 - ok, 1 - error
+##### Get playback position
+    sys.snd.getPos();
+Get media playback position in seconds.
+
+Return: [num] position in seconds
+##### Get media duration
+    sys.snd.getDuration([str] fileName);
+Returns media duration in seconds.
+
+Return: none
 
 #### Date selector widget
 
