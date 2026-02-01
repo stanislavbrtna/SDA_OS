@@ -25,6 +25,7 @@ SOFTWARE.
 // power options overlay
 uint16_t batt_overlay;
 uint8_t batt_overlay_flag;
+#include <math.h>
 
 extern uint8_t  overlayRedrawFlag;
 
@@ -496,7 +497,9 @@ int16_t batt_overlay_handle(uint8_t init) {
   
 #ifdef SDA_FEATURE_PCM_SOUND
   if (gr2_get_event(volumeSlider, &sda_sys_con)) {
-    svpSGlobal.volumePCM = (uint16_t) (gr2_get_value(volumeSlider, &sda_sys_con)) + MIN_PCM_VOLUME_VALUE;
+    uint16_t val = (uint16_t) (gr2_get_value(volumeSlider, &sda_sys_con)) + MIN_PCM_VOLUME_VALUE;
+    float t = (float)val / (float)MAX_PCM_VOLUME_VALUE;
+    svpSGlobal.volumePCM = (uint32_t) pow((float)MAX_PCM_VOLUME_VALUE, t);
     svp_set_volume(svpSGlobal.volumePCM);
   }
   if (gr2_get_event(volumeSlider, &sda_sys_con) == EV_RELEASED) {
