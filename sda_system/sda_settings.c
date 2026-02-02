@@ -74,7 +74,7 @@ void sda_load_config() {
 
   // pcm volume
   svpSGlobal.volumePCM = sda_conf_key_read_i32(&conffile, (uint8_t *)"pcm_vol", MAX_PCM_VOLUME_VALUE/2);
-  svp_set_volume(svpSGlobal.volumePCM);
+  svp_set_volume(sda_get_log_volume(svpSGlobal.volumePCM));
 
   // haptics
   svpSGlobal.haptics = sda_conf_key_read_i32(&conffile, (uint8_t *)"haptics", 0);
@@ -184,9 +184,9 @@ void sda_set_mute(uint8_t mute) {
   sda_store_mute_config();
 #ifdef SDA_FEATURE_PCM_SOUND
   if(mute) {
-    svp_set_volume(MIN_PCM_VOLUME_VALUE);
+    svp_set_volume(0);
   } else {
-    svp_set_volume(svpSGlobal.volumePCM);
+    svp_set_volume(sda_get_log_volume(svpSGlobal.volumePCM));
   }
 #endif
 }

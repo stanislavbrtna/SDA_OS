@@ -353,3 +353,8 @@ void sda_set_device_lock(uint8_t locked) {
     rtc_write_locked(0);
   }
 }
+
+uint32_t sda_get_log_volume(uint16_t vol) {
+  float t = (float)(vol - MIN_PCM_VOLUME_VALUE) / (float)(MAX_PCM_VOLUME_VALUE - MIN_PCM_VOLUME_VALUE);
+  return (uint16_t) ((float)MIN_PCM_VOLUME_VALUE * pow((float)MAX_PCM_VOLUME_VALUE / (float)MIN_PCM_VOLUME_VALUE, t));
+}

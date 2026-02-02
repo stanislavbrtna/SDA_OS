@@ -99,7 +99,7 @@ File description:
 #endif
 
 #ifndef MIN_PCM_VOLUME_VALUE
-  #define MIN_PCM_VOLUME_VALUE 0
+  #define MIN_PCM_VOLUME_VALUE 100
 #endif
 
 #ifndef MAX_PCM_VOLUME_VALUE
