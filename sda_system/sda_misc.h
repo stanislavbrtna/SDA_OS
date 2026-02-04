@@ -72,4 +72,8 @@ void sda_set_device_lock(uint8_t locked);
 
 uint32_t sda_get_log_volume(uint16_t vol);
 
+void sda_set_volume(uint16_t vol);
+uint16_t sda_get_volume();
+void sda_set_pcm_output_type(sdaPCMOutputType t);
+
 #endif

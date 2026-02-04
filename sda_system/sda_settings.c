@@ -73,8 +73,9 @@ void sda_load_config() {
   svpSGlobal.mute = sda_conf_key_read_i32(&conffile, (uint8_t *)"mute", 0);
 
   // pcm volume
-  svpSGlobal.volumePCM = sda_conf_key_read_i32(&conffile, (uint8_t *)"pcm_vol", MAX_PCM_VOLUME_VALUE/2);
-  svp_set_volume(sda_get_log_volume(svpSGlobal.volumePCM));
+  svpSGlobal.volumeSpeaker = sda_conf_key_read_i32(&conffile, (uint8_t *)"pcm_vol", MAX_PCM_VOLUME_VALUE/2);
+  svpSGlobal.volumeHeadphones = sda_conf_key_read_i32(&conffile, (uint8_t *)"pcm_phones", MAX_PCM_VOLUME_VALUE/2);
+  svp_set_volume(sda_get_log_volume(svpSGlobal.volumeSpeaker));
 
   // haptics
   svpSGlobal.haptics = sda_conf_key_read_i32(&conffile, (uint8_t *)"haptics", 0);
@@ -186,7 +187,7 @@ void sda_set_mute(uint8_t mute) {
   if(mute) {
     svp_set_volume(0);
   } else {
-    svp_set_volume(sda_get_log_volume(svpSGlobal.volumePCM));
+    svp_set_volume(sda_get_log_volume(svpSGlobal.volumeSpeaker));
   }
 #endif
 }
@@ -197,7 +198,8 @@ void sda_store_pcm_config() {
   sda_conf conffile;
   uint8_t dirbuf[258];
   if(sda_settings_switch_to_main(&conffile, dirbuf)) return;
-  sda_conf_key_write_i32(&conffile, (uint8_t *)"pcm_vol", svpSGlobal.volumePCM);
+  sda_conf_key_write_i32(&conffile, (uint8_t *)"pcm_vol", svpSGlobal.volumeSpeaker);
+  sda_conf_key_write_i32(&conffile, (uint8_t *)"pcm_phones", svpSGlobal.volumeHeadphones);
   sda_conf_close(&conffile);
   svp_chdir(dirbuf);
 #endif

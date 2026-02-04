@@ -358,3 +358,26 @@ uint32_t sda_get_log_volume(uint16_t vol) {
   float t = (float)(vol - MIN_PCM_VOLUME_VALUE) / (float)(MAX_PCM_VOLUME_VALUE - MIN_PCM_VOLUME_VALUE);
   return (uint16_t) ((float)MIN_PCM_VOLUME_VALUE * pow((float)MAX_PCM_VOLUME_VALUE / (float)MIN_PCM_VOLUME_VALUE, t));
 }
+
+void sda_set_volume(uint16_t vol) {
+  if(svpSGlobal.outputPCM == SPEAKER) {
+    svpSGlobal.volumeSpeaker = vol;
+  } else {
+    svpSGlobal.volumeHeadphones = vol;
+  }
+
+  svp_set_volume(sda_get_log_volume(vol));
+}
+
+uint16_t sda_get_volume() {
+  if(svpSGlobal.outputPCM == SPEAKER) {
+    return svpSGlobal.volumeSpeaker;
+  } else {
+    return svpSGlobal.volumeHeadphones;
+  }
+}
+
+void sda_set_pcm_output_type(sdaPCMOutputType t) {
+  svpSGlobal.outputPCM = t;
+  svp_set_volume(sda_get_log_volume(sda_get_volume()));
+}

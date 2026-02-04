@@ -57,6 +57,8 @@ typedef enum {DEVICE_LOCKED, DEVICE_UNLOCKED} sdaDeviceLockType;
 
 typedef enum {ON_SCREEN_KEYBOARD, OTHER} sdaInputMethodType;
 
+typedef enum {SPEAKER, HEADPHONES} sdaPCMOutputType;
+
 typedef struct {
   // Touch
   volatile uint8_t       touchValid;
@@ -107,9 +109,11 @@ typedef struct {
   volatile uint64_t uptimeMs;
 
   // Notifications
-  volatile uint8_t   mute;
-  volatile uint8_t   haptics;
-  volatile uint16_t  volumePCM;
+  volatile uint8_t          mute;
+  volatile uint8_t          haptics;
+  volatile uint16_t         volumeSpeaker;
+  volatile uint16_t         volumeHeadphones;
+  volatile sdaPCMOutputType outputPCM;
 
   // Keyboard, clipboard, text input method
   volatile uint8_t   kbdFlag;

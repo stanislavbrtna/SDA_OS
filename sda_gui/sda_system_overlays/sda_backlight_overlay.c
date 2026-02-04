@@ -175,6 +175,22 @@ uint8_t batt_0_icon[] = {
   0x7f,
 };
 
+uint8_t phones_icon[] =  {
+  0x02, // Format descriptor
+  0x18, // img_width
+  0x16, // img_height
+  0x00, 0x7c, 0x00, 0x80, 0xff, 0x01, 0xc0, 0x83, 
+  0x07, 0xe0, 0x00, 0x0e, 0x70, 0x00, 0x1c, 0x30, 
+  0x00, 0x18, 0x18, 0x00, 0x30, 0x18, 0x00, 0x30, 
+  0x18, 0x00, 0x30, 0x0c, 0x00, 0x60, 0x0c, 0x00, 
+  0x60, 0x0c, 0x00, 0x60, 0x0c, 0x00, 0x60, 0x3c, 
+  0x00, 0x78, 0x7e, 0x00, 0xfc, 0xfe, 0x00, 0xfe, 
+  0xfe, 0x00, 0xfe, 0xfe, 0x00, 0xfe, 0xfe, 0x00, 
+  0xfe, 0xfe, 0x00, 0xfe, 0x7e, 0x00, 0xfc, 0x3c, 
+  0x00, 0x78, 
+};
+
+
 static uint16_t ovrY2;
 
 void sda_batt_overlay_init() {
@@ -304,7 +320,8 @@ void perfBtnsUpdate() {
 }
 
 int16_t batt_overlay_handle(uint8_t init) {
-  static uint8_t  backlightOld;
+  static uint8_t backlightOld;
+  static sdaPCMOutputType outputOld;
 
   if (init == 1) {
     uint8_t relInit = gr2_get_relative_init(&sda_sys_con);
@@ -330,12 +347,16 @@ int16_t batt_overlay_handle(uint8_t init) {
     volumeSlider = gr2_add_slider_h(
       1, y1, 14,  2,
       MAX_PCM_VOLUME_VALUE - MIN_PCM_VOLUME_VALUE,
-      svpSGlobal.volumePCM,
+      sda_get_volume(),
       batt_overlay,
       &sda_sys_con
     );
 
-    gr2_set_str2(volumeSlider, vol_sld_icon, &sda_sys_con);
+    if(svpSGlobal.outputPCM == SPEAKER) {
+      gr2_set_str2(volumeSlider, vol_sld_icon, &sda_sys_con);  
+    } else {
+      gr2_set_str2(volumeSlider, phones_icon, &sda_sys_con);
+    }
     y1 += 3;
 #endif
 
@@ -497,8 +518,8 @@ int16_t batt_overlay_handle(uint8_t init) {
   
 #ifdef SDA_FEATURE_PCM_SOUND
   if (gr2_get_event(volumeSlider, &sda_sys_con)) {
-    svpSGlobal.volumePCM = (uint16_t) (gr2_get_value(volumeSlider, &sda_sys_con)) + MIN_PCM_VOLUME_VALUE;
-    svp_set_volume(sda_get_log_volume(svpSGlobal.volumePCM));
+    uint16_t vol = (uint16_t) (gr2_get_value(volumeSlider, &sda_sys_con)) + MIN_PCM_VOLUME_VALUE;
+    sda_set_volume(vol);
   }
   if (gr2_get_event(volumeSlider, &sda_sys_con) == EV_RELEASED) {
     sda_store_pcm_config();
@@ -512,11 +533,21 @@ int16_t batt_overlay_handle(uint8_t init) {
         svpSGlobal.lcdBacklight - MIN_BACKLIGHT_VALUE,
         &sda_sys_con
     );
+    backlightOld = svpSGlobal.lcdBacklight;
   }
 
+#ifdef SDA_FEATURE_PCM_SOUND
+  if (svpSGlobal.outputPCM != outputOld) {
+    if(svpSGlobal.outputPCM == SPEAKER) {
+      gr2_set_str2(volumeSlider, vol_sld_icon, &sda_sys_con);  
+    } else {
+      gr2_set_str2(volumeSlider, phones_icon, &sda_sys_con);
+    }
+    outputOld = svpSGlobal.outputPCM;
+  }
+#endif
+
   sda_screen_button_handler(batt_overlay, backlightOk, &sda_sys_con);
-
-  backlightOld = svpSGlobal.lcdBacklight;
-
+  
   return 0;
 }
