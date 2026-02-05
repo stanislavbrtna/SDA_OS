@@ -355,8 +355,16 @@ void sda_set_device_lock(uint8_t locked) {
 }
 
 uint32_t sda_get_log_volume(uint16_t vol) {
-  float t = (float)(vol - MIN_PCM_VOLUME_VALUE) / (float)(MAX_PCM_VOLUME_VALUE - MIN_PCM_VOLUME_VALUE);
-  return (uint16_t) ((float)MIN_PCM_VOLUME_VALUE * pow((float)MAX_PCM_VOLUME_VALUE / (float)MIN_PCM_VOLUME_VALUE, t));
+  uint32_t min = MIN_PCM_VOLUME_VALUE;
+  uint32_t max = MAX_PCM_VOLUME_VALUE;
+
+  if(svpSGlobal.outputPCM == HEADPHONES) {
+    min = MIN_PCM_VOLUME_PHONES;
+    max = MAX_PCM_VOLUME_PHONES;
+  }
+
+  float t = (float)(vol - min) / (float)(max - min);
+  return (uint16_t) ((float)min * pow((float)max / (float)min, t));
 }
 
 void sda_set_volume(uint16_t vol) {

@@ -539,10 +539,14 @@ int16_t batt_overlay_handle(uint8_t init) {
 #ifdef SDA_FEATURE_PCM_SOUND
   if (svpSGlobal.outputPCM != outputOld) {
     if(svpSGlobal.outputPCM == SPEAKER) {
-      gr2_set_str2(volumeSlider, vol_sld_icon, &sda_sys_con);  
+      gr2_set_str2(volumeSlider, vol_sld_icon, &sda_sys_con);
+      gr2_set_param(volumeSlider,  MAX_PCM_VOLUME_VALUE - MIN_PCM_VOLUME_VALUE, &sda_sys_con);
     } else {
       gr2_set_str2(volumeSlider, phones_icon, &sda_sys_con);
+      gr2_set_param(volumeSlider,  MAX_PCM_VOLUME_PHONES - MIN_PCM_VOLUME_PHONES, &sda_sys_con);
     }
+    gr2_set_value(volumeSlider, sda_get_volume(), &sda_sys_con);
+    gr2_set_modified(volumeSlider, &sda_sys_con);
     outputOld = svpSGlobal.outputPCM;
   }
 #endif

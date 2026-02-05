@@ -106,6 +106,14 @@ File description:
   #define MAX_PCM_VOLUME_VALUE 1600
 #endif
 
+#ifndef MIN_PCM_VOLUME_PHONES
+  #define MIN_PCM_VOLUME_PHONES 100
+#endif
+
+#ifndef MAX_PCM_VOLUME_PHONES
+  #define MAX_PCM_VOLUME_PHONES 800
+#endif 
+
 // button id defines
 #define BUTTON_A     0
 #define BUTTON_LEFT  1
