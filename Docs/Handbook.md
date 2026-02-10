@@ -423,7 +423,7 @@ Return: none
     sys.snd.seek([num]secs);
 Seeks in current media to given timestamp (in seconds).
 
-Return: 0 - ok, 1 - error
+Return: [num] 0 - ok, 1 - error
 ##### Get playback position
     sys.snd.getPos();
 Get media playback position in seconds.
@@ -432,6 +432,21 @@ Return: [num] position in seconds
 ##### Get media duration
     sys.snd.getDuration([str] fileName);
 Returns media duration in seconds.
+
+Return: none
+##### Get media output type
+    sys.snd.getDevice();
+Returns if current playback device is speaker or headphones.
+
+Return: [num] 0 - speaker, 1 - headphones
+##### Get media playback volume
+    sys.snd.getVolume();
+Returns volume of the current output device in range 0 - 1000.
+
+Return: [num] volume
+##### Set volume
+    sys.snd.setVolume([num]value);
+Sets playback volume for current output device.
 
 Return: none
 

@@ -198,7 +198,7 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.snd.seek([num]secs);
   //#!Seeks in current media to given timestamp (in seconds).
   //#!
-  //#!Return: 0 - ok, 1 - error
+  //#!Return: [num] 0 - ok, 1 - error
   if (sysFuncMatch(argS->callId, "seek", s)) {
     argType[1] = SVS_TYPE_NUM;
     
@@ -239,6 +239,55 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     result->value.val_u = sda_media_getDuration(s->stringField + argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get media output type
+  //#!    sys.snd.getDevice();
+  //#!Returns if current playback device is speaker or headphones.
+  //#!
+  //#!Return: [num] 0 - speaker, 1 - headphones
+  if (sysFuncMatch(argS->callId, "getDevice", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)){
+      return 0;
+    }
+
+    result->value.val_u = svpSGlobal.outputPCM;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get media playback volume
+  //#!    sys.snd.getVolume();
+  //#!Returns volume of the current output device in range 0 - 1000.
+  //#!
+  //#!Return: [num] volume
+  if (sysFuncMatch(argS->callId, "getVolume", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)){
+      return 0;
+    }
+
+    result->value.val_u = sda_get_volume();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Set volume
+  //#!    sys.snd.setVolume([num]value);
+  //#!Sets playback volume for current output device.
+  //#!
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "setVolume", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    sda_set_volume(argS->arg[1].val_u);
+
+    result->value.val_u = 0;
     result->type = SVS_TYPE_NUM;
     return 1;
   }
