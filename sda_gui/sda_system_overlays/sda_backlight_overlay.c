@@ -346,7 +346,7 @@ int16_t batt_overlay_handle(uint8_t init) {
 #ifdef SDA_FEATURE_PCM_SOUND
     volumeSlider = gr2_add_slider_h(
       1, y1, 14,  2,
-      MAX_PCM_VOLUME_VALUE - MIN_PCM_VOLUME_VALUE,
+      MAX_VOLUME_SLIDER_VALUE,
       sda_get_volume(),
       batt_overlay,
       &sda_sys_con
@@ -518,8 +518,7 @@ int16_t batt_overlay_handle(uint8_t init) {
   
 #ifdef SDA_FEATURE_PCM_SOUND
   if (gr2_get_event(volumeSlider, &sda_sys_con)) {
-    uint16_t vol = (uint16_t) (gr2_get_value(volumeSlider, &sda_sys_con)) + MIN_PCM_VOLUME_VALUE;
-    sda_set_volume(vol);
+    sda_set_volume(gr2_get_value(volumeSlider, &sda_sys_con));
   }
   if (gr2_get_event(volumeSlider, &sda_sys_con) == EV_RELEASED) {
     sda_store_pcm_config();
@@ -540,10 +539,8 @@ int16_t batt_overlay_handle(uint8_t init) {
   if (svpSGlobal.outputPCM != outputOld) {
     if(svpSGlobal.outputPCM == SPEAKER) {
       gr2_set_str2(volumeSlider, vol_sld_icon, &sda_sys_con);
-      gr2_set_param(volumeSlider,  MAX_PCM_VOLUME_VALUE - MIN_PCM_VOLUME_VALUE, &sda_sys_con);
     } else {
       gr2_set_str2(volumeSlider, phones_icon, &sda_sys_con);
-      gr2_set_param(volumeSlider,  MAX_PCM_VOLUME_PHONES - MIN_PCM_VOLUME_PHONES, &sda_sys_con);
     }
     gr2_set_value(volumeSlider, sda_get_volume(), &sda_sys_con);
     gr2_set_modified(volumeSlider, &sda_sys_con);

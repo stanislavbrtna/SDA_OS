@@ -21,6 +21,7 @@ SOFTWARE.
 */
 
 #include "sda_misc.h"
+#include <math.h>
 
 // globals
 extern uint8_t timeUpdateFlag;
@@ -363,7 +364,9 @@ uint32_t sda_get_log_volume(uint16_t vol) {
     max = MAX_PCM_VOLUME_PHONES;
   }
 
-  float t = (float)(vol - min) / (float)(max - min);
+  uint16_t nvol = (uint16_t) (((float) vol / (float)MAX_VOLUME_SLIDER_VALUE)*(float)(max - min) + min);
+
+  float t = (float)(nvol - min) / (float)(max - min);
   return (uint16_t) ((float)min * pow((float)max / (float)min, t));
 }
 

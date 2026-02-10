@@ -114,6 +114,8 @@ File description:
   #define MAX_PCM_VOLUME_PHONES 800
 #endif 
 
+#define MAX_VOLUME_SLIDER_VALUE 1000
+
 // button id defines
 #define BUTTON_A     0
 #define BUTTON_LEFT  1
