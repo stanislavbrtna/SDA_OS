@@ -341,6 +341,7 @@ int16_t batt_overlay_handle(uint8_t init) {
       &sda_sys_con
     );
     gr2_set_str2(backlightSlider, bl_icon, &sda_sys_con);
+    gr2_set_y_offset(backlightSlider, 0, &sda_sys_con);
     y1 += 3;
 
 #ifdef SDA_FEATURE_PCM_SOUND
@@ -351,6 +352,8 @@ int16_t batt_overlay_handle(uint8_t init) {
       batt_overlay,
       &sda_sys_con
     );
+
+    gr2_set_y_offset(volumeSlider, 0, &sda_sys_con);
 
     if(svpSGlobal.outputPCM == SPEAKER) {
       gr2_set_str2(volumeSlider, vol_sld_icon, &sda_sys_con);  
@@ -377,7 +380,7 @@ int16_t batt_overlay_handle(uint8_t init) {
       batt_overlay,
       &sda_sys_con
     );
-    gr2_set_param(perfBtn, 32, &sda_sys_con);
+    gr2_set_x_offset(perfBtn, 16, &sda_sys_con);
     
     gr2_set_str2(perfBtn, perf_icon, &sda_sys_con);
 
@@ -417,7 +420,7 @@ int16_t batt_overlay_handle(uint8_t init) {
     );
 
     gr2_set_str2(soundEnable, mute_icon, &sda_sys_con);
-    gr2_set_param(soundEnable, -5, &sda_sys_con);
+    gr2_set_x_offset(soundEnable, -3, &sda_sys_con);
 
 #ifdef SDA_FEATURE_NOTIF_VIBRO
     hapticEnable = gr2_add_button(
@@ -428,7 +431,7 @@ int16_t batt_overlay_handle(uint8_t init) {
     );
 
     gr2_set_str2(hapticEnable, haptic_icon, &sda_sys_con);
-    gr2_set_param(hapticEnable, 9, &sda_sys_con);
+    gr2_set_x_offset(hapticEnable, 4, &sda_sys_con);
     gr2_set_ghost(hapticEnable, 1 - svpSGlobal.haptics, &sda_sys_con);
 #endif
     y1 += 2;

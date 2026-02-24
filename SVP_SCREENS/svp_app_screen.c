@@ -313,7 +313,7 @@ uint16_t svp_appScreen(uint8_t init, uint8_t top) {
     gr2_text_set_align(btnSettings, GR2_ALIGN_CENTER, &sda_sys_con);
 
     gr2_set_str2(btnBack, sda_get_icon(SDA_ICON_BACK), &sda_sys_con);
-    gr2_set_param(btnBack, 32, &sda_sys_con);
+    gr2_set_x_offset(btnBack, 16, &sda_sys_con);
 
     gr2_set_ghost(btnBack, 1, &sda_sys_con);
     gr2_text_set_align(btnBack, GR2_ALIGN_CENTER, &sda_sys_con);

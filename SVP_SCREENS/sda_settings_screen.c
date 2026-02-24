@@ -64,6 +64,7 @@ void sda_settings_open() {
   sda_slot_on_top(SDA_SLOT_SETTINGS);
   settingsPrev = 0;
   sda_settings_stack_add(settingsMenu, SCR_SETTINGS);
+  svpSGlobal.systemXBtnVisible = 0;
   svp_switch_main_dir();
   svp_chdir("APPS");
 }
@@ -81,7 +82,7 @@ uint16_t sda_settings_gui(uint8_t init, uint8_t top) {
 
     btnBack = gr2_add_button(0, 0, 2, 1, "", settingsScreen, &sda_sys_con);
     gr2_set_str2(btnBack, sda_get_icon(SDA_ICON_BACK), &sda_sys_con);
-    gr2_set_param(btnBack, 32, &sda_sys_con);
+    gr2_set_x_offset(btnBack, 16, &sda_sys_con);
 
     gr2_text_set_align(btnBack, GR2_ALIGN_CENTER, &sda_sys_con);
     gr2_set_ghost(btnBack, 1, &sda_sys_con);

@@ -306,7 +306,7 @@ void sda_mm_overlay_handle(uint8_t init) {
       &sda_sys_con
     );
     gr2_set_str2(quickBtn, launch, &sda_sys_con);
-    gr2_set_param(quickBtn, -4, &sda_sys_con);
+    gr2_set_x_offset(quickBtn, -2, &sda_sys_con);
     gr2_set_rounded(quickBtn, 0, &sda_sys_con);
 
     homeBtn = gr2_add_button(
@@ -316,7 +316,7 @@ void sda_mm_overlay_handle(uint8_t init) {
       &sda_sys_con
     );
     gr2_set_str2(homeBtn, home, &sda_sys_con);
-    gr2_set_param(homeBtn, -4, &sda_sys_con);
+    gr2_set_x_offset(homeBtn, -2, &sda_sys_con);
     gr2_set_rounded(homeBtn, 0, &sda_sys_con);
 
     appsBtn = gr2_add_button(
@@ -326,7 +326,7 @@ void sda_mm_overlay_handle(uint8_t init) {
       &sda_sys_con
     );
     gr2_set_str2(appsBtn, apps, &sda_sys_con);
-    gr2_set_param(appsBtn, -4, &sda_sys_con);
+    gr2_set_x_offset(appsBtn, -2, &sda_sys_con);
     gr2_set_rounded(appsBtn, 0, &sda_sys_con);
 
     int16_t y = 4;

@@ -73,7 +73,7 @@ uint8_t sda_draw_sic_file(int16_t x1, int16_t y1, uint16_t front_color, uint16_t
   image_height = svp_fread_u8(&fp);
 
   LCD_getDrawArea(&area);
-  LCD_setSubDrawArea(x1, y1, x1 + image_width, y1 + image_width);
+  LCD_setSubDrawArea(x1, y1, x1 + image_width, y1 + image_height);
   LCD_canvas_set(x1, y1, x1 + image_width, y1 + image_height);
 
   uint8_t bit_n   = 0;

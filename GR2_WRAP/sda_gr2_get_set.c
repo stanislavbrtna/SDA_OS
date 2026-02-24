@@ -385,6 +385,40 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!#### Vertical offset
+  //#!    sys.gui.setYOffset([num]Id, [num]val);
+  //#!Sets vertical offset of a content of the given elemet.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setYOffset", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM; // val
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+    gr2_set_y_offset(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+
+    return 1;
+  }
+
+  //#!#### Horizontal offset
+  //#!    sys.gui.setXOffset([num]Id, [num]val);
+  //#!Sets vertical offset of a content of the given elemet.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setXOffset", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM; // val
+
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+    gr2_set_x_offset(argS->arg[1].val_s, argS->arg[2].val_s, &sda_app_con);
+
+    return 1;
+  }
+
   //#!##### Set rounded
   //#!    sys.gui.setRounded([num]Id, [num]rounded);
   //#!Sets element rounded parameter.
