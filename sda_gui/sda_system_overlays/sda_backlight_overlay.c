@@ -514,6 +514,7 @@ int16_t batt_overlay_handle(uint8_t init) {
 
   if (gr2_get_event(soundEnable, &sda_sys_con) == EV_RELEASED) {
     sda_set_mute(1 - svpSGlobal.mute);
+    sda_store_mute_config();
     setVolIcon();
   }
   gr2_set_event(soundEnable, EV_NONE, &sda_sys_con);

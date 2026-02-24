@@ -50,6 +50,7 @@ uint16_t sda_settings_notif_screen(uint8_t init) {
 
   if (gr2_clicked(optSoundMute, &sda_sys_con)) {
     sda_set_mute((uint8_t) gr2_get_value(optSoundMute, &sda_sys_con));
+    sda_store_mute_config();
   }
 
   return 0;

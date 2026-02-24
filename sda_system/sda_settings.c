@@ -69,14 +69,14 @@ void sda_load_config() {
     svpSGlobal.lcdShutdownTime = 5;
   }
 
-  // mute
-  svpSGlobal.mute = sda_conf_key_read_i32(&conffile, (uint8_t *)"mute", 0);
-
   // pcm volume
   svpSGlobal.volumeSpeaker = sda_conf_key_read_i32(&conffile, (uint8_t *)"pcm_vol", MAX_PCM_VOLUME_VALUE/2);
   svpSGlobal.volumeHeadphones = sda_conf_key_read_i32(&conffile, (uint8_t *)"pcm_phones", MAX_PCM_VOLUME_VALUE/2);
   svp_set_volume(sda_get_log_volume(svpSGlobal.volumeSpeaker));
 
+  // mute
+  sda_set_mute(sda_conf_key_read_i32(&conffile, (uint8_t *)"mute", 0));
+  
   // haptics
   svpSGlobal.haptics = sda_conf_key_read_i32(&conffile, (uint8_t *)"haptics", 0);
 
@@ -178,11 +178,9 @@ void sda_store_dbg_options() {
   printf("Done.\n");
 }
 
-
 void sda_set_mute(uint8_t mute) {
   svpSGlobal.mute = mute;
   svp_set_irq_redraw();
-  sda_store_mute_config();
 #ifdef SDA_FEATURE_PCM_SOUND
   if(mute) {
     svp_set_volume(0);
