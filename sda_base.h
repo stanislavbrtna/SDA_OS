@@ -50,7 +50,10 @@ void sda_media_play(uint8_t* fname);
 void sda_media_stop();
 uint8_t  sda_media_seek(uint32_t s);
 uint32_t sda_media_getPos();
+uint32_t sda_media_getSampleRate(uint8_t *fname);
+uint32_t sda_media_getBitRate(uint8_t *fname);
 uint32_t sda_media_getDuration(uint8_t *fname);
+
 
 // [HW] Haptic feedback
 void svp_haptic_fb(uint16_t time);

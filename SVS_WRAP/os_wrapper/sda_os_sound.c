@@ -243,6 +243,40 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get media bitrate
+  //#!    sys.snd.getBitRate([str] fileName);
+  //#!Returns media bitrate.
+  //#!
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "getBitRate", s)) {
+    argType[1] = SVS_TYPE_STR; // file
+
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    result->value.val_u = sda_media_getBitRate(s->stringField + argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Get media sample rate
+  //#!    sys.snd.getSmplRate([str] fileName);
+  //#!Returns media sample rate.
+  //#!
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "getSmplRate", s)) {
+    argType[1] = SVS_TYPE_STR; // file
+
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    result->value.val_u = sda_media_getSampleRate(s->stringField + argS->arg[1].val_str);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Get media output type
   //#!    sys.snd.getDevice();
   //#!Returns if current playback device is speaker or headphones.
@@ -286,6 +320,25 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     }
 
     sda_set_volume(argS->arg[1].val_u);
+
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  //#!##### Set pause
+  //#!    sys.snd.setPause([num]pauseOn);
+  //#!Pauses and resumes media playback.
+  //#!
+  //#!Return: none
+  if (sysFuncMatch(argS->callId, "setPause", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    sda_media_pause(argS->arg[1].val_u);
 
     result->value.val_u = 0;
     result->type = SVS_TYPE_NUM;
