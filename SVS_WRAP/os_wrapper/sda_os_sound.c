@@ -281,13 +281,20 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!    sys.snd.getDevice();
   //#!Returns if current playback device is speaker or headphones.
   //#!
-  //#!Return: [num] 0 - speaker, 1 - headphones
+  //#!Return: [num] 1 - speaker, 2 - headphones
   if (sysFuncMatch(argS->callId, "getDevice", s)) {
     if(sysExecTypeCheck(argS, argType, 0, s)){
       return 0;
     }
 
-    result->value.val_u = svpSGlobal.outputPCM;
+    if(svpSGlobal.outputPCM == SPEAKER) {
+      result->value.val_u = 1;
+    } else if(svpSGlobal.outputPCM == HEADPHONES) {
+      result->value.val_u = 2;
+    } else {
+      result->value.val_u = 0;
+    }
+
     result->type = SVS_TYPE_NUM;
     return 1;
   }
