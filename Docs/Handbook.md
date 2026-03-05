@@ -356,6 +356,8 @@ Return: [num] 1 - ok, 0 - Error
 | ICON_NONE    | Box with questionmark |
 | ICON_BACK    | Back arrow            |
 | ICON_FORWARD | Forward arrow         |
+| ICON_UP      | Up arrow              |
+| ICON_DOWN    | Down arrow            |
 
 Hint: Unknown icons are drawn as ICON_NONE 
 ##### Add an os icon to a button 

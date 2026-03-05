@@ -428,6 +428,8 @@ uint8_t sda_os_gui_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   //#!| ICON_NONE    | Box with questionmark |
   //#!| ICON_BACK    | Back arrow            |
   //#!| ICON_FORWARD | Forward arrow         |
+  //#!| ICON_UP      | Up arrow              |
+  //#!| ICON_DOWN    | Down arrow            |
   //#!
   //#!Hint: Unknown icons are drawn as ICON_NONE 
 
