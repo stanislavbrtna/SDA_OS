@@ -221,6 +221,16 @@ Return: None
 Sets size of slider in pixels.
 
 Return: None
+#### Vertical offset
+    sys.gui.setYOffset([num]Id, [num]val);
+Sets vertical offset of a content of the given elemet.
+
+Return: None
+#### Horizontal offset
+    sys.gui.setXOffset([num]Id, [num]val);
+Sets vertical offset of a content of the given elemet.
+
+Return: None
 ##### Set rounded
     sys.gui.setRounded([num]Id, [num]rounded);
 Sets element rounded parameter.

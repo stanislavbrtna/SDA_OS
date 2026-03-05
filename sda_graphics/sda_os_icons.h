@@ -28,6 +28,8 @@ SOFTWARE.
 #define SDA_ICON_NONE    0
 #define SDA_ICON_BACK    1
 #define SDA_ICON_FORWARD 2
+#define SDA_ICON_UP      3
+#define SDA_ICON_DOWN    4
 
 uint8_t * sda_get_icon(uint8_t ic);
 

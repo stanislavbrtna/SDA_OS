@@ -69,11 +69,21 @@ Return: [num] position in seconds
 Returns media duration in seconds.
 
 Return: none
+##### Get media bitrate
+    sys.snd.getBitRate([str] fileName);
+Returns media bitrate.
+
+Return: none
+##### Get media sample rate
+    sys.snd.getSmplRate([str] fileName);
+Returns media sample rate.
+
+Return: none
 ##### Get media output type
     sys.snd.getDevice();
 Returns if current playback device is speaker or headphones.
 
-Return: [num] 0 - speaker, 1 - headphones
+Return: [num] 1 - speaker, 2 - headphones
 ##### Get media playback volume
     sys.snd.getVolume();
 Returns volume of the current output device in range 0 - 1000.
@@ -82,5 +92,10 @@ Return: [num] volume
 ##### Set volume
     sys.snd.setVolume([num]value);
 Sets playback volume for current output device.
+
+Return: none
+##### Set pause
+    sys.snd.setPause([num]pauseOn);
+Pauses and resumes media playback.
 
 Return: none
