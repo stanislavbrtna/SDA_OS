@@ -136,14 +136,14 @@ uint16_t inner_handler(uint8_t init, uint8_t * fileName) {
     if (listLen > 9) {
       uint32_t x;
       for(x = 0; x < listLen/9 || x > 4; x++) {
-        pageButton[x] = gr2_add_button(2 + 2*x, 20, 4 + 2*x, 22, date_days_strs[x + 1], retScreen, &sda_sys_con);
+        pageButton[x] = gr2_add_button(2 + 2*x, 20, 4 + 2*x, 22, (uint8_t *)date_days_strs[x + 1], retScreen, &sda_sys_con);
         if (innerPage == x) {
           gr2_set_select(pageButton[x], 1, &sda_sys_con);
         }
       }
 
       if (listLen%9) {
-        pageButton[x] = gr2_add_button(2 + 2*x, 20, 4 + 2*x, 22, date_days_strs[x + 1], retScreen, &sda_sys_con);
+        pageButton[x] = gr2_add_button(2 + 2*x, 20, 4 + 2*x, 22, (uint8_t *)date_days_strs[x + 1], retScreen, &sda_sys_con);
         if (innerPage == x) {
           gr2_set_select(pageButton[x], 1, &sda_sys_con);
         }

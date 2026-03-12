@@ -23,10 +23,13 @@ SOFTWARE.
 #ifndef SVP_BASICS_H
 #define SVP_BASICS_H
 
-// constants and constraints (just defines)
+// Platfrorm constants
+#include "../sda_platform_consts.h"
+
+// Constants and constraints (just defines)
 #include "sda_consts.h"
 
-//
+// Platform defines
 #include "../sda_platform.h"
 
 // gui library defines and data types

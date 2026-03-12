@@ -68,6 +68,9 @@ uint8_t sda_resource_free(sdaResource res, uint16_t pid) {
     printf("%s: Trying to unlock id %u without permissions!\n", __FUNCTION__, res);
     return 1;
   }
+  
+  printf("%s: Resource id %u is in unknown state!\n", __FUNCTION__, res);
+  return 1;
 }
 
 

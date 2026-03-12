@@ -66,7 +66,7 @@ void sda_settings_open() {
   sda_settings_stack_add(settingsMenu, SCR_SETTINGS);
   svpSGlobal.systemXBtnVisible = 0;
   svp_switch_main_dir();
-  svp_chdir("APPS");
+  svp_chdir((uint8_t *)"APPS");
 }
 
 
@@ -80,7 +80,7 @@ uint16_t sda_settings_gui(uint8_t init, uint8_t top) {
     settingsMenu   = sda_settings_menu(1);
     settingsFrame  = gr2_add_frame(0, 1, 10, 14, settingsMenu, settingsScreen, &sda_sys_con);
 
-    btnBack = gr2_add_button(0, 0, 2, 1, "", settingsScreen, &sda_sys_con);
+    btnBack = gr2_add_button(0, 0, 2, 1, (uint8_t *)"", settingsScreen, &sda_sys_con);
     gr2_set_str2(btnBack, sda_get_icon(SDA_ICON_BACK), &sda_sys_con);
     gr2_set_x_offset(btnBack, 16, &sda_sys_con);
 
@@ -146,7 +146,7 @@ void settings_sd_mount() {
     sda_show_error_message(SCR_CARD_ERROR_MSG);
   } else {
     svp_switch_main_dir();
-    svp_chdir("APPS");
+    svp_chdir((uint8_t *)"APPS");
     gr2_set_str(optMntSel, SD_UMOUNT, &sda_sys_con);
 
     if (svpSGlobal.sdaDeviceLock == DEVICE_UNLOCKED) {
@@ -268,4 +268,6 @@ uint16_t sda_settings_menu(uint8_t init) {
   sda_settings_info_screen(0);
   sda_settings_notif_screen(0);
   sda_settings_security_screen(0);
+
+  return 0;
 }

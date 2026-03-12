@@ -126,7 +126,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     sda_set_device_lock(1);
   }
 
-  if (gr2_clicked(optSecuOk, &sda_sys_con) && svp_strcmp(optSecuNewStr, "") == 0) {
+  if (gr2_clicked(optSecuOk, &sda_sys_con) && svp_strcmp(optSecuNewStr, (uint8_t *)"") == 0) {
     uint8_t retval;
     if (svp_crypto_get_if_set_up() == 0) {
       retval = svp_crypto_unlock((uint8_t *)"def");
