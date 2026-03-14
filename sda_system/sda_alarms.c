@@ -28,6 +28,7 @@ static uint8_t currentAlarmAppName[APP_NAME_LEN];
 static int32_t currentAlarmTime;
 static int32_t notifyAlarmTime;
 static int32_t currentAlarmId;
+static int32_t currentAlarmVid;
 static int32_t currentAlarmParam;
 
 static int32_t resolveReapeating(uint8_t hour, uint8_t min, uint8_t wkday, uint8_t day, uint8_t month, int32_t last);
@@ -65,7 +66,21 @@ static void sdaReloadAlarmIcon() {
 }
 
 
-int32_t getValNum(uint8_t *name, int32_t id, sda_conf * pConffile) {
+void rmVal(uint8_t *name, int32_t id, sda_conf *pConffile) {
+  uint8_t keybuff[25];
+  uint8_t numbuff[25];
+#ifdef SDA_ALARMS_DEBUG
+  printf("rmval called (id: %u) (fil: %u) (key: %s)\n", id, pConffile, name);
+#endif
+  sda_int_to_str(numbuff, id, sizeof(numbuff));
+  sda_strcp(name, keybuff, sizeof(keybuff));
+  sda_str_add(keybuff, (uint8_t *) "_");
+  sda_str_add(keybuff, numbuff);
+  sda_conf_key_remove(pConffile, keybuff);
+}
+
+
+int32_t getValNum(uint8_t *name, int32_t id, sda_conf *pConffile) {
   uint8_t keybuff[25];
   uint8_t numbuff[25];
 
@@ -116,6 +131,25 @@ void setValNum(
   sda_conf_key_write_i32(pConffile, keybuff, value);
 }
 
+int32_t getIdFromVid(int32_t vid, sda_conf * pConffile) {
+  int32_t  maxId;
+  int32_t  currentId = 1;
+
+  maxId = sda_conf_key_read_i32(pConffile, (uint8_t *)"maxId", 16);
+
+  while(maxId >= currentId) {
+    if(vid == getValNum((uint8_t *) "vid", currentId, pConffile)) {
+#ifdef SDA_ALARMS_DEBUG
+      printf("id from vid: id: %u vid: %u\n", currentId, vid);
+#endif
+      return currentId;
+    }
+    currentId++;
+  }
+
+  return 0;
+}
+
 
 int32_t sdaRegisterAlarm(
     uint8_t * appname,
@@ -126,12 +160,12 @@ int32_t sdaRegisterAlarm(
     uint8_t day,
     uint8_t month,
     int32_t param
-){
-
-  uint8_t dirbuf[258];
-  uint8_t keybuff[25];
-  uint8_t numbuff[25];
-  int32_t maxId;
+) {
+  uint8_t  dirbuf[258];
+  uint8_t  keybuff[25];
+  uint8_t  numbuff[25];
+  int32_t  maxId;
+  uint32_t vid = 0;
   sda_conf conffile;
 
   svp_getcwd(dirbuf, sizeof(dirbuf));
@@ -142,6 +176,9 @@ int32_t sdaRegisterAlarm(
   }
 
   maxId = 1;
+
+  vid = sda_conf_key_read_i32(&conffile, (uint8_t *)"maxVid", 0);
+  vid++;
 
   sda_int_to_str(numbuff, maxId, sizeof(numbuff));
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
@@ -187,6 +224,10 @@ int32_t sdaRegisterAlarm(
   sda_str_add(keybuff, numbuff);
   sda_conf_key_write_i32(&conffile, keybuff, param);
 
+  sda_strcp((uint8_t *) "vid_", keybuff, sizeof(keybuff));
+  sda_str_add(keybuff, numbuff);
+  sda_conf_key_write_i32(&conffile, keybuff, vid);
+
   sda_strcp((uint8_t *) "notify_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
   sda_conf_key_write_i32(&conffile, keybuff, 1);
@@ -195,13 +236,15 @@ int32_t sdaRegisterAlarm(
     sda_conf_key_write_i32(&conffile, (uint8_t *)"maxId", maxId);
   }
 
+  sda_conf_key_write_i32(&conffile, (uint8_t *)"maxVid", vid);
+
   sda_conf_close(&conffile);
 
   svp_chdir(dirbuf);
 
   sdaReloadAlarms();
 
-  return maxId;
+  return vid;
 }
 
 
@@ -215,6 +258,7 @@ void sdaReloadAlarms() {
   int32_t  alarmTime  = 0;
   uint32_t alarmId    = 0;
   int32_t  alarmParam = 0;
+  int32_t  alarmVid   = 0;
 
   notifyAlarmTime = 0;
   
@@ -244,55 +288,35 @@ void sdaReloadAlarms() {
     int32_t last = 0;
     int32_t param = 0;
     int32_t notify = 0;
+    int32_t vid = 0;
 
     if(!sda_conf_key_exists(&conffile, keybuff)) {
       currentId++;
+
       sda_int_to_str(numbuff, currentId, sizeof(numbuff));
       sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
       sda_str_add(keybuff, numbuff);
       continue;
     }
 
-    sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
-    sda_str_add(keybuff, numbuff);
-    time = sda_conf_key_read_i32(&conffile, keybuff, 0);
-
-    sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
-    sda_str_add(keybuff, numbuff);
-    param = sda_conf_key_read_i32(&conffile, keybuff, 0);
-
-    sda_strcp((uint8_t *) "notify_", keybuff, sizeof(keybuff));
-    sda_str_add(keybuff, numbuff);
-    notify = sda_conf_key_read_i32(&conffile, keybuff, 1);
+    time = getValNum((uint8_t *) "tfix", currentId, &conffile);
+    param = getValNum((uint8_t *) "param", currentId, &conffile);
+    notify = getValNum((uint8_t *) "notify", currentId, &conffile);
+    vid = getValNum((uint8_t *) "vid", currentId, &conffile);
 
     if (time == 0) {
-      int32_t timeTmp = 0;
-
-      sda_strcp((uint8_t *) "ttime_", keybuff, sizeof(keybuff));
-      sda_str_add(keybuff, numbuff);
-      timeTmp = sda_conf_key_read_i32(&conffile, keybuff, 0);
-
+      int32_t timeTmp = getValNum((uint8_t *) "ttime", currentId, &conffile);
+      
       hour = timeTmp / 100;
 
       min = timeTmp % 100;
 
-      sda_strcp((uint8_t *) "twkday_", keybuff, sizeof(keybuff));
-      sda_str_add(keybuff, numbuff);
-      wkday = sda_conf_key_read_i32(&conffile, keybuff, 0);
+      wkday = getValNum((uint8_t *) "twkday", currentId, &conffile);
+      day   = getValNum((uint8_t *) "tday", currentId, &conffile);
+      month = getValNum((uint8_t *) "tmonth", currentId, &conffile);
+      last  = getValNum((uint8_t *) "last", currentId, &conffile);
 
-      sda_strcp((uint8_t *) "tday_", keybuff, sizeof(keybuff));
-      sda_str_add(keybuff, numbuff);
-      day = sda_conf_key_read_i32(&conffile, keybuff, 0);
-
-      sda_strcp((uint8_t *) "tmonth_", keybuff, sizeof(keybuff));
-      sda_str_add(keybuff, numbuff);
-      month = sda_conf_key_read_i32(&conffile, keybuff, 0);
-
-      sda_strcp((uint8_t *) "last_", keybuff, sizeof(keybuff));
-      sda_str_add(keybuff, numbuff);
-      last = sda_conf_key_read_i32(&conffile, keybuff, svpSGlobal.timestamp);
-
-      time = resolveReapeating(hour, min, wkday, day, month, last);
+      time  = resolveReapeating(hour, min, wkday, day, month, last);
 
       if (time == 0) {
         printf("notif test: repeat false");
@@ -309,11 +333,13 @@ void sdaReloadAlarms() {
         alarmTime = time;
         alarmParam = param;
         alarmId = currentId;
+        alarmVid = vid;
       } else {
         if (time < alarmTime) {
           alarmTime = time;
           alarmParam = param;
           alarmId = currentId;
+          alarmVid = vid;
         }
       }
 
@@ -343,6 +369,7 @@ void sdaReloadAlarms() {
   currentAlarmTime  = alarmTime;
   currentAlarmId    = alarmId;
   currentAlarmParam = alarmParam;
+  currentAlarmVid   = alarmVid;
 
   sda_conf_close(&conffile);
   svp_chdir(dirbuf);
@@ -354,16 +381,18 @@ void sdaReloadAlarms() {
 uint8_t wkdayInMask(uint8_t mask, int32_t time) {
   uint8_t day = sdaTimeGetWeekDay(time);
 
-  if(((mask & 1) && day == 1)
-    || ((mask & 2) && day == 2)
-    || ((mask & 4) && day == 3)
-    || ((mask & 8) && day == 4)
-    || ((mask & 16) && day == 5)
-    || ((mask & 32) && day == 6)
-    || ((mask & 64) && day == 7)
+  if(
+    ((mask & 1)  && day == 1) ||
+    ((mask & 2)  && day == 2) ||
+    ((mask & 4)  && day == 3) ||
+    ((mask & 8)  && day == 4) ||
+    ((mask & 16) && day == 5) ||
+    ((mask & 32) && day == 6) ||
+    ((mask & 64) && day == 7)
   ) {
     return 1;
   }
+
   return 0;
 }
 
@@ -435,6 +464,7 @@ void sdaResolveAlarm() {
 
   if (sda_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
     printf("Failed to open alarm config file\n");
+    return;
   }
 
   // delete static or update last time of repeating
@@ -445,21 +475,16 @@ void sdaResolveAlarm() {
   sda_str_add(keybuff, numbuff);
 
   if (sda_conf_key_exists(&conffile, keybuff)) {
-    sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
-    sda_str_add(keybuff, numbuff);
-    sda_conf_key_remove(&conffile, keybuff);
-    sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
-    sda_str_add(keybuff, numbuff);
-    sda_conf_key_remove(&conffile, keybuff);
-
-    sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
-    sda_str_add(keybuff, numbuff);
-    sda_conf_key_remove(&conffile, keybuff);
-
+    // if fixed time, delete
+    rmVal("appname", currentAlarmId, &conffile);
+    rmVal("tfix", currentAlarmId, &conffile);
+    rmVal("param", currentAlarmId, &conffile);
+    rmVal("vid", currentAlarmId, &conffile);
+    rmVal("last", currentAlarmId, &conffile);
+    rmVal("notify", currentAlarmId, &conffile);
   } else {
-    sda_strcp((uint8_t *) "last_", keybuff, sizeof(keybuff));
-    sda_str_add(keybuff, numbuff);
-    sda_conf_key_write_i32(&conffile, keybuff, svpSGlobal.timestamp);
+    // if repeating, update last
+    setValNum("last", currentAlarmId, svpSGlobal.timestamp, &conffile);
   }
 
   sda_conf_close(&conffile);
@@ -470,7 +495,7 @@ void sdaResolveAlarm() {
 uint8_t sdaGetCurentAlarm(int32_t * id, int32_t * param, uint8_t * appNameBuffer, uint16_t size) {
   if (currentAlarmTime != 0 && svpSGlobal.timestamp >= currentAlarmTime) {
     sda_strcp(currentAlarmAppName, appNameBuffer, size);
-    *id = currentAlarmId;
+    *id = currentAlarmVid;
     *param = currentAlarmParam;
     sdaResolveAlarm();
     sdaReloadAlarms();
@@ -485,15 +510,15 @@ uint8_t sdaGetCurentAlarm(int32_t * id, int32_t * param, uint8_t * appNameBuffer
 }
 
 
-uint8_t removeAlarm(int32_t id, uint8_t * appName) {
+uint8_t removeAlarm(int32_t vid, uint8_t * appName) {
   uint8_t dirbuf[258];
   uint8_t keybuff[25];
   uint8_t numbuff[25];
   uint8_t confAppName[APP_NAME_LEN];
   sda_conf conffile;
 
-  if (id == 0) {
-    printf("Warning: removeAlarm: zero id!\n");
+  if (vid == 0) {
+    printf("%s: Warning: zero vid!\n", __FUNCTION__);
     return 0;
   }
 
@@ -504,6 +529,13 @@ uint8_t removeAlarm(int32_t id, uint8_t * appName) {
     printf("Failed to open notification config file\n");
   }
 
+  int32_t id = getIdFromVid(vid, &conffile);
+
+  if (id == 0) {
+    printf("%s: Warning: zero id!\n", __FUNCTION__);
+    return 0;
+  }
+
   // check appname
   sda_int_to_str(numbuff, id, sizeof(numbuff));
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
@@ -511,48 +543,23 @@ uint8_t removeAlarm(int32_t id, uint8_t * appName) {
 
   sda_conf_key_read(&conffile, keybuff, confAppName, APP_NAME_LEN);
 
-  if (! strCmp(appName, confAppName)) {
-    printf("Warning: Notification delete: appnames does not match!");
+  if (!strCmp(appName, confAppName)) {
+    printf("Warning: Notification delete: appnames does not match!\n");
     sda_conf_close(&conffile);
     svp_chdir(dirbuf);
     return 1;
   }
 
-  sda_strcp((uint8_t *) "notify_", keybuff, sizeof(keybuff));
-  sda_str_add(keybuff, numbuff);
-  sda_conf_key_remove(&conffile, keybuff);
-
-  sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
-  sda_str_add(keybuff, numbuff);
-  sda_conf_key_remove(&conffile, keybuff);
-
-  sda_strcp((uint8_t *) "tfix_", keybuff, sizeof(keybuff));
-  sda_str_add(keybuff, numbuff);
-  sda_conf_key_remove(&conffile, keybuff);
-
-  sda_strcp((uint8_t *) "param_", keybuff, sizeof(keybuff));
-  sda_str_add(keybuff, numbuff);
-  sda_conf_key_remove(&conffile, keybuff);
-
-  sda_strcp((uint8_t *) "last_", keybuff, sizeof(keybuff));
-  sda_str_add(keybuff, numbuff);
-  sda_conf_key_remove(&conffile, keybuff);
-
-  sda_strcp((uint8_t *) "ttime_", keybuff, sizeof(keybuff));
-  sda_str_add(keybuff, numbuff);
-  sda_conf_key_remove(&conffile, keybuff);
-
-  sda_strcp((uint8_t *) "twkday_", keybuff, sizeof(keybuff));
-  sda_str_add(keybuff, numbuff);
-  sda_conf_key_remove(&conffile, keybuff);
-
-  sda_strcp((uint8_t *) "tday_", keybuff, sizeof(keybuff));
-  sda_str_add(keybuff, numbuff);
-  sda_conf_key_remove(&conffile, keybuff);
-
-  sda_strcp((uint8_t *) "tmonth_", keybuff, sizeof(keybuff));
-  sda_str_add(keybuff, numbuff);
-  sda_conf_key_remove(&conffile, keybuff);
+  rmVal("notify", id, &conffile);
+  rmVal("appname", id, &conffile);
+  rmVal("vid", id, &conffile);
+  rmVal("tfix", id, &conffile);
+  rmVal("param", id, &conffile);
+  rmVal("last", id, &conffile);
+  rmVal("ttime", id, &conffile);
+  rmVal("twkday", id, &conffile);
+  rmVal("tday", id, &conffile);
+  rmVal("tmonth", id, &conffile);
 
   sda_conf_close(&conffile);
   svp_chdir(dirbuf);
@@ -563,13 +570,13 @@ uint8_t removeAlarm(int32_t id, uint8_t * appName) {
 }
 
 
-int32_t getAlarmParam(int32_t id, uint8_t * appName) {
+int32_t getAlarmParam(int32_t vid, uint8_t * appName) {
   uint8_t dirbuf[258];
   uint8_t confAppName[APP_NAME_LEN];
   sda_conf conffile;
 
-  if (id == 0) {
-    printf("%s: Warning: removeAlarm: zero id!\n", __FUNCTION__);
+  if (vid == 0) {
+    printf("%s: Warning: zero vid!\n", __FUNCTION__);
     return 0;
   }
 
@@ -580,10 +587,17 @@ int32_t getAlarmParam(int32_t id, uint8_t * appName) {
     printf("Failed to open notification config file\n");
   }
 
+  int32_t id = getIdFromVid(vid, &conffile);
+
+  if (id == 0) {
+    printf("%s: Warning: zero id!\n", __FUNCTION__);
+    return 0;
+  }
+
   getValStr((uint8_t *) "appname", id, confAppName, APP_NAME_LEN, &conffile);
 
   if (!strCmp(appName, confAppName)) {
-    printf("%s:Warning: appnames does not match!", __FUNCTION__);
+    printf("%s:Warning: appnames does not match!\n", __FUNCTION__);
     sda_conf_close(&conffile);
     svp_chdir(dirbuf);
     return 1;
@@ -598,13 +612,13 @@ int32_t getAlarmParam(int32_t id, uint8_t * appName) {
 }
 
 
-uint8_t getAlarmValid(int32_t id, uint8_t * appName) {
+uint8_t getAlarmValid(int32_t vid, uint8_t * appName) {
   uint8_t dirbuf[258];
   uint8_t confAppName[APP_NAME_LEN];
   sda_conf conffile;
 
-  if (id == 0) {
-    printf("%s: Warning: removeAlarm: zero id!\n", __FUNCTION__);
+  if (vid == 0) {
+    printf("%s: Warning: zero vid!\n", __FUNCTION__);
     return 0;
   }
 
@@ -613,6 +627,13 @@ uint8_t getAlarmValid(int32_t id, uint8_t * appName) {
 
   if (sda_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
     printf("Failed to open notification config file\n");
+  }
+
+  int32_t id = getIdFromVid(vid, &conffile);
+
+  if (id == 0) {
+    printf("%s: Warning: zero id!\n", __FUNCTION__);
+    return 0;
   }
 
   // alarm does not exist
@@ -624,7 +645,7 @@ uint8_t getAlarmValid(int32_t id, uint8_t * appName) {
 
   // names does not match
   if (!strCmp(appName, confAppName)) {
-    printf("%s:Warning: appnames does not match!", __FUNCTION__);
+    printf("%s:Warning: appnames does not match!\n", __FUNCTION__);
     sda_conf_close(&conffile);
     svp_chdir(dirbuf);
     return 0;
@@ -637,13 +658,13 @@ uint8_t getAlarmValid(int32_t id, uint8_t * appName) {
 }
 
 
-uint8_t setAlarmNotify(int32_t id, uint8_t * appName, int32_t value) {
+uint8_t setAlarmNotify(int32_t vid, uint8_t * appName, int32_t value) {
   uint8_t dirbuf[258];
   uint8_t confAppName[APP_NAME_LEN];
   sda_conf conffile;
 
-  if (id == 0) {
-    printf("%s: Warning: removeAlarm: zero id!\n", __FUNCTION__);
+  if (vid == 0) {
+    printf("%s: Warning: zero id!\n", __FUNCTION__);
     return 0;
   }
 
@@ -652,6 +673,13 @@ uint8_t setAlarmNotify(int32_t id, uint8_t * appName, int32_t value) {
 
   if (sda_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
     printf("Failed to open notification config file\n");
+  }
+
+  int32_t id = getIdFromVid(vid, &conffile);
+
+  if (id == 0) {
+    printf("%s: Warning: removeAlarm: zero id!\n", __FUNCTION__);
+    return 0;
   }
 
   // alarm does not exist
