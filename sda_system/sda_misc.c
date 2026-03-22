@@ -262,6 +262,10 @@ void sda_precache() {
 
   do {
     svp_csv_get_cell(&f_list, 0, (uint8_t *)"", appname, APP_NAME_LEN);
+    if(!svp_fexists((uint8_t*) appname)) {
+      printf("%s: Missing file %s, nothing to do.\n", __FUNCTION__, appname);
+      continue;;
+    }
     svmPrecacheFile(appname);
   } while(svp_csv_next_line(&f_list));
 
