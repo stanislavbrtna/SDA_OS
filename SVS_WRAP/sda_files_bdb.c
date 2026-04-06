@@ -575,8 +575,13 @@ uint8_t sda_fs_bdb_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   if (sysFuncMatch(argS->callId, "setEntry", s)) {
     argType[1] = SVS_TYPE_STR;
     
-    if(argS->usedup != 2 || argS->argType[1] != SVS_TYPE_STR) {
-      errSoft((uint8_t *)"sys.fs.db.setEntry: Wrong count or type of arguments.", s);
+    if(argS->usedup != 2) {
+      errSoft((uint8_t *)"sys.fs.db.setEntry: Wrong count of arguments.", s);
+      return 0;
+    }
+
+    if(argS->argType[1] != SVS_TYPE_STR) {
+      errSoft((uint8_t *)"sys.fs.db.setEntry: Wrong type of argument col_name, only string is accepted.", s);
       return 0;
     }
 
