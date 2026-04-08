@@ -59,6 +59,7 @@ SOFTWARE.
 #include "sda_util/sda_crypto_key_mgmt.h"
 #include "sda_util/sda_crypto_strings.h"
 #include "sda_util/sda_time.h"
+#include "sda_util/sda_media.h"
 #include "sda_graphics/sda_p16.h"
 #include "sda_graphics/sda_images.h"
 #include "sda_graphics/sda_sic.h"

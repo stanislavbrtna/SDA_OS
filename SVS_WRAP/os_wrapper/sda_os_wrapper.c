@@ -105,7 +105,7 @@ uint8_t sda_os_hw_buttons_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_settings_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 uint8_t sda_overlay_color_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
-
+uint8_t sda_os_media_wrapper(varRetVal *result, argStruct *argS, svsVM *s);
 
 svsConstType svsWrapConsts[] = {
   {"SVP_LANG_CZ",    0},
@@ -150,6 +150,7 @@ void sda_svs_wrapper_init() {
   addSysConsts(svsWrapConsts);
   addSysWrapper(sda_os_wrapper, (uint8_t *)"os");
   addSysWrapper(sda_os_sound_wrapper, (uint8_t *)"snd");
+  addSysWrapper(sda_os_media_wrapper, (uint8_t *)"pcm");
   addSysWrapper(sda_os_crypto_wrapper, (uint8_t *)"cr");
   addSysWrapper(sda_os_hw_wrapper, (uint8_t *)"hw");
   addSysWrapper(sda_os_hw_buttons_wrapper, (uint8_t *)"hw.btn");
