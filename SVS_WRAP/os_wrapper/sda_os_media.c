@@ -88,6 +88,21 @@ uint8_t sda_os_media_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get media Id
+  //#!    sys.pcm.getId();
+  //#!Get id of the currently playing media.
+  //#!
+  //#!Return: [num] id
+  if (sysFuncMatch(argS->callId, "getId", s)) {
+    if(sysExecTypeCheck(argS, argType, 0, s)){
+      return 0;
+    }
+
+    result->value.val_u = sda_media_get();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Get playback position
   //#!    sys.pcm.getPos([num] id);
   //#!Get media playback position in seconds.
