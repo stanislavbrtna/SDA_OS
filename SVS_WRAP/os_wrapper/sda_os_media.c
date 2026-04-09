@@ -79,7 +79,7 @@ uint8_t sda_os_media_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     argType[1] = SVS_TYPE_NUM;
     argType[2] = SVS_TYPE_NUM;
     
-    if(sysExecTypeCheck(argS, argType, 1, s)){
+    if(sysExecTypeCheck(argS, argType, 2, s)){
       return 0;
     }
 
