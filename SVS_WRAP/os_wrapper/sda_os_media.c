@@ -83,7 +83,7 @@ uint8_t sda_os_media_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_u = sda_media_seek(argS->arg[1].val_u, argS->arg[1].val_u);
+    result->value.val_u = sda_media_seek(argS->arg[1].val_u, argS->arg[2].val_u);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
