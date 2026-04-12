@@ -62,7 +62,7 @@ uint8_t sda_media_seek(uint32_t seek_s, uint32_t fid) {
 #endif
 }
 
-uint8_t  sda_media_getPos(uint32_t fid) {
+uint32_t  sda_media_getPos(uint32_t fid) {
 #ifndef SDA_FEATURE_PCM_SOUND
   return 0;
 #else

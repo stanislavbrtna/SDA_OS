@@ -24,11 +24,11 @@ SOFTWARE.
 #define SDA_MEDIA_H
 #include "../SDA_OS.h"
 
-uint32_t sda_media_play(uint8_t* fname);
-uint8_t  sda_media_stop(uint32_t fid);
-uint8_t  sda_media_seek(uint32_t seek_s, uint32_t fid);
-uint8_t  sda_media_getPos(uint32_t fid);
-uint8_t  sda_media_pause(uint8_t pause_on, uint32_t fid);
-uint32_t sda_media_get();
+uint32_t  sda_media_play(uint8_t* fname);
+uint8_t   sda_media_stop(uint32_t fid);
+uint8_t   sda_media_seek(uint32_t seek_s, uint32_t fid);
+uint32_t  sda_media_getPos(uint32_t fid);
+uint8_t   sda_media_pause(uint8_t pause_on, uint32_t fid);
+uint32_t  sda_media_get();
 
 #endif
