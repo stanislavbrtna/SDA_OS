@@ -278,7 +278,7 @@ void sdaReloadAlarms() {
   sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
   sda_str_add(keybuff, numbuff);
 
-  while (currentId < maxId) {
+  while (currentId <= maxId) {
     int32_t time = 0;
     uint8_t hour = 0;
     uint8_t min = 0;
