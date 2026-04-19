@@ -152,9 +152,11 @@ uint8_t sda_os_sound_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
+#ifdef SDA_FEATURE_NOTIF_VIBRO
     if(argS->arg[1].val_u <= 1000) {
       svp_haptic_fb(argS->arg[1].val_u);
     }
+#endif
     return 1;
   }
 

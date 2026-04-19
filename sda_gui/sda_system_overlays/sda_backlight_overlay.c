@@ -238,7 +238,7 @@ static uint8_t perfTextStr[32];
 static void moveButtons(int16_t val) {
   gr2_set_y1(soundEnable, gr2_get_y1(soundEnable, &sda_sys_con) + val, &sda_sys_con);
 
-  #ifdef SDA_FEATURE_NOTIF_VIBRO
+#ifdef SDA_FEATURE_NOTIF_VIBRO
   gr2_set_y1(hapticEnable, gr2_get_y1(hapticEnable, &sda_sys_con) + val, &sda_sys_con);
   gr2_set_y2(hapticEnable, gr2_get_y2(hapticEnable, &sda_sys_con) + val, &sda_sys_con);
 #endif
@@ -279,13 +279,13 @@ static void perfTextUpdate(uint8_t init) {
   sda_strcp(buff, perfTextStr, sizeof(buff));
   
   sda_str_add(perfTextStr, "% ");
-
+#ifdef SDA_FEATURE_FREQ_SCALING
   sda_int_to_str(buff, svpSGlobal.systemClock, sizeof(buff));
 
   sda_str_add(perfTextStr, buff);
   
   sda_str_add(perfTextStr, "MHz");
-
+#endif
   gr2_set_modified(perfText, &sda_sys_con);
 
   if(svpSGlobal.battPercentage > 60) {
@@ -364,6 +364,7 @@ int16_t batt_overlay_handle(uint8_t init) {
 #endif
 
 #ifdef SDA_FEATURE_FREQ_SCALING
+#define SMALL_OK 0
     perfImage = gr2_add_image(1, y1, 2, 2, batt_full_icon, batt_overlay, &sda_sys_con);
 
     perfTextUpdate(1);
@@ -402,10 +403,29 @@ int16_t batt_overlay_handle(uint8_t init) {
 
     gr2_set_visible(perfScr, 0, &sda_sys_con);
     
+#else
+
+#ifndef SDA_FEATURE_NOTIF_VIBRO
+  #define BATPOS 3
+  #define SMALL_OK 0
+#else
+  #define BATPOS 7
+  #define SMALL_OK 1
+#endif
+    perfImage = gr2_add_image(BATPOS, y1, 2, 2, batt_full_icon, batt_overlay, &sda_sys_con);
+    gr2_set_x_offset(perfImage, 8, &sda_sys_con);
+    perfTextUpdate(1);
+    perfText = gr2_add_text(
+      BATPOS + 2, y1, 3, 2,
+      perfTextStr,
+      batt_overlay,
+      &sda_sys_con
+    );
+    gr2_set_x_offset(perfText, 0, &sda_sys_con);
 #endif
 
     backlightOk = gr2_add_button(
-      11, y1, 4, 2,
+      11 + SMALL_OK, y1, 4 - SMALL_OK, 2,
       OVRL_OK,
       batt_overlay,
       &sda_sys_con
