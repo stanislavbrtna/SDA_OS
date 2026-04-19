@@ -440,7 +440,8 @@ int16_t batt_overlay_handle(uint8_t init) {
     );
 
     gr2_set_str2(soundEnable, mute_icon, &sda_sys_con);
-    gr2_set_x_offset(soundEnable, -3, &sda_sys_con);
+    gr2_set_x_offset(soundEnable, 4, &sda_sys_con);
+    gr2_set_y_offset(soundEnable, 6, &sda_sys_con);
 
 #ifdef SDA_FEATURE_NOTIF_VIBRO
     hapticEnable = gr2_add_button(
@@ -529,6 +530,9 @@ int16_t batt_overlay_handle(uint8_t init) {
   if(gr2_clicked(hapticEnable, &sda_sys_con)) {
     sda_set_haptics( 1 - svpSGlobal.haptics);
     gr2_set_ghost(hapticEnable, 1 - svpSGlobal.haptics, &sda_sys_con);
+    if(svpSGlobal.haptics) {
+      svp_haptic_fb(50);
+    }
   }
 #endif
 
