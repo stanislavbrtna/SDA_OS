@@ -29,35 +29,8 @@ File description:
 
 #include "SVS/svs_limits.h" // for varType in svmMeta
 #include "SVS/svs_types.h"
+#include "sda_types_hw.h"
 
-typedef enum {PRESSED, HOLD,LONGHOLD, RELEASED} eventType;
-
-typedef enum {LED_ON, LED_OFF ,LED_BLINK, LED_SHORTBLINK, LED_ALARM} ledPatternType;
-
-typedef enum {LCD_ON, LCD_OFF} lcdStateType;
-
-typedef enum {SDA_LOCK_LOCKED, SDA_LOCK_UNLOCKED} sdaLockState;
-
-typedef enum {SDA_PWR_MODE_NORMAL, SDA_PWR_MODE_SLEEP} pwrModeType;
-
-typedef enum {SDA_PWR_MODE_SLEEP_LOW, SDA_PWR_MODE_SLEEP_NORMAL, SDA_PWR_MODE_SLEEP_DEEP} pwrSleepModeType;
-
-// Power management enum
-typedef enum {
-  PERFORMANCE,
-  POWERSAVE,
-  AUTO,
-} sdaPwrModeType;
-
-typedef enum {POWER_USB, POWER_BATT} systemPwrType;
-
-typedef enum {CLICKED_NONE, CLICKED_SHORT, CLICKED_LONG} clickType;
-
-typedef enum {DEVICE_LOCKED, DEVICE_UNLOCKED} sdaDeviceLockType;
-
-typedef enum {ON_SCREEN_KEYBOARD, OTHER} sdaInputMethodType;
-
-typedef enum {SPEAKER, HEADPHONES} sdaPCMOutputType;
 
 typedef struct {
   // Touch
@@ -213,13 +186,5 @@ typedef struct {
   void (*overlay_destructor) ();
   uint8_t destructor_set;
 } sdaOverlayType;
-
-
-typedef enum {
-  EXTERNAL_EXPANSION_PORT = 1,
-  INTERNAL_EXPANSION_PORT = 2,
-  SERIAL_PORT = 3,
-  USB_PORT = 4
-} sdaResource;
 
 #endif
