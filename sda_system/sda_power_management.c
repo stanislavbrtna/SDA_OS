@@ -60,27 +60,35 @@ void sda_lcd_on_handler() {
 
 //#define POWER_MODE_DEBUG
 
+pwrSleepModeType sda_determine_sleep_mode() {
+  if (
+    (wrap_get_lcdOffButtons() == 1 && sda_if_slot_on_top(SDA_SLOT_SVM)) ||  // active app has enabled buttons
+    sdaSvmIsTimerSet() ||         // timer is enabled
+    svmGetUartCallbackActive() || // active uart callback
+    svmGetScreenShdnLock() ||     // Screen shutdown lock active, the lcd can still be shut down manually
+    svmGetSleepLock()
+  ) {
+    return SDA_PWR_MODE_SLEEP_LOW;
+  } else if (sdaGetActiveAlarm() == 1) {
+    return SDA_PWR_MODE_SLEEP_NORMAL;
+  }
+  return SDA_PWR_MODE_SLEEP_DEEP;
+}
+
 uint64_t sda_lcd_off_handler() {
-  if ((wrap_get_lcdOffButtons() == 1 && sda_if_slot_on_top(SDA_SLOT_SVM)) // active app has enabled buttons
-      || sdaSvmIsTimerSet() // timer is enabled
-      || svmGetUartCallbackActive() // active uart callback
-      || svmGetScreenShdnLock()    // Screen shutdown lock active, the lcd can still be shut down manually
-      || svmGetSleepLock()
-     )
-  {
-    svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_LOW;
+  svpSGlobal.powerSleepMode = sda_determine_sleep_mode();
+  if (svpSGlobal.powerSleepMode == SDA_PWR_MODE_SLEEP_LOW) { // active app has enabled buttons
 #ifdef POWER_MODE_DEBUG
     printf("SDA Power mode: LOW\n");
 #endif
     return 100; // time for the led to blink is returned
-  } else if (sdaGetActiveAlarm() == 1) {
-    svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_NORMAL;
+  } else if (svpSGlobal.powerSleepMode == SDA_PWR_MODE_SLEEP_NORMAL) {
 #ifdef POWER_MODE_DEBUG
     printf("SDA Power mode: NORMAL\n");
 #endif
     return 300;
   }
-  svpSGlobal.powerSleepMode = SDA_PWR_MODE_SLEEP_DEEP;
+  
 #ifdef POWER_MODE_DEBUG
     printf("SDA Power mode: DEEP\n");
 #endif

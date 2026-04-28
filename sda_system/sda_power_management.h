@@ -30,6 +30,8 @@ void sda_power_wait_for_input();
 void sda_power_management_handler();
 void sda_power_sleep_after(uint32_t seconds);
 
+pwrSleepModeType sda_determine_sleep_mode();
+
 // internal
 void sda_lcd_on_handler();
 
