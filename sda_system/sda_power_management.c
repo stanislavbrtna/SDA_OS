@@ -61,6 +61,10 @@ void sda_lcd_on_handler() {
 //#define POWER_MODE_DEBUG
 
 pwrSleepModeType sda_determine_sleep_mode() {
+  if(svmGetStandbyLock()) {
+    return SDA_PWR_MODE_SLEEP_STANDBY;
+  }
+
   if (
     (wrap_get_lcdOffButtons() == 1 && sda_if_slot_on_top(SDA_SLOT_SVM)) ||  // active app has enabled buttons
     sdaSvmIsTimerSet() ||         // timer is enabled
@@ -72,6 +76,7 @@ pwrSleepModeType sda_determine_sleep_mode() {
   } else if (sdaGetActiveAlarm() == 1) {
     return SDA_PWR_MODE_SLEEP_NORMAL;
   }
+
   return SDA_PWR_MODE_SLEEP_DEEP;
 }
 
@@ -87,6 +92,8 @@ uint64_t sda_lcd_off_handler() {
     printf("SDA Power mode: NORMAL\n");
 #endif
     return 300;
+  } else if (svpSGlobal.powerSleepMode == SDA_PWR_MODE_SLEEP_STANDBY) {
+    return 25;
   }
   
 #ifdef POWER_MODE_DEBUG

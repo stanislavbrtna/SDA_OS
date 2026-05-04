@@ -34,7 +34,7 @@ typedef enum {SDA_LOCK_LOCKED, SDA_LOCK_UNLOCKED} sdaLockState;
 
 typedef enum {SDA_PWR_MODE_NORMAL, SDA_PWR_MODE_SLEEP} pwrModeType;
 
-typedef enum {SDA_PWR_MODE_SLEEP_LOW, SDA_PWR_MODE_SLEEP_NORMAL, SDA_PWR_MODE_SLEEP_DEEP} pwrSleepModeType;
+typedef enum {SDA_PWR_MODE_SLEEP_LOW, SDA_PWR_MODE_SLEEP_NORMAL, SDA_PWR_MODE_SLEEP_DEEP, SDA_PWR_MODE_SLEEP_STANDBY} pwrSleepModeType;
 
 // Power management enum
 typedef enum {

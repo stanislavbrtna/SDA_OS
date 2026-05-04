@@ -69,6 +69,10 @@ uint16_t svmGetSavedProcPid(uint16_t id);
 
 void    svmSetSleepLock(uint8_t val);
 uint8_t svmGetSleepLock();
+
+void    svmSetStandbyLock(uint8_t val);
+uint8_t svmGetStandbyLock();
+
 void    svmSetScreenShdnLock(uint8_t val);
 uint8_t svmGetScreenShdnLock();
 

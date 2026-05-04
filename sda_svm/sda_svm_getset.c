@@ -306,10 +306,34 @@ void svmSetSleepLock(uint8_t val) {
   svmSavedProc[svmGetId(id)].sleepLock = val;
 }
 
+void svmSetStandbyLock(uint8_t val) {
+  if(!svmGetValid()) {
+    return;
+  }
+
+  int16_t id = svmGetPid();
+
+  if(id == -1) {
+    return;
+  }
+
+  svmSavedProc[svmGetId(id)].sleepLock = val;
+}
+
 
 uint8_t svmGetSleepLock() {
   for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
     if (svmSavedProc[i].sleepLock && svmSavedProc[i].valid) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+
+uint8_t svmGetStandbyLock() {
+  for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
+    if (svmSavedProc[i].standbyLock && svmSavedProc[i].valid) {
       return 1;
     }
   }

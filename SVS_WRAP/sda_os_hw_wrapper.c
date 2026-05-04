@@ -75,6 +75,22 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   //#!#### Power Functions
 
+  //#!##### Force standby mode
+  //#!    sys.hw.lockStandby([num]val);
+  //#!Sets sleep lock value. On 1 system won't go to anny deeper
+  //#!sleep mode than standby, regardless of the screen state.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "lockStandby", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    svmSetStandbyLock((uint8_t)argS->arg[1].val_s);
+    return 1;
+  }
+
   //#!##### Lock system suspend
   //#!    sys.hw.lockSuspend([num]val);
   //#!Sets sleep lock value. On 1 system won't go to anny deeper
@@ -89,8 +105,6 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     svmSetSleepLock((uint8_t)argS->arg[1].val_s);
     return 1;
   }
-
-
 
   //#!##### Lock LCD sleep
   //#!    sys.hw.lockSleep([num]val);
