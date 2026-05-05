@@ -144,7 +144,10 @@ void sda_main_redraw() {
       );
     }
 
-    LCD_DrawRectangle(overlayX1 - 1, overlayY1 - 1, overlayX2 + 1, overlayY2 + 1, sda_current_con->borderColor);
+    if(svpSGlobal.systemRedraw) {
+      LCD_DrawRectangle(overlayX1 - 1, overlayY1 - 1, overlayX2 + 1, overlayY2 + 1, sda_current_con->borderColor);
+    }
+    
     gr2_draw_screen(
             overlayX1,
             overlayY1,
