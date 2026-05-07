@@ -6,6 +6,7 @@ This clang formatter options should be used.
       IndentWidth: 2,
       TabWidth: 2, 
       ColumnLimit: 100,
+      SortIncludes: false,
       BinPackParameters: false,
       BinPackArguments: false,
       AlignAfterOpenBracket: Align,
@@ -16,5 +17,5 @@ This clang formatter options should be used.
       IndentCaseLabels: false, 
       AccessModifierOffset: -4, 
       NamespaceIndentation: All, 
-      FixNamespaceComments: false 
+      FixNamespaceComments: false
     }
