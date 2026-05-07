@@ -364,6 +364,11 @@ Return: None
 Gets Yscroll parameter.
 
 Return: [num] Yscroll
+##### Set screen scroll limits
+    sys.gui.setScrollLim([num]screenId, [num]xMin, [num]xMax, [num]yMin, [num]yMax);
+Sets scroll limits for a screen, enables drag scrolling.
+
+Return: None
 #### Colors
 #### Sets gr2 context color
     sys.gui.setColor([num]Col, [num]val);

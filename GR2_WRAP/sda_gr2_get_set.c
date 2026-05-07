@@ -874,6 +874,29 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Set screen scroll limits
+  //#!    sys.gui.setScrollLim([num]screenId, [num]xMin, [num]xMax, [num]yMin, [num]yMax);
+  //#!Sets scroll limits for a screen, enables drag scrolling.
+  //#!
+  //#!Return: None
+  if (sysFuncMatch(argS->callId, "setScrollLim", s)) {
+    argType[1] = SVS_TYPE_NUM; // id
+    argType[2] = SVS_TYPE_NUM; // xmin
+    argType[3] = SVS_TYPE_NUM; // xmax
+    argType[4] = SVS_TYPE_NUM; // ymin
+    argType[5] = SVS_TYPE_NUM; // ymax
+
+    if(sysExecTypeCheck(argS, argType, 5,s)){
+      return 0;
+    }
+    
+    gr2_set_scroll_limits(argS->arg[1].val_s, argS->arg[2].val_s, argS->arg[3].val_s, argS->arg[4].val_s,argS->arg[5].val_s, &sda_app_con);
+    
+    result->value.val_s = 0;
+    result->type = 0;
+    return 1;
+  }
+
   //#!#### Colors
   //#!#### Sets gr2 context color
   //#!    sys.gui.setColor([num]Col, [num]val);

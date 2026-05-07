@@ -30,6 +30,12 @@
 | PIN_PULLDOWN | Pin set as input with no pull resistor |
 
 #### Power Functions
+##### Force standby mode
+    sys.hw.lockStandby([num]val);
+Sets sleep lock value. On 1 system won't go to anny deeper
+sleep mode than standby, regardless of the screen state.
+
+Return: None
 ##### Lock system suspend
     sys.hw.lockSuspend([num]val);
 Sets sleep lock value. On 1 system won't go to anny deeper

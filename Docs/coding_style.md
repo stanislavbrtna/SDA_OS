@@ -7,6 +7,7 @@ This clang formatter options should be used.
       TabWidth: 2, 
       ColumnLimit: 100,
       SortIncludes: false,
+      AlignConsecutiveMacros: Consecutive
       BinPackParameters: false,
       BinPackArguments: false,
       AlignAfterOpenBracket: Align,
