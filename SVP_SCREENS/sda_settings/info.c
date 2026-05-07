@@ -72,6 +72,8 @@ uint16_t sda_settings_info_screen(uint8_t init) {
     optInfoScr = gr2_add_screen(&sda_sys_con);
     internalScr = gr2_add_screen(&sda_sys_con);
 
+    gr2_set_scroll_limits(internalScr, 0, 0, 0, 150, &sda_sys_con);
+
     gr2_set_yscroll(optInfoScr, 16, &sda_sys_con);
 
     gr2_set_param(gr2_add_image(1, 1, 8, 4, (uint8_t *)"Icons/logo.p16", optInfoScr, &sda_sys_con), 1, &sda_sys_con);
@@ -125,7 +127,13 @@ uint16_t sda_settings_info_screen(uint8_t init) {
     gr2_set_modified(infoUptimePWR, &sda_sys_con);
   }
 
-  gr2_set_yscroll(internalScr, gr2_get_value(slider, &sda_sys_con), &sda_sys_con);
+  if(gr2_get_event(slider, &sda_sys_con)) {
+    gr2_set_yscroll(internalScr, gr2_get_value(slider, &sda_sys_con), &sda_sys_con);
+    gr2_set_event(slider, EV_NONE,&sda_sys_con);
+  } else {
+    gr2_set_value(slider, gr2_get_yscroll(internalScr,&sda_sys_con), &sda_sys_con);
+  }
+    
 
   return 0;
 }
