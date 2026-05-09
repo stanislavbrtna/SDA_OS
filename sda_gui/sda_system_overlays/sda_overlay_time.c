@@ -38,7 +38,7 @@ static uint16_t tov_th1;
 static uint16_t tov_th2;
 
 static uint16_t tov_ok;
-static uint16_t tov_id = 0xFFFF;
+static uint16_t tov_id;
 static uint16_t tov_cancel;
 
 static uint16_t tov_minutes;
@@ -50,7 +50,6 @@ static uint8_t tov_min2_str[2];
 
 static uint8_t tov_hr1_str[2];
 static uint8_t tov_hr2_str[2];
-
 
 uint16_t time_overlay_init() {
   tov_hours = 0;
@@ -82,11 +81,9 @@ uint16_t time_overlay_init() {
   tov_th1 = gr2_add_text(1, 2, 2, 3, tov_hr1_str, tov_screen, sda_current_con);
   tov_th2 = gr2_add_text(2, 2, 3, 3, tov_hr2_str, tov_screen, sda_current_con);
 
-  gr2_text_set_align(
-    gr2_add_text(3, 2, 4, 3, (uint8_t *)":", tov_screen, sda_current_con),
-    GR2_ALIGN_CENTER,
-    sda_current_con
-  );
+  gr2_text_set_align(gr2_add_text(3, 2, 4, 3, (uint8_t *)":", tov_screen, sda_current_con),
+                     GR2_ALIGN_CENTER,
+                     sda_current_con);
 
   tov_tm1 = gr2_add_text(4, 2, 5, 3, tov_min1_str, tov_screen, sda_current_con);
   tov_tm2 = gr2_add_text(5, 2, 6, 3, tov_min2_str, tov_screen, sda_current_con);
@@ -105,6 +102,8 @@ uint16_t time_overlay_init() {
 
   gr2_set_xscroll(tov_screen, -16, sda_current_con);
 
+  tov_id++;
+
   tov_id = setOverlayScreen(tov_screen, sda_current_con);
 
   setOverlayY2(272);
@@ -114,24 +113,22 @@ uint16_t time_overlay_init() {
   return tov_id;
 }
 
-
 void time_overlay_destructor() {
   tov_done = 2; // set done to cancel
-  tov_id = 0xFFFF;
+  tov_id = 0;
   gr2_clear_screen_ev(tov_screen, sda_current_con);
   gr2_destroy(tov_screen, sda_current_con);
   setRedrawFlag();
   overlayDestructorDone();
 }
 
-
 void time_overlay_update(uint16_t ovId) {
 
-  if (tov_id != ovId) {
+  if (ovId == 0 || tov_id == 0 || tov_id != ovId) {
     return;
   }
 
-  if((tov_done == 1) || (tov_done == 2)) {
+  if ((tov_done == 1) || (tov_done == 2)) {
     return;
   }
 
@@ -145,24 +142,22 @@ void time_overlay_update(uint16_t ovId) {
     tov_done = 2;
     return;
   }
-  //hours
 
   if (gr2_get_event(tov_ph1, sda_current_con) == EV_RELEASED) {
-    if ((tov_hr1_str[0] - 48 < 1)
-        || ((tov_hr2_str[0] - 48 < 4) && (tov_hr1_str[0] - 48 == 1))) {
-        tov_hr1_str[0]++;
-        gr2_set_modified(tov_th1, sda_current_con);
+    if ((tov_hr1_str[0] - 48 < 1) || ((tov_hr2_str[0] - 48 < 4) && (tov_hr1_str[0] - 48 == 1))) {
+      tov_hr1_str[0]++;
+      gr2_set_modified(tov_th1, sda_current_con);
     }
   }
 
   if (gr2_get_event(tov_mh1, sda_current_con) == EV_RELEASED) {
-    if (tov_hr1_str[0] - 48 != 0){
+    if (tov_hr1_str[0] - 48 != 0) {
       tov_hr1_str[0]--;
       gr2_set_modified(tov_th1, sda_current_con);
     }
   }
 
-  if (gr2_get_event(tov_mh2, sda_current_con) == EV_RELEASED){
+  if (gr2_get_event(tov_mh2, sda_current_con) == EV_RELEASED) {
     if (tov_hr2_str[0] - 48 != 0) {
       tov_hr2_str[0]--;
       gr2_set_modified(tov_th2, sda_current_con);
@@ -184,7 +179,7 @@ void time_overlay_update(uint16_t ovId) {
       if ((tov_hr1_str[0] - 48 < 2)) {
         tov_hr2_str[0]++;
       } else {
-        if(tov_hr2_str[0] - 48 < 3) {
+        if (tov_hr2_str[0] - 48 < 3) {
           tov_hr2_str[0]++;
         } else {
           tov_hr2_str[0] = '0';
@@ -203,7 +198,7 @@ void time_overlay_update(uint16_t ovId) {
     }
   }
 
-  //minutes
+  // minutes
   if (gr2_get_event(tov_pm1, sda_current_con) == EV_RELEASED) {
     if (tov_min1_str[0] - 48 < 5) {
       tov_min1_str[0]++;
@@ -212,7 +207,7 @@ void time_overlay_update(uint16_t ovId) {
   }
 
   if (gr2_get_event(tov_mm1, sda_current_con) == EV_RELEASED) {
-    if (tov_min1_str[0]-48 != 0) {
+    if (tov_min1_str[0] - 48 != 0) {
       tov_min1_str[0]--;
       gr2_set_modified(tov_tm1, sda_current_con);
     }
@@ -224,14 +219,14 @@ void time_overlay_update(uint16_t ovId) {
       gr2_set_modified(tov_tm2, sda_current_con);
     } else {
       if (tov_min1_str[0] - 48 != 0) {
-        tov_min2_str[0]='9';
+        tov_min2_str[0] = '9';
         tov_min1_str[0]--;
       } else {
         tov_min1_str[0] = '5';
         tov_min2_str[0] = '9';
       }
       gr2_set_modified(tov_tm2, sda_current_con);
-       gr2_set_modified(tov_tm1, sda_current_con);
+      gr2_set_modified(tov_tm1, sda_current_con);
     }
   }
 
@@ -259,46 +254,42 @@ void time_overlay_update(uint16_t ovId) {
   sda_screen_button_handler(tov_screen, tov_cancel, sda_current_con);
 }
 
-
-void time_overlay_set_time(uint16_t ovId, uint16_t hour, uint16_t min){
-  if (tov_id != ovId){
+void time_overlay_set_time(uint16_t ovId, uint16_t hour, uint16_t min) {
+  if (tov_id != ovId || tov_id == 0 || ovId == 0) {
     return;
   }
 
-  if (hour > 23){
+  if (hour > 23) {
     return;
   }
 
-  if (min > 59){
+  if (min > 59) {
     return;
   }
 
   tov_hr1_str[0] = 48 + hour / 10;
   tov_hr2_str[0] = 48 + hour % 10;
 
-  tov_min1_str[0] = 48+min / 10;
-  tov_min2_str[0] = 48+min % 10;
+  tov_min1_str[0] = 48 + min / 10;
+  tov_min2_str[0] = 48 + min % 10;
 }
 
-
 uint16_t time_overlay_get_hours(uint16_t ovId) {
-  if (tov_id != ovId) {
+  if (tov_id != ovId || tov_id == 0 || ovId == 0) {
     return 0;
   }
   return ((tov_hr1_str[0] - 48) * 10 + (tov_hr2_str[0] - 48));
 }
 
-
 uint16_t time_overlay_get_minutes(uint16_t ovId) {
-  if (tov_id != ovId) {
+  if (tov_id != ovId || tov_id == 0 || ovId == 0) {
     return 0;
   }
   return ((tov_min1_str[0] - 48) * 10 + (tov_min2_str[0] - 48));
 }
 
-
 uint16_t time_overlay_get_ok(uint16_t ovId) {
-  if (tov_id != ovId) {
+  if (tov_id != ovId || tov_id == 0 || ovId == 0) {
     return 0;
   }
 
@@ -309,14 +300,12 @@ uint16_t time_overlay_get_ok(uint16_t ovId) {
   }
 }
 
-
 void time_overlay_clear_ok(uint16_t ovId) {
-  if (tov_id != ovId) {
+  if (tov_id != ovId || tov_id == 0 || ovId == 0) {
     return;
   }
 
   destroyOverlay();
   tov_done = 0;
-  tov_id = 0xFFFF;
+  tov_id = 0;
 }
-

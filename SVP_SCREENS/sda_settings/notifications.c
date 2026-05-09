@@ -28,7 +28,7 @@ uint16_t sda_settings_notif_screen(uint8_t init) {
   static uint16_t optSoundMute;
   uint16_t optNotifyScr;
 
-  if (init == 1){
+  if (init == 1) {
     // notifiacations screen
     optNotifyScr = gr2_add_screen(&sda_sys_con);
     optSoundMute = gr2_add_checkbox(1, 1, 7, 2, SCR_SOUND_OFF, optNotifyScr, &sda_sys_con);
@@ -49,7 +49,7 @@ uint16_t sda_settings_notif_screen(uint8_t init) {
   }
 
   if (gr2_clicked(optSoundMute, &sda_sys_con)) {
-    sda_set_mute((uint8_t) gr2_get_value(optSoundMute, &sda_sys_con));
+    sda_set_mute((uint8_t)gr2_get_value(optSoundMute, &sda_sys_con));
     sda_store_mute_config();
   }
 

@@ -37,7 +37,7 @@ uint8_t update_uptime() {
 }
 
 uint8_t update_uptimeL() {
-  static uint32_t  uptime_prev;
+  static uint32_t uptime_prev;
   if (svpSGlobal.lcdOnTime != uptime_prev) {
     sda_time_to_str(uptimeL, svpSGlobal.lcdOnTime);
     uptime_prev = svpSGlobal.lcdOnTime;
@@ -47,7 +47,7 @@ uint8_t update_uptimeL() {
 }
 
 uint8_t update_uptimePWR() {
-  static uint32_t  uptime_prev;
+  static uint32_t uptime_prev;
   if (svpSGlobal.battTime != uptime_prev) {
     sda_time_to_str(uptimePWR, svpSGlobal.battTime);
     uptime_prev = svpSGlobal.battTime;
@@ -55,7 +55,6 @@ uint8_t update_uptimePWR() {
   }
   return 0;
 }
-
 
 uint16_t sda_settings_info_screen(uint8_t init) {
   // system info screen
@@ -72,10 +71,14 @@ uint16_t sda_settings_info_screen(uint8_t init) {
     optInfoScr = gr2_add_screen(&sda_sys_con);
     internalScr = gr2_add_screen(&sda_sys_con);
 
+    gr2_set_scroll_limits(internalScr, 0, 0, 0, 150, &sda_sys_con);
+
     gr2_set_yscroll(optInfoScr, 16, &sda_sys_con);
 
-    gr2_set_param(gr2_add_image(1, 1, 8, 4, (uint8_t *)"Icons/logo.p16", optInfoScr, &sda_sys_con), 1, &sda_sys_con);
-    gr2_add_text(1, 4, 10, 5, SCR_OS_VERSION" "SDA_OS_VERSION, optInfoScr, &sda_sys_con);
+    gr2_set_param(gr2_add_image(1, 1, 8, 4, (uint8_t *)"Icons/logo.p16", optInfoScr, &sda_sys_con),
+                  1,
+                  &sda_sys_con);
+    gr2_add_text(1, 4, 10, 5, SCR_OS_VERSION " " SDA_OS_VERSION, optInfoScr, &sda_sys_con);
 
     slider = gr2_add_slider_v(8, 5, 9, 12, 150, 0, optInfoScr, &sda_sys_con);
 
@@ -97,14 +100,20 @@ uint16_t sda_settings_info_screen(uint8_t init) {
     update_uptimePWR();
     infoUptimePWR = gr2_add_text(0, 7, 10, 8, uptimePWR, internalScr, &sda_sys_con);
 
-    gr2_add_text(0, 8, 10, 9,(uint8_t *)"SVS version: "SVS_VERSION, internalScr, &sda_sys_con);
-    gr2_add_text(0, 9, 10, 12,(uint8_t *)"Compiled:\n"__DATE__" "__TIME__"\n(c) Standa", internalScr, &sda_sys_con);
+    gr2_add_text(0, 8, 10, 9, (uint8_t *)"SVS version: " SVS_VERSION, internalScr, &sda_sys_con);
+    gr2_add_text(0,
+                 9,
+                 10,
+                 12,
+                 (uint8_t *)"Compiled:\n" __DATE__ " " __TIME__ "\n(c) Standa",
+                 internalScr,
+                 &sda_sys_con);
 
     return optInfoScr;
   }
 
   if (init == 2) {
-    gr2_set_value(slider,0, &sda_sys_con);
+    gr2_set_value(slider, 0, &sda_sys_con);
     return 0;
   }
 
@@ -113,19 +122,24 @@ uint16_t sda_settings_info_screen(uint8_t init) {
     infoBattPercentPrev = svpSGlobal.battPercentage;
   }
 
-  if(update_uptime()){
+  if (update_uptime()) {
     gr2_set_modified(infoUptime, &sda_sys_con);
   }
 
-  if(update_uptimeL()) {
+  if (update_uptimeL()) {
     gr2_set_modified(infoUptimeL, &sda_sys_con);
   }
 
-  if(update_uptimePWR()) {
+  if (update_uptimePWR()) {
     gr2_set_modified(infoUptimePWR, &sda_sys_con);
   }
 
-  gr2_set_yscroll(internalScr, gr2_get_value(slider, &sda_sys_con), &sda_sys_con);
+  if (gr2_get_event(slider, &sda_sys_con)) {
+    gr2_set_yscroll(internalScr, gr2_get_value(slider, &sda_sys_con), &sda_sys_con);
+    gr2_set_event(slider, EV_NONE, &sda_sys_con);
+  } else {
+    gr2_set_value(slider, gr2_get_yscroll(internalScr, &sda_sys_con), &sda_sys_con);
+  }
 
   return 0;
 }

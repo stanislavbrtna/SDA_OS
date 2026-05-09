@@ -22,13 +22,10 @@ SOFTWARE.
 
 #include "settings.h"
 
-
 uint16_t sda_settings_time_screen(uint8_t init) {
   uint16_t optTimeScr;
-  //nastavení data a času
   static uint16_t optTimeBtn;
   static uint16_t optDateBtn;
-
 
   static uint16_t timeOvrId;
   static uint16_t dateOvrId;
@@ -36,11 +33,11 @@ uint16_t sda_settings_time_screen(uint8_t init) {
   if (init == 1) {
 
     optTimeScr = gr2_add_screen(&sda_sys_con);
-    
+
     gr2_set_yscroll(optTimeScr, 16, &sda_sys_con);
     optTimeBtn = gr2_add_button(2, 1, 7, 2, SCR_SET_TIME, optTimeScr, &sda_sys_con);
     optDateBtn = gr2_add_button(2, 2, 7, 3, SCR_SET_DATE, optTimeScr, &sda_sys_con);
-    
+
     return optTimeScr;
   }
 
@@ -52,27 +49,38 @@ uint16_t sda_settings_time_screen(uint8_t init) {
   if (gr2_clicked(optDateBtn, &sda_sys_con)) {
     dateOvrId = date_overlay_init(svpSGlobal.year, svpSGlobal.month, svpSGlobal.day);
     printf("Old date: y:%u d:%u wkd:%u mon:%u %u:%u \n",
-            svpSGlobal.year,
-            svpSGlobal.day,
-            svpSGlobal.weekday,
-            svpSGlobal.month,
-            svpSGlobal.hour,
-            svpSGlobal.min
-          );
+           svpSGlobal.year,
+           svpSGlobal.day,
+           svpSGlobal.weekday,
+           svpSGlobal.month,
+           svpSGlobal.hour,
+           svpSGlobal.min);
   }
 
   date_overlay_update(dateOvrId);
 
   time_overlay_update(timeOvrId);
 
-  if(time_overlay_get_ok(timeOvrId)) {
-    sda_set_time(svpSGlobal.year, svpSGlobal.day, svpSGlobal.weekday, svpSGlobal.month, (uint8_t) time_overlay_get_hours(timeOvrId), (uint8_t) time_overlay_get_minutes(timeOvrId), 0);
+  if (time_overlay_get_ok(timeOvrId)) {
+    sda_set_time(svpSGlobal.year,
+                 svpSGlobal.day,
+                 svpSGlobal.weekday,
+                 svpSGlobal.month,
+                 (uint8_t)time_overlay_get_hours(timeOvrId),
+                 (uint8_t)time_overlay_get_minutes(timeOvrId),
+                 0);
     time_overlay_clear_ok(timeOvrId);
     timeOvrId = 0;
   }
 
-  if(date_overlay_get_ok(dateOvrId)) {
-    sda_set_time(date_overlay_get_year(dateOvrId), date_overlay_get_day(dateOvrId), svpSGlobal.weekday, date_overlay_get_month(dateOvrId),svpSGlobal.hour, svpSGlobal.min, svpSGlobal.sec);
+  if (date_overlay_get_ok(dateOvrId)) {
+    sda_set_time(date_overlay_get_year(dateOvrId),
+                 date_overlay_get_day(dateOvrId),
+                 svpSGlobal.weekday,
+                 date_overlay_get_month(dateOvrId),
+                 svpSGlobal.hour,
+                 svpSGlobal.min,
+                 svpSGlobal.sec);
     date_overlay_clear_ok(dateOvrId);
     dateOvrId = 0;
   }
