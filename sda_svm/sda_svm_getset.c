@@ -317,7 +317,7 @@ void svmSetStandbyLock(uint8_t val) {
     return;
   }
 
-  svmSavedProc[svmGetId(id)].sleepLock = val;
+  svmSavedProc[svmGetId(id)].standbyLock = val;
 }
 
 
