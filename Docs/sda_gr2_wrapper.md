@@ -369,6 +369,28 @@ Return: [num] Yscroll
 Sets scroll limits for a screen, enables drag scrolling.
 
 Return: None
+##### Get screen horizontal scroll limit
+    sys.gui.getXScrMax([num]screenId);
+Gets yscroll limit for a given screen.
+
+Return: None
+##### Get screen vertical scroll limit
+    sys.gui.getYScrMax([num]screenId);
+Gets yscroll limit for a given screen.
+
+Return: None
+##### Set vertical screen scrollbar
+    sys.gui.setYScrBar([num]screenId, [num]barId);
+Sets scroll bar for given screen. If zero is passed as barId,
+scrollbar functionality is disabled.
+
+Return: None
+##### Set horizontal screen scrollbar
+    sys.gui.setXScrBar([num]screenId, [num]barId);
+Sets scroll bar for given screen. If zero is passed as barId,
+scrollbar functionality is disabled.
+
+Return: None
 #### Colors
 #### Sets gr2 context color
     sys.gui.setColor([num]Col, [num]val);
