@@ -544,8 +544,12 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
     if (sysExecTypeCheck(argS, argType, 2, s)) {
       return 0;
     }
-
-    gr2_set_param2((uint16_t)argS->arg[1].val_s, 1 - argS->arg[1].val_s, &sda_app_con);
+    if(argS->arg[2].val_s) {
+      gr2_set_param2((uint16_t)argS->arg[1].val_s, 0, &sda_app_con);
+    } else {
+      gr2_set_param2((uint16_t)argS->arg[1].val_s, 1, &sda_app_con);
+    }
+    
 
     return 1;
   }
