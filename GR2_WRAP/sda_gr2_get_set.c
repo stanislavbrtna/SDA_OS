@@ -534,7 +534,8 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   // #!##### Set screen background redraw
   // #!    sys.gui.setBgRedraw([num]screen_id, [num]val);
   // #!Enables or disables redrawing background on a screen update.
-  // #!Usefull for iproving redraw speed in scrolling texts.
+  // #!Usefull for iproving redraw speed in scrolling lists,
+  // #!assuming there are no holes in that list.
   // #!
   // #!Return: None
   if (sysFuncMatch(argS->callId, "setBgRedraw", s)) {

@@ -1925,7 +1925,8 @@ Return: None
 ##### Set screen background redraw
     sys.gui.setBgRedraw([num]screen_id, [num]val);
 Enables or disables redrawing background on a screen update.
-Usefull for iproving redraw speed in scrolling texts.
+Usefull for iproving redraw speed in scrolling lists,
+assuming there are no holes in that list.
 
 Return: None
 ##### Set elemnent size and position
