@@ -232,10 +232,11 @@ int16_t getRunningScreen(uint16_t scrId, uint16_t y0) {
 
   uint16_t screen = gr2_add_screen_ext(0, y0, 12, 2, scrId, &sda_sys_con);
   uint16_t n = 0;
+  uint16_t m = 0;
 
   gr2_set_cell_spacing(screen, 0, 4, 0, 2, &sda_sys_con);
-  gr2_set_xscroll(screen, -2, &sda_sys_con);
-  gr2_set_yscroll(screen, 2, &sda_sys_con);
+  gr2_set_x_offset(screen, 2, &sda_sys_con);
+  //gr2_set_y_offset(screen, 2, &sda_sys_con);
 
   gr2_add_text(0, 0, 6, 1, SWITCH_RUNNING_APPS, screen, &sda_sys_con);
 
@@ -257,24 +258,21 @@ int16_t getRunningScreen(uint16_t scrId, uint16_t y0) {
 
     n++;
 
-    if (n == 7) {
-      gr2_add_text(
-        0, n + 1, 6, 1,
-        "...",
-        screen,
-        &sda_sys_con
-      );
-      n++;
-      break;
+    if (n <= 7) {
+      m++;
     }
   }
 
-  gr2_set_y2(screen, n*2 + 2, &sda_sys_con);
+  if(n > m) {
+    gr2_set_scroll_limits(screen, 0, 0, 0, 32*(n - 8 + 1) + 2,&sda_sys_con);
+  }
+  
+  gr2_set_y2(screen, m*2 + 2, &sda_sys_con);
 
-  additionalHeight = 16 * (n * 2 + 2);
+  additionalHeight = 16 * (m * 2 + 2);
   numberOfApps = n;
 
-  return n*2 + 2;
+  return m*2 + 2;
 }
 
 
