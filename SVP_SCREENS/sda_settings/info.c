@@ -82,6 +82,8 @@ uint16_t sda_settings_info_screen(uint8_t init) {
 
     slider = gr2_add_slider_v(8, 5, 9, 12, 150, 0, optInfoScr, &sda_sys_con);
 
+    gr2_set_y_scroll_bar(internalScr, slider, &sda_sys_con);
+
     gr2_set_screen(internalScr, optInfoScr, &sda_sys_con);
     gr2_set_x1y1x2y2(internalScr, 1, 5, 8, 12, &sda_sys_con);
 
@@ -132,13 +134,6 @@ uint16_t sda_settings_info_screen(uint8_t init) {
 
   if (update_uptimePWR()) {
     gr2_set_modified(infoUptimePWR, &sda_sys_con);
-  }
-
-  if (gr2_get_event(slider, &sda_sys_con)) {
-    gr2_set_yscroll(internalScr, gr2_get_value(slider, &sda_sys_con), &sda_sys_con);
-    gr2_set_event(slider, EV_NONE, &sda_sys_con);
-  } else {
-    gr2_set_value(slider, gr2_get_yscroll(internalScr, &sda_sys_con), &sda_sys_con);
   }
 
   return 0;
