@@ -61,9 +61,9 @@ typedef struct {
   lcdOrientationType lcdOrientation;
   lcdStateType       lcdState;
   uint8_t  lcdLandscape;
-  uint8_t  lcdBacklight;
+  volatile uint8_t  lcdBacklight;
   uint32_t lcdShutdownTime;
-  uint16_t ambLightValue; // voltage on two decimal places
+  volatile uint16_t ambLightValue; // voltage on two decimal places
 
   // RTC
   volatile uint8_t  sec;
