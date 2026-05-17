@@ -64,6 +64,7 @@ typedef struct {
   volatile uint8_t  lcdBacklight;
   uint32_t lcdShutdownTime;
   volatile uint16_t ambLightValue; // voltage on two decimal places
+  volatile uint8_t  autoBacklight;
 
   // RTC
   volatile uint8_t  sec;

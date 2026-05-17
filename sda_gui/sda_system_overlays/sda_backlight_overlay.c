@@ -223,6 +223,7 @@ static uint16_t backlightSlider;
 static uint16_t volumeSlider;
 static uint16_t soundEnable;
 static uint16_t hapticEnable;
+static uint16_t autoBlEnable;
 
 static uint16_t perfText;
 static uint16_t perfImage;
@@ -241,6 +242,11 @@ static void moveButtons(int16_t val) {
 #ifdef SDA_FEATURE_NOTIF_VIBRO
   gr2_set_y1(hapticEnable, gr2_get_y1(hapticEnable, &sda_sys_con) + val, &sda_sys_con);
   gr2_set_y2(hapticEnable, gr2_get_y2(hapticEnable, &sda_sys_con) + val, &sda_sys_con);
+#endif
+
+#ifdef SDA_FEATURE_AMB_LIGHT_SENS
+  gr2_set_y1(autoBlEnable, gr2_get_y1(autoBlEnable, &sda_sys_con) + val, &sda_sys_con);
+  gr2_set_y2(autoBlEnable, gr2_get_y2(autoBlEnable, &sda_sys_con) + val, &sda_sys_con);
 #endif
 
   gr2_set_y1(backlightOk, gr2_get_y1(backlightOk, &sda_sys_con) + val, &sda_sys_con);
@@ -364,7 +370,7 @@ int16_t batt_overlay_handle(uint8_t init) {
 #endif
 
 #ifdef SDA_FEATURE_FREQ_SCALING
-#define SMALL_OK 0
+#define SMALL_OK 1
     perfImage = gr2_add_image(1, y1, 2, 2, batt_full_icon, batt_overlay, &sda_sys_con);
 
     perfTextUpdate(1);
@@ -454,6 +460,20 @@ int16_t batt_overlay_handle(uint8_t init) {
     gr2_set_str2(hapticEnable, haptic_icon, &sda_sys_con);
     gr2_set_x_offset(hapticEnable, 4, &sda_sys_con);
     gr2_set_ghost(hapticEnable, 1 - svpSGlobal.haptics, &sda_sys_con);
+#endif
+
+#ifdef SDA_FEATURE_AMB_LIGHT_SENS
+    autoBlEnable = gr2_add_button(
+      8, y1, 3, 2,
+      "",
+      batt_overlay,
+      &sda_sys_con
+    );
+
+    gr2_set_str2(autoBlEnable, bl_icon, &sda_sys_con);
+    gr2_set_x_offset(autoBlEnable, 9, &sda_sys_con);
+    gr2_set_y_offset(autoBlEnable, 4, &sda_sys_con);
+    gr2_set_ghost(autoBlEnable, 1 - svpSGlobal.autoBacklight, &sda_sys_con);
 #endif
     y1 += 2;
 
@@ -574,6 +594,14 @@ int16_t batt_overlay_handle(uint8_t init) {
     gr2_set_modified(volumeSlider, &sda_sys_con);
     outputOld = svpSGlobal.outputPCM;
   }
+#endif
+
+#ifdef SDA_FEATURE_AMB_LIGHT_SENS
+  if (gr2_get_event(autoBlEnable, &sda_sys_con) == EV_RELEASED) {
+    svpSGlobal.autoBacklight = 1 - svpSGlobal.autoBacklight;
+    gr2_set_ghost(autoBlEnable, 1 - svpSGlobal.autoBacklight, &sda_sys_con);
+  }
+  gr2_set_event(autoBlEnable, EV_NONE, &sda_sys_con);
 #endif
 
   sda_screen_button_handler(batt_overlay, backlightOk, &sda_sys_con);
