@@ -490,6 +490,8 @@ int16_t batt_overlay_handle(uint8_t init) {
         = (uint8_t) (gr2_get_value(backlightSlider, &sda_sys_con) + MIN_BACKLIGHT_VALUE);
     }
     svp_set_backlight(svpSGlobal.lcdBacklight);
+
+    svpSGlobal.autoBacklightOverride = 1;
   }
   gr2_set_event(backlightSlider, EV_NONE, &sda_sys_con);
 
@@ -599,6 +601,9 @@ int16_t batt_overlay_handle(uint8_t init) {
 #ifdef SDA_FEATURE_AMB_LIGHT_SENS
   if (gr2_get_event(autoBlEnable, &sda_sys_con) == EV_RELEASED) {
     svpSGlobal.autoBacklight = 1 - svpSGlobal.autoBacklight;
+    if(svpSGlobal.autoBacklight) {
+      svpSGlobal.autoBacklightOverride = 0;
+    }
     gr2_set_ghost(autoBlEnable, 1 - svpSGlobal.autoBacklight, &sda_sys_con);
   }
   gr2_set_event(autoBlEnable, EV_NONE, &sda_sys_con);

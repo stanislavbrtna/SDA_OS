@@ -327,6 +327,7 @@ void sda_set_init_struct_defaults() {
   svpSGlobal.haptics = 0;
   svpSGlobal.ambLightValue = 0;
   svpSGlobal.autoBacklight = 0;
+  svpSGlobal.autoBacklightOverride = 0;
 
   // 101 is non-valid init value, displays questionmark
   svpSGlobal.battPercentage = 101;
