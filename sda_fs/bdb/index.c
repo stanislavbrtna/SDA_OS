@@ -216,6 +216,8 @@ uint8_t sda_bdb_rebuild_index_id(uint8_t column_id, sda_bdb *db) {
     offset += index_header.size + sizeof(index_header);
   }
   sda_bdb_set_index_dirty(column_id, 0, db);
+  
+  return 0;
 }
 
 void sda_bdb_set_index_dirty(uint8_t column_id, uint8_t val, sda_bdb *db) {
