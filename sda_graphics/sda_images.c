@@ -22,20 +22,16 @@ SOFTWARE.
 
 #include "sda_images.h"
 
-static uint8_t  sic_pmc_enable;
+static uint8_t sic_pmc_enable;
 static uint16_t sic_pmc_color;
 
 // gets if file is p16 image
-uint8_t sda_get_if_p16(uint8_t * filename) {
-  return sda_validate_extension(filename, "p16");
-}
+uint8_t sda_get_if_p16(uint8_t *filename) { return sda_validate_extension(filename, "p16"); }
 
 // gets if file is ppm image
-uint8_t sda_get_if_ppm(uint8_t * filename) {
-  return sda_validate_extension(filename, "ppm");
-}
+uint8_t sda_get_if_ppm(uint8_t *filename) { return sda_validate_extension(filename, "ppm"); }
 
-int8_t sda_get_if_sic(uint8_t * filename) {
+int8_t sda_get_if_sic(uint8_t *filename) {
   if (filename[0] == 2) {
     return 1;
   }
@@ -43,25 +39,30 @@ int8_t sda_get_if_sic(uint8_t * filename) {
   return sda_validate_extension(filename, "sic");
 }
 
-
-int8_t sda_validate_extension(uint8_t* filename, uint8_t* exten) {
+int8_t sda_validate_extension(uint8_t *filename, uint8_t *exten) {
   uint32_t fnameLen = 0;
 
+  uint32_t extenLen = sda_strlen(exten);
   fnameLen = sda_strlen(filename);
 
-  if(fnameLen < 3) {
+  if (fnameLen < extenLen) {
     return 0;
   }
 
-  if(
-    sda_str_lower(filename[fnameLen - 3]) == sda_str_lower(exten[0]) &&
-    sda_str_lower(filename[fnameLen - 2]) == sda_str_lower(exten[1]) &&
-    sda_str_lower(filename[fnameLen - 1]) == sda_str_lower(exten[2])
-  ) {
-    return 1;
+  int match = 1;
+
+  for (uint16_t i = 0; i < extenLen; i++) {
+    if (sda_str_lower(filename[fnameLen - i]) != sda_str_lower(exten[extenLen - i])) {
+      match = 0;
+      break;
+    }
+
+    if (filename[fnameLen - i] == '.') {
+      break;
+    }
   }
 
-  return 0;
+  return match;
 }
 
 // sets mix color for drawn image
@@ -70,9 +71,8 @@ void sda_img_set_mix_color(uint8_t enable, uint16_t color) {
   svp_ppm_set_pmc(enable, color);
 
   sic_pmc_enable = enable;
-  sic_pmc_color  = color;
+  sic_pmc_color = color;
 }
-
 
 void sda_img_draw(int16_t x, int16_t y, int16_t scale_w, int16_t scale_h, uint8_t *filename) {
   if (sda_get_if_p16(filename)) {
@@ -86,7 +86,7 @@ void sda_img_draw(int16_t x, int16_t y, int16_t scale_w, int16_t scale_h, uint8_
   }
 
   if (sda_get_if_sic(filename)) {
-    if(!sic_pmc_enable) {
+    if (!sic_pmc_enable) {
       sic_pmc_color = sda_current_con->textColor;
     }
     sda_draw_sic_file(x, y, sic_pmc_color, sda_current_con->backgroundColor, filename);
@@ -95,7 +95,6 @@ void sda_img_draw(int16_t x, int16_t y, int16_t scale_w, int16_t scale_h, uint8_
 
   printf("%s: %s image type not supported!\n", __FUNCTION__, filename);
 }
-
 
 uint16_t sda_img_get_width(uint8_t *filename) {
   if (sda_get_if_p16(filename)) {
