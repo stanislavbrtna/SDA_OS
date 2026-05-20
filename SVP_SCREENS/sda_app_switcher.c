@@ -100,8 +100,8 @@ void taskSwitcherOpen() {
   gr2_set_cell_spacing(task_switcher, 2, 1, 2, 1, &sda_sys_con);
   gr2_set_x_cell(task_switcher, 19, &sda_sys_con);
   gr2_set_y_cell(task_switcher, 18, &sda_sys_con);
-  gr2_set_yscroll(task_switcher, -8, &sda_sys_con);
-  gr2_set_xscroll(task_switcher, -12, &sda_sys_con);
+  gr2_set_y_offset(task_switcher, 8, &sda_sys_con);
+  gr2_set_x_offset(task_switcher, 12, &sda_sys_con);
 
   task_switcher_inner = gr2_add_screen(&sda_sys_con);
 
@@ -109,16 +109,17 @@ void taskSwitcherOpen() {
   gr2_set_x1y1x2y2(task_switcher_inner, 0, 2, 12, 14 - svpSGlobal.lcdLandscape*6, &sda_sys_con);
 
   gr2_set_cell_spacing(task_switcher_inner, 1, 2, 1, 1, &sda_sys_con);
-  gr2_set_yscroll(task_switcher_inner, -5, &sda_sys_con);
-  gr2_set_xscroll_initial(task_switcher_inner, -4, &sda_sys_con);
+  
+  gr2_set_y_offset(task_switcher_inner, 5, &sda_sys_con);
+  gr2_set_x_offset(task_switcher_inner, 4, &sda_sys_con);
   gr2_set_x_cell(task_switcher_inner, 31, &sda_sys_con);
-
   gr2_add_text(
     0, 0, 14, 2,
     SWITCH_RUNNING_APPS,
     task_switcher,
     &sda_sys_con
   );
+
   scrollbar = gr2_add_slider_v(
     12, 2, 2, 14 - svpSGlobal.lcdLandscape*6,
     MAX_OF_SAVED_PROC * 32 - 7*32,
@@ -126,6 +127,9 @@ void taskSwitcherOpen() {
     task_switcher,
     &sda_sys_con
   );
+
+  gr2_set_scroll_limits(task_switcher_inner, 0, 0, 0, MAX_OF_SAVED_PROC * 32 - 7*32, &sda_sys_con);
+  gr2_set_y_scroll_bar(task_switcher_inner, scrollbar, &sda_sys_con);
 
   for(uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     appPid[n] = svmGetSuspendedPid(x);
@@ -202,10 +206,10 @@ void taskSwitcherUpdate() {
 
     if (gr2_get_event(appButtonsClose[x], &sda_sys_con) == EV_RELEASED) {
       svmClose(appPid[x], 1);
-      int32_t prevScroll = gr2_get_value(scrollbar, &sda_sys_con);
+      int32_t prevScroll = gr2_get_yscroll(task_switcher_inner, &sda_sys_con);
       destroyOverlay();
       taskSwitcherOpen();
-      gr2_set_value(scrollbar, prevScroll, &sda_sys_con);
+      gr2_set_yscroll(task_switcher_inner, prevScroll, &sda_sys_con);
       return;
     }
 
@@ -226,12 +230,6 @@ void taskSwitcherUpdate() {
     return;
   }
   gr2_set_event(close_all, EV_NONE, &sda_sys_con);
-
-  gr2_set_yscroll(
-    task_switcher_inner,
-    gr2_get_value(scrollbar, &sda_sys_con) - 5,
-    &sda_sys_con
-  );
 
   sda_screen_button_handler(task_switcher, ok, &sda_sys_con);
 }
