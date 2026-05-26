@@ -113,9 +113,7 @@ uint8_t sda_main_loop() {
     oldsec = svpSGlobal.sec;
   }
 
-  if (svpSGlobal.touchType != EV_NONE) {
-    sda_main_process_touch();
-  }
+  sda_main_process_touch();
   svpSGlobal.touchType = EV_NONE;
 
   sda_store_buttons();

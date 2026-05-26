@@ -223,51 +223,51 @@ void sda_main_process_touch() {
 
   if (overlayScr == 0) { // if there is no overlay
     // touch is in main screen
-    if ((svpSGlobal.touchType != EV_NONE)) {
-      scr_touch_retval = gr2_touch_input(
-        0,
-        32,
-        319 + 160*svpSGlobal.lcdLandscape,
-        479 - 160 * svpSGlobal.kbdVisible - 160*svpSGlobal.lcdLandscape,
+
+    scr_touch_retval = gr2_touch_input(
+      0,
+      32,
+      319 + 160*svpSGlobal.lcdLandscape,
+      479 - 160 * svpSGlobal.kbdVisible - 160*svpSGlobal.lcdLandscape,
+      svpSGlobal.touchX,
+      svpSGlobal.touchY,
+      svpSGlobal.touchType,
+      mainScr,
+      sda_current_con
+    );
+
+    if (scr_touch_retval == 2) { // retval 2 means open the keyboard
+      if (svpSGlobal.inputMethod == ON_SCREEN_KEYBOARD) {
+        sda_keyboard_show();
+      }
+      svpSGlobal.kbdKeyStr[0] = 0;
+    }
+    
+  } else {
+    // touch in overlay
+
+    int16_t y2 = overlayY2;
+
+    if(svpSGlobal.kbdVisible && y2 > 479 - 160 * svpSGlobal.lcdLandscape - 160) {
+      y2 = 479 - 160 * svpSGlobal.lcdLandscape - 160;
+    }
+
+    scr_touch_retval = gr2_touch_input(
+        overlayX1,
+        overlayY1,
+        overlayX2,
+        y2,
         svpSGlobal.touchX,
         svpSGlobal.touchY,
         svpSGlobal.touchType,
-        mainScr,
-        sda_current_con
+        overlayScr,
+        overlayCont
       );
 
-      if (scr_touch_retval == 2) { // retval 2 means open the keyboard
-        if (svpSGlobal.inputMethod == ON_SCREEN_KEYBOARD) {
-          sda_keyboard_show();
-        }
-        svpSGlobal.kbdKeyStr[0] = 0;
-      }
+    if (scr_touch_retval == 2) { // retval 2 means open the keyboard
+      sda_keyboard_show();
     }
-  } else {
-    // touch in overlay
-    if ((svpSGlobal.touchType != EV_NONE)) {
-      int16_t y2 = overlayY2;
 
-      if(svpSGlobal.kbdVisible && y2 > 479 - 160 * svpSGlobal.lcdLandscape - 160) {
-        y2 = 479 - 160 * svpSGlobal.lcdLandscape - 160;
-      }
-
-      scr_touch_retval = gr2_touch_input(
-          overlayX1,
-          overlayY1,
-          overlayX2,
-          y2,
-          svpSGlobal.touchX,
-          svpSGlobal.touchY,
-          svpSGlobal.touchType,
-          overlayScr,
-          overlayCont
-        );
-
-      if (scr_touch_retval == 2) { // retval 2 means open the keyboard
-        sda_keyboard_show();
-      }
-    }
 
     if (// clicked
         svpSGlobal.touchType == EV_PRESSED &&
