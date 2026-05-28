@@ -186,13 +186,17 @@ int16_t getRunningScreen(uint16_t scrId, uint16_t y0) {
 
     n++;
 
-    if (n <= 7) {
+    if ((n <= 7 && svpSGlobal.lcdLandscape == 0 ) || (n <= 3 && svpSGlobal.lcdLandscape == 1 )) {
       m++;
     }
   }
 
   if (n > m) {
-    gr2_set_scroll_limits(screen, 0, 0, 0, 32 * (n - 8 + 1) + 2, &sda_sys_con);
+    if(svpSGlobal.lcdLandscape == 0) {
+      gr2_set_scroll_limits(screen, 0, 0, 0, 32 * (n - 8 + 1) + 2, &sda_sys_con);
+    } else {
+      gr2_set_scroll_limits(screen, 0, 0, 0, 32 * (n - 3 + 1) + 1, &sda_sys_con);
+    }
   }
 
   gr2_set_y2(screen, m * 2 + 2, &sda_sys_con);
