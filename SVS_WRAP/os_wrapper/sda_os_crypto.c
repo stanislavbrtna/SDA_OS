@@ -109,48 +109,9 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  //#!##### Loads password as a key
-  //#!    sys.cr.loadPass();
-  //#!Loads OS password as a key
-  //#!
-  //#!Return: 0 if success, 1 if error
-  if (sysFuncMatch(argS->callId, "loadPass", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
-      return 0;
-    }
-    if (svmGetCryptoUnlock()) {
-      svp_crypto_set_pass_as_key();
-      result->value.val_u = 0;
-    } else {
-      result->value.val_u = 1;
-    }
-    
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
   //#!##### Load custom key string
-  //#!    sys.cr.loadStr([str]key);
+  //#!    sys.cr.loadKey([str]key, [str]password);
   //#!Loads custom string as a crypto key
-  //#!
-  //#!Return: 0 if success, 1 if error
-  if (sysFuncMatch(argS->callId, "loadStr", s)) {
-    argType[1] = SVS_TYPE_STR;
-    if(sysExecTypeCheck(argS, argType, 1, s)) {
-      return 0;
-    }
-    if (svmGetCryptoUnlock()) {
-      result->value.val_u = svp_crypto_set_key(s->stringField + argS->arg[1].val_str);
-    } else {
-      result->value.val_u = 1;
-    }
-    result->type = SVS_TYPE_NUM;
-    return 1;
-  }
-
-  //#!##### Load custom keyfile
-  //#!    sys.cr.loadKey([str]keyfile);
-  //#!Loads custom keyfile as a crypto key
   //#!
   //#!Return: 0 if success, 1 if error
   if (sysFuncMatch(argS->callId, "loadKey", s)) {
@@ -158,36 +119,33 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    if (svmGetCryptoUnlock()) {
-      result->value.val_u = svp_crypto_load_keyfile(s->stringField + argS->arg[1].val_str);
-    } else {
-      result->value.val_u = 1;
-    }
+
+    //TODO
+    
     result->type = SVS_TYPE_NUM;
     return 1;
   }
 
-  //#!##### Load OS keyfile
-  //#!    sys.cr.loadOSKey();
-  //#!Loads OS keyfile as a crypto key
+  //#!##### Derive user key from password
+  //#!    sys.cr.deriveKey([str]password);
+  //#!Loads derived key as a user key.
   //#!
   //#!Return: 0 if success, 1 if error
-  if (sysFuncMatch(argS->callId, "loadOSKey", s)) {
-    if(sysExecTypeCheck(argS, argType, 0, s)) {
+  if (sysFuncMatch(argS->callId, "deriveKey", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    if (svmGetCryptoUnlock()) {
-      result->value.val_u = svp_crypto_load_os_keyfile();
-    } else {
-      result->value.val_u = 1;
-    }
+
+    sda_crypto_derive_usr_key(s->stringField + argS->arg[1].val_str);
+    
     result->type = SVS_TYPE_NUM;
     return 1;
   }
 
   //#!##### Generate keyfile
-  //#!    sys.cr.genKey([str]keyfile);
-  //#!Generates custom keyfile.
+  //#!    sys.cr.genKey([str]password);
+  //#!Generates custom keystring.
   //#!
   //#!Return: 0 if success, 1 if error
   if (sysFuncMatch(argS->callId, "genKey", s)) {
@@ -195,12 +153,26 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    if (svmGetCryptoUnlock()) {
-      result->value.val_u = svp_crypto_generate_keyfile(s->stringField + argS->arg[1].val_str);
-    } else {
-      result->value.val_u = 1;
+    // TODO
+
+    result->type = SVS_TYPE_STR;
+    return 1;
+  }
+
+  //#!##### Set key type
+  //#!    sys.cr.setKey([num]keytype);
+  //#!Sets given key for crypto operations.
+  //#!0 - Device encryption key, 1 - user encryption key
+  //#!
+  //#!Return: 0 if success, 1 if error
+  if (sysFuncMatch(argS->callId, "genKey", s)) {
+    argType[1] = SVS_TYPE_STR;
+    if(sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
     }
-    result->type = SVS_TYPE_NUM;
+    // TODO
+    
+    result->type = SVS_TYPE_STR;
     return 1;
   }
 
@@ -258,6 +230,23 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get TOTP 
+  //#!    sys.cr.getTotp([str]secret, [num]time_offset_s);
+  //#!Returns OTP auth code for given secret.
+  //#!
+  //#!Return: 0 if success, 1 if error
+  if (sysFuncMatch(argS->callId, "getTotp", s)) {
+    argType[1] = SVS_TYPE_STR;
+    argType[2] = SVS_TYPE_NUM;
+    if(sysExecTypeCheck(argS, argType, 2, s)) {
+      return 0;
+    }
+
+    result->value.val_u = sda_crypto_generate_totp(s->stringField + argS->arg[1].val_str, argS->arg[2].val_s);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Encrypt string
   //#!    sys.cr.encryptStr([str]source);
   //#!Encrypts given string.
@@ -272,13 +261,14 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (svmGetCryptoUnlock()) {
       uint8_t *dest;
       uint16_t str_id;
-      uint32_t len = sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1;
+      uint32_t len = sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1 + 12*2;
 
       dest = strNewPLen(len, &str_id, s);
       sda_encrypt_string(
         (uint8_t*) (s->stringField + argS->arg[1].val_str), 
         dest, 
-        len
+        len,
+        SDA_KEY_DEK
       );
 
       result->value.val_str = str_id;
@@ -304,14 +294,15 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (svmGetCryptoUnlock()) {
       uint8_t *dest;
       uint16_t str_id;
-      uint32_t len = sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1;
+      uint32_t len = sda_strlen(s->stringField + argS->arg[1].val_str)*2 + 1 + 12*2;
       
       dest = strNewPLen(len, &str_id, s);
 
       sda_decrypt_string(
         (uint8_t*) (s->stringField + argS->arg[1].val_str),
         dest,
-        len
+        len,
+        SDA_KEY_DEK
       );
 
       result->value.val_str = str_id;

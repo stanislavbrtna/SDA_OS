@@ -29,9 +29,7 @@ uint16_t optMntSel;
 void settings_sd_umount();
 void settings_sd_mount();
 
-void svp_settings_set_spacing(uint16_t id) {
-  gr2_set_param(id, SDA_SETTINGS_SPACER, &sda_sys_con);
-}
+void svp_settings_set_spacing(uint16_t id) { gr2_set_param(id, SDA_SETTINGS_SPACER, &sda_sys_con); }
 
 static uint16_t settingsScreen;
 static uint16_t settingsTitle;
@@ -40,14 +38,13 @@ static uint16_t settingsMenu;
 
 static uint16_t settingsPrev;
 static uint16_t settingsStack[5];
-static uint8_t  *settingsStackStr[5];
+static uint8_t *settingsStackStr[5];
 
 static uint16_t optSecuScr;
 
-
 uint16_t sda_settings_menu(uint8_t init);
 
-void sda_settings_stack_add(uint16_t scr, uint8_t * label) {
+void sda_settings_stack_add(uint16_t scr, uint8_t *label) {
   settingsPrev++;
   settingsStack[settingsPrev] = scr;
   settingsStackStr[settingsPrev] = label;
@@ -56,11 +53,10 @@ void sda_settings_stack_add(uint16_t scr, uint8_t * label) {
   gr2_set_value(settingsFrame, scr, &sda_sys_con);
 }
 
-
 void sda_settings_open() {
   sda_set_landscape(0);
   sda_keyboard_hide();
-  
+
   sda_slot_on_top(SDA_SLOT_SETTINGS);
   settingsPrev = 0;
   sda_settings_stack_add(settingsMenu, SCR_SETTINGS);
@@ -69,16 +65,15 @@ void sda_settings_open() {
   svp_chdir((uint8_t *)"APPS");
 }
 
-
 uint16_t sda_settings_gui(uint8_t init, uint8_t top) {
   static uint8_t sd_inserted_pre;
   static uint16_t btnBack;
 
   if (init) {
     settingsScreen = gr2_add_screen(&sda_sys_con);
-    settingsTitle  = gr2_add_text(2, 0, 10, 1, SCR_SETTINGS, settingsScreen, &sda_sys_con);
-    settingsMenu   = sda_settings_menu(1);
-    settingsFrame  = gr2_add_frame(0, 1, 10, 14, settingsMenu, settingsScreen, &sda_sys_con);
+    settingsTitle = gr2_add_text(2, 0, 10, 1, SCR_SETTINGS, settingsScreen, &sda_sys_con);
+    settingsMenu = sda_settings_menu(1);
+    settingsFrame = gr2_add_frame(0, 1, 10, 14, settingsMenu, settingsScreen, &sda_sys_con);
 
     btnBack = gr2_add_button(0, 0, 2, 1, (uint8_t *)"", settingsScreen, &sda_sys_con);
     gr2_set_str2(btnBack, sda_get_icon(SDA_ICON_BACK), &sda_sys_con);
@@ -95,7 +90,7 @@ uint16_t sda_settings_gui(uint8_t init, uint8_t top) {
     return settingsScreen;
   }
 
-  //loop top
+  // loop top
   if (top == 1) {
     sda_settings_menu(0);
 
@@ -131,7 +126,6 @@ uint16_t sda_settings_gui(uint8_t init, uint8_t top) {
   return 0;
 }
 
-
 void settings_sd_umount() {
   if (svpSGlobal.sdaDeviceLock == DEVICE_UNLOCKED) {
     sda_slot_on_top(SDA_SLOT_SETTINGS);
@@ -140,9 +134,8 @@ void settings_sd_umount() {
   gr2_set_str(optMntSel, SCR_SD_MOUNT, &sda_sys_con);
 }
 
-
 void settings_sd_mount() {
-  if(svp_mount()) {
+  if (svp_mount()) {
     sda_show_error_message(SCR_CARD_ERROR_MSG);
   } else {
     svp_switch_main_dir();
@@ -152,11 +145,10 @@ void settings_sd_mount() {
     if (svpSGlobal.sdaDeviceLock == DEVICE_UNLOCKED) {
       sda_slot_on_top(SDA_SLOT_SETTINGS);
     }
-    //relod the main screen, this will be replaced someday
+    // relod the main screen, this will be replaced someday
     sda_homescreen_configure();
   }
 }
-
 
 void sda_settings_open_security() {
   svpSGlobal.systemXBtnVisible = 0;
@@ -165,7 +157,6 @@ void sda_settings_open_security() {
   sda_settings_security_screen(2);
   setRedrawFlag();
 }
-
 
 uint16_t sda_settings_menu(uint8_t init) {
 
@@ -183,6 +174,7 @@ uint16_t sda_settings_menu(uint8_t init) {
   static uint16_t optSecuSel;
   static uint16_t optSound;
 
+  static uint16_t unlockOverlay;
 
   if (init == 1) {
     optScreen = gr2_add_screen(&sda_sys_con);
@@ -201,12 +193,12 @@ uint16_t sda_settings_menu(uint8_t init) {
     uint8_t ri = gr2_get_relative_init(&sda_sys_con);
     gr2_set_relative_init(1, &sda_sys_con);
 
-    optTimSel  = gr2_add_button(1, 1, 7, 1, SCR_SET_DATE_TIME, optScreen, &sda_sys_con);
-    optLcdSel  = gr2_add_button(1, 2, 7, 1, SCR_SET_DISPLAY, optScreen, &sda_sys_con);
-    optSound   = gr2_add_button(1, 3, 7, 1, SCR_SETTINGS_SND, optScreen, &sda_sys_con);
+    optTimSel = gr2_add_button(1, 1, 7, 1, SCR_SET_DATE_TIME, optScreen, &sda_sys_con);
+    optLcdSel = gr2_add_button(1, 2, 7, 1, SCR_SET_DISPLAY, optScreen, &sda_sys_con);
+    optSound = gr2_add_button(1, 3, 7, 1, SCR_SETTINGS_SND, optScreen, &sda_sys_con);
     optSecuSel = gr2_add_button(1, 4, 7, 1, SCR_SET_SECU, optScreen, &sda_sys_con);
-    optDbgSel  = gr2_add_button(1, 5, 7, 1, (uint8_t *)"Debug", optScreen, &sda_sys_con);
-    optMntSel  = gr2_add_button(1, 7, 7, 1, SD_UMOUNT, optScreen, &sda_sys_con);
+    optDbgSel = gr2_add_button(1, 5, 7, 1, (uint8_t *)"Debug", optScreen, &sda_sys_con);
+    optMntSel = gr2_add_button(1, 7, 7, 1, SD_UMOUNT, optScreen, &sda_sys_con);
     optInfoSel = gr2_add_button(1, 9, 7, 1, SCR_ABOUT_SYSTEM, optScreen, &sda_sys_con);
 
     svp_settings_set_spacing(optTimSel);
@@ -232,13 +224,30 @@ uint16_t sda_settings_menu(uint8_t init) {
   }
 
   if (gr2_clicked(optSound, &sda_sys_con)) {
-    sda_settings_notif_screen(2); 
+    sda_settings_notif_screen(2);
     sda_settings_stack_add(optNotifyScr, SCR_NOTIFICATIONS);
   }
 
   if (gr2_clicked(optSecuSel, &sda_sys_con)) {
+    if (!svp_crypto_get_if_set_up()) {
+      sda_settings_stack_add(optSecuScr, SCR_SECURITY_SCREEN);
+      sda_settings_security_screen(2);
+    } else {
+      unlockOverlay = password_overlay_init();
+    }
+  }
+
+  password_overlay_update(unlockOverlay);
+
+  if (password_overlay_get_ok(unlockOverlay) == 1) {
+    password_overlay_clear_ok(unlockOverlay);
+    svp_crypto_lock();
     sda_settings_stack_add(optSecuScr, SCR_SECURITY_SCREEN);
     sda_settings_security_screen(2);
+  }
+
+  if (password_overlay_get_ok(unlockOverlay) == 2) {
+    password_overlay_clear_ok(unlockOverlay);
   }
 
   if (gr2_clicked(optDbgSel, &sda_sys_con)) {

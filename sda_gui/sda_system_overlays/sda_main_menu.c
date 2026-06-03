@@ -220,7 +220,7 @@ void sda_mm_overlay_handle(uint8_t init) {
     gr2_set_y_cell(main_menu_overlay, 16, &sda_sys_con);
     gr2_set_relative_init(1, &sda_sys_con);
 
-    if (svp_crypto_get_if_set_up() == 0) {
+    if (svp_crypto_get_if_after_dfu() == 0) {
       gr2_set_grayout(lockBtn, 1, &sda_sys_con);
     }
 
@@ -248,7 +248,7 @@ void sda_mm_overlay_handle(uint8_t init) {
 
     lockBtn = gr2_add_button(0, y, 12, 2, SCR_LOCK_DEVICE, main_menu_overlay, &sda_sys_con);
     gr2_set_rounded(lockBtn, 0, &sda_sys_con);
-    if (!svp_crypto_get_if_set_up()) {
+    if (!svp_crypto_get_if_after_dfu()) {
       gr2_set_grayout(lockBtn, 1, &sda_sys_con);
     }
     y += 2;

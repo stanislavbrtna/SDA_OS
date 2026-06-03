@@ -116,7 +116,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
   }
 
   if (gr2_clicked(resetBtn, &sda_sys_con)) {
-    svp_crypto_reset_os_keyfile();
+    sda_crypto_remove();
     gr2_set_visible(resetBtn, 0, &sda_sys_con);
     gr2_set_visible(msgKeyMismatch, 0, &sda_sys_con);
   }
@@ -127,44 +127,28 @@ uint16_t sda_settings_security_screen(uint8_t init) {
   }
 
   if (gr2_clicked(optSecuOk, &sda_sys_con) && svp_strcmp(optSecuNewStr, (uint8_t *)"") == 0) {
-    uint8_t retval;
-    if (svp_crypto_get_if_set_up() == 0) {
-      retval = svp_crypto_unlock((uint8_t *)"def");
-    } else {
-      retval = svp_crypto_unlock(optSecuOldStr);
-    }
     
-    if (retval != 0) {
-      if (retval == 2) {
-        gr2_set_visible(msgWrongPwd, 1, &sda_sys_con);
-        gr2_set_visible(msgPwdStored, 0, &sda_sys_con);
-        gr2_set_visible(msgKeyMismatch, 0, &sda_sys_con);
-      } else if (retval == 3) {
-        gr2_set_grayout(optSecuOk, 1, &sda_sys_con);
-        gr2_set_grayout(optSecuNew, 1, &sda_sys_con);
-        gr2_set_grayout(optSecuOld, 1, &sda_sys_con);
-      }
-    } else {
+    if (!svp_crypto_get_if_set_up()) {
+      svp_crypto_reset(optSecuNewStr);
+      
       gr2_set_grayout(optSecuOld, 0, &sda_sys_con);
       gr2_set_grayout(optSecuLock, 0, &sda_sys_con);
       gr2_set_visible(msgPwdStored, 1, &sda_sys_con);
       gr2_set_visible(msgWrongPwd, 0, &sda_sys_con);
+    } else {
+      uint8_t retval = svp_crypto_unlock(optSecuOldStr);
 
-      if (svp_crypto_get_if_set_up()) {
+      if(retval == 0) {
         svp_crypto_change_password(optSecuNewStr);
-        svp_crypto_reencrypt_os_keyfile(optSecuOldStr, optSecuNewStr);
+        svp_crypto_lock();
+        sda_homescreen_lock_en();
+        
       } else {
-        svp_crypto_change_password(optSecuNewStr);
-      }
-
-      if (sda_crypto_keyfile_init_check() != 0) {
-        sda_show_error_message(SCR_KEY_ERROR_MSG);
-        gr2_set_visible(msgKeyMismatch, 1, &sda_sys_con);
+        gr2_set_visible(msgWrongPwd, 1, &sda_sys_con);
+        gr2_set_visible(msgPwdStored, 0, &sda_sys_con);
+        gr2_set_visible(msgKeyMismatch, 0, &sda_sys_con);
         gr2_set_visible(resetBtn, 1, &sda_sys_con);
       }
-
-      svp_crypto_lock();
-      sda_homescreen_lock_en();
     }
     optSecuNewStr[0] = 0;
     optSecuOldStr[0] = 0;

@@ -111,7 +111,7 @@ void sda_main_init() {
   sdaReloadAlarms();
   sdaPrintActiveAlarm();
 
-  sda_crypto_keyfile_boot_check();
+  sda_crypto_boot_check();
 
   // screen redraw for the first time
   tick_lock = SDA_LOCK_LOCKED;

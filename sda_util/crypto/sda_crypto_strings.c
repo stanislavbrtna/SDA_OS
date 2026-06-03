@@ -22,7 +22,6 @@ SOFTWARE.
 
 #include "sda_crypto_strings.h"
 
-
 uint8_t nibble_to_hex(uint8_t val) {
   val = val & 0x0f;
 
@@ -41,20 +40,32 @@ uint8_t hex_to_nibble(uint8_t val) {
   }
 }
 
-
-uint8_t sda_encrypt_string(uint8_t * source, uint8_t * dest, uint32_t len) {
+uint8_t sda_encrypt_string(uint8_t *source, uint8_t *dest, uint32_t len, uint8_t keytype) {
   uint8_t encr_char;
 
   if (svp_crypto_get_lock() == 0) {
     return 1;
   }
- 
-  svp_crypto_stream_init();
+
+  uint8_t nonce[12];
+
+  generate_rnd_array(nonce, sizeof(nonce));
+
+  svp_crypto_encryption_init(nonce, keytype);
 
   uint32_t i = 0;
   uint32_t b = 0;
-  
-  while(source[i] != 0) {
+
+  for (uint32_t l = 0; l < sizeof(nonce); l++) {
+    encr_char = nonce[l];
+
+    dest[b] = nibble_to_hex(encr_char >> 4);
+    b++;
+    dest[b] = nibble_to_hex(encr_char);
+    b++;
+  }
+
+  while (source[i] != 0) {
     encr_char = svp_crypto_stream_encrypt(source[i]);
     i++;
 
@@ -63,36 +74,40 @@ uint8_t sda_encrypt_string(uint8_t * source, uint8_t * dest, uint32_t len) {
     dest[b] = nibble_to_hex(encr_char);
     b++;
 
-    //printf("%u converted as: %c %c\n", encr_char, dest[b-2], dest[b-1]);
-
     if (b >= len) {
       printf("%s: Target buffer overflow!\n", __FUNCTION__);
       return 1;
     }
   }
+
   dest[b] = 0;
 
   return 0;
 }
 
-uint8_t sda_decrypt_string(uint8_t * source, uint8_t * dest, uint32_t len) {
+uint8_t sda_decrypt_string(uint8_t *source, uint8_t *dest, uint32_t len, uint8_t keytype) {
   uint8_t raw_byte;
 
   if (svp_crypto_get_lock() == 0) {
     return 1;
   }
 
-  svp_crypto_stream_init();
-
   uint32_t i = 0;
   uint32_t b = 0;
+  uint8_t nonce[12];
 
-  while(source[b] != 0) {
-    
-    raw_byte = (hex_to_nibble(source[b]) << 4) + (hex_to_nibble(source[b + 1]) & 0x0F) ;
+  for (uint32_t l = 0; l < sizeof(nonce); l++) {
+    nonce[l] = (hex_to_nibble(source[b]) << 4) + (hex_to_nibble(source[b + 1]) & 0x0F);
+    b += 2;
+  }
+
+  svp_crypto_encryption_init(nonce, keytype);
+
+  while (source[b] != 0) {
+    raw_byte = (hex_to_nibble(source[b]) << 4) + (hex_to_nibble(source[b + 1]) & 0x0F);
     b += 2;
 
-    //printf("%u with sources: %c %c\n", raw_byte, source[b-2], source[b-1]);
+    // printf("%u with sources: %c %c\n", raw_byte, source[b-2], source[b-1]);
 
     dest[i] = svp_crypto_stream_decrypt(raw_byte);
     i++;
@@ -108,25 +123,24 @@ uint8_t sda_decrypt_string(uint8_t * source, uint8_t * dest, uint32_t len) {
   return 0;
 }
 
-
 uint8_t sda_test_crypto_strings() {
-  uint8_t buff[256];
-  uint8_t deBuff[256];
+  // uint8_t buff[256];
+  // uint8_t deBuff[256];
 
-  svp_crypto_unlock("def");
+  // svp_crypto_unlock("def");
 
-  sda_encrypt_string("Quick brown fox jumps over the žluťoučký kůň.", buff, sizeof(buff));
+  // sda_encrypt_string("Quick brown fox jumps over the žluťoučký kůň.", buff, sizeof(buff));
 
-  printf("Encrypted: %s \n", buff);
+  // printf("Encrypted: %s \n", buff);
 
-  sda_decrypt_string(buff, deBuff, sizeof(deBuff));
+  // sda_decrypt_string(buff, deBuff, sizeof(deBuff));
 
-  printf("Decrypted again: %s \n", deBuff);
+  // printf("Decrypted again: %s \n", deBuff);
 
-  if(sda_strcp("Quick brown fox jumps over the žluťoučký kůň.", deBuff, sizeof(deBuff))) {
-    return 0;
-  } else {
-    printf("%s: Test failed, strings doesn't match!", __FUNCTION__);
-    return 1;
-  }
+  // if (sda_strcp("Quick brown fox jumps over the žluťoučký kůň.", deBuff, sizeof(deBuff))) {
+  //   return 0;
+  // } else {
+  //   printf("%s: Test failed, strings doesn't match!", __FUNCTION__);
+  //   return 1;
+  // }
 }

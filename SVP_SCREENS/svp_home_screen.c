@@ -155,7 +155,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
       gr2_set_str(screen,(uint8_t *)"", &sda_sys_con);
     }
 
-    if (svp_crypto_get_if_set_up() == 0) {
+    if (svp_crypto_get_if_after_dfu() == 0) {
       gr2_set_grayout(btnLock, 1, &sda_sys_con);
     }
 

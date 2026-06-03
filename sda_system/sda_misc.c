@@ -350,7 +350,7 @@ void sda_set_init_struct_defaults() {
 
 void sda_set_device_lock(uint8_t locked) {
   if (locked) {
-    if(svp_crypto_get_if_set_up() == 0) {
+    if(svp_crypto_get_if_after_dfu() == 0) {
       printf("Warn: Trying to lock the device without initialized crypto functionality.\n");
       return;
     }
