@@ -155,7 +155,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
       gr2_set_str(screen,(uint8_t *)"", &sda_sys_con);
     }
 
-    if (svp_crypto_get_if_after_dfu() == 0) {
+    if (sda_crypto_get_if_set_up() == 0) {
       gr2_set_grayout(btnLock, 1, &sda_sys_con);
     }
 
@@ -224,7 +224,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 
     if(password_overlay_get_ok(unlockOverlay) == 1) {
       password_overlay_clear_ok(unlockOverlay);
-      svp_crypto_lock();
+      sda_crypto_lock();
       svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
       rtc_write_locked(0);
     }

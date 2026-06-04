@@ -425,7 +425,7 @@ uint8_t svmLoadProcData(uint16_t pid) {
   }
 
   if (svmGetCryptoUnlock()) {
-    svp_crypto_unlock_nopass();
+    sda_crypto_unlock_nopass();
   }
 
   svp_chdir(svmMeta.currentWorkDir);

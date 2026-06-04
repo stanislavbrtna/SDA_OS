@@ -43,7 +43,7 @@ uint8_t hex_to_nibble(uint8_t val) {
 uint8_t sda_encrypt_string(uint8_t *source, uint8_t *dest, uint32_t len, uint8_t keytype) {
   uint8_t encr_char;
 
-  if (svp_crypto_get_lock() == 0) {
+  if (sda_crypto_get_lock() == 0) {
     return 1;
   }
 
@@ -51,7 +51,7 @@ uint8_t sda_encrypt_string(uint8_t *source, uint8_t *dest, uint32_t len, uint8_t
 
   generate_rnd_array(nonce, sizeof(nonce));
 
-  svp_crypto_encryption_init(nonce, keytype);
+  sda_crypto_encryption_init(nonce, keytype);
 
   uint32_t i = 0;
   uint32_t b = 0;
@@ -66,7 +66,7 @@ uint8_t sda_encrypt_string(uint8_t *source, uint8_t *dest, uint32_t len, uint8_t
   }
 
   while (source[i] != 0) {
-    encr_char = svp_crypto_stream_encrypt(source[i]);
+    encr_char = sda_crypto_stream_encrypt(source[i]);
     i++;
 
     dest[b] = nibble_to_hex(encr_char >> 4);
@@ -88,7 +88,7 @@ uint8_t sda_encrypt_string(uint8_t *source, uint8_t *dest, uint32_t len, uint8_t
 uint8_t sda_decrypt_string(uint8_t *source, uint8_t *dest, uint32_t len, uint8_t keytype) {
   uint8_t raw_byte;
 
-  if (svp_crypto_get_lock() == 0) {
+  if (sda_crypto_get_lock() == 0) {
     return 1;
   }
 
@@ -101,7 +101,7 @@ uint8_t sda_decrypt_string(uint8_t *source, uint8_t *dest, uint32_t len, uint8_t
     b += 2;
   }
 
-  svp_crypto_encryption_init(nonce, keytype);
+  sda_crypto_encryption_init(nonce, keytype);
 
   while (source[b] != 0) {
     raw_byte = (hex_to_nibble(source[b]) << 4) + (hex_to_nibble(source[b + 1]) & 0x0F);
@@ -109,7 +109,7 @@ uint8_t sda_decrypt_string(uint8_t *source, uint8_t *dest, uint32_t len, uint8_t
 
     // printf("%u with sources: %c %c\n", raw_byte, source[b-2], source[b-1]);
 
-    dest[i] = svp_crypto_stream_decrypt(raw_byte);
+    dest[i] = sda_crypto_stream_decrypt(raw_byte);
     i++;
 
     if (i >= len) {
@@ -127,7 +127,7 @@ uint8_t sda_test_crypto_strings() {
   // uint8_t buff[256];
   // uint8_t deBuff[256];
 
-  // svp_crypto_unlock("def");
+  // sda_crypto_unlock("def");
 
   // sda_encrypt_string("Quick brown fox jumps over the žluťoučký kůň.", buff, sizeof(buff));
 

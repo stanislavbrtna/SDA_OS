@@ -163,6 +163,7 @@ typedef struct {
   uint8_t  initExecuted;
   uint8_t  suspendExecuted;
   uint8_t  kbdVisible;
+  uint8_t  cryptoKey;
 } sdaSvmMetadata;
 
 typedef struct {

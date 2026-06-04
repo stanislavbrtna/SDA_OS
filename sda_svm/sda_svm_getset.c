@@ -71,7 +71,8 @@ void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname) {
   svmMeta.screen          = 0;
   svmMeta.kbdVisible      = 0;
   svmMeta.calWidgetUsed   = 0;
-
+  svmMeta.cryptoKey       = SDA_KEY_DEK;
+ 
   for (uint16_t i = 0; i < 3; i++) {
     svmMeta.svmCallRetval[i].val_u = 0;
     svmMeta.svmCallRetvalType[i]   = SVS_TYPE_UNDEF;

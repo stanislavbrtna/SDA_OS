@@ -78,7 +78,7 @@ uint16_t password_overlay_init() {
  
   gr2_activate_text(passInput, &sda_sys_con);
 
-  if (svp_crypto_get_if_set_up() == 0) {
+  if (sda_crypto_get_if_set_up() == 0) {
     gr2_text_deactivate(&sda_sys_con);
     kbdInit = 7;
     gr2_set_grayout(passInput, 1, &sda_sys_con);
@@ -134,7 +134,7 @@ void password_overlay_update(uint16_t ovId) {
 
   if (gr2_get_event(okButton, &sda_sys_con) == EV_RELEASED) {
 
-    if (svp_crypto_unlock(passInputStr)) {
+    if (sda_crypto_unlock(passInputStr)) {
       gr2_set_visible(passMessage, 1, &sda_sys_con);
     } else {
       destroyOverlay();

@@ -84,7 +84,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     gr2_set_visible(msgPwdStored, 0, &sda_sys_con);
     gr2_set_visible(msgKeyMismatch, 0, &sda_sys_con);
 
-    if (svp_crypto_get_if_set_up() == 0) {
+    if (sda_crypto_get_if_set_up() == 0) {
       gr2_set_grayout(optSecuOld, 1, &sda_sys_con);
       gr2_set_grayout(optSecuLock, 1, &sda_sys_con);
     } else {
@@ -128,19 +128,19 @@ uint16_t sda_settings_security_screen(uint8_t init) {
 
   if (gr2_clicked(optSecuOk, &sda_sys_con) && svp_strcmp(optSecuNewStr, (uint8_t *)"") == 0) {
     
-    if (!svp_crypto_get_if_set_up()) {
-      svp_crypto_reset(optSecuNewStr);
+    if (!sda_crypto_get_if_set_up()) {
+      sda_crypto_reset(optSecuNewStr);
       
       gr2_set_grayout(optSecuOld, 0, &sda_sys_con);
       gr2_set_grayout(optSecuLock, 0, &sda_sys_con);
       gr2_set_visible(msgPwdStored, 1, &sda_sys_con);
       gr2_set_visible(msgWrongPwd, 0, &sda_sys_con);
     } else {
-      uint8_t retval = svp_crypto_unlock(optSecuOldStr);
+      uint8_t retval = sda_crypto_unlock(optSecuOldStr);
 
       if(retval == 0) {
-        svp_crypto_change_password(optSecuNewStr);
-        svp_crypto_lock();
+        sda_crypto_change_password(optSecuNewStr);
+        sda_crypto_lock();
         sda_homescreen_lock_en();
         
       } else {

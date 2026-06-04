@@ -85,7 +85,7 @@ void generate_rnd_array(uint8_t *dest, size_t len) {
   }
 }
 
-void svp_crypto_init() {
+void sda_crypto_init() {
 
   svp_crypto_after_dfu = 0;
   svp_crypto_set_up = 0;
@@ -93,11 +93,11 @@ void svp_crypto_init() {
   return;
 }
 
-uint8_t svp_crypto_get_lock() { return svp_crypto_unlocked; }
+uint8_t sda_crypto_get_lock() { return svp_crypto_unlocked; }
 
-uint8_t svp_crypto_get_if_set_up() { return svp_crypto_set_up; }
+uint8_t sda_crypto_get_if_set_up() { return svp_crypto_set_up; }
 
-uint8_t svp_crypto_get_if_after_dfu() { return svp_crypto_after_dfu; }
+uint8_t sda_crypto_get_if_after_dfu() { return svp_crypto_after_dfu; }
 
 // TODO: move imports
 void derive_key_from_pin(const char *pin, const uint8_t *salt, uint8_t *out_key);
@@ -105,7 +105,7 @@ int base32_decode(const char *src, uint8_t *dst, int dst_len);
 void base32_encode(const uint8_t *input, size_t input_len, char *output);
 size_t get_base32_encoded_length(size_t input_length);
 
-uint8_t svp_crypto_unlock(uint8_t *password) {
+uint8_t sda_crypto_unlock(uint8_t *password) {
   static uint8_t fails;
   uint16_t i = 0;
   uint8_t derived_key[KEY_LEN];
@@ -172,7 +172,7 @@ uint8_t svp_crypto_unlock(uint8_t *password) {
 }
 
 // used to unlock crypto for app that was suspended previously
-uint8_t svp_crypto_unlock_nopass() {
+uint8_t sda_crypto_unlock_nopass() {
 
   if (svp_crypto_after_dfu == 0) {
     return 1;
@@ -182,9 +182,9 @@ uint8_t svp_crypto_unlock_nopass() {
   return 0;
 }
 
-void svp_crypto_lock() { svp_crypto_unlocked = 0; }
+void sda_crypto_lock() { svp_crypto_unlocked = 0; }
 
-uint8_t svp_crypto_change_password(uint8_t *new_pass) {
+uint8_t sda_crypto_change_password(uint8_t *new_pass) {
   uint16_t i;
 
   if (!svp_crypto_unlocked) {
@@ -247,7 +247,7 @@ uint8_t svp_crypto_load_user_pass(uint8_t *user_pass) { return 0; }
 
 static cf_chacha20_ctx ctx;
 
-uint8_t svp_crypto_encryption_init(uint8_t *nonce, uint8_t keytype) {
+uint8_t sda_crypto_encryption_init(uint8_t *nonce, uint8_t keytype) {
 
   if (!svp_crypto_unlocked) {
     return 1;
@@ -264,7 +264,7 @@ uint8_t svp_crypto_encryption_init(uint8_t *nonce, uint8_t keytype) {
   return 0;
 }
 
-uint8_t svp_crypto_cypher_block(uint8_t *input, uint8_t *output, size_t len) {
+uint8_t sda_crypto_cypher_block(uint8_t *input, uint8_t *output, size_t len) {
   if (!svp_crypto_unlocked) {
     return 1;
   }
@@ -276,7 +276,7 @@ uint8_t svp_crypto_cypher_block(uint8_t *input, uint8_t *output, size_t len) {
   return out;
 }
 
-uint8_t svp_crypto_stream_encrypt(uint8_t c) {
+uint8_t sda_crypto_stream_encrypt(uint8_t c) {
   if (!svp_crypto_unlocked) {
     return 1;
   }
@@ -288,7 +288,7 @@ uint8_t svp_crypto_stream_encrypt(uint8_t c) {
   return out;
 }
 
-uint8_t svp_crypto_stream_decrypt(uint8_t c) {
+uint8_t sda_crypto_stream_decrypt(uint8_t c) {
 
   if (!svp_crypto_unlocked) {
     return 1;
@@ -301,7 +301,7 @@ uint8_t svp_crypto_stream_decrypt(uint8_t c) {
   return out;
 }
 
-uint8_t svp_encrypt(uint8_t *fname) {
+uint8_t sda_encrypt(uint8_t *fname, uint8_t keytype) {
   svp_file source;
 
   if (!svp_crypto_unlocked) {
@@ -320,13 +320,13 @@ uint8_t svp_encrypt(uint8_t *fname) {
 
   generate_rnd_array(nonce, 12);
 
-  svp_crypto_encryption_init(nonce, SDA_KEY_DEK);
+  sda_crypto_encryption_init(nonce, keytype);
 
   // read
   uint8_t nextchar = svp_fread_u8(&source);
 
   while (!svp_feof(&source)) {
-    uint8_t encr_char = svp_crypto_stream_encrypt(nextchar);
+    uint8_t encr_char = sda_crypto_stream_encrypt(nextchar);
     svp_fseek(&source, svp_ftell(&source) - 1);
     svp_fwrite_u8(&source, encr_char);
     nextchar = svp_fread_u8(&source);
@@ -336,7 +336,7 @@ uint8_t svp_encrypt(uint8_t *fname) {
   return 0;
 }
 
-uint8_t svp_decrypt(uint8_t *fname) {
+uint8_t sda_decrypt(uint8_t *fname, uint8_t keytype) {
   svp_file source;
 
   if (!svp_crypto_unlocked) {
@@ -360,13 +360,13 @@ uint8_t svp_decrypt(uint8_t *fname) {
 
   svp_fseek(&source, 0);
 
-  svp_crypto_encryption_init(nonce, SDA_KEY_DEK);
+  sda_crypto_encryption_init(nonce, keytype);
 
   // read
   uint8_t nextchar = svp_fread_u8(&source);
 
   while (!svp_feof(&source)) {
-    uint8_t encr_char = svp_crypto_stream_encrypt(nextchar);
+    uint8_t encr_char = sda_crypto_stream_encrypt(nextchar);
     svp_fseek(&source, svp_ftell(&source) - 1);
     svp_fwrite_u8(&source, encr_char);
     nextchar = svp_fread_u8(&source);
@@ -427,11 +427,11 @@ void sda_crypto_remove() {
   svp_chdir(dirbuf);
 }
 
-void svp_crypto_reset(uint8_t *new_pass) {
+void sda_crypto_reset(uint8_t *new_pass) {
 
   generate_rnd_array(svp_crypto_dek, KEY_LEN);
   svp_crypto_unlocked = 1;
-  svp_crypto_change_password(new_pass);
+  sda_crypto_change_password(new_pass);
 
   printf("%s: Password reset successfull!\n", __FUNCTION__);
   svp_crypto_unlocked = 0;
@@ -440,7 +440,6 @@ void svp_crypto_reset(uint8_t *new_pass) {
 }
 
 uint8_t sda_crypto_load_usr_key(uint8_t *base32_enc_key, uint8_t *password) {
-  uint8_t dek_base32[128];
   uint8_t nonce_dek_and_tag[12 + 32 + 16];
   uint8_t key_decrypted[KEY_LEN];
 
@@ -449,16 +448,21 @@ uint8_t sda_crypto_load_usr_key(uint8_t *base32_enc_key, uint8_t *password) {
 
   base32_decode(base32_enc_key, nonce_dek_and_tag, sizeof(nonce_dek_and_tag));
 
+  //print_hex("nonceDekTag", nonce_dek_and_tag, sizeof(nonce_dek_and_tag));
+  //print_hex("derived key", derived_key, KEY_LEN);
+
   if (cf_chacha20poly1305_decrypt(derived_key,
                                   nonce_dek_and_tag,
                                   NULL,
                                   0,
-                                  nonce_dek_and_tag + KEY_LEN,
-                                  32,
+                                  nonce_dek_and_tag + 12,
+                                  KEY_LEN,
                                   nonce_dek_and_tag + KEY_LEN + 12,
                                   key_decrypted)) {
     return 1;
   }
+
+  //print_hex("loaded key", key_decrypted, KEY_LEN);
 
   copy_key(key_decrypted, svp_crypto_usr);
 
@@ -476,6 +480,9 @@ uint8_t sda_crypto_generate_usr_key(uint8_t *base32_output_buffer, uint8_t *pass
   generate_rnd_array(nonce_dek_and_tag, 12);
   generate_rnd_array(new_key, KEY_LEN);
 
+  //print_hex("generated key", new_key, KEY_LEN);
+  //print_hex("derived key", derived_key, KEY_LEN);
+
   cf_chacha20poly1305_encrypt(derived_key,
                               nonce_dek_and_tag,
                               NULL,
@@ -485,7 +492,11 @@ uint8_t sda_crypto_generate_usr_key(uint8_t *base32_output_buffer, uint8_t *pass
                               nonce_dek_and_tag + 12,
                               nonce_dek_and_tag + KEY_LEN + 12);
 
+  //print_hex("nonceDekTag", nonce_dek_and_tag, sizeof(nonce_dek_and_tag));
+
   base32_encode(nonce_dek_and_tag, sizeof(nonce_dek_and_tag), base32_output_buffer);
+
+  return 0;
 }
 
 void sda_crypto_derive_usr_key(uint8_t *password) {
@@ -494,24 +505,24 @@ void sda_crypto_derive_usr_key(uint8_t *password) {
   copy_key(derived_key, svp_crypto_usr);
 }
 
-void svp_crypto_test() {
+void sda_crypto_test() {
 
   // puts("crypto test begin");
   // // non-valid unlock
-  // if (!svp_crypto_unlock((uint8_t *)"notpass")) {
+  // if (!sda_crypto_unlock((uint8_t *)"notpass")) {
   //   puts("unlocked with wrong password");
   //   return;
   // }
 
   // // valid unlock
-  // if (svp_crypto_unlock((uint8_t *)"def")) {
+  // if (sda_crypto_unlock((uint8_t *)"def")) {
   //   puts("failed to unlock");
   //   return;
   // }
 
   // // change password
   // printf("change password: old:%s new:", svp_crypto_password);
-  // svp_crypto_change_password((uint8_t *)"new password");
+  // sda_crypto_change_password((uint8_t *)"new password");
   // printf("%s\n", svp_crypto_password);
 
   // // set key
@@ -526,12 +537,12 @@ void svp_crypto_test() {
   // svp_crypto_load_keyfile((uint8_t *)"keyfile.svk");
 
   // // encrypt
-  // svp_encrypt((uint8_t *)"testfile.txt");
+  // sda_encrypt((uint8_t *)"testfile.txt");
 
   // puts("encrypted");
   // getchar();
   // // decrypt
-  // svp_decrypt((uint8_t *)"testfile.txt");
+  // sda_decrypt((uint8_t *)"testfile.txt");
 
   // puts("crypto test end");
 }

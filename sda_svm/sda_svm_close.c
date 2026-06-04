@@ -64,7 +64,7 @@ void svmCloseRunning() {
   }
 
   if (svmGetCryptoUnlock()) {
-    svp_crypto_lock();
+    sda_crypto_lock();
   }
 
   SVScloseCache(&svm);

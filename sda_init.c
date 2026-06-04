@@ -79,7 +79,7 @@ void sda_main_init() {
   // get default
   svp_getcwd(mainDir, 256);
 
-  svp_crypto_init();
+  sda_crypto_init();
 
   sda_set_init_struct_defaults();
 
@@ -126,7 +126,7 @@ void sda_main_init() {
   led_set_pattern(LED_OFF);
 
   // check for screen lock
-  if (rtc_read_locked() == 1) {
+  if (sda_crypto_get_if_set_up() == 1) {
     svpSGlobal.sdaDeviceLock = DEVICE_LOCKED;
     sda_slot_on_top(SDA_SLOT_HOMESCREEN);
   }

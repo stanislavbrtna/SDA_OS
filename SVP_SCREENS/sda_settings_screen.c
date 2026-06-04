@@ -229,7 +229,7 @@ uint16_t sda_settings_menu(uint8_t init) {
   }
 
   if (gr2_clicked(optSecuSel, &sda_sys_con)) {
-    if (!svp_crypto_get_if_set_up()) {
+    if (!sda_crypto_get_if_set_up()) {
       sda_settings_stack_add(optSecuScr, SCR_SECURITY_SCREEN);
       sda_settings_security_screen(2);
     } else {
@@ -241,7 +241,7 @@ uint16_t sda_settings_menu(uint8_t init) {
 
   if (password_overlay_get_ok(unlockOverlay) == 1) {
     password_overlay_clear_ok(unlockOverlay);
-    svp_crypto_lock();
+    sda_crypto_lock();
     sda_settings_stack_add(optSecuScr, SCR_SECURITY_SCREEN);
     sda_settings_security_screen(2);
   }
