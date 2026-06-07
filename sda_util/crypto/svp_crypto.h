@@ -30,7 +30,7 @@ void sda_crypto_lock();
 // getters
 uint8_t sda_crypto_get_lock();
 uint8_t sda_crypto_get_if_set_up();
-uint8_t sda_crypto_get_if_after_dfu();
+uint8_t sda_crypto_get_if_after_dkl();
 
 // change password
 uint8_t sda_crypto_change_password(uint8_t *new_pass);

@@ -16,8 +16,8 @@ static uint8_t svp_crypto_kek[KEY_LEN];
 // TODO: random salt
 const uint8_t kek_salt[] = SDA_PASSWORD_SALT;
 
-// if the first unlock occured
-static uint8_t svp_crypto_after_dfu;
+// Flags that the SDA is after device key load
+static uint8_t svp_crypto_after_dkl;
 
 // kek & dek in memory
 static uint8_t svp_crypto_unlocked;
@@ -87,7 +87,7 @@ void generate_rnd_array(uint8_t *dest, size_t len) {
 
 void sda_crypto_init() {
 
-  svp_crypto_after_dfu = 0;
+  svp_crypto_after_dkl = 0;
   svp_crypto_set_up = 0;
   svp_crypto_unlocked = 0;
   return;
@@ -97,7 +97,7 @@ uint8_t sda_crypto_get_lock() { return svp_crypto_unlocked; }
 
 uint8_t sda_crypto_get_if_set_up() { return svp_crypto_set_up; }
 
-uint8_t sda_crypto_get_if_after_dfu() { return svp_crypto_after_dfu; }
+uint8_t sda_crypto_get_if_after_dkl() { return svp_crypto_after_dkl; }
 
 // TODO: move imports
 void derive_key_from_pin(const char *pin, const uint8_t *salt, uint8_t *out_key);
@@ -116,7 +116,7 @@ uint8_t sda_crypto_unlock(uint8_t *password) {
 
   derive_key_from_pin(password, kek_salt, derived_key);
 
-  if (svp_crypto_after_dfu) {
+  if (svp_crypto_after_dkl) {
     if (constant_time_memcmp(derived_key, svp_crypto_kek, KEY_LEN)) {
       svp_crypto_unlocked = 0;
       // printf("Wrong pass after DFU\n");
@@ -161,20 +161,20 @@ uint8_t sda_crypto_unlock(uint8_t *password) {
     copy_key(dek_decoded, svp_crypto_dek);
     copy_key(derived_key, svp_crypto_kek);
 
-    svp_crypto_after_dfu = 1;
+    svp_crypto_after_dkl = 1;
     svp_chdir(dirbuf);
   }
 
   svp_crypto_unlocked = 1;
   fails = 0;
-  // printf("gud pass aft_dfu:%u\n", svp_crypto_after_dfu);
+  // printf("gud pass aft_dfu:%u\n", svp_crypto_after_dkl);
   return 0;
 }
 
 // used to unlock crypto for app that was suspended previously
 uint8_t sda_crypto_unlock_nopass() {
 
-  if (svp_crypto_after_dfu == 0) {
+  if (svp_crypto_after_dkl == 0) {
     return 1;
   }
 
@@ -422,7 +422,7 @@ void sda_crypto_remove() {
   printf("%s: Encryption is removed, keys are deleted.\n", __FUNCTION__);
 
   svp_crypto_set_up = 0;
-  svp_crypto_after_dfu = 0;
+  svp_crypto_after_dkl = 0;
 
   svp_chdir(dirbuf);
 }
@@ -435,7 +435,7 @@ void sda_crypto_reset(uint8_t *new_pass) {
 
   printf("%s: Password reset successfull!\n", __FUNCTION__);
   svp_crypto_unlocked = 0;
-  svp_crypto_after_dfu = 1;
+  svp_crypto_after_dkl = 1;
   svp_crypto_set_up = 1;
 }
 
