@@ -155,7 +155,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
       gr2_set_str(screen,(uint8_t *)"", &sda_sys_con);
     }
 
-    if (sda_crypto_get_if_set_up() == 0) {
+    if (sda_crypto_get_if_after_dkl() == 0) {
       gr2_set_grayout(btnLock, 1, &sda_sys_con);
     }
 
@@ -211,27 +211,46 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
         gr2_set_visible(btnQuickLaunch, 1, &sda_sys_con);
         gr2_set_visible(btnLock, 1, &sda_sys_con);
         gr2_set_visible(btnApps, 1, &sda_sys_con);
+
+        if (sda_crypto_get_if_after_dkl()) {
+          gr2_set_grayout(btnLock, 0, &sda_sys_con);
+        }
       }
       oldLock = svpSGlobal.sdaDeviceLock;
     }
 
     if (gr2_get_event(btnUnLock, &sda_sys_con) == EV_RELEASED) {
-      unlockOverlay = password_overlay_init();
+      if(sda_crypto_get_if_pin_set_up() && svpSGlobal.usePinForLock) {
+        unlockOverlay = pin_overlay_init(0);
+      } else {
+        unlockOverlay = password_overlay_init();
+      }
     }
     gr2_set_event(btnUnLock, EV_NONE, &sda_sys_con);
 
-    password_overlay_update(unlockOverlay);
+    if(sda_crypto_get_if_pin_set_up() && svpSGlobal.usePinForLock) {
+      pin_overlay_update(unlockOverlay);
+      
+      if(pin_overlay_get_ok(unlockOverlay) == 1) {
+        pin_overlay_clear_ok(unlockOverlay);
+        svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
+      }
 
-    if(password_overlay_get_ok(unlockOverlay) == 1) {
-      password_overlay_clear_ok(unlockOverlay);
-      sda_crypto_lock();
-      svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
-      rtc_write_locked(0);
-    }
+      if(pin_overlay_get_ok(unlockOverlay) == 2) {
+        pin_overlay_clear_ok(unlockOverlay);
+      }
+    } else {
+      password_overlay_update(unlockOverlay);
+      if(password_overlay_get_ok(unlockOverlay) == 1) {
+        password_overlay_clear_ok(unlockOverlay);
+        svpSGlobal.sdaDeviceLock = DEVICE_UNLOCKED;
+      }
 
-    if(password_overlay_get_ok(unlockOverlay) == 2) {
-      password_overlay_clear_ok(unlockOverlay);
+      if(password_overlay_get_ok(unlockOverlay) == 2) {
+        password_overlay_clear_ok(unlockOverlay);
+      }
     }
+    
 
 
     if (gr2_get_event(btnApps, &sda_sys_con) == EV_RELEASED) {

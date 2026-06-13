@@ -112,9 +112,13 @@ typedef struct {
 
   // Misc
   volatile uint8_t breakP16Draw;
-  volatile sdaDeviceLockType sdaDeviceLock;
 
-  } svpStatusStruct;
+  // Security
+  volatile sdaDeviceLockType sdaDeviceLock;
+  uint8_t  usePinForLock;
+  uint32_t unlockCounter;
+
+} svpStatusStruct;
 
 //TODO: specify what should be part of os and what should be part of touch driver
 #ifdef PC

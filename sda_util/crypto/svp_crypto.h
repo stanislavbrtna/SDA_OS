@@ -8,6 +8,7 @@
 
 #define SDA_KEY_DEK 0
 #define SDA_KEY_USR 1
+#define SDA_KEY_PIN 2
 
 // init crypto
 void sda_crypto_init();
@@ -57,6 +58,16 @@ uint8_t sda_crypto_stream_decrypt(uint8_t c);
 
 // utils
 uint32_t sda_crypto_generate_totp(const char *secret_b32, int32_t offset);
+
+// Pin functions
+uint8_t sda_crypto_get_if_pin_set_up();
+uint8_t sda_crypto_change_pin(uint8_t *new_pin);
+uint8_t sda_crypto_change_distress(uint8_t *new_pin);
+uint8_t sda_crypto_verify_pin(uint8_t *pin);
+
+// Configs
+uint8_t sda_crypto_load_conf();
+uint8_t sda_crypto_store_conf();
 
 // internal functions
 uint32_t crc32b(unsigned char *message);

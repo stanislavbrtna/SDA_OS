@@ -112,6 +112,8 @@ void svmSetCryptoUnlock(uint8_t unlock) {
   }
 }
 
+//TODO: crypto is unlocked by default after DKL
+//TODO: this will show if PEK key is unlocked in current app context
 uint8_t svmGetCryptoUnlock() {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProc[x].pid == svmMeta.pid) {

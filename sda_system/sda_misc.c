@@ -345,6 +345,9 @@ void sda_set_init_struct_defaults() {
   svpSGlobal.inputMethod    = ON_SCREEN_KEYBOARD;
 
   svpSGlobal.breakP16Draw   = 0;
+
+  svpSGlobal.usePinForLock  = 0;
+  svpSGlobal.unlockCounter  = 0;
 }
 
 

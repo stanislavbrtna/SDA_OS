@@ -99,14 +99,30 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   // #!##### Get if is locked
   // #!    sys.cr.getLock();
-  // #!Gets if crypto is unlocked
+  // #!Gets if current app can use PIN key
   // #!
   // #!Return: [num] 1 - crypto unlocked, 0 - crypto locked
   if (sysFuncMatch(argS->callId, "getLock", s)) {
     if (sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    result->value.val_u = svmGetCryptoUnlock() && sda_crypto_get_lock();
+    //TODO: fix this
+
+    result->value.val_u = sda_crypto_get_if_after_dkl();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  // #!##### Get if crypto is set up
+  // #!    sys.cr.enabled();
+  // #!Gets if crypto is enabled. (Device is has keys loaded.)
+  // #!
+  // #!Return: [num] 1 - crypto enabled, 0 - crypto disabled
+  if (sysFuncMatch(argS->callId, "getLock", s)) {
+    if (sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+    result->value.val_u = sda_crypto_get_if_after_dkl();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -194,9 +210,11 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    if (svmGetCryptoUnlock()) {
-      svmSetCryptoUnlock(0);
-      sda_crypto_lock();
+
+    //TODO: this will be used to remove the USR key from mem
+    if (sda_crypto_get_if_after_dkl()) {
+      //svmSetCryptoUnlock(0);
+      //sda_crypto_lock();
     }
     return 1;
   }
@@ -211,7 +229,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    if (svmGetCryptoUnlock()) {
+    if (sda_crypto_get_if_after_dkl()) {
       result->value.val_u = sda_encrypt(s->stringField + argS->arg[1].val_str, svmMeta.cryptoKey);
     } else {
       result->value.val_u = 1;
@@ -230,7 +248,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    if (svmGetCryptoUnlock()) {
+    if (sda_crypto_get_if_after_dkl()) {
       result->value.val_u = sda_decrypt(s->stringField + argS->arg[1].val_str, svmMeta.cryptoKey);
     } else {
       result->value.val_u = 1;
@@ -268,7 +286,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    if (svmGetCryptoUnlock()) {
+    if (sda_crypto_get_if_after_dkl()) {
       uint8_t *dest;
       uint16_t str_id;
       uint32_t len = sda_strlen(s->stringField + argS->arg[1].val_str) * 2 + 1 + 12 * 2;
@@ -297,7 +315,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    if (svmGetCryptoUnlock()) {
+    if (sda_crypto_get_if_after_dkl()) {
       uint8_t *dest;
       uint16_t str_id;
       uint32_t len = sda_strlen(s->stringField + argS->arg[1].val_str) * 2 + 1 + 12 * 2;

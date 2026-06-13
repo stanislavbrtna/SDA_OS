@@ -92,6 +92,13 @@ void sda_show_auth_overlay_init();
 void sda_auth_overlay_handle();
 uint8_t sda_auth_overlay_visible();
 
+// Pin overlay
+uint16_t pin_overlay_init(uint8_t onlyGet);
+void pin_overlay_update(uint16_t ovId);
+uint16_t pin_overlay_get_ok(uint16_t ovId);
+void pin_overlay_clear_ok(uint16_t ovId);
+void pin_overlay_get_pin(uint8_t *outBuffer, size_t len);
+
 #include "sda_clipboard_overlay.h"
 uint8_t sda_clipboard_overlay_visible();
 

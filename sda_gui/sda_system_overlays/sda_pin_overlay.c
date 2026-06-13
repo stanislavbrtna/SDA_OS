@@ -25,22 +25,38 @@ SOFTWARE.
 extern gr2context sda_sys_con;
 
 static uint16_t screen;
-static uint16_t passInput;
-static uint8_t  passInputStr[33];
-static uint16_t passButton;
-static uint16_t passMessage;
+//static uint16_t passInput;
+static uint8_t  pinInputStr[33];
+static uint16_t keypadButtons[12];
 static uint16_t okButton;
 static uint16_t cancelButton;
-static uint16_t setupButton;
 static uint16_t povId;
 static uint16_t povDone;
-static uint8_t  kbdInit;
+static uint8_t  povOnlyGet;
+static uint16_t povCount;
 
-void password_overlay_destructor();
+const uint8_t *buttonNames[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "A", "B"};
 
-uint16_t password_overlay_init() {
-  passInputStr[0] = 0;
-  kbdInit = 0;
+void pin_overlay_destructor();
+
+void switch_xy(uint16_t id1, uint16_t id2) {
+  int16_t x,y;
+
+  x = gr2_get_x1(id1, &sda_sys_con);
+  y = gr2_get_y1(id1, &sda_sys_con);
+
+  gr2_set_x1(id1, gr2_get_x1(id2, &sda_sys_con), &sda_sys_con);
+  gr2_set_y1(id1, gr2_get_y1(id2, &sda_sys_con), &sda_sys_con);
+
+  gr2_set_x1(id2, x, &sda_sys_con);
+  gr2_set_y1(id2, y, &sda_sys_con);
+}
+
+uint16_t pin_overlay_init(uint8_t onlyGet) {
+  pinInputStr[0] = 0;
+  povCount = 0;
+  
+  povOnlyGet = onlyGet;
 
   uint8_t rInit = gr2_get_relative_init(&sda_sys_con);
   gr2_set_relative_init(1, &sda_sys_con);
@@ -51,58 +67,45 @@ uint16_t password_overlay_init() {
 
   gr2_add_text(1, 0, 7, 2, OVRL_ENTER_PASSWORD, screen, &sda_sys_con);
 
-  passInput = gr2_add_text(1, 4, 6, 2, (uint8_t *)"", screen, &sda_sys_con);
+  
+  for(uint16_t i = 0; i < 12; i++) {
+    keypadButtons[i] = gr2_add_button(1 + (i % 3)*2, 2 + (i / 3)*4, 2, 4, buttonNames[i], screen, &sda_sys_con);
+  }
 
-  passMessage = gr2_add_text(1, 6, 7, 2, SCR_WRONG_PASSWORD, screen, &sda_sys_con);
-  gr2_set_visible(passMessage, 0, &sda_sys_con);
+  for(uint16_t i = 0; i < 20; i++) {
+    switch_xy(keypadButtons[svp_random()%12], keypadButtons[svp_random()%12]);
+  }
 
-  gr2_text_set_editable(passInput, 1, &sda_sys_con);
-  gr2_text_set_pwd(passInput, 1, &sda_sys_con);
-
-  passButton = gr2_add_button(7, 4, 1, 2, (uint8_t *)"*", screen, &sda_sys_con);
-
-  setupButton = gr2_add_button(2, 7, 5, 2, OVRL_SETUP_PASSWORD, screen, &sda_sys_con);
-  gr2_set_visible(setupButton, 0, &sda_sys_con);
-
-  okButton = gr2_add_button(5, 10, 2, 2, OVRL_OK, screen, &sda_sys_con);
-  cancelButton = gr2_add_button(2, 10, 2, 2, OVRL_CANCEL, screen, &sda_sys_con);
+  okButton = gr2_add_button(4, 19, 3, 2, OVRL_OK, screen, &sda_sys_con);
+  cancelButton = gr2_add_button(1, 19, 2, 2, OVRL_CANCEL, screen, &sda_sys_con);
 
   gr2_text_set_align(okButton, GR2_ALIGN_CENTER, &sda_sys_con);
   gr2_text_set_align(cancelButton, GR2_ALIGN_CENTER, &sda_sys_con);
 
   povId = setOverlayScreen(screen, &sda_sys_con);
 
-  gr2_set_xscroll(screen, 16, &sda_sys_con);
+  gr2_set_x_offset(screen, 0, &sda_sys_con);
 
-  setOverlayY2(288);
+  setOverlayY2(288 + 64 + 64 + 16);
  
-  gr2_activate_text(passInput, &sda_sys_con);
-
   if (sda_crypto_get_if_set_up() == 0) {
-    gr2_text_deactivate(&sda_sys_con);
-    kbdInit = 7;
-    gr2_set_grayout(passInput, 1, &sda_sys_con);
     gr2_set_grayout(okButton, 1, &sda_sys_con);
-    gr2_set_grayout(passButton, 1, &sda_sys_con);
-    gr2_text_set_pwd(passInput, 0, &sda_sys_con);
-    gr2_set_str(passInput, OVRL_SEC_NOT_SET_UP, &sda_sys_con);
-    gr2_set_visible(setupButton, 1, &sda_sys_con);
   } else {
-    gr2_set_y1(okButton, 8, &sda_sys_con);
-    gr2_set_y1(cancelButton, 8, &sda_sys_con);
-    setOverlayY2(288 - 28);
+    //gr2_set_y1(okButton, 8, &sda_sys_con);
+    //gr2_set_y1(cancelButton, 8, &sda_sys_con);
+    //setOverlayY2(288 + 32);
   }
   
   povDone = 0;
 
   gr2_set_relative_init(rInit, &sda_sys_con);
 
-  setOverlayDestructor(password_overlay_destructor);
+  setOverlayDestructor(pin_overlay_destructor);
 
   return povId;
 }
 
-void password_overlay_update(uint16_t ovId) {
+void pin_overlay_update(uint16_t ovId) {
 
   if (povId != ovId || ovId == 0 || povId != getOverlayId()) {
     return;
@@ -112,34 +115,19 @@ void password_overlay_update(uint16_t ovId) {
     return;
   }
 
-  sda_keyboard_show();
-  
-  svp_input_handler(passInputStr, 32, passInput);
-
-  if(sda_kbd_input_ret_detect(passInputStr, 32) == 1) {
-    gr2_set_event(okButton, EV_RELEASED, &sda_sys_con);
-  }
-
-  if (gr2_clicked(passButton, &sda_sys_con)) {
-    gr2_text_set_pwd(passInput, 1 - gr2_text_get_pwd(passInput, &sda_sys_con), &sda_sys_con);
-  }
-
-  if (gr2_clicked(setupButton, &sda_sys_con)) {
-    sda_keyboard_hide();
-    destroyOverlay();
-    povDone = 2;
-    sda_settings_open_security();
-    return;
-  }
-
-  if (gr2_get_event(okButton, &sda_sys_con) == EV_RELEASED) {
-
-    if (sda_crypto_unlock(passInputStr)) {
-      gr2_set_visible(passMessage, 1, &sda_sys_con);
+  if (gr2_get_event(okButton, &sda_sys_con) == EV_RELEASED) { 
+    if(povOnlyGet) {
+      destroyOverlay();
+      povDone = 3;
+      return;
+    } else if (sda_crypto_verify_pin(pinInputStr)) {
+      printf("Pin failed\n");
       svpSGlobal.unlockCounter++;
+      destroyOverlay();
+      povDone = 2;
+      return;
     } else {
       destroyOverlay();
-      sda_keyboard_hide();
       povDone = 1;
       return;
     }
@@ -147,17 +135,28 @@ void password_overlay_update(uint16_t ovId) {
 
   if (gr2_get_event(cancelButton, &sda_sys_con) == EV_RELEASED) {
     destroyOverlay();
-    sda_keyboard_hide();
     povDone = 2;
     return;
   }
+
+  for(uint16_t i = 0; i < 12; i++) {
+    
+    if (gr2_get_event(keypadButtons[i], &sda_sys_con) == EV_RELEASED) {
+      pinInputStr[povCount] = (gr2_get_str(keypadButtons[i], &sda_sys_con))[0];
+      if(povCount < sizeof(pinInputStr) - 1) {
+        povCount++;
+      }
+      pinInputStr[povCount] = 0;
+    }
+  }
+
   gr2_clear_screen_ev(screen, &sda_sys_con);
 
   sda_screen_button_handler(screen, cancelButton, &sda_sys_con);
 }
 
 
-uint16_t password_overlay_get_ok(uint16_t ovId) {
+uint16_t pin_overlay_get_ok(uint16_t ovId) {
   if (povId != ovId || ovId == 0) {
     return 0;
   }
@@ -170,7 +169,7 @@ uint16_t password_overlay_get_ok(uint16_t ovId) {
 }
 
 
-void password_overlay_clear_ok(uint16_t ovId) {
+void pin_overlay_clear_ok(uint16_t ovId) {
   if (povId != ovId || ovId == 0) {
     return;
   }
@@ -179,8 +178,15 @@ void password_overlay_clear_ok(uint16_t ovId) {
 }
 
 
-void password_overlay_destructor() {
+void pin_overlay_destructor() {
   gr2_destroy(screen, &sda_sys_con);
-  sda_keyboard_hide();
   setRedrawFlag();
+}
+
+void pin_overlay_get_pin(uint8_t *outBuffer, size_t len) {
+  if(povOnlyGet) {
+    sda_strcp(pinInputStr, outBuffer, len);
+  } else {
+    outBuffer[0] = 0;
+  }
 }
