@@ -108,6 +108,7 @@ void sda_crypto_init() {
   svp_crypto_after_dkl = 0;
   svp_crypto_set_up = 0;
   svp_crypto_unlocked = 0;
+  pin_set_up = 0;
   return;
 }
 
@@ -564,6 +565,7 @@ void sda_crypto_remove() {
   sda_conf_key_remove(&conffile, "pin_hash");
   sda_conf_key_remove(&conffile, "dist_hash");
 
+  svp_fclose(&conffile);
   printf("%s: Encryption is removed, keys are deleted.\n", __FUNCTION__);
 
   svp_crypto_set_up = 0;
@@ -584,6 +586,7 @@ void sda_crypto_reset(uint8_t *new_pass) {
 
   printf("%s: Password reset successfull!\n", __FUNCTION__);
   svp_crypto_unlocked = 0;
+  pin_set_up = 0;
   svp_crypto_after_dkl = 1;
   svp_crypto_set_up = 1;
 }
@@ -613,8 +616,14 @@ uint8_t sda_crypto_verify_pin(uint8_t *pin) {
   derive_key_from_pin(pin, kek_salt, new_hash);
 
   if (!constant_time_memcmp(svp_crypto_distress, new_hash, 32)) {
-    // printf("distress match!\n");
     sda_crypto_remove();
+    generate_rnd_array(new_hash, 32);
+    copy_key(new_hash, svp_crypto_pin_hash);
+    svp_crypto_store_key("pin_hash", new_hash);
+
+    //generate_rnd_array(svp_crypto_dek, 32);
+    //svp_crypto_store_dek();
+
     return 1;
   }
 

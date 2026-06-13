@@ -41,6 +41,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
   static uint16_t optSecuSetDist;
   static uint16_t unlockWithPin;
   static uint16_t unlockCountClear;
+  static uint16_t unlockCount;
   static uint16_t pinOverlay;
   static uint16_t distOverlay;
   uint16_t optSecuScr;
@@ -77,25 +78,26 @@ uint16_t sda_settings_security_screen(uint8_t init) {
 
     gr2_text_set_align(msgKeyMismatch, GR2_ALIGN_CENTER, &sda_sys_con);
     gr2_text_set_align(msgWrongPwd, GR2_ALIGN_RIGHT, &sda_sys_con);
-    //gr2_text_set_align(msgPwdStored, GR2_ALIGN_RIGHT, &sda_sys_con);
 
-    gr2_add_text(1, 9, 6, 1, "Pin setup:", optSecuScr, &sda_sys_con);
-    optSecuSetPin = gr2_add_button(1, 10, 4, 1, "Set pin", optSecuScr, &sda_sys_con);
-    optSecuSetDist = gr2_add_button(5, 10, 4, 1, "Set distress", optSecuScr, &sda_sys_con);
+    gr2_add_text(1, 9, 6, 1, SCR_SECU_PIN_SETUP, optSecuScr, &sda_sys_con);
+    optSecuSetPin = gr2_add_button(1, 10, 4, 1, SCR_SECU_SET_PIN, optSecuScr, &sda_sys_con);
+    optSecuSetDist = gr2_add_button(5, 10, 4, 1, SCR_SECU_SET_DISTRESS, optSecuScr, &sda_sys_con);
 
-    unlockWithPin = gr2_add_checkbox(1, 11, 9, 1, "Unlock with PIN", optSecuScr, &sda_sys_con);
+    unlockWithPin = gr2_add_checkbox(1, 11, 9, 1, SCR_SECU_PIN_UNLOCK, optSecuScr, &sda_sys_con);
 
-    if(svpSGlobal.usePinForLock) {
+    if (svpSGlobal.usePinForLock) {
       gr2_set_value(unlockWithPin, 1, &sda_sys_con);
     }
 
-    unlockCountStr[0] = '3';
-    unlockCountStr[1] = 0;
+    unlockCountStr[0] = 0;
 
-    gr2_add_text(1, 12, 1, 1, unlockCountStr, optSecuScr, &sda_sys_con);
-    gr2_add_text(2, 12, 5, 1, "failed unlocks.", optSecuScr, &sda_sys_con);
+    sda_int_to_str(unlockCountStr, svpSGlobal.unlockCounter, sizeof(unlockCountStr));
 
-    unlockCountClear = gr2_add_button(7, 12, 2, 1, "Clear", optSecuScr, &sda_sys_con);
+    unlockCount = gr2_add_text(0, 12, 2, 1, unlockCountStr, optSecuScr, &sda_sys_con);
+
+    gr2_add_text(2, 12, 5, 1, SCR_KEY_UNLOCK_COUNT , optSecuScr, &sda_sys_con);
+    gr2_text_set_align(unlockCount, GR2_ALIGN_RIGHT, &sda_sys_con);
+    unlockCountClear = gr2_add_button(7, 12, 2, 1, SCR_SECU_CLEAR, optSecuScr, &sda_sys_con);
 
     resetBtn = gr2_add_button(1, 13, 5, 1, SCR_RESET_KEY, optSecuScr, &sda_sys_con);
 
@@ -122,6 +124,12 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     gr2_set_visible(msgPwdStored, 0, &sda_sys_con);
     gr2_set_visible(msgKeyMismatch, 0, &sda_sys_con);
 
+    sda_int_to_str(unlockCountStr, svpSGlobal.unlockCounter, sizeof(unlockCountStr));
+
+    if (svpSGlobal.usePinForLock) {
+      gr2_set_value(unlockWithPin, 1, &sda_sys_con);
+    }
+
     if (sda_crypto_get_if_set_up() == 0) {
       gr2_set_grayout(optSecuOld, 1, &sda_sys_con);
       gr2_set_grayout(optSecuSetPin, 1, &sda_sys_con);
@@ -132,8 +140,15 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     } else {
       gr2_set_grayout(optSecuOld, 0, &sda_sys_con);
       gr2_set_grayout(optSecuSetPin, 0, &sda_sys_con);
-      gr2_set_grayout(optSecuSetDist, 0, &sda_sys_con);
-      gr2_set_grayout(unlockWithPin, 0, &sda_sys_con);
+
+      if(sda_crypto_get_if_pin_set_up()) {
+        gr2_set_grayout(optSecuSetDist, 0, &sda_sys_con);
+        gr2_set_grayout(unlockWithPin, 0, &sda_sys_con);
+      } else {
+        gr2_set_grayout(optSecuSetDist, 1, &sda_sys_con);
+        gr2_set_grayout(unlockWithPin, 1, &sda_sys_con);
+      }
+      
       gr2_set_grayout(unlockCountClear, 0, &sda_sys_con);
       gr2_set_grayout(resetBtn, 0, &sda_sys_con);
     }
@@ -163,8 +178,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
 
   if (gr2_clicked(resetBtn, &sda_sys_con)) {
     sda_crypto_remove();
-    gr2_set_visible(resetBtn, 0, &sda_sys_con);
-    gr2_set_visible(msgKeyMismatch, 0, &sda_sys_con);
+    sda_settings_security_screen(2);
   }
 
   if (gr2_clicked(optSecuSetPin, &sda_sys_con)) {
@@ -173,11 +187,12 @@ uint16_t sda_settings_security_screen(uint8_t init) {
 
   pin_overlay_update(pinOverlay);
 
-  if(pin_overlay_get_ok(pinOverlay) == 3) {
+  if (pin_overlay_get_ok(pinOverlay) == 3) {
     uint8_t buff[33];
     pin_overlay_get_pin(buff, sizeof(buff));
     sda_crypto_change_pin(buff);
     pin_overlay_clear_ok(pinOverlay);
+    sda_settings_security_screen(2);
   } else if (pin_overlay_get_ok(pinOverlay)) {
     pin_overlay_clear_ok(pinOverlay);
   }
@@ -188,7 +203,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
 
   pin_overlay_update(distOverlay);
 
-  if(pin_overlay_get_ok(distOverlay) == 3) {
+  if (pin_overlay_get_ok(distOverlay) == 3) {
     uint8_t buff[33];
     pin_overlay_get_pin(buff, sizeof(buff));
     sda_crypto_change_distress(buff);
@@ -197,27 +212,23 @@ uint16_t sda_settings_security_screen(uint8_t init) {
     pin_overlay_clear_ok(distOverlay);
   }
 
-  //TODO: screen locking settings + lock in home
-
-  if(gr2_clicked(unlockWithPin, &sda_sys_con)) {
+  if (gr2_clicked(unlockWithPin, &sda_sys_con)) {
     svpSGlobal.usePinForLock = gr2_get_value(unlockWithPin, &sda_sys_con);
     sda_crypto_store_conf();
   }
 
-  if(gr2_clicked(unlockCountClear, &sda_sys_con)) {
+  if (gr2_clicked(unlockCountClear, &sda_sys_con)) {
     svpSGlobal.unlockCounter = 0;
-    // TODO: refresh string
+    sda_int_to_str(unlockCountStr, svpSGlobal.unlockCounter, sizeof(unlockCountStr));
+    gr2_set_modified(unlockCount, &sda_sys_con);
   }
 
   if (gr2_clicked(optSecuOk, &sda_sys_con) && svp_strcmp(optSecuNewStr, (uint8_t *)"") == 0) {
 
     if (!sda_crypto_get_if_set_up()) {
       sda_crypto_reset(optSecuNewStr);
-
-      gr2_set_grayout(optSecuOld, 0, &sda_sys_con);
-      gr2_set_grayout(optSecuSetPin, 0, &sda_sys_con);
+      sda_settings_security_screen(2);
       gr2_set_visible(msgPwdStored, 1, &sda_sys_con);
-      gr2_set_visible(msgWrongPwd, 0, &sda_sys_con);
     } else {
       uint8_t retval = sda_crypto_unlock(optSecuOldStr);
 

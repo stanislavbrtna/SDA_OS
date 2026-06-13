@@ -29,7 +29,7 @@ uint16_t optMntSel;
 void settings_sd_umount();
 void settings_sd_mount();
 
-void svp_settings_set_spacing(uint16_t id) { gr2_set_param(id, SDA_SETTINGS_SPACER, &sda_sys_con); }
+void svp_settings_set_spacing(uint16_t id) { gr2_set_x_offset(id, SDA_SETTINGS_SPACER, &sda_sys_con); }
 
 static uint16_t settingsScreen;
 static uint16_t settingsTitle;
@@ -180,6 +180,9 @@ uint16_t sda_settings_menu(uint8_t init) {
     optScreen = gr2_add_screen(&sda_sys_con);
 
     gr2_set_yscroll(optScreen, 16, &sda_sys_con);
+
+    gr2_set_cell_space_bottom(optScreen, 4, &sda_sys_con);
+    gr2_set_y_cell(optScreen, 36, &sda_sys_con);
 
     // sub-screens
     optLcdScr = sda_settings_display_screen(1);
