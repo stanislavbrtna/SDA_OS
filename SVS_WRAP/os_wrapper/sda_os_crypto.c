@@ -106,7 +106,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    //TODO: fix this
+    //TODO: finish this
 
     result->value.val_u = sda_crypto_get_if_after_dkl();
     result->type = SVS_TYPE_NUM;
@@ -118,7 +118,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   // #!Gets if crypto is enabled. (Device is has keys loaded.)
   // #!
   // #!Return: [num] 1 - crypto enabled, 0 - crypto disabled
-  if (sysFuncMatch(argS->callId, "getLock", s)) {
+  if (sysFuncMatch(argS->callId, "enabled", s)) {
     if (sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
@@ -161,7 +161,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
-  // #!##### Generate keyfile
+  // #!##### Generate keystring
   // #!    sys.cr.genKey([str]password);
   // #!Generates custom keystring.
   // #!
@@ -190,14 +190,14 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   // #!
   // #!Return: none
   if (sysFuncMatch(argS->callId, "setKey", s)) {
-    argType[1] = SVS_TYPE_STR;
+    argType[1] = SVS_TYPE_NUM;
     if (sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
 
     svmMeta.cryptoKey = argS->arg[1].val_s;
 
-    result->type = SVS_TYPE_STR;
+    result->type = SVS_TYPE_NUM;
     return 1;
   }
 
@@ -271,6 +271,23 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
     result->value.val_u =
         sda_crypto_generate_totp(s->stringField + argS->arg[1].val_str, argS->arg[2].val_s);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
+  // #!##### Get TOTP Remaining time
+  // #!    sys.cr.getTRem([num]time_offset_s);
+  // #!Returns for how long the OTP code is valid, in seconds.
+  // #!
+  // #!Return: [num] time_in_s
+  if (sysFuncMatch(argS->callId, "getTRem", s)) {
+    argType[1] = SVS_TYPE_NUM;
+    if (sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    result->value.val_u =
+        sda_crypto_totp_remaining(argS->arg[1].val_s);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
