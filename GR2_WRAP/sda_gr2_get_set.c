@@ -934,12 +934,12 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   // #!##### Set vertical screen scrollbar
-  // #!    sys.gui.setYScrBar([num]screenId, [num]barId);
+  // #!    sys.gui.setYSlider([num]screenId, [num]sliderId);
   // #!Sets scroll bar for given screen. If zero is passed as barId,
   // #!scrollbar functionality is disabled.
   // #!
   // #!Return: None
-  if (sysFuncMatch(argS->callId, "setYScrBar", s)) {
+  if (sysFuncMatch(argS->callId, "setYScrBar", s) || sysFuncMatch(argS->callId, "setYSlider", s)) {
     argType[1] = SVS_TYPE_NUM; // screen_id
     argType[2] = SVS_TYPE_NUM; // scrollbar_id
 
@@ -955,12 +955,12 @@ uint8_t sda_gr2_getset_subwrap(varRetVal *result, argStruct *argS, svsVM *s) {
   }
 
   // #!##### Set horizontal screen scrollbar
-  // #!    sys.gui.setXScrBar([num]screenId, [num]barId);
+  // #!    sys.gui.setXSlider([num]screenId, [num]sliderId);
   // #!Sets scroll bar for given screen. If zero is passed as barId,
   // #!scrollbar functionality is disabled.
   // #!
   // #!Return: None
-  if (sysFuncMatch(argS->callId, "setXScrBar", s)) {
+  if (sysFuncMatch(argS->callId, "setXSlider", s)) {
     argType[1] = SVS_TYPE_NUM; // screen_id
     argType[2] = SVS_TYPE_NUM; // scrollbar_id
 
