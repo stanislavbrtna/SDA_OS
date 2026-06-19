@@ -38,3 +38,8 @@ uint32_t sda_crypto_generate_totp(const char *secret_b32, int32_t time_offset) {
   // 6. Reduce to a 6-digit code (modulo 10^6)
   return code % 1000000;
 }
+
+uint32_t sda_crypto_totp_remaining(int32_t time_offset) {
+  uint64_t timestamp = (1167602400 + (uint64_t)(svpSGlobal.timestamp + time_offset)) / 30;
+  return (uint32_t)(((uint64_t)timestamp + 1)*30) - (1167602400 + (uint64_t)(svpSGlobal.timestamp + time_offset));
+}

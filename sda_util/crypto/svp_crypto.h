@@ -58,6 +58,7 @@ uint8_t sda_crypto_stream_decrypt(uint8_t c);
 
 // utils
 uint32_t sda_crypto_generate_totp(const char *secret_b32, int32_t offset);
+uint32_t sda_crypto_totp_remaining(int32_t time_offset);
 
 // Pin functions
 uint8_t sda_crypto_get_if_pin_set_up();
