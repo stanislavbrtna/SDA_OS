@@ -21,34 +21,34 @@ Creates unlock overlay
 Return: None
 ##### Get if is locked
     sys.cr.getLock();
-Gets if crypto is unlocked
+Gets if current app can use PIN key
 
 Return: [num] 1 - crypto unlocked, 0 - crypto locked
-##### Loads password as a key
-    sys.cr.loadPass();
-Loads OS password as a key
+##### Get if crypto is set up
+    sys.cr.enabled();
+Gets if crypto is enabled. (Device is has keys loaded.)
 
-Return: 0 if success, 1 if error
+Return: [num] 1 - crypto enabled, 0 - crypto disabled
 ##### Load custom key string
-    sys.cr.loadStr([str]key);
+    sys.cr.loadKey([str]key, [str]password);
 Loads custom string as a crypto key
 
 Return: 0 if success, 1 if error
-##### Load custom keyfile
-    sys.cr.loadKey([str]keyfile);
-Loads custom keyfile as a crypto key
+##### Derive user key from password
+    sys.cr.deriveKey([str]password);
+Loads derived key as a user key.
+
+##### Generate keystring
+    sys.cr.genKey([str]password);
+Generates custom keystring.
 
 Return: 0 if success, 1 if error
-##### Load OS keyfile
-    sys.cr.loadOSKey();
-Loads OS keyfile as a crypto key
+##### Set key type
+    sys.cr.setKey([num]keytype);
+Sets given key for crypto operations.
+0 - Device encryption key, 1 - user encryption key
 
-Return: 0 if success, 1 if error
-##### Generate keyfile
-    sys.cr.genKey([str]keyfile);
-Generates custom keyfile.
-
-Return: 0 if success, 1 if error
+Return: none
 ##### Lock
     sys.cr.lock();
 Locks sda encryption
@@ -64,6 +64,16 @@ Return: 0 if success, 1 if error
 Encrypts file.
 
 Return: 0 if success, 1 if error
+##### Get TOTP
+    sys.cr.getTotp([str]secret, [num]time_offset_s);
+Returns OTP auth code for given secret.
+
+Return: 0 if success, 1 if error
+##### Get TOTP Remaining time
+    sys.cr.getTRem([num]time_offset_s);
+Returns for how long the OTP code is valid, in seconds.
+
+Return: [num] time_in_s
 ##### Encrypt string
     sys.cr.encryptStr([str]source);
 Encrypts given string.
