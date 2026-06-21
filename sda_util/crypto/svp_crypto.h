@@ -40,6 +40,7 @@ uint8_t sda_crypto_change_password(uint8_t *new_pass);
 uint8_t sda_crypto_load_usr_key(uint8_t *base32_enc_key, uint8_t *password);
 uint8_t sda_crypto_generate_usr_key(uint8_t *base32_output_buffer, uint8_t *password);
 void sda_crypto_derive_usr_key(uint8_t *password);
+void sda_crypto_clear_usr_key();
 
 // file encryption
 uint8_t sda_encrypt(uint8_t *fname, uint8_t keytype);

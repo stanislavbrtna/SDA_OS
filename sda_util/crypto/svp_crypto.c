@@ -700,6 +700,10 @@ void sda_crypto_derive_usr_key(uint8_t *password) {
   copy_key(derived_key, svp_crypto_usr);
 }
 
+void sda_crypto_clear_usr_key() {
+  clear_key(svp_crypto_usr);
+}
+
 void sda_crypto_test() {
 
   // puts("crypto test begin");
