@@ -35,6 +35,7 @@ static uint16_t setupButton;
 static uint16_t povId;
 static uint16_t povDone;
 static uint8_t  kbdInit;
+static uint32_t hideMessage;
 
 void password_overlay_destructor();
 
@@ -133,16 +134,21 @@ void password_overlay_update(uint16_t ovId) {
   }
 
   if (gr2_get_event(okButton, &sda_sys_con) == EV_RELEASED) {
-
     if (sda_crypto_unlock(passInputStr)) {
       gr2_set_visible(passMessage, 1, &sda_sys_con);
       svpSGlobal.unlockCounter++;
+      hideMessage = svpSGlobal.uptime + 2;
     } else {
       destroyOverlay();
       sda_keyboard_hide();
       povDone = 1;
       return;
     }
+  }
+
+  if (hideMessage != 0 && hideMessage < svpSGlobal.uptime) {
+    gr2_set_visible(passMessage, 0, &sda_sys_con);
+    hideMessage = 0;
   }
 
   if (gr2_get_event(cancelButton, &sda_sys_con) == EV_RELEASED) {
