@@ -31,15 +31,19 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
 
   // #!##### Unlock overlay init
   // #!    sys.cr.unLockInit();
-  // #!Creates unlock overlay
+  // #!Creates Pin unlock overlay
   // #!
   // #!Return: [num] overlay ID, 0 when error
   if (sysFuncMatch(argS->callId, "unLockInit", s)) {
     if (sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    if (sda_crypto_get_lock() == 0) {
-      result->value.val_u = password_overlay_init();
+    if (sda_crypto_get_lock()) {
+      if(svpSGlobal.usePinForLock) {
+        result->value.val_u = pin_overlay_init(0);
+      } else {
+        result->value.val_u = password_overlay_init();
+      }
     } else {
       result->value.val_u = 0;
     }
@@ -57,7 +61,12 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    password_overlay_update(argS->arg[1].val_u);
+    if(svpSGlobal.usePinForLock) {
+      pin_overlay_update(argS->arg[1].val_u);
+    } else {
+      password_overlay_update(argS->arg[1].val_u);
+    }
+    
     result->value.val_u = 0;
     result->type = SVS_TYPE_NUM;
     return 1;
@@ -73,7 +82,12 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    result->value.val_u = password_overlay_get_ok(argS->arg[1].val_u);
+    if(svpSGlobal.usePinForLock) {
+      result->value.val_u = pin_overlay_get_ok(argS->arg[1].val_u);
+    } else {
+      result->value.val_u = password_overlay_get_ok(argS->arg[1].val_u);
+    }
+    
     if (result->value.val_u == 1) {
       svmSetCryptoUnlock(1);
     }
@@ -91,7 +105,12 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-    password_overlay_clear_ok(argS->arg[1].val_u);
+    if(svpSGlobal.usePinForLock) {
+      pin_overlay_clear_ok(argS->arg[1].val_u);
+    } else {
+      password_overlay_clear_ok(argS->arg[1].val_u);
+    }
+    
     result->value.val_u = 0;
     result->type = SVS_TYPE_NUM;
     return 1;
@@ -106,9 +125,8 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    //TODO: finish this
 
-    result->value.val_u = sda_crypto_get_if_after_dkl();
+    result->value.val_u = svmGetCryptoUnlock();
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -183,6 +201,21 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  // #!##### Clear User key
+  // #!    sys.cr.clearKey();
+  // #!Clears usr key from memory.
+  // #!
+  // #!Return: None
+  if (sysFuncMatch(argS->callId, "clearKey", s)) {
+    if (sysExecTypeCheck(argS, argType, 0, s)) {
+      return 0;
+    }
+
+    sda_crypto_clear_usr_key();
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   // #!##### Set key type
   // #!    sys.cr.setKey([num]keytype);
   // #!Sets given key for crypto operations.
@@ -194,9 +227,11 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
-
+    if(svmGetCryptoUnlock() == 0 && argS->arg[1].val_s == SDA_KEY_PIN) {
+      errSoft((uint8_t *)"sda_os_crypto_wrapper: PIN_KEY is not available.", s);
+      return 0;
+    }
     svmMeta.cryptoKey = argS->arg[1].val_s;
-
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -211,10 +246,8 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    //TODO: this will be used to remove the USR key from mem
     if (sda_crypto_get_if_after_dkl()) {
-      //svmSetCryptoUnlock(0);
-      //sda_crypto_lock();
+      svmSetCryptoUnlock(0);
     }
     return 1;
   }

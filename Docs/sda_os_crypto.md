@@ -1,7 +1,7 @@
 #### Text obfuscation
 ##### Unlock overlay init
     sys.cr.unLockInit();
-Creates unlock overlay
+Creates Pin unlock overlay
 
 Return: [num] overlay ID, 0 when error
 ##### Unlock overlay update
@@ -43,6 +43,11 @@ Loads derived key as a user key.
 Generates custom keystring.
 
 Return: 0 if success, 1 if error
+##### Clear User key
+    sys.cr.clearKey();
+Clears usr key from memory.
+
+Return: None
 ##### Set key type
     sys.cr.setKey([num]keytype);
 Sets given key for crypto operations.
