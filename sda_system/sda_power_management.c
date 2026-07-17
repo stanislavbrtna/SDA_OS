@@ -31,9 +31,7 @@ void sda_power_sleep() {
   if (svpSGlobal.lcdState == LCD_ON) {
     svp_set_lcd_state(LCD_OFF);
   }
-
   svpSGlobal.powerMode = SDA_PWR_MODE_SLEEP;
-  system_clock_set_low();
 }
 
 void sda_power_sleep_after(uint32_t seconds) {
@@ -159,7 +157,6 @@ void sda_power_management_handler() {
     // after we blink the led, system will underclock itself
     // to gave time for apps or system to do stuff after lcd shutdown
     svpSGlobal.powerMode = SDA_PWR_MODE_SLEEP;
-    system_clock_set_low();
     sda_power_sleep_after(30);
   }
 
