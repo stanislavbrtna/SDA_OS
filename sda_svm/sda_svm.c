@@ -421,7 +421,7 @@ void sdaSvmKillApp_handle() {
   
   sda_set_landscape(0);
 
-  svp_crypto_lock();
+  sda_crypto_lock();
   gr2_cleanup(&sda_app_con); // performs cleanup of pscg elements
   sda_prev_slot_on_top(SDA_SLOT_HOMESCREEN);
   svp_switch_main_dir();

@@ -116,6 +116,10 @@ File description:
 
 #define MAX_VOLUME_SLIDER_VALUE 1000
 
+#ifndef SDA_PASSWORD_SALT
+  #define SDA_PASSWORD_SALT {134, 170, 233, 64, 209, 32, 162, 11, 187, 120, 28, 201, 103, 93, 35, 101}
+#endif
+
 // button id defines
 #define BUTTON_A     0
 #define BUTTON_LEFT  1

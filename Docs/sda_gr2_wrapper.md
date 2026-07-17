@@ -381,13 +381,13 @@ Gets yscroll limit for a given screen.
 
 Return: None
 ##### Set vertical screen scrollbar
-    sys.gui.setYScrBar([num]screenId, [num]barId);
+    sys.gui.setYSlider([num]screenId, [num]sliderId);
 Sets scroll bar for given screen. If zero is passed as barId,
 scrollbar functionality is disabled.
 
 Return: None
 ##### Set horizontal screen scrollbar
-    sys.gui.setXScrBar([num]screenId, [num]barId);
+    sys.gui.setXSlider([num]screenId, [num]sliderId);
 Sets scroll bar for given screen. If zero is passed as barId,
 scrollbar functionality is disabled.
 

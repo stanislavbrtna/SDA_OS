@@ -49,6 +49,12 @@
 #define SCR_CARD_ERROR_MSG            (uint8_t *)"Připojení karty se nezdařilo."
 #define SCR_SOUND_ON                  (uint8_t *)"Zvuk zapnut"
 #define SCR_KEY_ERROR_MSG             (uint8_t *)"Zadané heslo nesouhlasí se šifrovacím klíčem."
+#define SCR_SECU_CLEAR                (uint8_t *)"Smaž"
+#define SCR_SECU_PIN_UNLOCK           (uint8_t *)"Zamknout Pinem"
+#define SCR_KEY_UNLOCK_COUNT          (uint8_t *)"neús. pokusů"
+#define SCR_SECU_SET_DISTRESS         (uint8_t *)"Nouzový pin"
+#define SCR_SECU_SET_PIN              (uint8_t *)"Nastavit Pin"
+#define SCR_SECU_PIN_SETUP            (uint8_t *)"Nastavit Pin:"
 
 #define OVRL_ENTER_TIME               (uint8_t *)"Zadejte Čas:"
 #define OVRL_OK                       (uint8_t *)"Ok"

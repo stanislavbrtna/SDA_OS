@@ -345,12 +345,15 @@ void sda_set_init_struct_defaults() {
   svpSGlobal.inputMethod    = ON_SCREEN_KEYBOARD;
 
   svpSGlobal.breakP16Draw   = 0;
+
+  svpSGlobal.usePinForLock  = 0;
+  svpSGlobal.unlockCounter  = 0;
 }
 
 
 void sda_set_device_lock(uint8_t locked) {
   if (locked) {
-    if(svp_crypto_get_if_set_up() == 0) {
+    if(sda_crypto_get_if_after_dkl() == 0) {
       printf("Warn: Trying to lock the device without initialized crypto functionality.\n");
       return;
     }

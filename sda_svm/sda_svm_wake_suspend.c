@@ -138,7 +138,7 @@ uint8_t svmStoreRunning() {
   if (r == 1) return 0; // sys.os.exit called
 
   if (svmGetCryptoUnlock()) {
-    svp_crypto_lock();
+    sda_crypto_lock();
   }
   // reset the flag
   svmMeta.suspendExecuted = 0;
@@ -231,7 +231,7 @@ uint8_t svmWake(uint16_t pid) {
 
   // unlock
   if (svmGetCryptoUnlock()) {
-    svp_crypto_unlock_nopass();
+    sda_crypto_unlock_nopass();
   }
 
   // reset suspend executed flag
@@ -283,7 +283,7 @@ uint8_t svmWakeArgs(uint16_t pid, uint8_t* argType, varType *arg, uint8_t **svmA
   svmOnTop();
 
   if (svmGetCryptoUnlock()) {
-    svp_crypto_unlock_nopass();
+    sda_crypto_unlock_nopass();
   }
   
   svmRestoreArguments(argType, arg, svmArgs, &svm);

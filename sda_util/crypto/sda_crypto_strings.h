@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2021 Stanislav Brtna
+Copyright (c) 2023 Stanislav Brtna
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,16 +20,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef __SDA_CRYPTO_KEYFILE_MGMT_H
-#define __SDA_CRYPTO_KEYFILE_MGMT_H
+#ifndef SDA_CRYPTO_STRINGS_H
+#define SDA_CRYPTO_STRINGS_H
 
-#include "sda_util.h"
+#include "../sda_util.h"
 
-void sda_crypto_keyfile_boot_check();
-uint8_t sda_crypto_keyfile_init_check();
+// Encrypts given string using the integrated crypto functions,
+// Len is length of the dest buffer.
+// Encrypted string is stored as sting of hex values terminated by zero.
+uint8_t sda_encrypt_string(uint8_t * source, uint8_t * dest, uint32_t len, uint8_t keytype);
 
-uint8_t svp_crypto_load_os_keyfile();
-uint8_t svp_crypto_reencrypt_os_keyfile(uint8_t* oldpass, uint8_t* newpass);
-uint8_t svp_crypto_reset_os_keyfile();
+// Decrypts given string using the integrated crypto functions,
+// len is length of the dest buffer
+uint8_t sda_decrypt_string(uint8_t * source, uint8_t * dest, uint32_t len, uint8_t keytype);
 
 #endif

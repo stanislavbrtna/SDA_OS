@@ -71,7 +71,8 @@ void svmLaunchSetDefMetadata(uint16_t pid, uint16_t parentPid, uint8_t *fname) {
   svmMeta.screen          = 0;
   svmMeta.kbdVisible      = 0;
   svmMeta.calWidgetUsed   = 0;
-
+  svmMeta.cryptoKey       = SDA_KEY_DEK;
+ 
   for (uint16_t i = 0; i < 3; i++) {
     svmMeta.svmCallRetval[i].val_u = 0;
     svmMeta.svmCallRetvalType[i]   = SVS_TYPE_UNDEF;
@@ -111,6 +112,8 @@ void svmSetCryptoUnlock(uint8_t unlock) {
   }
 }
 
+//TODO: crypto is unlocked by default after DKL
+//TODO: this will show if PEK key is unlocked in current app context
 uint8_t svmGetCryptoUnlock() {
   for (uint16_t x = 0; x < MAX_OF_SAVED_PROC; x++) {
     if (svmSavedProc[x].pid == svmMeta.pid) {
