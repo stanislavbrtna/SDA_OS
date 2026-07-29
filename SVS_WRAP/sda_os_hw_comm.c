@@ -189,7 +189,10 @@ uint8_t sda_os_hw_com_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    if(wrap_get_resource(USB_PORT) == 0) return 1;
+    if(wrap_get_resource(USB_PORT) == 0) {
+      printf("sys.com.usbRcvIT: Usb resource locked\n");
+      return 1;
+    }
 
     result->value.val_s = sda_usb_serial_recieve_init();
     result->type = SVS_TYPE_NUM;
