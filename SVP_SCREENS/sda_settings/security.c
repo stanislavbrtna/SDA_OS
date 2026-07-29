@@ -32,7 +32,7 @@ uint16_t sda_settings_security_screen(uint8_t init) {
 
   static uint8_t optSecuNewStr[33];
   static uint8_t optSecuOldStr[33];
-  static uint16_t unlockCountStr[4];
+  static uint8_t unlockCountStr[4];
   static uint16_t optSecuOk;
   static uint16_t msgWrongPwd;
   static uint16_t msgPwdStored;

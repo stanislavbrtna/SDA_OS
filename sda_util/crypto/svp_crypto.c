@@ -392,12 +392,12 @@ uint8_t sda_crypto_encryption_init(uint8_t *nonce, uint8_t keytype) {
     return 1;
   }
 
-  uint8_t *key = &svp_crypto_dek;
+  uint8_t *key = svp_crypto_dek;
 
   if (keytype == SDA_KEY_USR) {
-    key = &svp_crypto_usr;
+    key = svp_crypto_usr;
   } else if (keytype == SDA_KEY_PIN) {
-    key = &svp_crypto_pek;
+    key = svp_crypto_pek;
   }
 
   cf_chacha20_init(&ctx, key, KEY_LEN, nonce);
@@ -565,7 +565,7 @@ void sda_crypto_remove() {
   sda_conf_key_remove(&conffile, "pin_hash");
   sda_conf_key_remove(&conffile, "dist_hash");
 
-  svp_fclose(&conffile);
+  svp_fclose(&conffile.fil);
   printf("%s: Encryption is removed, keys are deleted.\n", __FUNCTION__);
 
   svp_crypto_set_up = 0;

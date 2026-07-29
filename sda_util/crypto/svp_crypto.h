@@ -2,6 +2,7 @@
 #define SDA_CRYPTO_H
 #include "../sda_util.h"
 #include "base32.h"
+#include <string.h>
 
 #define KEY_LEN      32
 #define PASS_LEN_MAX 32
@@ -15,6 +16,10 @@ void sda_crypto_init();
 
 // Reset key and password
 void sda_crypto_reset(uint8_t *new_pass);
+
+// Check crypto setup after boot 
+void sda_crypto_boot_check();
+
 // Remove encryption keys
 void sda_crypto_remove();
 
@@ -75,5 +80,6 @@ uint8_t sda_crypto_store_conf();
 uint32_t crc32b(unsigned char *message);
 uint32_t crc32b_len(uint8_t *message, uint32_t len);
 void sda_crypto_test();
+void generate_rnd_array(uint8_t *dest, size_t len);
 
 #endif
