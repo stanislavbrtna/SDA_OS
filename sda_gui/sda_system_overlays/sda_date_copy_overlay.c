@@ -45,6 +45,7 @@ void sda_dc_overlay_destructor() {
   setRedrawFlag();
   dc_overlay_flag = 0;
   dc_overlay = 0xFFFF;
+  overlayDestructorDone();
 }
 
 

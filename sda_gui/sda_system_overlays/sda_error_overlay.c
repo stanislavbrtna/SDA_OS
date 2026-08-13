@@ -37,6 +37,7 @@ void sda_error_overlay_destructor() {
   setRedrawFlag();
   soft_error_flag = 0;
   error_overlay = 0xFFFF;
+  overlayDestructorDone();
 }
 
 

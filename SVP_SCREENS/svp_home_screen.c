@@ -91,9 +91,6 @@ void sda_homescreen_configure() {
     return;
   }
 
-  gr2_set_x_cell(screen, 32, &sda_sys_con);
-  gr2_set_y_cell(screen, 32, &sda_sys_con);
-
   // background image
   sda_conf_key_read(&conffile, (uint8_t *) "background", background_img, sizeof(background_img));
   if (svp_fexists(background_img)) {

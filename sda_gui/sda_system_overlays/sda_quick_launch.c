@@ -67,6 +67,7 @@ void sda_ql_overlay_destructor() {
   setRedrawFlag();
   ql_overlay_flag = 0;
   ql_overlay = 0xFFFF;
+  overlayDestructorDone();
 }
 
 

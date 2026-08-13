@@ -65,7 +65,6 @@ static void reloadNiceNames() {
     } else {
       sda_strcp(buff + slash + 1, niceSuspendName[x], 35);
     }
-
   }
 }
 
@@ -75,6 +74,7 @@ void taskSwitcherDestructor() {
   printf("task switcher destructor called\n");
 #endif
   valid = 0;
+  overlayDestructorDone();
 }
 
 void taskSwitcherOpen() {

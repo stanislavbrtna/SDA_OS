@@ -126,7 +126,8 @@ void sda_mm_destructor() {
   gr2_destroy(main_menu_overlay, &sda_sys_con);
   setRedrawFlag();
   main_menu_overlay_flag = 0;
-  main_menu_overlay = 0xFFFF;
+  main_menu_overlay = 0;
+  overlayDestructorDone();
 }
 
 uint8_t sda_mm_overlay_shown() { return main_menu_overlay_flag; }
@@ -286,7 +287,7 @@ void sda_mm_overlay_handle(uint8_t init) {
 
   if (gr2_clicked(homeBtn, &sda_sys_con)) {
     if (sda_get_top_slot() != SDA_SLOT_HOMESCREEN) {
-      switch_to_homescreen();
+     switch_to_homescreen();
     }
 
     destroyOverlay();

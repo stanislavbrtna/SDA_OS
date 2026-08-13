@@ -188,5 +188,6 @@ void password_overlay_clear_ok(uint16_t ovId) {
 void password_overlay_destructor() {
   gr2_destroy(screen, &sda_sys_con);
   sda_keyboard_hide();
+  overlayDestructorDone();
   setRedrawFlag();
 }

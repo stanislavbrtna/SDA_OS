@@ -179,6 +179,7 @@ void pin_overlay_clear_ok(uint16_t ovId) {
 void pin_overlay_destructor() {
   gr2_destroy(screen, &sda_sys_con);
   setRedrawFlag();
+  overlayDestructorDone();
 }
 
 void pin_overlay_get_pin(uint8_t *outBuffer, size_t len) {

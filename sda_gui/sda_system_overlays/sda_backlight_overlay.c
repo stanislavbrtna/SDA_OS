@@ -210,6 +210,7 @@ void sda_batt_overlay_destructor() {
   setRedrawFlag();
   batt_overlay_flag = 0;
   batt_overlay = 0xFFFF;
+  overlayDestructorDone();
 }
 
 
