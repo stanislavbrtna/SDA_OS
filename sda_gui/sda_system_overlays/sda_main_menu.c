@@ -308,8 +308,6 @@ void sda_mm_overlay_handle(uint8_t init) {
   }
 
   if (gr2_clicked(quickBtn, &sda_sys_con)) {
-    svmHandleSlotSwitch();
-    sda_keyboard_hide();
     qlFlag = 1;
     return;
   }
