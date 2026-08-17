@@ -205,6 +205,10 @@ int16_t getRunningScreen(uint16_t scrId, uint16_t y0) {
   additionalHeight = 16 * (m * 2 + 2);
   numberOfApps = n;
 
+  if (numberOfApps > 3 || svpSGlobal.lcdLandscape) {
+     sda_keyboard_hide();
+  }
+
   return m * 2 + 2;
 }
 
@@ -309,6 +313,8 @@ void sda_mm_overlay_handle(uint8_t init) {
   }
 
   if (gr2_clicked(quickBtn, &sda_sys_con)) {
+    
+    sda_keyboard_hide();
     qlFlag = 1;
     return;
   }
