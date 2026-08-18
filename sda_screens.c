@@ -49,6 +49,9 @@ static uint8_t get_draw_root_en() {
 void sda_main_redraw() {
   uint8_t dirBuff[256];
 
+  gr2_set_timer(svpSGlobal.uptimeMs, &sda_sys_con);
+  gr2_set_timer(svpSGlobal.uptimeMs, &sda_app_con);
+
   if (
     get_draw_root_en()
   ) {
