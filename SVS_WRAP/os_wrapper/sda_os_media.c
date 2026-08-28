@@ -103,6 +103,28 @@ uint8_t sda_os_media_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  //#!##### Get media state
+  //#!    sys.pcm.getState([num] id);
+  //#!Get media playback state
+  //#! 0 - Unavailable
+  //#! 1 - Playback
+  //#! 2 - Paused
+  //#! 3 - Stopped
+  //#! 4 - Finished
+  //#!
+  //#!Return: [num] status
+  if (sysFuncMatch(argS->callId, "getState", s)) {
+    argType[1] = SVS_TYPE_NUM;
+
+    if(sysExecTypeCheck(argS, argType, 1, s)){
+      return 0;
+    }
+
+    result->value.val_u = sda_media_getStatus(argS->arg[1].val_u);
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   //#!##### Get playback position
   //#!    sys.pcm.getPos([num] id);
   //#!Get media playback position in seconds.
