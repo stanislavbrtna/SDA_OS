@@ -23,6 +23,7 @@ SOFTWARE.
 #include "sda_media.h"
 
 static uint32_t currentFid;
+static uint8_t currentStatus;
 
 uint32_t sda_media_play(uint8_t* fname) {
   
@@ -31,6 +32,7 @@ uint32_t sda_media_play(uint8_t* fname) {
 #else
   sda_base_media_play(fname);
   currentFid++;
+  currentStatus = SDA_MEDIA_PLAYBACK;
   return currentFid;
 #endif
 }
@@ -42,6 +44,7 @@ uint8_t sda_media_stop(uint32_t fid) {
   if(currentFid != fid) {
     return 0;
   }
+  currentStatus = SDA_MEDIA_STOPPED;
   sda_base_media_stop();
   return 1;
 #endif
@@ -75,6 +78,20 @@ uint32_t  sda_media_getPos(uint32_t fid) {
 #endif
 }
 
+uint8_t  sda_media_getStatus(uint32_t fid) {
+#ifndef SDA_FEATURE_PCM_SOUND
+  return 0;
+#else
+
+  if(currentFid != fid) {
+    return 0;
+  }
+
+  return currentStatus;
+#endif
+}
+
+
 uint8_t sda_media_pause(uint8_t pause_on, uint32_t fid) {
 #ifndef SDA_FEATURE_PCM_SOUND
   return 0;
@@ -84,10 +101,21 @@ uint8_t sda_media_pause(uint8_t pause_on, uint32_t fid) {
   }
 
   sda_base_media_pause(pause_on);
+
+  if(pause_on) {
+    currentStatus = SDA_MEDIA_PAUSED;
+  } else {
+    currentStatus = SDA_MEDIA_PLAYBACK;
+  }
+
   return 1;
 #endif
 }
 
 uint32_t sda_media_get() {
   return currentFid;
+}
+
+void sda_media_finished_cb() {
+  currentStatus = SDA_MEDIA_FINISHED;
 }

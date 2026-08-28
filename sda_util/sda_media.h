@@ -22,6 +22,13 @@ SOFTWARE.
 
 #ifndef SDA_MEDIA_H
 #define SDA_MEDIA_H
+
+#define SDA_MEDIA_UNDEF 0
+#define SDA_MEDIA_PLAYBACK 1
+#define SDA_MEDIA_PAUSED 2
+#define SDA_MEDIA_STOPPED 3
+#define SDA_MEDIA_FINISHED 4
+
 #include "../SDA_OS.h"
 
 uint32_t  sda_media_play(uint8_t* fname);
@@ -30,5 +37,9 @@ uint8_t   sda_media_seek(uint32_t seek_s, uint32_t fid);
 uint32_t  sda_media_getPos(uint32_t fid);
 uint8_t   sda_media_pause(uint8_t pause_on, uint32_t fid);
 uint32_t  sda_media_get();
+uint8_t   sda_media_getStatus(uint32_t fid);
+
+// internal callback
+void sda_media_finished_cb();
 
 #endif
