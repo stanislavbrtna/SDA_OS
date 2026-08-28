@@ -82,6 +82,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (sysExecTypeCheck(argS, argType, 1, s)) {
       return 0;
     }
+
     if(svpSGlobal.usePinForLock) {
       result->value.val_u = pin_overlay_get_ok(argS->arg[1].val_u);
     } else {
@@ -91,6 +92,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if (result->value.val_u == 1) {
       svmSetCryptoUnlock(1);
     }
+    
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -219,7 +221,7 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
   // #!##### Set key type
   // #!    sys.cr.setKey([num]keytype);
   // #!Sets given key for crypto operations.
-  // #!0 - Device encryption key, 1 - user encryption key
+  // #!0 - Device encryption key, 1 - user encryption key, 2 - PIN key
   // #!
   // #!Return: none
   if (sysFuncMatch(argS->callId, "setKey", s)) {

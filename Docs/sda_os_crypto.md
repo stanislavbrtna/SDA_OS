@@ -51,7 +51,7 @@ Return: None
 ##### Set key type
     sys.cr.setKey([num]keytype);
 Sets given key for crypto operations.
-0 - Device encryption key, 1 - user encryption key
+0 - Device encryption key, 1 - user encryption key, 2 - PIN key
 
 Return: none
 ##### Lock

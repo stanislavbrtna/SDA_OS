@@ -180,8 +180,9 @@ void password_overlay_clear_ok(uint16_t ovId) {
   if (povId != ovId || ovId == 0) {
     return;
   }
+  
   povDone = 0;
-  povId = 0xFFFF;
+  povId = 0;
 }
 
 
