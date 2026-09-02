@@ -23,6 +23,7 @@ SOFTWARE.
 #include "svp_screens.h"
 
 static uint8_t background_img[64];
+static uint8_t background_set;
 
 static uint8_t headingStr[64];
 static uint8_t subHeadingStr[64];
@@ -33,6 +34,14 @@ static uint16_t tTime;
 static uint16_t date;
 static uint16_t screen;
 
+
+uint8_t *getBackgroundImage() {
+  if (background_set) {
+    return background_img;
+  } else {
+    return 0;
+  }
+}
 
 static void set_element(uint16_t id, sda_conf *conffile, uint8_t * name, uint8_t * strbuff) {
   uint8_t buff[32];
@@ -76,6 +85,7 @@ static void set_element(uint16_t id, sda_conf *conffile, uint8_t * name, uint8_t
 void sda_homescreen_configure() {
   uint8_t dirbuf[258];
   sda_conf conffile;
+  background_set = 0;
   svp_getcwd(dirbuf, 256);
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
@@ -100,8 +110,10 @@ void sda_homescreen_configure() {
     } else {
       gr2_set_param(screen, 1, &sda_sys_con);
     }
+    background_set = 1;
   } else {
     gr2_set_str(screen, 0, &sda_sys_con);
+    background_set = 0;
   }
 
   set_element(tHeading, &conffile, (uint8_t *)"heading", headingStr);
@@ -150,9 +162,7 @@ uint16_t svp_homeScreen(uint8_t init, uint8_t top) {
 
     if (svp_fexists((uint8_t *)"APPS/background.p16")) {
       gr2_set_str(screen,(uint8_t *)"background.p16", &sda_sys_con);
-    } else {
-      // set default bg as empty
-      gr2_set_str(screen,(uint8_t *)"", &sda_sys_con);
+      background_set = 1;
     }
 
     if (sda_crypto_get_if_after_dkl() == 0) {

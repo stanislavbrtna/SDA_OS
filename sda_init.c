@@ -100,7 +100,7 @@ void sda_main_init() {
   sda_slot_init(SDA_SLOT_SVM, 0, &sda_app_con, 0, 0);
 
   sda_splash_screen = gr2_add_screen(&sda_sys_con);
-  gr2_set_str(sda_splash_screen, gr2_get_str(slotScreen[0], &sda_sys_con), &sda_sys_con);
+  gr2_set_str(sda_splash_screen, getBackgroundImage(), &sda_sys_con);
   gr2_text_set_align(gr2_add_text(0, 2, 10, 3, SCR_LOADING_TEXT, sda_splash_screen, &sda_sys_con), GR2_ALIGN_CENTER, &sda_sys_con);
   gr2_set_param(sda_splash_screen, gr2_get_param(slotScreen[0], &sda_sys_con), &sda_sys_con);
 

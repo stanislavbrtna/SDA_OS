@@ -50,5 +50,6 @@ void taskSwitcherUpdate();
 uint8_t taskSwitcherVisible();
 
 void sda_homescreen_lock_en();
+uint8_t *getBackgroundImage();
 
 #endif
