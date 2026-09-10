@@ -154,7 +154,7 @@ uint8_t sda_os_media_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_u = sda_media_getDuration(s->stringField + argS->arg[1].val_str);
+    result->value.val_u = sda_base_media_getDuration(s->stringField + argS->arg[1].val_str);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -171,7 +171,7 @@ uint8_t sda_os_media_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_u = sda_media_getBitRate(s->stringField + argS->arg[1].val_str);
+    result->value.val_u = sda_base_media_getBitRate(s->stringField + argS->arg[1].val_str);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
@@ -188,7 +188,7 @@ uint8_t sda_os_media_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_u = sda_media_getSampleRate(s->stringField + argS->arg[1].val_str);
+    result->value.val_u = sda_base_media_getSampleRate(s->stringField + argS->arg[1].val_str);
     result->type = SVS_TYPE_NUM;
     return 1;
   }
