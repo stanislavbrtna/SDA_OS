@@ -51,7 +51,7 @@ typedef enum {DEVICE_LOCKED, DEVICE_UNLOCKED} sdaDeviceLockType;
 
 typedef enum {ON_SCREEN_KEYBOARD, OTHER} sdaInputMethodType;
 
-typedef enum {SPEAKER, HEADPHONES} sdaPCMOutputType;
+typedef enum sdaPCMOutputType {SPEAKER, HEADPHONES, ALL} sdaPCMOutputType;
 
 typedef enum {
   EXTERNAL_EXPANSION_PORT = 1,
