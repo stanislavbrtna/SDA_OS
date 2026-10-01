@@ -228,7 +228,7 @@ uint8_t sda_os_hw_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     if(sysExecTypeCheck(argS, argType, 0, s)) {
       return 0;
     }
-    if (svpSGlobal.pwrType == POWER_USB) {
+    if (svpSGlobal.powerSource == POWER_USB) {
       result->value.val_u = 1;
     } else {
       result->value.val_u = 0;

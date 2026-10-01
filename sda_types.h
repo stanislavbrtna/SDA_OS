@@ -46,7 +46,7 @@ typedef struct {
   // Battery
   volatile uint8_t       battPercentage;
   uint8_t                battString[6]; // 3.654V for example 
-  volatile systemPwrType pwrType;
+  volatile systemPwrType powerSource;
 
   // Power mode
   volatile pwrModeType      powerMode;

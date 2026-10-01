@@ -60,16 +60,22 @@ void sda_irq_update_timestruct(
 
   // and because of that, we must be carefull, more seconds than one might pass
   if (svpSGlobal.uptime != oldtime) {
+    static systemPwrType oldState;
 
     if (svpSGlobal.lcdState == LCD_ON) {
       svpSGlobal.lcdOnTime += svpSGlobal.uptime - oldtime;
     }
 
-    if (svpSGlobal.pwrType == POWER_BATT) {
-      svpSGlobal.battTime += svpSGlobal.uptime - oldtime;
-    } else {
+    if(oldState != svpSGlobal.powerSource && svpSGlobal.powerSource == POWER_BATT) {
       svpSGlobal.battTime = 0;
     }
+
+    if (svpSGlobal.powerSource == POWER_BATT) {
+      svpSGlobal.battTime += svpSGlobal.uptime - oldtime;
+    }
+
+    oldState = svpSGlobal.powerSource;
+
   }
   oldtime = svpSGlobal.uptime;
 }

@@ -335,7 +335,7 @@ void sda_set_init_struct_defaults() {
   svpSGlobal.battString[1]  = 'V';
   svpSGlobal.battString[2]  = 0;
 
-  svpSGlobal.pwrType        = POWER_BATT;
+  svpSGlobal.powerSource    = POWER_BATT;
   svpSGlobal.powerMode      = SDA_PWR_MODE_NORMAL;
   svpSGlobal.pwrClockScalingMode = AUTO;
   svpSGlobal.systemClock    = 167;

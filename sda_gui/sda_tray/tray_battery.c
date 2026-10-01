@@ -35,10 +35,10 @@ int16_t sda_tray_battery(int16_t x2, int16_t y1, int16_t w) {
   int16_t x1;
   uint8_t curr_font;
 
-  if ((oldbatt != svpSGlobal.battPercentage) || (oldBattState != svpSGlobal.pwrType)) {
+  if ((oldbatt != svpSGlobal.battPercentage) || (oldBattState != svpSGlobal.powerSource)) {
     redraw = 0;
     oldbatt = svpSGlobal.battPercentage;
-    oldBattState = svpSGlobal.pwrType;
+    oldBattState = svpSGlobal.powerSource;
     irq_redraw = 1;
   }
 
@@ -70,7 +70,7 @@ int16_t sda_tray_battery(int16_t x2, int16_t y1, int16_t w) {
     batt_string[4] = 0;
   }
 
-  if (svpSGlobal.pwrType == POWER_USB) {
+  if (svpSGlobal.powerSource == POWER_USB) {
     w = LCD_Text_Get_Width(IRQ_BATT_CHRG, 0) + 10;
     x1 = x2 - w;
   } else {
@@ -84,7 +84,7 @@ int16_t sda_tray_battery(int16_t x2, int16_t y1, int16_t w) {
     curr_font = LCD_Get_Font_Size();
     LCD_Set_Sys_Font(18);
 
-    if (svpSGlobal.pwrType == POWER_USB) {
+    if (svpSGlobal.powerSource == POWER_USB) {
       LCD_DrawText_ext(x1 + 7, y1 + 8, gr2_get_text_color(&sda_sys_con), IRQ_BATT_CHRG);
     } else {
       LCD_DrawText_ext(x1 + 7, y1 + 8, gr2_get_text_color(&sda_sys_con), batt_string);

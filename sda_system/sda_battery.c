@@ -105,7 +105,7 @@ void sda_handle_battery_status() {
         svpSGlobal.battPercentage = (battPercentRealValue / 5) * 5;
       }
 
-      if (svpSGlobal.pwrType == POWER_BATT) {
+      if (svpSGlobal.powerSource == POWER_BATT) {
         // on battery power use the "battery wont go up" function
         reload_batt_percent(battPercentRealValue);
       } else {
@@ -116,11 +116,11 @@ void sda_handle_battery_status() {
   }
 
   // reset batt state after unplugging device from charger
-  if (oldBattState != svpSGlobal.pwrType && svpSGlobal.pwrType == POWER_BATT) {
+  if (oldBattState != svpSGlobal.powerSource && svpSGlobal.powerSource == POWER_BATT) {
     unplugged_flag = 1;
     unpluggedCount = 5;
     battUnpluggedVal = 0;
   }
 
-  oldBattState = svpSGlobal.pwrType;
+  oldBattState = svpSGlobal.powerSource;
 }
