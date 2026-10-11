@@ -36,14 +36,86 @@ static int32_t resolveReapeating(uint8_t hour, uint8_t min, uint8_t wkday, uint8
 
 void sdaPrintActiveAlarm() {
   if (currentAlarmTime != 0) {
-    printf("Current alarm: id: %d app: %s time: ", (int) currentAlarmId, currentAlarmAppName);
+    printf("Current active alarm: id: %d app: %s time: ", (int) currentAlarmId, currentAlarmAppName);
     sdaTimePrint(currentAlarmTime);
     printf("\n");
   } else {
-    printf("Current notification: None\n");
+    printf("Current active alarm: None\n");
   }
 }
 
+void sdaPrintAlarms() {
+  uint8_t  dirbuf[258];
+  uint8_t  keybuff[25];
+  uint8_t  numbuff[25];
+  int32_t  maxId;
+  uint32_t vid = 0;
+  sda_conf conffile;
+
+  svp_getcwd(dirbuf, sizeof(dirbuf));
+  svp_switch_main_dir();
+
+  if (sda_conf_open(&conffile, (uint8_t *)"sda_alarms.cfg") == 0) {
+    printf("Failed to open notification config file\n");
+  }
+
+  printf("Stored alarms:\n");
+  maxId = 1;
+
+  vid = sda_conf_key_read_i32(&conffile, (uint8_t *)"maxVid", 0);
+  vid++;
+
+  sda_int_to_str(numbuff, maxId, sizeof(numbuff));
+  sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
+  sda_str_add(keybuff, numbuff);
+
+  while (sda_conf_key_exists(&conffile, keybuff)) {
+    uint8_t namebuff[APP_NAME_LEN];
+
+    sda_conf_key_read(&conffile, keybuff, namebuff, APP_NAME_LEN);
+
+    int32_t time = getValNum((uint8_t *) "tfix", maxId, &conffile);
+    int32_t param = getValNum((uint8_t *) "param", maxId, &conffile);
+    int32_t notify = getValNum((uint8_t *) "notify", maxId, &conffile);
+    int32_t vid = getValNum((uint8_t *) "vid", maxId, &conffile);
+    int32_t repeating = 0;
+
+    printf("orig time: %d\n", time);
+
+    if (time == 0) {
+      int32_t timeTmp = getValNum((uint8_t *) "ttime", maxId, &conffile);
+      
+      int32_t hour = timeTmp / 100;
+
+      int32_t min = timeTmp % 100;
+
+      int32_t wkday = getValNum((uint8_t *) "twkday", maxId, &conffile);
+      int32_t day   = getValNum((uint8_t *) "tday", maxId, &conffile);
+      int32_t month = getValNum((uint8_t *) "tmonth", maxId, &conffile);
+      int32_t last  = getValNum((uint8_t *) "last", maxId, &conffile);
+
+      time  = resolveReapeating(hour, min, wkday, day, month, last);
+
+      if (time == 0) {
+        printf("notif test: repeat false");
+      } else {
+        repeating = 1;
+      }
+    }
+
+    printf("%d : id: %d app: %s param: %d notify: %d repeating: %d time: ",(int) maxId, (int) vid, namebuff, param, notify, repeating);
+    sdaTimePrint(time);
+    printf("\n");
+
+    maxId++;
+    sda_int_to_str(numbuff, maxId, sizeof(numbuff));
+    sda_strcp((uint8_t *) "appname_", keybuff, sizeof(keybuff));
+    sda_str_add(keybuff, numbuff);
+  }
+
+  sda_conf_close(&conffile);
+  svp_chdir(dirbuf);
+}
 
 uint8_t sdaGetActiveAlarm() {
   if (currentAlarmTime) {

@@ -51,7 +51,7 @@ uint16_t sdaTimeGetYears(int32_t sdaTime) {
 }
 
 void sdaTimePrint(int32_t sdaTime) {
-  printf("%0u:%0u:%0u %u. %u. %u",
+  printf("%02u:%02u:%02u %u. %u. %u",
     sdaTimeGetHours(sdaTime),
     sdaTimeGetMinutes(sdaTime),
     sdaTimeGetSeconds(sdaTime),

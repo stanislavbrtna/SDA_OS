@@ -31,6 +31,7 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
   static uint16_t dbgAutocahceEnable;
   static uint16_t bMemInfo;
   static uint16_t bSvmInfo;
+  static uint16_t bAlInfo;
   static uint16_t bCClean;
   static uint16_t tCClean;
 
@@ -57,6 +58,8 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
 
     bMemInfo = gr2_add_button(1, 6, 6, 1, (uint8_t *)"Print memory info", optDbgScr, &sda_sys_con);
     bSvmInfo = gr2_add_button(1, 7, 6, 1, (uint8_t *)"Print SVSvm info", optDbgScr, &sda_sys_con);
+
+    bAlInfo = gr2_add_button(1, 8, 6, 1, (uint8_t *)"Print Alarms info", optDbgScr, &sda_sys_con);
 
     sda_settings_debug_screen(2); // reload options
 
@@ -109,6 +112,11 @@ uint16_t sda_settings_debug_screen(uint8_t init) {
            sda_app_con.elementsUsed,
            sda_app_con.elementsMax,
            sda_app_con.maxElementsId);
+  }
+
+  if (gr2_clicked(bAlInfo, &sda_sys_con)) {
+    sdaPrintAlarms();
+    sdaPrintActiveAlarm();
   }
 
   if (gr2_clicked(bSvmInfo, &sda_sys_con)) {
