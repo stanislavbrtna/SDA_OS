@@ -112,7 +112,7 @@ void sda_main_redraw() {
         319 + 160 * svpSGlobal.lcdLandscape,
         479 - 160 * svpSGlobal.kbdVisible - 160 * svpSGlobal.lcdLandscape - 1,
         mainScr,
-        svpSGlobal.systemRedraw,
+        svpSGlobal.systemRedraw || gr2_get_modified(mainScr, sda_current_con),
         sda_current_con
       );
     }
@@ -157,7 +157,7 @@ void sda_main_redraw() {
             overlayX2,
             overlayY2,
             overlayScr,
-            svpSGlobal.systemRedraw,
+            svpSGlobal.systemRedraw || gr2_get_modified(mainScr, sda_current_con),
             overlayCont
     );
     svpSGlobal.systemRedraw = 0;
