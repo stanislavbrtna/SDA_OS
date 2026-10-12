@@ -98,6 +98,7 @@ void svmSuspendInitPid(uint16_t pid, uint8_t * name) {
   svmSavedProc[index].screenShdnLock = 0;
   svmSavedProc[index].sleepLock = 0;
   svmSavedProc[index].standbyLock = 0;
+  svmSavedProc[index].forceProtect = 0;
 }
 
 // execs the suspend function, result: 0 - ok, 1 - app exited, 2 - svs error occured

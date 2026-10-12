@@ -48,4 +48,8 @@ uint8_t *svmGetNiceName(uint16_t pid);
 
 void svmHandleSlotSwitch();
 
+// Force cache encryption
+void svmSetForceProtect(uint8_t val);
+uint8_t svmGetForceProtect(uint16_t pid);
+
 #endif

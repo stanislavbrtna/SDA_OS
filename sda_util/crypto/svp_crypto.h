@@ -2,6 +2,7 @@
 #define SDA_CRYPTO_H
 #include "../sda_util.h"
 #include "base32.h"
+#include "sda_crypto_buffers.h"
 #include <string.h>
 
 #define KEY_LEN      32

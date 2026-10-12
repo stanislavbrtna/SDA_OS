@@ -316,15 +316,21 @@ void svmSaveProcData() {
   printf("svmSaveProcData: cache files\n");
 #endif
 
-  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".svm", &svm, sizeof(svm));
-  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".str", svmStrings, svm.stringFieldLen + 1);
-  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX);
-  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX);
-  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context));
-  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta));
+  uint8_t encrypt = 0;
+
+  if (svmGetForceProtect(svmMeta.pid) && sda_crypto_get_if_after_dkl()) {
+    encrypt = 1;
+  }
+
+  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".svm", &svm, sizeof(svm), 0);
+  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".str", svmStrings, svm.stringFieldLen + 1, encrypt);
+  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX, 0);
+  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX, 0);
+  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context), 0);
+  sdaSvmSaver(svmMeta.pid, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta), encrypt);
 
   if(svmMeta.calWidgetUsed) {
-    sdaSvmSaver(svmMeta.pid, (uint8_t *) ".cal", &dateWidget, sizeof(dateWidget));
+    sdaSvmSaver(svmMeta.pid, (uint8_t *) ".cal", &dateWidget, sizeof(dateWidget), 0);
   }
 
 #ifdef SVM_DBG_ENABLED
@@ -339,26 +345,32 @@ uint8_t svmLoadProcData(uint16_t pid) {
   printf("svmLoadProcData: loading: id: %u\n", id);
 #endif
 
-  if(!sdaSvmLoader(pid, (uint8_t *) ".svm", &svm, sizeof(svm)))
+  uint8_t decrypt = 0;
+
+  if (svmGetForceProtect(pid) && sda_crypto_get_if_after_dkl()) {
+    decrypt = 1;
+  }
+
+  if(!sdaSvmLoader(pid, (uint8_t *) ".svm", &svm, sizeof(svm), 0))
     return 0;
 
-  if(!sdaSvmLoader(pid, (uint8_t *) ".str", svmStrings, svm.stringFieldLen + 1))
+  if(!sdaSvmLoader(pid, (uint8_t *) ".str", svmStrings, svm.stringFieldLen + 1, decrypt))
     return 0;
 
-  if(!sdaSvmLoader(pid, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX))
+  if(!sdaSvmLoader(pid, (uint8_t *) ".gr0", &sda_app_gr2_elements, sizeof(gr2Element) * SDA_APP_ELEM_MAX, 0))
     return 0;
 
-  if(!sdaSvmLoader(pid, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX))
+  if(!sdaSvmLoader(pid, (uint8_t *) ".gr1", &sda_app_gr2_screens, sizeof(gr2Screen) * SDA_APP_SCREEN_MAX, 0))
     return 0;
 
-  if(!sdaSvmLoader(pid, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context)))
+  if(!sdaSvmLoader(pid, (uint8_t *) ".gr2", &sda_app_con, sizeof(gr2context), 0))
     return 0;
 
-  if(!sdaSvmLoader(pid, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta)))
+  if(!sdaSvmLoader(pid, (uint8_t *) ".met", &svmMeta, sizeof(svmMeta), decrypt))
     return 0;
 
   if(svmMeta.calWidgetUsed) {
-    if(!sdaSvmLoader(pid, (uint8_t *) ".cal", &dateWidget, sizeof(dateWidget)))
+    if(!sdaSvmLoader(pid, (uint8_t *) ".cal", &dateWidget, sizeof(dateWidget), 0))
       return 0;
   }
 
@@ -437,7 +449,7 @@ uint8_t svmLoadProcData(uint16_t pid) {
 }
 
 
-uint8_t sdaSvmLoader(uint16_t pid, uint8_t * tail, void *target, uint32_t size) {
+uint8_t sdaSvmLoader(uint16_t pid, uint8_t * tail, void *target, uint32_t size, uint8_t encrypt) {
   uint8_t cacheBuffer[256];
   uint8_t numbuff[25];
   svp_file svmFile;
@@ -455,14 +467,18 @@ uint8_t sdaSvmLoader(uint16_t pid, uint8_t * tail, void *target, uint32_t size) 
     return 0;
   }
 
-  svp_fread(&svmFile, target, size);
+  if(encrypt) {
+    sda_crypto_fread_encr(&svmFile, SDA_KEY_DEK, target, size);
+  } else {
+    svp_fread(&svmFile, target, size);
+  }
   svp_fclose(&svmFile);
 
   return 1;
 }
 
 
-void sdaSvmSaver(uint16_t pid, uint8_t * tail, void *target, uint32_t size) {
+void sdaSvmSaver(uint16_t pid, uint8_t * tail, void *target, uint32_t size, uint8_t encrypt) {
   uint8_t cacheBuffer[256];
   uint8_t numbuff[25];
   svp_file svmFile;
@@ -479,7 +495,13 @@ void sdaSvmSaver(uint16_t pid, uint8_t * tail, void *target, uint32_t size) {
     printf("sdaSvmSaver: file open error\n");
     return;
   }
-  svp_fwrite(&svmFile, target, size);
+
+  if(encrypt) {
+    sda_crypto_fwrite_encr(&svmFile, SDA_KEY_DEK, target, size);
+  } else {
+    svp_fwrite(&svmFile, target, size);
+  }
 
   svp_fclose(&svmFile);
 }
+

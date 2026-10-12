@@ -29,6 +29,13 @@ Return: [num] 1 - crypto unlocked, 0 - crypto locked
 Gets if crypto is enabled. (Device is has keys loaded.)
 
 Return: [num] 1 - crypto enabled, 0 - crypto disabled
+##### Force app cache encryption
+    sys.cr.cacheEncr([num] val);
+Forces os to encrypt written cache content.
+Crypto must be enabled for this, device key is used for encryption.
+1 - force protection, 0 - disable protection
+
+Return: None
 ##### Load custom key string
     sys.cr.loadKey([str]key, [str]password);
 Loads custom string as a crypto key

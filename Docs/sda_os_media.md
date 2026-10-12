@@ -22,10 +22,10 @@ Return: [num] 0 - ok, 1 - error
 Get id of the currently playing media.
 
 Return: [num] id
-##### Get media status
+##### Get media state
     sys.pcm.getState([num] id);
-Get media playback status.
- 0 - unavailable
+Get media playback state
+ 0 - Unavailable
  1 - Playback
  2 - Paused
  3 - Stopped

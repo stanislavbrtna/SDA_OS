@@ -147,6 +147,27 @@ uint8_t sda_os_crypto_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
     return 1;
   }
 
+  // #!##### Force app cache encryption
+  // #!    sys.cr.cacheEncr([num] val);
+  // #!Forces os to encrypt written cache content.
+  // #!Crypto must be enabled for this, device key is used for encryption.
+  // #!1 - force protection, 0 - disable protection
+  // #!
+  // #!Return: None
+  if (sysFuncMatch(argS->callId, "cacheEncr", s)) {
+    argType[1] = SVS_TYPE_NUM;
+
+    if (sysExecTypeCheck(argS, argType, 1, s)) {
+      return 0;
+    }
+
+    svmSetForceProtect(argS->arg[1].val_u);
+    
+    result->value.val_u = 0;
+    result->type = SVS_TYPE_NUM;
+    return 1;
+  }
+
   // #!##### Load custom key string
   // #!    sys.cr.loadKey([str]key, [str]password);
   // #!Loads custom string as a crypto key

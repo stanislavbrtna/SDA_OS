@@ -334,6 +334,32 @@ uint8_t svmGetSleepLock() {
 }
 
 
+void svmSetForceProtect(uint8_t val) {
+  if(!svmGetValid()) {
+    return;
+  }
+
+  int16_t pid = svmGetPid();
+
+  if(pid == -1) {
+    return;
+  }
+
+  svmSavedProc[svmGetId(pid)].forceProtect = val;
+}
+
+
+uint8_t svmGetForceProtect(uint16_t pid) {
+
+  int16_t id = svmGetId(pid);
+  if(!svmSavedProc[id].valid) {
+    return 0;
+  }
+
+  return svmSavedProc[id].forceProtect;
+}
+
+
 uint8_t svmGetStandbyLock() {
   for(uint16_t i = 0; i < MAX_OF_SAVED_PROC; i++) {
     if (svmSavedProc[i].standbyLock && svmSavedProc[i].valid) {
