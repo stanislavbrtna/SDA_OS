@@ -32,7 +32,7 @@ static int32_t currentAlarmVid;
 static int32_t currentAlarmParam;
 
 static int32_t resolveReapeating(uint8_t hour, uint8_t min, uint8_t wkday, uint8_t day, uint8_t month, int32_t last);
-
+int32_t getValNum(uint8_t *name, int32_t id, sda_conf *pConffile);
 
 void sdaPrintActiveAlarm() {
   if (currentAlarmTime != 0) {
@@ -103,7 +103,7 @@ void sdaPrintAlarms() {
       }
     }
 
-    printf("%d : id: %d app: %s param: %d notify: %d repeating: %d time: ",(int) maxId, (int) vid, namebuff, param, notify, repeating);
+    printf("%d : id: %d app: %s param: %d notify: %d repeating: %ld time: ",(int) maxId, (int) vid, namebuff, param, notify, repeating);
     sdaTimePrint(time);
     printf("\n");
 
