@@ -182,7 +182,7 @@ void sda_set_mute(uint8_t mute) {
   svpSGlobal.mute = mute;
   svp_set_irq_redraw();
 #ifdef SDA_FEATURE_PCM_SOUND
-  if(mute) {
+  if (mute) {
     svp_set_volume(0);
   } else {
     svp_set_volume(sda_get_log_volume(svpSGlobal.volumeSpeaker));

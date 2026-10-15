@@ -386,8 +386,12 @@ void sda_set_volume(uint16_t vol) {
   } else {
     svpSGlobal.volumeHeadphones = vol;
   }
-
-  svp_set_volume(sda_get_log_volume(vol));
+  if(svpSGlobal.mute == 0) {
+    svp_set_volume(sda_get_log_volume(vol));
+  } else {
+    svp_set_volume(0);
+  }
+  
 }
 
 uint16_t sda_get_volume() {
@@ -400,5 +404,9 @@ uint16_t sda_get_volume() {
 
 void sda_set_pcm_output_type(sdaPCMOutputType t) {
   svpSGlobal.outputPCM = t;
-  svp_set_volume(sda_get_log_volume(sda_get_volume()));
+  if(svpSGlobal.mute == 0) {
+    svp_set_volume(sda_get_log_volume(sda_get_volume()));
+  } else {
+    svp_set_volume(0);
+  }
 }
