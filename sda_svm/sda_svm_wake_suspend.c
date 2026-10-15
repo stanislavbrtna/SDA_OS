@@ -222,6 +222,9 @@ uint8_t svmWake(uint16_t pid) {
       svmSavedProc[id].valid = 0;
       return 1;
     }
+    if(!sda_os_overlay_visible()) {
+      destroyOverlay();
+    }
     sda_slot_set_valid(SDA_SLOT_SVM);
     svmSetValid(1);
   }
