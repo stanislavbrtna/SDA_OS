@@ -34,5 +34,6 @@ void sda_store_pcm_config();
 
 void sda_set_mute(uint8_t mute);
 void sda_set_haptics(uint8_t val);
+void sda_set_auto_bl(uint8_t val);
 
 #endif

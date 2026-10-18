@@ -74,6 +74,9 @@ void sda_load_config() {
   svpSGlobal.volumeHeadphones = sda_conf_key_read_i32(&conffile, (uint8_t *)"pcm_phones", MAX_PCM_VOLUME_VALUE/2);
   svp_set_volume(sda_get_log_volume(svpSGlobal.volumeSpeaker));
 
+  // auto backlight
+  svpSGlobal.autoBacklight = sda_conf_key_read_i32(&conffile, (uint8_t *)"auto_bl", 0);
+
   // mute
   sda_set_mute(sda_conf_key_read_i32(&conffile, (uint8_t *)"mute", 0));
   
@@ -141,6 +144,7 @@ void sda_store_config_gui(uint8_t set_def) {
     sda_conf_key_write_i32(&conffile, (uint8_t *)"fill_color", DEFAULT_FILL_COLOR);
     sda_conf_key_write_i32(&conffile, (uint8_t *)"active_color", DEFAULT_ACTIVE_COLOR);
   }
+
   sda_conf_key_write_i32(&conffile, (uint8_t *)"sleep_time", svpSGlobal.lcdShutdownTime);
   sda_conf_close(&conffile);
   svp_chdir(dirbuf);
@@ -221,6 +225,18 @@ void sda_set_haptics(uint8_t val) {
   uint8_t dirbuf[258];
   if(sda_settings_switch_to_main(&conffile, dirbuf)) return;
   sda_conf_key_write_i32(&conffile, (uint8_t *)"haptics", svpSGlobal.haptics);
+  sda_conf_close(&conffile);
+  svp_chdir(dirbuf);
+}
+
+void sda_set_auto_bl(uint8_t val) {
+  svpSGlobal.autoBacklight = val;
+
+  // store
+  sda_conf conffile;
+  uint8_t dirbuf[258];
+  if(sda_settings_switch_to_main(&conffile, dirbuf)) return;
+  sda_conf_key_write_i32(&conffile, (uint8_t *)"auto_bl", svpSGlobal.autoBacklight);
   sda_conf_close(&conffile);
   svp_chdir(dirbuf);
 }

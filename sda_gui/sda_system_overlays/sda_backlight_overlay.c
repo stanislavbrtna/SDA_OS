@@ -601,7 +601,7 @@ int16_t batt_overlay_handle(uint8_t init) {
 
 #ifdef SDA_FEATURE_AMB_LIGHT_SENS
   if (gr2_get_event(autoBlEnable, &sda_sys_con) == EV_RELEASED) {
-    svpSGlobal.autoBacklight = 1 - svpSGlobal.autoBacklight;
+    sda_set_auto_bl(1 - svpSGlobal.autoBacklight);
     if(svpSGlobal.autoBacklight) {
       svpSGlobal.autoBacklightOverride = 0;
     }
