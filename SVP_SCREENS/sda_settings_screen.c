@@ -41,6 +41,7 @@ static uint16_t settingsStack[5];
 static uint8_t *settingsStackStr[5];
 
 static uint16_t optSecuScr;
+static uint16_t optDeviceScr;
 
 uint16_t sda_settings_menu(uint8_t init);
 
@@ -159,7 +160,6 @@ void sda_settings_open_security() {
 }
 
 uint16_t sda_settings_menu(uint8_t init) {
-
   static uint16_t optScreen;
 
   static uint16_t optTimeScr;
@@ -173,6 +173,7 @@ uint16_t sda_settings_menu(uint8_t init) {
   static uint16_t optInfoSel;
   static uint16_t optSecuSel;
   static uint16_t optSound;
+  static uint16_t bDeviceOptions;
 
   static uint16_t unlockOverlay;
 
@@ -200,9 +201,17 @@ uint16_t sda_settings_menu(uint8_t init) {
     optLcdSel = gr2_add_button(1, 2, 7, 1, SCR_SET_DISPLAY, optScreen, &sda_sys_con);
     optSound = gr2_add_button(1, 3, 7, 1, SCR_SETTINGS_SND, optScreen, &sda_sys_con);
     optSecuSel = gr2_add_button(1, 4, 7, 1, SCR_SET_SECU, optScreen, &sda_sys_con);
-    optDbgSel = gr2_add_button(1, 5, 7, 1, (uint8_t *)"Debug", optScreen, &sda_sys_con);
-    optMntSel = gr2_add_button(1, 7, 7, 1, SD_UMOUNT, optScreen, &sda_sys_con);
-    optInfoSel = gr2_add_button(1, 9, 7, 1, SCR_ABOUT_SYSTEM, optScreen, &sda_sys_con);
+    
+    int16_t h = 0;
+#ifdef SDA_FEATURE_DEVICE_OPTIONS
+    bDeviceOptions = gr2_add_button(1, 5, 7, 1, SCR_SET_DEVICE, optScreen, &sda_sys_con);
+    svp_settings_set_spacing(bDeviceOptions);
+    h = 1;
+#endif
+
+    optDbgSel = gr2_add_button(1, 5 + h, 7, 1, (uint8_t *)"Debug", optScreen, &sda_sys_con);
+    optMntSel = gr2_add_button(1, 7 + h, 7, 1, SD_UMOUNT, optScreen, &sda_sys_con);
+    optInfoSel = gr2_add_button(1, 9 + h, 7, 1, SCR_ABOUT_SYSTEM, optScreen, &sda_sys_con);
 
     svp_settings_set_spacing(optTimSel);
     svp_settings_set_spacing(optLcdSel);
@@ -258,6 +267,19 @@ uint16_t sda_settings_menu(uint8_t init) {
     sda_settings_debug_screen(2);
   }
 
+#ifdef SDA_FEATURE_DEVICE_OPTIONS
+  if(gr2_clicked(bDeviceOptions, &sda_sys_con)) {
+    if(optDeviceScr) {
+      gr2_destroy(optDeviceScr, &sda_sys_con);
+      optDeviceScr = 0;
+    }
+
+    optDeviceScr = sda_base_get_dev_opts_scr(&sda_sys_con);
+
+    sda_settings_stack_add(optDeviceScr, SCR_DEVICE_OPTIONS);
+  }
+#endif
+
   // Card unmounting and apps reloader
   if (gr2_clicked(optMntSel, &sda_sys_con)) {
     if (svp_getMounted() == 1) {
@@ -281,5 +303,11 @@ uint16_t sda_settings_menu(uint8_t init) {
   sda_settings_notif_screen(0);
   sda_settings_security_screen(0);
 
+#ifdef SDA_FEATURE_DEVICE_OPTIONS
+  if(optDeviceScr) {
+    sda_base_handle_dev_opts_scr();
+  }
+
+#endif
   return 0;
 }

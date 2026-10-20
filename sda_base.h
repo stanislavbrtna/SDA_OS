@@ -126,4 +126,8 @@ void    sda_set_perf_mode(sdaPwrModeType mode);
 void    rtc_write_password(uint8_t *pwd);
 uint8_t rtc_read_password(uint8_t *pwd);
 
+// [Misc]
+uint16_t sda_base_get_dev_opts_scr(gr2context *c);
+uint16_t sda_base_handle_dev_opts_scr();
+
 #endif
