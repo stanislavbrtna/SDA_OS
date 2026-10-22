@@ -159,11 +159,6 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
     return 0;
   }
 
-  if (svp_fexists(fname)) {
-    printf("%s: Error: File does not exist!\n", __FUNCTION__);
-    return 0;
-  }
-
   uint16_t singularId = 0;
   singularId = svmGetIfSingular(fname);
   if (singularId) {
@@ -222,8 +217,13 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
 
-  if(!svp_fexists(fname)) {
+  if (!svp_fexists(fname)) {
     printf("%s: Error: Given fname (%s) does not exist!\n", __FUNCTION__, fname);
+    return 0;
+  }
+
+  if (svp_is_dir(fname)) {
+    printf("%s: Error: Given fname (%s) is not a file!\n", __FUNCTION__, fname);
     return 0;
   }
 
