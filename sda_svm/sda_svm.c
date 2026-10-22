@@ -154,8 +154,13 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
       printf("%s: launching: %s \n",__FUNCTION__ , fname);
 #endif
 
-  if(strCmp(fname, "")) {
+  if (strCmp(fname, "")) {
     printf("%s: Error: Empty fname given!\n", __FUNCTION__);
+    return 0;
+  }
+
+  if (svp_fexists(fname)) {
+    printf("%s: Error: File does not exist!\n", __FUNCTION__);
     return 0;
   }
 
