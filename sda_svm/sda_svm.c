@@ -26,22 +26,19 @@ SOFTWARE.
 #include "sda_svm_subproc.h"
 #include "sda_svm_wake_suspend.h"
 
-//svs VM
+// svs VM
 
 #ifdef STM32H743xx
-__attribute__ ((section(".strdata"), used))
+__attribute__((section(".strdata"), used))
 #endif
-svsVM          svm;
-
+svsVM svm;
 
 sdaSvmMetadata svmMeta;
 
 #ifdef STM32H743xx
-__attribute__ ((section(".strdata"), used))
+__attribute__((section(".strdata"), used))
 #endif
-uint8_t        svmStrings[STRING_FIELD_L];
-
-
+uint8_t svmStrings[STRING_FIELD_L];
 
 static uint16_t nextPid;
 static uint8_t  svmValid;
@@ -57,28 +54,19 @@ extern uint16_t svs_wrap_setScr_id;
 
 uint8_t autocahceEnable;
 uint8_t nocacheLaunchFlag;
- 
-// pscg
-uint8_t * pscgErrorString;
 
+// pscg
+uint8_t *pscgErrorString;
 
 // few getters/setters
-void svmSetNextPid(uint16_t pid) {
-  nextPid = pid;
-}
+void svmSetNextPid(uint16_t pid) { nextPid = pid; }
 
-uint16_t svmGetMainScreen() {
-  return svmMeta.screen;
-}
+uint16_t svmGetMainScreen() { return svmMeta.screen; }
 
 // gets if current SVM is valid
-uint8_t svmGetValid() {
-  return svmValid;
-}
+uint8_t svmGetValid() { return svmValid; }
 
-void svmSetValid(uint8_t val) {
-  svmValid = val;
-}
+void svmSetValid(uint8_t val) { svmValid = val; }
 
 // SVS wrapper headers
 void pcBasicWrapInit();
@@ -100,11 +88,11 @@ uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
   svp_getcwd(dirbuf, 256);
 
 #ifdef SVM_DBG_ENABLED
-      printf("%s: tokenizing: %s in %s \n",__FUNCTION__ , fname, name);
-      uint8_t dbg_dir[258];
-      svp_getcwd(dbg_dir, 256);
-      printf("cwd: %s\n", dbg_dir);
-      setTokenizerDebug(1);
+  printf("%s: tokenizing: %s in %s \n", __FUNCTION__, fname, name);
+  uint8_t dbg_dir[258];
+  svp_getcwd(dbg_dir, 256);
+  printf("cwd: %s\n", dbg_dir);
+  setTokenizerDebug(1);
 #endif
 
 #ifdef PC
@@ -122,7 +110,7 @@ uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
     }
 
     if (loadApp(fname, name, &svm, mode) != 0) {
-      if(errCheck(&svm) != 0) {
+      if (errCheck(&svm) != 0) {
         svp_errSoftPrint(&svm);
       }
       return 1;
@@ -135,7 +123,7 @@ uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
   }
 
 #ifdef SVM_DBG_ENABLED
-  printf("%s: success\n",__FUNCTION__);
+  printf("%s: success\n", __FUNCTION__);
 #endif
 
   return 0;
@@ -143,7 +131,7 @@ uint8_t svmTokenizeFile(uint8_t *fname, uint8_t *name, uint8_t mode) {
 
 #define SVM_DBG_ENABLED
 // launch app
-uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
+uint8_t svmLaunch(uint8_t *fname, uint16_t parentPid) {
   uint8_t cacheBuffer[256];
   uint8_t numbuff[25];
   uint8_t dirbuf[258];
@@ -151,7 +139,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   svp_getcwd(dirbuf, 256);
 
 #ifdef SVM_DBG_ENABLED
-      printf("%s: launching: %s \n",__FUNCTION__ , fname);
+  printf("%s: launching: %s \n", __FUNCTION__, fname);
 #endif
 
   if (strCmp(fname, "")) {
@@ -163,7 +151,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   singularId = svmGetIfSingular(fname);
   if (singularId) {
 #ifdef SVM_DBG_ENABLED
-      printf("%s: waking singular...\n",__FUNCTION__);
+    printf("%s: waking singular...\n", __FUNCTION__);
 #endif
     svmWake(singularId);
     return 1;
@@ -179,20 +167,20 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   }
 
   sda_int_to_str(numbuff, (int32_t)nextPid, sizeof(numbuff));
-  sda_strcp((uint8_t *) "cache/", cacheBuffer, sizeof(cacheBuffer));
+  sda_strcp((uint8_t *)"cache/", cacheBuffer, sizeof(cacheBuffer));
   sda_str_add(cacheBuffer, numbuff);
-  sda_str_add(cacheBuffer,(uint8_t *) ".stc");
+  sda_str_add(cacheBuffer, (uint8_t *)".stc");
 
   if (sda_strlen(fname) > APP_NAME_LEN) {
     printf("Application name %s is too long!\n", fname);
     return 0;
   }
 
-  if (svmValid)  {
+  if (svmValid) {
 #ifdef SVM_DBG_ENABLED
-      printf("%s: suspending running app: %s \n",__FUNCTION__ , svmMeta.name);
+    printf("%s: suspending running app: %s \n", __FUNCTION__, svmMeta.name);
 #endif
-    if(svmStoreRunning()) {
+    if (svmStoreRunning()) {
       return 0;
     }
   }
@@ -234,7 +222,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   }
 
   // check for pre-tokenized app
-  int32_t crc = (int32_t) crc32b(fname);
+  int32_t crc = (int32_t)crc32b(fname);
   if (crc < 0) {
     crc *= -1;
   }
@@ -242,24 +230,24 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   svp_file fil;
   svp_fopen_rw(&fil, fname);
   uint32_t siz = svp_get_size(&fil);
-  int32_t  tim = svp_get_mtime(fname);
+  int32_t tim = svp_get_mtime(fname);
   svp_fclose(&fil);
 
-  if(svmPreCachedExists(crc, tim, siz) && nocacheLaunchFlag == 0) {
-    printf("%s: loading cached: %s\n",__FUNCTION__, fname);
-    if(svmLoadPrecached(crc)) {
+  if (svmPreCachedExists(crc, tim, siz) && nocacheLaunchFlag == 0) {
+    printf("%s: loading cached: %s\n", __FUNCTION__, fname);
+    if (svmLoadPrecached(crc)) {
       return 0;
     }
   } else {
-    if(autocahceEnable && nocacheLaunchFlag == 0) {
+    if (autocahceEnable && nocacheLaunchFlag == 0) {
       // precahce the app, then launch it from cahce
-      if(svmPrecacheFile(fname)) {
-        printf("%s: caching app failed: %s\n",__FUNCTION__, fname);
+      if (svmPrecacheFile(fname)) {
+        printf("%s: caching app failed: %s\n", __FUNCTION__, fname);
         sda_show_error_message("svmPrecacheFile: Tokenizer error!");
         return 0;
       }
-      if(svmLoadPrecached(crc)) {
-        printf("%s: caching, then loading app failed: %s\n",__FUNCTION__, fname);
+      if (svmLoadPrecached(crc)) {
+        printf("%s: caching, then loading app failed: %s\n", __FUNCTION__, fname);
         return 0;
       }
     } else {
@@ -287,7 +275,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   // reset gr2 context
   gr2_reset_context(&sda_app_con);
   svmGetGR2Settings();
-  
+
   // validate the app slot
   sda_slot_set_valid(SDA_SLOT_SVM);
   sda_slot_on_top(SDA_SLOT_SVM);
@@ -295,7 +283,7 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   // reset main screen
   svmMeta.screen = 0;
   sda_slot_set_screen(SDA_SLOT_SVM, svmMeta.screen);
-  
+
   // show the close button
   svpSGlobal.systemXBtnVisible = 1;
   svpSGlobal.systemXBtnClick = 0;
@@ -307,10 +295,8 @@ uint8_t svmLaunch(uint8_t * fname, uint16_t parentPid) {
   return 1;
 }
 
-
 void sdaSvmKillApp_handle();
 void svmHandleScreenChange();
-
 
 uint16_t svmRun(uint8_t init, uint8_t top) {
 
@@ -319,7 +305,7 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
     return 0;
   }
 
-  if(!svmValid) {
+  if (!svmValid) {
     return 0;
   }
 
@@ -336,7 +322,7 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
 
   // SVM container is on top
   if (top == 1) {
-    
+
     // check for exit
     if (svmCheckAndExit()) {
       return 0;
@@ -356,18 +342,19 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
     }
 
     // Run "update"
-    if(functionExists((uint8_t *)"update", &svm)) {
+    if (functionExists((uint8_t *)"update", &svm)) {
 #ifdef PLATFORM_PC
       svsGetCacheReloads(1);
 #endif
       commExec((uint8_t *)"update", &svm);
 #ifdef PLATFORM_PC
-      if(svsGetCacheReloads(0)){
-        //printf("DBG: update cache reloads: %u\n", svsGetCacheReloads(0));
+      if (svsGetCacheReloads(0)) {
+        // printf("DBG: update cache reloads: %u\n", svsGetCacheReloads(0));
       }
 #endif
     } else {
-      printf("%s: No update function found. (%s pid: %u)\n", __FUNCTION__, svmMeta.name, svmMeta.pid);
+      printf(
+          "%s: No update function found. (%s pid: %u)\n", __FUNCTION__, svmMeta.name, svmMeta.pid);
       sda_show_error_message((uint8_t *)"No update function found.\n");
       svmCloseRunning();
       return 0;
@@ -382,9 +369,9 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
     }
 
     // Check and perform call
-    if(svmRunPerformCall()) {
+    if (svmRunPerformCall()) {
       // init call here with args
-      if(svmMeta.initExecuted == 0) {
+      if (svmMeta.initExecuted == 0) {
         commExec((uint8_t *)"init", &svm);
         svmClearArguments(&svm);
         svmMeta.initExecuted = 1;
@@ -393,16 +380,15 @@ uint16_t svmRun(uint8_t init, uint8_t top) {
       setRedrawFlag();
     }
 
-    if(svmGetSuspendFlag()) {
+    if (svmGetSuspendFlag()) {
       svmSuspend();
       svmSetSuspendFlag(0);
     }
-    
+
     svmHandleScreenChange();
   }
   return 0;
 }
-
 
 void sdaSvmKillApp_handle() {
   gr2_text_deactivate(&sda_app_con);
@@ -423,7 +409,7 @@ void sdaSvmKillApp_handle() {
   sda_files_close();
   sda_resource_free_pid(svmMeta.pid);
   sda_custom_icon_release_pid(svmMeta.pid);
-  
+
   sda_set_landscape(0);
 
   sda_crypto_lock();
@@ -432,7 +418,6 @@ void sdaSvmKillApp_handle() {
   svp_switch_main_dir();
   svp_chdir((uint8_t *)"APPS");
 }
-
 
 void svmHandleScreenChange() {
   if (svs_wrap_setScr_flag == 1) {
