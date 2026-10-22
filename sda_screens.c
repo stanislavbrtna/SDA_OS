@@ -157,7 +157,7 @@ void sda_main_redraw() {
             overlayX2,
             overlayY2,
             overlayScr,
-            svpSGlobal.systemRedraw || gr2_get_modified(mainScr, sda_current_con),
+            svpSGlobal.systemRedraw || gr2_get_modified(overlayScr, overlayCont),
             overlayCont
     );
     svpSGlobal.systemRedraw = 0;
