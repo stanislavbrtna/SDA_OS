@@ -26,17 +26,17 @@ static uint8_t sic_pmc_enable;
 static uint16_t sic_pmc_color;
 
 // gets if file is p16 image
-uint8_t sda_get_if_p16(uint8_t *filename) { return sda_validate_extension(filename, "p16"); }
+uint8_t sda_get_if_p16(uint8_t *filename) { return sda_validate_extension(filename, (uint8_t *)"p16"); }
 
 // gets if file is ppm image
-uint8_t sda_get_if_ppm(uint8_t *filename) { return sda_validate_extension(filename, "ppm"); }
+uint8_t sda_get_if_ppm(uint8_t *filename) { return sda_validate_extension(filename, (uint8_t *)"ppm"); }
 
 int8_t sda_get_if_sic(uint8_t *filename) {
   if (filename[0] == 2) {
     return 1;
   }
 
-  return sda_validate_extension(filename, "sic");
+  return sda_validate_extension(filename, (uint8_t *)"sic");
 }
 
 int8_t sda_validate_extension(uint8_t *filename, uint8_t *exten) {
