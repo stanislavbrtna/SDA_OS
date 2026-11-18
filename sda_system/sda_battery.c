@@ -31,18 +31,17 @@ SOFTWARE.
   #define SDA_BATT_MAX_VOLTAGE 4.0
 #endif
 
-static uint8_t get_batt_percent(float voltage) {
-  uint16_t percent;
-  if(voltage < SDA_BATT_MIN_VOLTAGE) {
-    return 0;
-  }
 
-  percent = (uint16_t)((voltage - SDA_BATT_MIN_VOLTAGE) / ((SDA_BATT_MAX_VOLTAGE - SDA_BATT_MIN_VOLTAGE) / 100 ));
-  if (percent > 100) {
-    percent = 100;
-  }
+static uint8_t get_batt_percent(float voltage) { 
+  if (voltage >= SDA_BATT_MAX_VOLTAGE) return 100;
+  if (voltage <= SDA_BATT_MIN_VOLTAGE) return 0;
 
-  return (uint8_t) percent;
+  float soc = 100.0f / (1.0f + expf(-10.5f * (voltage - 3.78f)));
+
+  if (soc > 100.0f) return 100;
+  if (soc < 0.0f) return 0;
+
+  return (uint8_t) soc;
 }
 
 
