@@ -1,8 +1,39 @@
-OS features:
-  - system log
-  - better support for operation with lcd switched off (phone mngr, alarm)
-  - Notification icon overlay:
+SDA_OS 1.6 checklist:
+[X] Save/load of auto backlight
+[ ] test/build on
+  [ ] Web sim
+  [ ] Wonder
+  [ ] Evo
+[ ] Create app package
+[ ] upload on the website
+
+GR2:
+[x] Scrollbar: change prev val to the rendered slider pos
+               Fixed with better set param/value/event handling
+
+Misc:
+[ ] draw sic/p16 from db entry
+
+SDA_OS 1.7:
+[ ] chan jpeg decoder
+[ ] move media playback (tone/flac/mp3/wav) to the base os
+[ ] Shutdown/reboot menu
+[ ] alarm reset flow
+[ ] click on hw kbd icon launches sw kbd
+[ ] security screen overhaul
+  [ ] option to lock the device after given amount of time
+  [ ] pop-up on key reset
+[ ] n app timers instead of 1
+[ ] at least 2 dbs that could be open at the same time
+[ ] BDB
+  [ ] add/drop column
+  [ ] native encryption with DEK and with the option to detect tampering
+[ ] Notification icon overlay:
     - When more icons are displayed than can fit the screen, hide the rest in an optional overlay.
+
+OS Wishlist:
+  - system log
+  - better support for operation with lcd switched off (phone mngr, alarm) - done (bg tasks)
   - Better alarm API:
     - better functions for managing of multiple alarms.
     - rewrite alarms so they can use the csv format

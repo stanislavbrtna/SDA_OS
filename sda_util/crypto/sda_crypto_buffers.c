@@ -1,6 +1,6 @@
 #include "sda_crypto_buffers.h"
 
-void sda_crypto_fwrite_encr(svp_file *svmFile,
+uint8_t sda_crypto_fwrite_encr(svp_file *svmFile,
                             uint8_t key_type,
                             const uint8_t *data,
                             uint32_t data_len) {
@@ -28,7 +28,7 @@ void sda_crypto_fwrite_encr(svp_file *svmFile,
   }
 }
 
-void sda_crypto_fread_encr(svp_file *svmFile,
+uint8_t sda_crypto_fread_encr(svp_file *svmFile,
                            uint8_t key_type,
                            uint8_t *data,
                            uint32_t max_data_len) {
