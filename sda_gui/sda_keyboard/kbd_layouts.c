@@ -25,6 +25,8 @@ SOFTWARE.
 void init_kblayout_standard(psvcKbdLayout *l) {
   l->keyStr[0] = (uint8_t*)"123";
   l->key[0]    = (uint8_t*)"\x01\x04\x00";
+#if LANG_VAL == 0
+  // cz chars
   l->keyStr[1] = (uint8_t*)"ě";
   l->key[1]    = (uint8_t*)"ě";
   l->keyStr[2] = (uint8_t*)"š";
@@ -43,6 +45,29 @@ void init_kblayout_standard(psvcKbdLayout *l) {
   l->key[8]    = (uint8_t*)"í";
   l->keyStr[9] = (uint8_t*)"é";
   l->key[9]    = (uint8_t*)"é";
+#else
+  // en kbd
+  l->keyStr[0] = (uint8_t*)"1";
+  l->key[0]    = (uint8_t*)"1";
+  l->keyStr[1] = (uint8_t*)"2";
+  l->key[1]    = (uint8_t*)"2";
+  l->keyStr[2] = (uint8_t*)"3";
+  l->key[2]    = (uint8_t*)"3";
+  l->keyStr[3] = (uint8_t*)"4";
+  l->key[3]    = (uint8_t*)"4";
+  l->keyStr[4] = (uint8_t*)"5";
+  l->key[4]    = (uint8_t*)"5";
+  l->keyStr[5] = (uint8_t*)"6";
+  l->key[5]    = (uint8_t*)"6";
+  l->keyStr[6] = (uint8_t*)"7";
+  l->key[6]    = (uint8_t*)"7";
+  l->keyStr[7] = (uint8_t*)"8";
+  l->key[7]    = (uint8_t*)"8";
+  l->keyStr[8] = (uint8_t*)"9";
+  l->key[8]    = (uint8_t*)"9";
+  l->keyStr[9] = (uint8_t*)"0";
+  l->key[9]    = (uint8_t*)"0";
+#endif
 
   l->keyStr[10] = (uint8_t*)"q";
   l->key[10]    = (uint8_t*)"q";
@@ -110,6 +135,8 @@ void init_kblayout_standard(psvcKbdLayout *l) {
 }
 
 void init_kblayout_uppcase(psvcKbdLayout *l) {
+#if LANG_VAL == 0
+  // cz chars
   l->keyStr[0] = (uint8_t*)"1";
   l->key[0]    = (uint8_t*)"1";
   l->keyStr[1] = (uint8_t*)"2";
@@ -130,7 +157,28 @@ void init_kblayout_uppcase(psvcKbdLayout *l) {
   l->key[8]    = (uint8_t*)"9";
   l->keyStr[9] = (uint8_t*)"0";
   l->key[9]    = (uint8_t*)"0";
-
+#else
+  l->keyStr[0] = (uint8_t*)"+";
+  l->key[0]    = (uint8_t*)"+";
+  l->keyStr[1] = (uint8_t*)"@";
+  l->key[1]    = (uint8_t*)"@";
+  l->keyStr[2] = (uint8_t*)"#";
+  l->key[2]    = (uint8_t*)"#";
+  l->keyStr[3] = (uint8_t*)"$";
+  l->key[3]    = (uint8_t*)"$";
+  l->keyStr[4] = (uint8_t*)"%";
+  l->key[4]    = (uint8_t*)"%";
+  l->keyStr[5] = (uint8_t*)"^";
+  l->key[5]    = (uint8_t*)"^";
+  l->keyStr[6] = (uint8_t*)"&";
+  l->key[6]    = (uint8_t*)"&";
+  l->keyStr[7] = (uint8_t*)"*";
+  l->key[7]    = (uint8_t*)"*";
+  l->keyStr[8] = (uint8_t*)"(";
+  l->key[8]    = (uint8_t*)"(";
+  l->keyStr[9] = (uint8_t*)")";
+  l->key[9]    = (uint8_t*)")";
+#endif
   l->keyStr[10] = (uint8_t*)"Q";
   l->key[10]    = (uint8_t*)"Q";
   l->keyStr[11] = (uint8_t*)"W";
