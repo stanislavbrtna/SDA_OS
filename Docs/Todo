@@ -1,11 +1,11 @@
 SDA_OS 1.6 checklist:
 [X] Save/load of auto backlight
-[ ] test/build on
-  [ ] Web sim
-  [ ] Wonder
-  [ ] Evo
-[ ] Create app package
-[ ] upload on the website
+[X] test/build on
+  [X] Web sim
+  [X] Wonder
+  [X] Evo
+[X] Create app package
+[X] upload on the website
 
 GR2:
 [x] Scrollbar: change prev val to the rendered slider pos
@@ -13,6 +13,9 @@ GR2:
 
 Misc:
 [ ] draw sic/p16 from db entry
+
+Fixes:
+[ ] Better battery indication
 
 SDA_OS 1.7:
 [ ] chan jpeg decoder
