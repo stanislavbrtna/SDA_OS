@@ -445,7 +445,7 @@ uint8_t sda_os_wrapper(varRetVal *result, argStruct *argS, svsVM *s) {
       return 0;
     }
 
-    result->value.val_u = (uint16_t) LANG_VAL;
+    result->value.val_u = (uint16_t) SDA_LANG;
     result->type = SVS_TYPE_NUM;
     return 1;
   }

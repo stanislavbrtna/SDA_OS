@@ -25,7 +25,7 @@ SOFTWARE.
 void init_kblayout_standard(psvcKbdLayout *l) {
   l->keyStr[0] = (uint8_t*)"123";
   l->key[0]    = (uint8_t*)"\x01\x04\x00";
-#if LANG_VAL == 0
+#if SDA_LANG == SDA_LANG_CZ
   // cz chars
   l->keyStr[1] = (uint8_t*)"ě";
   l->key[1]    = (uint8_t*)"ě";
@@ -45,7 +45,8 @@ void init_kblayout_standard(psvcKbdLayout *l) {
   l->key[8]    = (uint8_t*)"í";
   l->keyStr[9] = (uint8_t*)"é";
   l->key[9]    = (uint8_t*)"é";
-#else
+#endif
+#if SDA_LANG == SDA_LANG_EN
   // en kbd
   l->keyStr[0] = (uint8_t*)"1";
   l->key[0]    = (uint8_t*)"1";
@@ -135,7 +136,7 @@ void init_kblayout_standard(psvcKbdLayout *l) {
 }
 
 void init_kblayout_uppcase(psvcKbdLayout *l) {
-#if LANG_VAL == 0
+#if SDA_LANG == SDA_LANG_CZ
   // cz chars
   l->keyStr[0] = (uint8_t*)"1";
   l->key[0]    = (uint8_t*)"1";
@@ -157,7 +158,8 @@ void init_kblayout_uppcase(psvcKbdLayout *l) {
   l->key[8]    = (uint8_t*)"9";
   l->keyStr[9] = (uint8_t*)"0";
   l->key[9]    = (uint8_t*)"0";
-#else
+#endif
+#if SDA_LANG == SDA_LANG_EN
   l->keyStr[0] = (uint8_t*)"+";
   l->key[0]    = (uint8_t*)"+";
   l->keyStr[1] = (uint8_t*)"@";

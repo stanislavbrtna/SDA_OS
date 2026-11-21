@@ -38,12 +38,19 @@ SOFTWARE.
 // SDA-OS data types
 #include "sda_types.h"
 
-#ifdef LANG_EN
-#include "Strings_EN.h"
-#define LANG_VAL 1
-#else
-#include "Strings_CZ.h"
-#define LANG_VAL 0
+#define SDA_LANG_CZ 0
+#define SDA_LANG_EN 1
+
+#ifndef SDA_LANG
+  #define SDA_LANG SDA_LANG_EN
+#endif
+
+#if SDA_LANG == SDA_LANG_EN
+  #include "Strings_EN.h"
+#endif
+
+#if SDA_LANG == SDA_LANG_CZ
+  #include "Strings_CZ.h"
 #endif
 
 #include "SVS/svs_basics.h"
